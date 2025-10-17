@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { testDatabaseConnection } from '@/lib/db-config'
 
+// Marcar como ruta dinámica para Vercel
+export const dynamic = 'force-dynamic'
+
 /**
  * Endpoint de health check
  * Útil para verificar que la aplicación y la base de datos están funcionando

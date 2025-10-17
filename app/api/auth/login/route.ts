@@ -4,6 +4,9 @@ import bcrypt from 'bcryptjs'
 import { prisma } from '@/lib/db'
 import { createSession } from '@/lib/auth'
 
+// Marcar como ruta dinámica para Vercel
+export const dynamic = 'force-dynamic'
+
 const loginSchema = z.object({
   email: z.string().email('El formato del correo electrónico no es válido'),
   password: z.string().min(1, 'La contraseña es requerida'),
