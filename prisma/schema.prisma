@@ -1,0 +1,27 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// Tabla de administradores (equivalente a tu tabla PHP 'admin')
+model Admin {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(100)
+  email     String   @unique @db.VarChar(100)
+  password  String   @db.VarChar(255)
+  rol       String   @default("usuario") @db.VarChar(50)
+  legajo    String?  @db.VarChar(50)
+  creadoEn  DateTime @default(now()) @map("creado_en")
+  
+  @@map("admin")
+}
+
+// Puedes agregar más modelos aquí cuando migremos otras tablas
+// Por ejemplo: Personas, Habilitaciones, TokensAcceso, etc.
