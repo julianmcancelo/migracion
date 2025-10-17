@@ -1,0 +1,305 @@
+'use client'
+
+import { useState, useEffect } from 'react'
+import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+interface Turno {
+  id: number
+  habilitacion_id: number
+  fecha: string
+  hora: string
+  fecha_hora: string
+  estado: 'PENDIENTE' | 'CONFIRMADO' | 'FINALIZADO' | 'CANCELADO'
+  observaciones?: string
+  habilitacion?: {
+    id: number
+    nro_licencia: string
+    tipo: string
+  }
+}
+
+/**
+ * Página de gestión de turnos
+ * Lista, crea y actualiza turnos de inspección
+ */
+export default function TurnosPage() {
+  const [turnos, setTurnos] = useState<Turno[]>([])
+  const [loading, setLoading] = useState(true)
+  const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
+
+  useEffect(() => {
+    cargarTurnos()
+  }, [filtroEstado])
+
+  const cargarTurnos = async () => {
+    try {
+      setLoading(true)
+      const params = new URLSearchParams()
+      
+      if (filtroEstado !== 'TODOS') {
+        params.append('estado', filtroEstado)
+      }
+
+      const response = await fetch(`/api/turnos?${params}`)
+      const data = await response.json()
+
+      if (data.success) {
+        setTurnos(data.data)
+      }
+    } catch (error) {
+      console.error('Error al cargar turnos:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const cambiarEstado = async (id: number, nuevoEstado: string) => {
+    try {
+      const response = await fetch(`/api/turnos/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ estado: nuevoEstado })
+      })
+
+      if (response.ok) {
+        cargarTurnos()
+      }
+    } catch (error) {
+      console.error('Error al actualizar turno:', error)
+    }
+  }
+
+  const getEstadoBadge = (estado: string) => {
+    const badges = {
+      PENDIENTE: 'bg-yellow-100 text-yellow-800 border-yellow-300',
+      CONFIRMADO: 'bg-blue-100 text-blue-800 border-blue-300',
+      FINALIZADO: 'bg-green-100 text-green-800 border-green-300',
+      CANCELADO: 'bg-red-100 text-red-800 border-red-300'
+    }
+    return badges[estado as keyof typeof badges] || badges.PENDIENTE
+  }
+
+  const getEstadoIcon = (estado: string) => {
+    switch (estado) {
+      case 'FINALIZADO':
+        return <CheckCircle className="h-4 w-4" />
+      case 'CANCELADO':
+        return <XCircle className="h-4 w-4" />
+      case 'CONFIRMADO':
+        return <AlertCircle className="h-4 w-4" />
+      default:
+        return <Clock className="h-4 w-4" />
+    }
+  }
+
+  const formatearFecha = (fecha: string) => {
+    return new Date(fecha).toLocaleDateString('es-AR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+  }
+
+  const formatearHora = (hora: string) => {
+    return new Date(hora).toLocaleTimeString('es-AR', {
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+  }
+
+  return (
+    <div className="container mx-auto py-8 px-4">
+      {/* Header */}
+      <div className="flex justify-between items-center mb-8">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <Calendar className="h-8 w-8 text-blue-600" />
+            Gestión de Turnos
+          </h1>
+          <p className="text-gray-600 mt-2">
+            Agenda de turnos para inspecciones vehiculares
+          </p>
+        </div>
+        
+        <Button className="bg-blue-600 hover:bg-blue-700">
+          <Plus className="h-5 w-5 mr-2" />
+          Nuevo Turno
+        </Button>
+      </div>
+
+      {/* Filtros */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+        <div className="flex items-center gap-2 flex-wrap">
+          <Filter className="h-5 w-5 text-gray-500" />
+          <span className="text-sm font-medium text-gray-700">Filtrar por estado:</span>
+          
+          {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
+            <button
+              key={estado}
+              onClick={() => setFiltroEstado(estado)}
+              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+                filtroEstado === estado
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {estado}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* Estadísticas */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-yellow-700 font-medium">Pendientes</p>
+              <p className="text-2xl font-bold text-yellow-900">
+                {turnos.filter(t => t.estado === 'PENDIENTE').length}
+              </p>
+            </div>
+            <Clock className="h-8 w-8 text-yellow-600" />
+          </div>
+        </div>
+
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-blue-700 font-medium">Confirmados</p>
+              <p className="text-2xl font-bold text-blue-900">
+                {turnos.filter(t => t.estado === 'CONFIRMADO').length}
+              </p>
+            </div>
+            <AlertCircle className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-green-700 font-medium">Finalizados</p>
+              <p className="text-2xl font-bold text-green-900">
+                {turnos.filter(t => t.estado === 'FINALIZADO').length}
+              </p>
+            </div>
+            <CheckCircle className="h-8 w-8 text-green-600" />
+          </div>
+        </div>
+
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-red-700 font-medium">Cancelados</p>
+              <p className="text-2xl font-bold text-red-900">
+                {turnos.filter(t => t.estado === 'CANCELADO').length}
+              </p>
+            </div>
+            <XCircle className="h-8 w-8 text-red-600" />
+          </div>
+        </div>
+      </div>
+
+      {/* Lista de Turnos */}
+      <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+        {loading ? (
+          <div className="p-12 text-center text-gray-500">
+            Cargando turnos...
+          </div>
+        ) : turnos.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">
+            No hay turnos para mostrar
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full">
+              <thead className="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Fecha
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Hora
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Licencia
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Tipo
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Estado
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Observaciones
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                {turnos.map((turno) => (
+                  <tr key={turno.id} className="hover:bg-gray-50">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                      {formatearFecha(turno.fecha)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
+                      {formatearHora(turno.hora)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <span className="font-mono font-bold text-blue-600">
+                        {turno.habilitacion?.nro_licencia || '-'}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                      {turno.habilitacion?.tipo || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getEstadoBadge(turno.estado)}`}>
+                        {getEstadoIcon(turno.estado)}
+                        {turno.estado}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
+                      {turno.observaciones || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex gap-2">
+                        {turno.estado === 'PENDIENTE' && (
+                          <button
+                            onClick={() => cambiarEstado(turno.id, 'CONFIRMADO')}
+                            className="text-blue-600 hover:text-blue-900 font-medium"
+                          >
+                            Confirmar
+                          </button>
+                        )}
+                        {turno.estado === 'CONFIRMADO' && (
+                          <a
+                            href={`/inspecciones/nueva?turno_id=${turno.id}&habilitacion_id=${turno.habilitacion_id}`}
+                            className="text-green-600 hover:text-green-900 font-medium"
+                          >
+                            Inspeccionar
+                          </a>
+                        )}
+                        {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
+                          <button
+                            onClick={() => cambiarEstado(turno.id, 'CANCELADO')}
+                            className="text-red-600 hover:text-red-900 font-medium"
+                          >
+                            Cancelar
+                          </button>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+    </div>
+  )
+}
