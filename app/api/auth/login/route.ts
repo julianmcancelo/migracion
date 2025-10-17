@@ -36,7 +36,7 @@ export async function POST(request: Request) {
       where: { email },
     })
 
-    if (!user) {
+    if (!user || !user.password) {
       return NextResponse.json(
         { 
           success: false, 
@@ -62,9 +62,9 @@ export async function POST(request: Request) {
     // Crear sesión
     await createSession({
       userId: user.id,
-      email: user.email,
-      nombre: user.nombre,
-      rol: user.rol,
+      email: user.email || '',
+      nombre: user.nombre || '',
+      rol: user.rol || 'lector',
       legajo: user.legajo || undefined,
     })
 
