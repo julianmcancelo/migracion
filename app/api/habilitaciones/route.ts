@@ -84,7 +84,10 @@ export async function GET(request: NextRequest) {
       include: {
         habilitaciones_personas: {
           where: {
-            rol: { not: null },
+            AND: [
+              { rol: { not: null } },
+              { rol: { not: '' } },
+            ],
           },
           include: {
             persona: true,
@@ -107,9 +110,9 @@ export async function GET(request: NextRequest) {
 
     // Formatear datos con relaciones
     const habilitacionesFormateadas = habilitaciones.map((hab: any) => {
-      // Obtener titular principal
+      // Obtener titular principal (con manejo seguro)
       const titular = hab.habilitaciones_personas?.find(
-        (hp: any) => hp.rol === 'TITULAR'
+        (hp: any) => hp.rol && hp.rol === 'TITULAR'
       )
 
       return {
