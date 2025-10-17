@@ -333,6 +333,7 @@ enum habilitaciones_establecimientos_tipo {
 enum habilitaciones_personas_rol {
   TITULAR
   CONDUCTOR
+  CHOFER
   CELADOR
 }
 

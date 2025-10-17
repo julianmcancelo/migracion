@@ -84,7 +84,7 @@ export async function GET(request: NextRequest) {
       include: {
         habilitaciones_personas: {
           where: {
-            rol: { in: ['TITULAR', 'CONDUCTOR', 'CELADOR'] },
+            rol: { in: ['TITULAR', 'CONDUCTOR', 'CHOFER', 'CELADOR'] },
           },
           include: {
             persona: true,
