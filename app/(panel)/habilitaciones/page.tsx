@@ -103,189 +103,218 @@ export default function HabilitacionesPage() {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Header con gradiente */}
-      <div className="relative overflow-hidden rounded-lg bg-gradient-to-r from-blue-600 to-blue-800 p-8 text-white shadow-lg">
-        <div className="absolute inset-0 bg-black/10"></div>
-        <div className="relative flex items-center justify-between">
-          <div>
-            <h1 className="text-4xl font-bold">Habilitaciones</h1>
-            <p className="mt-2 text-blue-100 text-lg">
-              Gestión de habilitaciones de transporte escolar y remis
-            </p>
-          </div>
-          <Button 
-            onClick={() => setModalOpen(true)} 
-            size="lg"
-            className="bg-white text-blue-600 hover:bg-blue-50 shadow-xl"
-          >
-            <Plus className="h-5 w-5 mr-2" />
-            Nueva Habilitación
-          </Button>
+    <div className="space-y-8 p-6">
+      {/* Header moderno sin gradiente */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Habilitaciones</h1>
+          <p className="mt-2 text-gray-600">
+            Gestione habilitaciones de transporte escolar y remis de forma eficiente
+          </p>
         </div>
+        <Button 
+          onClick={() => setModalOpen(true)} 
+          size="lg"
+          className="bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl transition-all"
+        >
+          <Plus className="h-5 w-5 mr-2" />
+          Nueva Habilitación
+        </Button>
       </div>
 
-      {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <Card className="p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Total</p>
-              <p className="text-3xl font-bold text-gray-900">{stats.total}</p>
+      {/* Stats Cards con diseño moderno */}
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+        {/* Total */}
+        <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-500/10 to-blue-600/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <FileCheck className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Total</p>
+                <p className="text-4xl font-bold text-gray-900 mt-1">{stats.total}</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-              <FileCheck className="h-6 w-6 text-blue-600" />
-            </div>
+            <div className="h-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-full"></div>
           </div>
         </Card>
 
-        <Card className="p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Habilitadas</p>
-              <p className="text-3xl font-bold text-green-600">{stats.habilitadas}</p>
+        {/* Habilitadas */}
+        <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-green-500/10 to-green-600/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <CheckCircle2 className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Habilitadas</p>
+                <p className="text-4xl font-bold text-gray-900 mt-1">{stats.habilitadas}</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-              <CheckCircle2 className="h-6 w-6 text-green-600" />
-            </div>
+            <div className="h-1 bg-gradient-to-r from-green-500 to-green-600 rounded-full"></div>
           </div>
         </Card>
 
-        <Card className="p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">En Trámite</p>
-              <p className="text-3xl font-bold text-yellow-600">{stats.enTramite}</p>
+        {/* En Trámite */}
+        <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-amber-500/10 to-amber-600/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Clock className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">En Trámite</p>
+                <p className="text-4xl font-bold text-gray-900 mt-1">{stats.enTramite}</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
-              <Clock className="h-6 w-6 text-yellow-600" />
-            </div>
+            <div className="h-1 bg-gradient-to-r from-amber-500 to-amber-600 rounded-full"></div>
           </div>
         </Card>
 
-        <Card className="p-6 hover:shadow-lg transition-shadow">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm font-medium text-gray-600">Por Vencer</p>
-              <p className="text-3xl font-bold text-orange-600">{stats.porVencer}</p>
+        {/* Por Vencer */}
+        <Card className="relative overflow-hidden border-0 shadow-md hover:shadow-xl transition-all duration-300 cursor-pointer group">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-orange-500/10 to-orange-600/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-center justify-between mb-4">
+              <div className="w-14 h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <AlertCircle className="h-7 w-7 text-white" />
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">Por Vencer</p>
+                <p className="text-4xl font-bold text-gray-900 mt-1">{stats.porVencer}</p>
+              </div>
             </div>
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center">
-              <AlertCircle className="h-6 w-6 text-orange-600" />
-            </div>
+            <div className="h-1 bg-gradient-to-r from-orange-500 to-orange-600 rounded-full"></div>
           </div>
         </Card>
       </div>
 
-      {/* Tabs con iconos y badges */}
+      {/* Tabs modernos */}
       <Tabs value={tipoActivo} onValueChange={(v) => setTipoActivo(v as TipoTransporte)}>
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <TabsList className="bg-white shadow-sm">
-            <TabsTrigger value="Escolar" className="gap-2">
-              <Bus className="h-4 w-4" />
-              Escolar
-              {pagination && tipoActivo === 'Escolar' && (
-                <Badge variant="secondary" className="ml-2">
-                  {pagination.total}
-                </Badge>
-              )}
-            </TabsTrigger>
-            <TabsTrigger value="Remis" className="gap-2">
-              <Car className="h-4 w-4" />
-              Remis
-              {pagination && tipoActivo === 'Remis' && (
-                <Badge variant="secondary" className="ml-2">
-                  {pagination.total}
-                </Badge>
-              )}
-            </TabsTrigger>
-          </TabsList>
+        <div className="bg-white rounded-xl shadow-sm border p-6">
+          <div className="flex items-center justify-between gap-4 flex-wrap mb-6">
+            <TabsList className="bg-gray-100 p-1 h-12">
+              <TabsTrigger 
+                value="Escolar" 
+                className="gap-2 px-6 data-[state=active]:bg-white data-[state=active]:shadow-md"
+              >
+                <Bus className="h-4 w-4" />
+                Escolar
+                {pagination && tipoActivo === 'Escolar' && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700 hover:bg-blue-100">
+                    {pagination.total}
+                  </Badge>
+                )}
+              </TabsTrigger>
+              <TabsTrigger 
+                value="Remis" 
+                className="gap-2 px-6 data-[state=active]:bg-white data-[state=active]:shadow-md"
+              >
+                <Car className="h-4 w-4" />
+                Remis
+                {pagination && tipoActivo === 'Remis' && (
+                  <Badge className="ml-2 bg-blue-100 text-blue-700 hover:bg-blue-100">
+                    {pagination.total}
+                  </Badge>
+                )}
+              </TabsTrigger>
+            </TabsList>
 
-          {/* Búsqueda */}
-          <div className="w-full sm:w-auto sm:min-w-[300px]">
-            <SearchBar onSearch={handleSearch} />
+            {/* Búsqueda */}
+            <div className="w-full sm:w-auto sm:min-w-[350px]">
+              <SearchBar onSearch={handleSearch} />
+            </div>
           </div>
+
+          {/* Contenido tabs */}
+          <TabsContent value="Escolar" className="mt-0">
+            {habilitaciones.length === 0 && !loading ? (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Bus className="h-12 w-12 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  No hay habilitaciones escolares
+                </h3>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                  Comienza creando tu primera habilitación escolar para gestionar el transporte de manera eficiente
+                </p>
+                <Button 
+                  onClick={() => setModalOpen(true)}
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Crear Primera Habilitación
+                </Button>
+              </div>
+            ) : (
+              <HabilitacionesTable habilitaciones={habilitaciones} loading={loading} />
+            )}
+            
+              {pagination && habilitaciones.length > 0 && (
+                <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">
+                      {((pagination.pagina_actual - 1) * pagination.limite) + 1} - {Math.min(pagination.pagina_actual * pagination.limite, pagination.total)} de {pagination.total}
+                    </Badge>
+                    <span className="text-gray-500">resultados</span>
+                  </div>
+                  <Pagination
+                    currentPage={pagination.pagina_actual}
+                    totalPages={pagination.total_paginas}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+        </TabsContent>
+
+        <TabsContent value="Remis" className="mt-0">
+            {habilitaciones.length === 0 && !loading ? (
+              <div className="text-center py-16">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Car className="h-12 w-12 text-blue-600" />
+                </div>
+                <h3 className="text-2xl font-bold text-gray-900 mb-3">
+                  No hay habilitaciones de remis
+                </h3>
+                <p className="text-gray-600 mb-8 max-w-md mx-auto">
+                  Comienza creando tu primera habilitación de remis para gestionar el servicio de forma organizada
+                </p>
+                <Button 
+                  onClick={() => setModalOpen(true)}
+                  size="lg"
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Plus className="h-5 w-5 mr-2" />
+                  Crear Primera Habilitación
+                </Button>
+              </div>
+            ) : (
+              <HabilitacionesTable habilitaciones={habilitaciones} loading={loading} />
+            )}
+            
+              {pagination && habilitaciones.length > 0 && (
+                <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t">
+                  <div className="flex items-center gap-2">
+                    <Badge variant="outline">
+                      {((pagination.pagina_actual - 1) * pagination.limite) + 1} - {Math.min(pagination.pagina_actual * pagination.limite, pagination.total)} de {pagination.total}
+                    </Badge>
+                    <span className="text-gray-500">resultados</span>
+                  </div>
+                  <Pagination
+                    currentPage={pagination.pagina_actual}
+                    totalPages={pagination.total_paginas}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+        </TabsContent>
         </div>
-
-        {/* Contenido tabs */}
-        <TabsContent value="Escolar" className="mt-6">
-          <Card className="p-6">
-            <div className="space-y-6">
-              {habilitaciones.length === 0 && !loading ? (
-                <div className="text-center py-12">
-                  <Bus className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No hay habilitaciones escolares
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    Comienza creando tu primera habilitación escolar
-                  </p>
-                  <Button onClick={() => setModalOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nueva Habilitación
-                  </Button>
-                </div>
-              ) : (
-                <HabilitacionesTable habilitaciones={habilitaciones} loading={loading} />
-              )}
-            
-              {pagination && habilitaciones.length > 0 && (
-                <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">
-                      {((pagination.pagina_actual - 1) * pagination.limite) + 1} - {Math.min(pagination.pagina_actual * pagination.limite, pagination.total)} de {pagination.total}
-                    </Badge>
-                    <span className="text-gray-500">resultados</span>
-                  </div>
-                  <Pagination
-                    currentPage={pagination.pagina_actual}
-                    totalPages={pagination.total_paginas}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
-              )}
-            </div>
-          </Card>
-        </TabsContent>
-
-        <TabsContent value="Remis" className="mt-6">
-          <Card className="p-6">
-            <div className="space-y-6">
-              {habilitaciones.length === 0 && !loading ? (
-                <div className="text-center py-12">
-                  <Car className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                    No hay habilitaciones de remis
-                  </h3>
-                  <p className="text-gray-500 mb-6">
-                    Comienza creando tu primera habilitación de remis
-                  </p>
-                  <Button onClick={() => setModalOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Nueva Habilitación
-                  </Button>
-                </div>
-              ) : (
-                <HabilitacionesTable habilitaciones={habilitaciones} loading={loading} />
-              )}
-            
-              {pagination && habilitaciones.length > 0 && (
-                <div className="flex items-center justify-between text-sm text-gray-600 pt-4 border-t">
-                  <div className="flex items-center gap-2">
-                    <Badge variant="outline">
-                      {((pagination.pagina_actual - 1) * pagination.limite) + 1} - {Math.min(pagination.pagina_actual * pagination.limite, pagination.total)} de {pagination.total}
-                    </Badge>
-                    <span className="text-gray-500">resultados</span>
-                  </div>
-                  <Pagination
-                    currentPage={pagination.pagina_actual}
-                    totalPages={pagination.total_paginas}
-                    onPageChange={handlePageChange}
-                  />
-                </div>
-              )}
-            </div>
-          </Card>
-        </TabsContent>
       </Tabs>
 
       {/* Modal de Nueva Habilitación */}

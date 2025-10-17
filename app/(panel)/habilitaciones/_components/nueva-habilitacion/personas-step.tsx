@@ -212,23 +212,39 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-3 bg-white border rounded-lg"
+                  className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow"
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <User className="h-5 w-5 text-blue-600" />
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <User className="h-6 w-6 text-blue-600" />
                     </div>
-                    <div>
-                      <div className="font-medium">{info.nombre}</div>
-                      <div className="text-sm text-gray-500">
-                        {persona.rol} {persona.licencia_categoria && `• Lic: ${persona.licencia_categoria}`}
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-gray-900">{info.nombre}</div>
+                      <div className="flex items-center gap-3 text-sm text-gray-600 mt-1 flex-wrap">
+                        <span className="font-medium">DNI: {info.dni}</span>
+                        <span className="text-gray-400">•</span>
+                        <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
+                          {persona.rol}
+                        </span>
+                        {persona.licencia_categoria && (
+                          <>
+                            <span className="text-gray-400">•</span>
+                            <span className="text-gray-600">Lic: {persona.licencia_categoria}</span>
+                          </>
+                        )}
                       </div>
+                      {(info as any).telefono && (
+                        <div className="text-xs text-gray-500 mt-1">
+                          📞 {(info as any).telefono}
+                        </div>
+                      )}
                     </div>
                   </div>
                   <Button
                     variant="ghost"
                     size="sm"
                     onClick={() => handleEliminarPersona(index)}
+                    className="flex-shrink-0"
                   >
                     <Trash2 className="h-4 w-4 text-red-500" />
                   </Button>

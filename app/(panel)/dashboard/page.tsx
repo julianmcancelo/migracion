@@ -1,5 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { AlertTriangle, CheckCircle2, Clock, FileX, Calendar, Bell, TrendingUp, AlertCircle } from 'lucide-react'
+import { Card } from '@/components/ui/card'
+import { Badge } from '@/components/ui/badge'
+import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Panel de Gestión',
@@ -32,144 +36,255 @@ export default async function DashboardPage() {
   const kpis = stats?.kpis || { activas: 0, en_tramite: 0, por_vencer: 0, obleas_pendientes: 0 }
 
   return (
-    <div className="space-y-8">
-      {/* Header de la página */}
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-2 text-gray-600">
-          Vista general del sistema de habilitaciones
-        </p>
+    <div className="space-y-6 p-6">
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-4xl font-bold text-gray-900 tracking-tight">Panel de Control</h1>
+          <p className="mt-2 text-gray-600">
+            Información crítica y alertas del sistema
+          </p>
+        </div>
+        <Badge className="bg-blue-100 text-blue-700 px-4 py-2 text-sm">
+          <Clock className="h-4 w-4 mr-2 inline" />
+          Actualizado ahora
+        </Badge>
       </div>
 
-      {/* KPIs - Cards de estadísticas */}
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-        {/* Card 1: Habilitaciones Activas */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="rounded-md bg-green-500 p-3">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
+      {/* ALERTAS CRÍTICAS - Primera sección */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {/* Alerta: Habilitaciones Vencidas */}
+        <Card className="relative overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 to-white">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
+                <FileX className="h-6 w-6 text-white" />
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="truncate text-sm font-medium text-gray-500">Habilitadas</dt>
-                  <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">{kpis.activas}</div>
-                  </dd>
-                </dl>
-              </div>
+              <Badge className="bg-red-500 text-white animate-pulse">URGENTE</Badge>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Habilitaciones Vencidas</h3>
+            <div className="flex items-baseline gap-2">
+              <p className="text-4xl font-bold text-red-600">3</p>
+              <span className="text-sm text-red-500 font-medium">Requieren acción</span>
+            </div>
+            <Link href="/panel/habilitaciones?filtro=vencidas" className="mt-4 block">
+              <Button size="sm" variant="destructive" className="w-full">
+                Ver habilitaciones
+              </Button>
+            </Link>
           </div>
-        </div>
+        </Card>
 
-        {/* Card 2: En Trámite */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="rounded-md bg-amber-500 p-3">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
+        {/* Alerta: Por Vencer (30 días) */}
+        <Card className="relative overflow-hidden border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-orange-500/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-white" />
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="truncate text-sm font-medium text-gray-500">En Trámite</dt>
-                  <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">24</div>
-                  </dd>
-                </dl>
-              </div>
+              <Badge className="bg-orange-500 text-white">ATENCIÓN</Badge>
             </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Por Vencer (30 días)</h3>
+            <div className="flex items-baseline gap-2">
+              <p className="text-4xl font-bold text-orange-600">8</p>
+              <span className="text-sm text-orange-500 font-medium">Renovar pronto</span>
+            </div>
+            <Link href="/panel/habilitaciones?filtro=por-vencer" className="mt-4 block">
+              <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
+                Planificar renovación
+              </Button>
+            </Link>
           </div>
-        </div>
+        </Card>
 
-        {/* Card 3: Por Vencer */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="rounded-md bg-orange-500 p-3">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
-                  </svg>
-                </div>
+        {/* Inspecciones Confirmadas */}
+        <Card className="relative overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50 to-white">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-green-500/5 rounded-bl-full"></div>
+          <div className="p-6 relative">
+            <div className="flex items-start justify-between mb-3">
+              <div className="w-12 h-12 bg-green-500 rounded-xl flex items-center justify-center">
+                <CheckCircle2 className="h-6 w-6 text-white" />
               </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="truncate text-sm font-medium text-gray-500">Por Vencer (30 días)</dt>
-                  <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">8</div>
-                  </dd>
-                </dl>
-              </div>
+              <Badge className="bg-green-500 text-white">HOY</Badge>
             </div>
-          </div>
-        </div>
-
-        {/* Card 4: Obleas Pendientes */}
-        <div className="overflow-hidden rounded-lg bg-white shadow">
-          <div className="p-6">
-            <div className="flex items-center">
-              <div className="flex-shrink-0">
-                <div className="rounded-md bg-sky-500 p-3">
-                  <svg className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25zM6.75 12h.008v.008H6.75V12zm0 3h.008v.008H6.75V15zm0 3h.008v.008H6.75V18z" />
-                  </svg>
-                </div>
-              </div>
-              <div className="ml-5 w-0 flex-1">
-                <dl>
-                  <dt className="truncate text-sm font-medium text-gray-500">Obleas Pendientes</dt>
-                  <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">12</div>
-                  </dd>
-                </dl>
-              </div>
+            <h3 className="text-sm font-medium text-gray-600 mb-1">Inspecciones Confirmadas</h3>
+            <div className="flex items-baseline gap-2">
+              <p className="text-4xl font-bold text-green-600">5</p>
+              <span className="text-sm text-green-500 font-medium">Para hoy</span>
             </div>
+            <Link href="/panel/inspecciones?fecha=hoy" className="mt-4 block">
+              <Button size="sm" className="w-full bg-green-500 hover:bg-green-600">
+                Ver agenda del día
+              </Button>
+            </Link>
           </div>
-        </div>
+        </Card>
       </div>
+
+      {/* RESUMEN RÁPIDO - Segunda fila */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        {/* Obleas Pendientes */}
+        <Card className="p-5 hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+              <Bell className="h-5 w-5 text-blue-600" />
+            </div>
+            <TrendingUp className="h-4 w-4 text-blue-500" />
+          </div>
+          <p className="text-sm text-gray-600 mb-1">Obleas Pendientes</p>
+          <p className="text-3xl font-bold text-gray-900">12</p>
+          <p className="text-xs text-gray-500 mt-1">Colocar en vehículos</p>
+        </Card>
+
+        {/* En Trámite */}
+        <Card className="p-5 hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
+              <Clock className="h-5 w-5 text-amber-600" />
+            </div>
+            <TrendingUp className="h-4 w-4 text-amber-500" />
+          </div>
+          <p className="text-sm text-gray-600 mb-1">En Trámite</p>
+          <p className="text-3xl font-bold text-gray-900">24</p>
+          <p className="text-xs text-gray-500 mt-1">Esperando documentación</p>
+        </Card>
+
+        {/* Habilitadas */}
+        <Card className="p-5 hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
+              <CheckCircle2 className="h-5 w-5 text-green-600" />
+            </div>
+            <TrendingUp className="h-4 w-4 text-green-500" />
+          </div>
+          <p className="text-sm text-gray-600 mb-1">Habilitadas</p>
+          <p className="text-3xl font-bold text-gray-900">{kpis.activas}</p>
+          <p className="text-xs text-gray-500 mt-1">Activas al día</p>
+        </Card>
+
+        {/* Turnos Pendientes */}
+        <Card className="p-5 hover:shadow-lg transition-shadow cursor-pointer">
+          <div className="flex items-center justify-between mb-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-lg flex items-center justify-center">
+              <Calendar className="h-5 w-5 text-purple-600" />
+            </div>
+            <TrendingUp className="h-4 w-4 text-purple-500" />
+          </div>
+          <p className="text-sm text-gray-600 mb-1">Turnos Pendientes</p>
+          <p className="text-3xl font-bold text-gray-900">7</p>
+          <p className="text-xs text-gray-500 mt-1">Esta semana</p>
+        </Card>
+      </div>
+
+      {/* PRÓXIMOS VENCIMIENTOS - Lista detallada */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Próximos Vencimientos</h2>
+            <p className="text-sm text-gray-600 mt-1">Habilitaciones que requieren renovación</p>
+          </div>
+          <Badge className="bg-orange-100 text-orange-700">
+            <AlertCircle className="h-4 w-4 mr-1 inline" />
+            11 próximos
+          </Badge>
+        </div>
+        <div className="space-y-3">
+          {/* Item 1 - Urgente (7 días) */}
+          <div className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-lg hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-12 h-12 bg-red-500 rounded-xl flex items-center justify-center">
+                <FileX className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">Habilitación Escolar #2024-001</p>
+                <p className="text-sm text-gray-600">Titular: Juan Pérez • Vehículo: ABC123</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <Badge className="bg-red-500 text-white mb-2">Vence en 7 días</Badge>
+              <p className="text-xs text-gray-500">25/10/2025</p>
+            </div>
+          </div>
+
+          {/* Item 2 - Atención (15 días) */}
+          <div className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-12 h-12 bg-orange-500 rounded-xl flex items-center justify-center">
+                <AlertTriangle className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">Habilitación Remis #2024-042</p>
+                <p className="text-sm text-gray-600">Titular: María González • Vehículo: XYZ789</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <Badge className="bg-orange-500 text-white mb-2">Vence en 15 días</Badge>
+              <p className="text-xs text-gray-500">02/11/2025</p>
+            </div>
+          </div>
+
+          {/* Item 3 - Planificado (25 días) */}
+          <div className="flex items-center justify-between p-4 bg-yellow-50 border border-yellow-200 rounded-lg hover:shadow-md transition-shadow">
+            <div className="flex items-center gap-4 flex-1">
+              <div className="w-12 h-12 bg-yellow-500 rounded-xl flex items-center justify-center">
+                <Clock className="h-6 w-6 text-white" />
+              </div>
+              <div className="flex-1">
+                <p className="font-semibold text-gray-900">Habilitación Escolar #2024-015</p>
+                <p className="text-sm text-gray-600">Titular: Carlos Rodríguez • Vehículo: DEF456</p>
+              </div>
+            </div>
+            <div className="text-right">
+              <Badge className="bg-yellow-500 text-white mb-2">Vence en 25 días</Badge>
+              <p className="text-xs text-gray-500">12/11/2025</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 text-center">
+          <Link href="/panel/habilitaciones?filtro=vencimientos">
+            <Button variant="outline" className="w-full">
+              Ver todos los vencimientos ({11})
+            </Button>
+          </Link>
+        </div>
+      </Card>
 
       {/* Acciones rápidas */}
-      <div className="rounded-lg bg-white shadow p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Acciones Rápidas</h2>
+      <Card className="p-6">
+        <h2 className="text-xl font-bold text-gray-900 mb-6">Acciones Rápidas</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <button className="flex items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-6 hover:border-sky-500 hover:bg-sky-50 transition-colors">
-            <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-            </svg>
-            <span className="text-sm font-medium text-gray-700">Nueva Habilitación</span>
-          </button>
+          <Link href="/panel/habilitaciones">
+            <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-8 hover:border-blue-500 hover:bg-blue-100 transition-all group">
+              <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                </svg>
+              </div>
+              <span className="text-base font-semibold text-gray-900">Nueva Habilitación</span>
+            </button>
+          </Link>
           
-          <button className="flex items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-6 hover:border-sky-500 hover:bg-sky-50 transition-colors">
-            <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span className="text-sm font-medium text-gray-700">Nueva Inspección</span>
-          </button>
+          <Link href="/panel/inspecciones">
+            <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-green-300 bg-green-50 p-8 hover:border-green-500 hover:bg-green-100 transition-all group">
+              <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <CheckCircle2 className="h-7 w-7 text-white" />
+              </div>
+              <span className="text-base font-semibold text-gray-900">Nueva Inspección</span>
+            </button>
+          </Link>
           
-          <button className="flex items-center justify-center gap-3 rounded-lg border-2 border-dashed border-gray-300 p-6 hover:border-sky-500 hover:bg-sky-50 transition-colors">
-            <svg className="h-6 w-6 text-gray-400" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" />
-            </svg>
-            <span className="text-sm font-medium text-gray-700">Asignar Turno</span>
-          </button>
+          <Link href="/panel/turnos">
+            <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50 p-8 hover:border-purple-500 hover:bg-purple-100 transition-all group">
+              <div className="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Calendar className="h-7 w-7 text-white" />
+              </div>
+              <span className="text-base font-semibold text-gray-900">Asignar Turno</span>
+            </button>
+          </Link>
         </div>
-      </div>
-
-      {/* Placeholder para gráfico */}
-      <div className="rounded-lg bg-white shadow p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">Distribución de Habilitaciones</h2>
-        <div className="flex items-center justify-center h-64 bg-gray-50 rounded-lg">
-          <p className="text-gray-500">Gráfico de distribución (próximamente con Recharts)</p>
-        </div>
-      </div>
+      </Card>
     </div>
   )
 }
