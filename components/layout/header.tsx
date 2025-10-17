@@ -40,16 +40,34 @@ export function Header({ user }: HeaderProps) {
         <div className="flex h-16 items-center justify-between">
           
           {/* Logo y título */}
-          <div className="flex items-center gap-4">
-            <img 
-              src="https://www.lanus.gob.ar/logo-200.png" 
-              alt="Municipio de Lanús" 
-              className="h-10 w-auto"
-            />
-            <div className="hidden md:block">
-              <h1 className="text-xl font-bold text-gray-900">Sistema de Gestión</h1>
-              <p className="text-xs text-gray-500">Municipio de Lanús</p>
+          <div className="flex items-center gap-8">
+            <div className="flex items-center gap-4">
+              <img 
+                src="https://www.lanus.gob.ar/logo-200.png" 
+                alt="Municipio de Lanús" 
+                className="h-10 w-auto"
+              />
+              <div className="hidden md:block">
+                <h1 className="text-xl font-bold text-gray-900">Sistema de Gestión</h1>
+                <p className="text-xs text-gray-500">Municipio de Lanús</p>
+              </div>
             </div>
+
+            {/* Navegación */}
+            <nav className="hidden lg:flex items-center gap-1">
+              <a
+                href="/habilitaciones"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                Habilitaciones
+              </a>
+              <a
+                href="/inspecciones"
+                className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-blue-600 hover:bg-gray-50 rounded-lg transition-colors"
+              >
+                Inspecciones
+              </a>
+            </nav>
           </div>
 
           {/* Búsqueda global - Desktop */}
