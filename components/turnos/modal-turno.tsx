@@ -32,6 +32,7 @@ interface ModalTurnoProps {
  * Modal para crear o editar un turno
  */
 export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurnoProps) {
+  const [tipoTransporte, setTipoTransporte] = useState<'Escolar' | 'Remis'>('Escolar')
   const [busqueda, setBusqueda] = useState('')
   const [habilitaciones, setHabilitaciones] = useState<Habilitacion[]>([])
   const [buscando, setBuscando] = useState(false)
@@ -55,6 +56,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
   }, [turnoEdit, isOpen])
 
   const limpiarFormulario = () => {
+    setTipoTransporte('Escolar')
     setBusqueda('')
     setHabilitaciones([])
     setHabilitacionSeleccionada(null)
@@ -71,7 +73,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
 
     setBuscando(true)
     try {
-      const response = await fetch(`/api/habilitaciones?search=${busqueda}`)
+      const response = await fetch(`/api/habilitaciones?search=${busqueda}&tipo=${tipoTransporte}`)
       const data = await response.json()
       
       if (data.success) {
@@ -92,7 +94,16 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
     }, 500)
 
     return () => clearTimeout(timer)
-  }, [busqueda])
+  }, [busqueda, tipoTransporte])
+
+  // Limpiar selección cuando cambia el tipo de transporte
+  useEffect(() => {
+    if (!turnoEdit) {
+      setHabilitacionSeleccionada(null)
+      setBusqueda('')
+      setHabilitaciones([])
+    }
+  }, [tipoTransporte])
 
   const seleccionarHabilitacion = (hab: Habilitacion) => {
     setHabilitacionSeleccionada(hab)
@@ -184,11 +195,44 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
 
         {/* Contenido */}
         <div className="p-6 space-y-6">
+          {/* Selector de Tipo de Transporte */}
+          {!turnoEdit && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Tipo de Transporte *
+              </label>
+              <div className="grid grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  onClick={() => setTipoTransporte('Escolar')}
+                  className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                    tipoTransporte === 'Escolar'
+                      ? 'border-blue-600 bg-blue-50 text-blue-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  🚌 Transporte Escolar
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTipoTransporte('Remis')}
+                  className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                    tipoTransporte === 'Remis'
+                      ? 'border-blue-600 bg-blue-50 text-blue-700'
+                      : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
+                  }`}
+                >
+                  🚕 Remis
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Búsqueda de Habilitación */}
           {!turnoEdit && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Buscar Habilitación *
+                Buscar Habilitación {tipoTransporte} *
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -224,21 +268,38 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
                       onClick={() => seleccionarHabilitacion(hab)}
                       className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
                     >
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="font-mono font-bold text-blue-600">
-                            {hab.nro_licencia}
-                          </p>
-                          <p className="text-sm text-gray-600">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="font-mono font-bold text-blue-600 text-base">
+                              {hab.nro_licencia}
+                            </p>
+                            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                              new Date(hab.vigencia_hasta) > new Date()
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}>
+                              {new Date(hab.vigencia_hasta) > new Date() ? 'Vigente' : 'Vencida'}
+                            </span>
+                          </div>
+                          <p className="text-sm font-medium text-gray-900">
                             {hab.tipo}
                           </p>
+                          <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
+                            <div>
+                              <span className="font-medium">Vigencia desde:</span>
+                              <br />
+                              {new Date(hab.vigencia_desde).toLocaleDateString('es-AR')}
+                            </div>
+                            <div>
+                              <span className="font-medium">Vigencia hasta:</span>
+                              <br />
+                              {new Date(hab.vigencia_hasta).toLocaleDateString('es-AR')}
+                            </div>
+                          </div>
                         </div>
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                          new Date(hab.vigencia_hasta) > new Date()
-                            ? 'bg-green-100 text-green-800'
-                            : 'bg-red-100 text-red-800'
-                        }`}>
-                          {new Date(hab.vigencia_hasta) > new Date() ? 'Vigente' : 'Vencida'}
+                        <span className="text-2xl">
+                          {tipoTransporte === 'Escolar' ? '🚌' : '🚕'}
                         </span>
                       </div>
                     </button>
@@ -247,20 +308,75 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
               )}
 
               {buscando && (
-                <p className="mt-2 text-sm text-gray-500">Buscando...</p>
+                <p className="mt-2 text-sm text-gray-500">
+                  🔍 Buscando habilitaciones de tipo {tipoTransporte}...
+                </p>
+              )}
+
+              {!buscando && busqueda.length >= 3 && habilitaciones.length === 0 && !habilitacionSeleccionada && (
+                <div className="mt-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+                  <p className="text-sm text-yellow-800">
+                    No se encontraron habilitaciones de tipo <strong>{tipoTransporte}</strong> con el término "{busqueda}"
+                  </p>
+                  <p className="text-xs text-yellow-700 mt-1">
+                    Intenta cambiar el tipo de transporte o buscar con otro término
+                  </p>
+                </div>
               )}
 
               {habilitacionSeleccionada && (
-                <div className="mt-3 p-4 bg-green-50 border border-green-200 rounded-lg">
-                  <div className="flex items-center gap-2">
-                    <div className="h-2 w-2 bg-green-500 rounded-full"></div>
-                    <span className="text-sm font-medium text-green-900">
-                      Habilitación seleccionada: {habilitacionSeleccionada.nro_licencia}
+                <div className="mt-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg shadow-sm">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1">
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm font-bold text-green-900">
+                          Habilitación Seleccionada
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-gray-600">Licencia:</span>
+                          <span className="font-mono font-bold text-blue-600">
+                            {habilitacionSeleccionada.nro_licencia}
+                          </span>
+                          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
+                            new Date(habilitacionSeleccionada.vigencia_hasta) > new Date()
+                              ? 'bg-green-100 text-green-800'
+                              : 'bg-red-100 text-red-800'
+                          }`}>
+                            {new Date(habilitacionSeleccionada.vigencia_hasta) > new Date() ? 'Vigente' : 'Vencida'}
+                          </span>
+                        </div>
+                        
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-medium text-gray-600">Tipo:</span>
+                          <span className="text-sm font-medium text-gray-900">
+                            {habilitacionSeleccionada.tipo}
+                          </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-green-200">
+                          <div>
+                            <span className="text-xs font-medium text-gray-600">Vigencia desde</span>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {new Date(habilitacionSeleccionada.vigencia_desde).toLocaleDateString('es-AR')}
+                            </p>
+                          </div>
+                          <div>
+                            <span className="text-xs font-medium text-gray-600">Vigencia hasta</span>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {new Date(habilitacionSeleccionada.vigencia_hasta).toLocaleDateString('es-AR')}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-3xl">
+                      {tipoTransporte === 'Escolar' ? '🚌' : '🚕'}
                     </span>
                   </div>
-                  <p className="text-sm text-green-700 mt-1">
-                    {habilitacionSeleccionada.tipo}
-                  </p>
                 </div>
               )}
             </div>
