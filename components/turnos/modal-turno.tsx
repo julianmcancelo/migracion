@@ -7,9 +7,23 @@ import { Button } from '@/components/ui/button'
 interface Habilitacion {
   id: number
   nro_licencia: string
-  tipo: string
-  vigencia_desde: string
-  vigencia_hasta: string
+  tipo_transporte: string
+  vigencia_inicio: string
+  vigencia_fin: string
+  titular_principal: string | null
+  personas: Array<{
+    nombre: string
+    dni: string
+    email: string | null
+    telefono: string | null
+    rol: string
+  }>
+  vehiculos: Array<{
+    dominio: string
+    marca: string
+    modelo: string
+    ano: string
+  }>
 }
 
 interface ModalTurnoProps {
@@ -283,18 +297,37 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
                             </span>
                           </div>
                           <p className="text-sm font-medium text-gray-900">
-                            {hab.tipo}
+                            {hab.tipo_transporte}
                           </p>
+                          
+                          {/* Datos del Titular */}
+                          {hab.titular_principal && (
+                            <div className="mt-2 text-xs">
+                              <span className="font-medium text-gray-700">Titular: </span>
+                              <span className="text-gray-900">{hab.titular_principal}</span>
+                            </div>
+                          )}
+                          
+                          {/* Datos del Vehículo */}
+                          {hab.vehiculos && hab.vehiculos.length > 0 && (
+                            <div className="mt-1 text-xs">
+                              <span className="font-medium text-gray-700">Vehículo: </span>
+                              <span className="text-gray-900">
+                                {hab.vehiculos[0].marca} {hab.vehiculos[0].modelo} - {hab.vehiculos[0].dominio}
+                              </span>
+                            </div>
+                          )}
+                          
                           <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
                             <div>
                               <span className="font-medium">Vigencia desde:</span>
                               <br />
-                              {new Date(hab.vigencia_desde).toLocaleDateString('es-AR')}
+                              {new Date(hab.vigencia_inicio).toLocaleDateString('es-AR')}
                             </div>
                             <div>
                               <span className="font-medium">Vigencia hasta:</span>
                               <br />
-                              {new Date(hab.vigencia_hasta).toLocaleDateString('es-AR')}
+                              {new Date(hab.vigencia_fin).toLocaleDateString('es-AR')}
                             </div>
                           </div>
                         </div>

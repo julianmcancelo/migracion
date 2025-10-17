@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Inspeccion {
@@ -172,6 +172,9 @@ export default function InspeccionesPage() {
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Email
                   </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Acciones
+                  </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
@@ -199,6 +202,18 @@ export default function InspeccionesPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                       {inspeccion.email_contribuyente || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <a
+                        href={`/api/inspecciones/${inspeccion.id}/pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                        title="Descargar PDF"
+                      >
+                        <FileText className="h-4 w-4" />
+                        PDF
+                      </a>
                     </td>
                   </tr>
                 ))}
