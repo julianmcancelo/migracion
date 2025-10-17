@@ -165,6 +165,9 @@ export async function POST(request: Request) {
     .button-cancel { 
       background: linear-gradient(135deg, #DC2626, #EF4444);
     }
+    .button-reschedule { 
+      background: linear-gradient(135deg, #7C3AED, #9333EA);
+    }
     .alert { 
       background: linear-gradient(135deg, #FEF3C7, #FDE68A);
       border-left: 5px solid #F59E0B;
@@ -269,10 +272,13 @@ export async function POST(request: Request) {
         <p style="margin-bottom: 16px; color: #6B7280; font-size: 14px;">
           <strong>Gestione su turno:</strong>
         </p>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos/confirmar/${turno_id || 'ID'}" class="button button-confirm">
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/confirmar/${turno_id || 'ID'}" class="button button-confirm">
           ✅ Confirmar Asistencia
         </a>
-        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos/cancelar/${turno_id || 'ID'}" class="button button-cancel">
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/reprogramar/${turno_id || 'ID'}" class="button button-reschedule">
+          📅 Reprogramar Turno
+        </a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/cancelar/${turno_id || 'ID'}" class="button button-cancel">
           ❌ Cancelar Turno
         </a>
       </div>
