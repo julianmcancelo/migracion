@@ -1,9 +1,11 @@
 'use client'
 
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
+import { DetalleModal } from './detalle-modal'
 import {
   Table,
   TableBody,
@@ -53,11 +55,14 @@ interface HabilitacionesTableProps {
  * - Menú de acciones por fila
  */
 export function HabilitacionesTable({ habilitaciones, loading = false }: HabilitacionesTableProps) {
+  const router = useRouter()
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
   const [selectedVehiculo, setSelectedVehiculo] = useState<any>(null)
   const [selectedPersona, setSelectedPersona] = useState<any>(null)
+  const [selectedHabilitacion, setSelectedHabilitacion] = useState<any>(null)
   const [showVehiculoModal, setShowVehiculoModal] = useState(false)
   const [showPersonaModal, setShowPersonaModal] = useState(false)
+  const [showDetalleModal, setShowDetalleModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -67,6 +72,30 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
       newExpanded.add(id)
     }
     setExpandedRows(newExpanded)
+  }
+
+  // Funciones para las acciones del menú
+  const handleVerDetalle = (hab: any) => {
+    setSelectedHabilitacion(hab)
+    setShowDetalleModal(true)
+  }
+
+  const handleEditar = (hab: any) => {
+    router.push(`/habilitaciones/${hab.id}/editar`)
+  }
+
+  const handleAsignarTurno = (hab: any) => {
+    // TODO: Implementar modal de turnos
+    alert(`Asignar turno a habilitación #${hab.id}`)
+  }
+
+  const handleDescargarPDF = async (hab: any) => {
+    try {
+      // TODO: Implementar generación de PDF
+      alert(`Descargando PDF de habilitación #${hab.id}`)
+    } catch (error) {
+      console.error('Error al descargar PDF:', error)
+    }
   }
 
   const getEstadoBadge = (estado: string | null) => {
@@ -177,11 +206,11 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleVerDetalle(hab)}>
                       <Eye className="h-4 w-4 mr-2" />
                       Ver Detalle
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleEditar(hab)}>
                       <Edit className="h-4 w-4 mr-2" />
                       Editar
                     </DropdownMenuItem>
@@ -191,11 +220,11 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                         Ver Resolución
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleAsignarTurno(hab)}>
                       <Calendar className="h-4 w-4 mr-2" />
                       Asignar Turno
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => handleDescargarPDF(hab)}>
                       <Download className="h-4 w-4 mr-2" />
                       Descargar PDF
                     </DropdownMenuItem>
@@ -295,6 +324,12 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
         persona={selectedPersona}
         open={showPersonaModal}
         onClose={() => setShowPersonaModal(false)}
+      />
+
+      <DetalleModal
+        habilitacion={selectedHabilitacion}
+        open={showDetalleModal}
+        onClose={() => setShowDetalleModal(false)}
       />
     </div>
   )
