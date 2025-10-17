@@ -18,14 +18,19 @@ export async function GET(request: Request) {
     const habilitacionId = searchParams.get('habilitacion_id')
 
     // Construir filtros
-    const where: any = {}
+    const where: any = {
+      // Filtrar fechas inválidas (0000-00-00)
+      fecha: {
+        gt: new Date('1970-01-01')
+      }
+    }
 
     if (estado) {
       where.estado = estado
     }
 
     if (fechaDesde || fechaHasta) {
-      where.fecha = {}
+      if (!where.fecha) where.fecha = {}
       if (fechaDesde) {
         where.fecha.gte = new Date(fechaDesde)
       }
