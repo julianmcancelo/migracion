@@ -84,9 +84,14 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   }
 
   // Obtener info completa de vehículo por ID (simulado)
-  const getVehiculoInfo = (vehiculo_id: number) => {
+  const getVehiculoInfo = (vehiculo_id: number): Vehiculo => {
     const vehiculo = resultados.find(v => v.id === vehiculo_id)
-    return vehiculo || { dominio: `Vehículo ${vehiculo_id}`, marca: '-', modelo: '-' }
+    return vehiculo || { 
+      id: vehiculo_id,
+      dominio: `Vehículo ${vehiculo_id}`, 
+      marca: '-', 
+      modelo: '-' 
+    }
   }
 
   return (
