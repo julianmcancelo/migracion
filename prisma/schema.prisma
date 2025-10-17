@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,18 +7,345 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Tabla de administradores (equivalente a tu tabla PHP 'admin')
-model Admin {
-  id        Int      @id @default(autoincrement())
-  nombre    String   @db.VarChar(100)
-  email     String   @unique @db.VarChar(100)
-  password  String   @db.VarChar(255)
-  rol       String   @default("usuario") @db.VarChar(50)
-  legajo    String?  @db.VarChar(50)
-  creadoEn  DateTime @default(now()) @map("creado_en")
-  
-  @@map("admin")
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model admin {
+  id        Int        @id @default(autoincrement())
+  nombre    String?    @db.VarChar(100)
+  email     String?    @unique(map: "email") @db.VarChar(100)
+  password  String?    @db.VarChar(255)
+  rol       admin_rol? @default(lector)
+  creado_en DateTime   @default(now()) @db.Timestamp(0)
+  legajo    String?    @unique(map: "legajo") @db.VarChar(50)
 }
 
-// Puedes agregar más modelos aquí cuando migremos otras tablas
-// Por ejemplo: Personas, Habilitaciones, TokensAcceso, etc.
+model establecimientos {
+  id              Int      @id @default(autoincrement())
+  habilitacion_id Int
+  nombre          String?  @db.VarChar(150)
+  domicilio       String?  @db.VarChar(150)
+  localidad       String?  @db.VarChar(100)
+  latitud         Decimal? @db.Decimal(10, 8)
+  longitud        Decimal? @db.Decimal(11, 8)
+  direccion       String?  @db.MediumText
+
+  @@index([habilitacion_id], map: "habilitacion_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model fotos_entidades {
+  id           Int      @id @default(autoincrement())
+  entidad_tipo String   @db.VarChar(20)
+  entidad_id   Int
+  path_foto    String   @db.VarChar(255)
+  fecha_subida DateTime @default(now()) @db.Timestamp(0)
+
+  @@index([entidad_tipo, entidad_id], map: "idx_entidad")
+}
+
+model habilitaciones_documentos {
+  id                       Int                      @id @default(autoincrement())
+  habilitacion_id          Int
+  tipo_documento           String                   @db.VarChar(100)
+  nombre_archivo_original  String                   @db.VarChar(255)
+  ruta_archivo_guardado    String                   @db.VarChar(255)
+  fecha_subida             DateTime                 @default(now()) @db.Timestamp(0)
+  habilitaciones_generales habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade, map: "habilitaciones_documentos_ibfk_1")
+
+  @@index([habilitacion_id], map: "habilitacion_id")
+}
+
+model habilitaciones_establecimientos {
+  id                 Int                                   @id @default(autoincrement())
+  habilitacion_id    Int
+  establecimiento_id Int
+  tipo               habilitaciones_establecimientos_tipo? @default(establecimiento)
+
+  @@index([establecimiento_id], map: "establecimiento_id")
+  @@index([habilitacion_id], map: "habilitacion_id")
+}
+
+model habilitaciones_generales {
+  id                        Int                                       @id @default(autoincrement())
+  anio                      Int?
+  nro_licencia              String?                                   @db.VarChar(20)
+  resolucion                String?                                   @db.VarChar(50)
+  resolucion_pdf_path       String?                                   @db.VarChar(255)
+  vigencia_inicio           DateTime?                                 @db.Date
+  vigencia_fin              DateTime?                                 @db.Date
+  estado                    habilitaciones_generales_estado?
+  oblea_colocada            Boolean                                   @default(false)
+  tipo                      String?                                   @db.VarChar(50)
+  observaciones             String?                                   @db.MediumText
+  expte                     String?                                   @db.VarChar(50)
+  establecimiento_id        Int?
+  tipo_transporte           habilitaciones_generales_tipo_transporte? @default(Escolar)
+  remiseria_id              Int?
+  notificado                Boolean                                   @default(false)
+  is_deleted                Boolean                                   @default(false)
+  habilitaciones_documentos habilitaciones_documentos[]
+}
+
+model habilitaciones_personas {
+  id                 Int                          @id @default(autoincrement())
+  habilitacion_id    Int?
+  persona_id         Int?
+  rol                habilitaciones_personas_rol?
+  licencia_categoria String?                      @db.VarChar(50)
+
+  @@index([habilitacion_id], map: "habilitacion_id")
+  @@index([persona_id], map: "persona_id")
+}
+
+model habilitaciones_vehiculos {
+  id              Int  @id @default(autoincrement())
+  habilitacion_id Int?
+  vehiculo_id     Int?
+
+  @@index([habilitacion_id], map: "habilitacion_id")
+  @@index([vehiculo_id], map: "vehiculo_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model inspeccion_detalles {
+  id            Int          @id @default(autoincrement())
+  inspeccion_id Int
+  item_id       String       @db.VarChar(50)
+  nombre_item   String       @db.VarChar(255)
+  estado        String       @db.VarChar(20)
+  observacion   String?      @db.Text
+  foto_url      String?      @db.VarChar(255)
+  foto_path     String?      @db.VarChar(255)
+  creado_en     DateTime     @default(now()) @db.Timestamp(0)
+  latitud       Decimal?     @db.Decimal(10, 8)
+  longitud      Decimal?     @db.Decimal(11, 8)
+  inspecciones  inspecciones @relation(fields: [inspeccion_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspeccion_detalles_ibfk_1")
+
+  @@index([inspeccion_id], map: "inspeccion_id")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model inspeccion_fotos {
+  id               Int          @id @default(autoincrement())
+  inspeccion_id    Int
+  tipo_foto        String?      @db.VarChar(50)
+  item_id_original String       @db.VarChar(50)
+  foto_path        String?      @db.VarChar(255)
+  latitud          Decimal?     @db.Decimal(10, 8)
+  longitud         Decimal?     @db.Decimal(11, 8)
+  fecha_creacion   DateTime     @default(now()) @db.Timestamp(0)
+  inspecciones     inspecciones @relation(fields: [inspeccion_id], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "fk_inspeccion_fotos")
+
+  @@index([inspeccion_id], map: "fk_inspeccion_fotos")
+}
+
+model inspeccion_items {
+  id               Int          @id @default(autoincrement())
+  id_inspeccion    Int
+  item_id_original String       @db.VarChar(50)
+  estado           String       @db.VarChar(50)
+  observacion      String?      @db.Text
+  inspecciones     inspecciones @relation(fields: [id_inspeccion], references: [id], onDelete: Cascade, onUpdate: Restrict, map: "inspeccion_items_ibfk_1")
+
+  @@index([id_inspeccion], map: "id_inspeccion")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model inspecciones {
+  id                  Int                   @id @default(autoincrement())
+  habilitacion_id     Int
+  nro_licencia        String                @db.VarChar(50)
+  nombre_inspector    String                @db.VarChar(255)
+  firma_digital       String                @db.Text
+  fecha_inspeccion    DateTime              @default(now()) @db.Timestamp(0)
+  tipo_transporte     String?               @db.VarChar(50)
+  firma_inspector     String                @db.LongText
+  firma_contribuyente String?               @db.LongText
+  email_contribuyente String?               @db.VarChar(255)
+  resultado           String?               @db.VarChar(100)
+  inspeccion_detalles inspeccion_detalles[]
+  inspeccion_fotos    inspeccion_fotos[]
+  inspeccion_items    inspeccion_items[]
+}
+
+model notificaciones {
+  id          Int      @id @default(autoincrement())
+  dni_usuario String   @db.VarChar(20)
+  titulo      String   @db.VarChar(100)
+  texto       String   @db.Text
+  fecha       DateTime @default(now()) @db.DateTime(0)
+  leida       Boolean  @default(false)
+  tipo        String   @default("informativo") @db.VarChar(50)
+}
+
+model oblea_historial {
+  id              Int                         @id @default(autoincrement()) @db.UnsignedInt
+  habilitacion_id Int                         @db.UnsignedInt
+  fecha_solicitud DateTime                    @db.Date
+  hora_solicitud  DateTime                    @db.Time(0)
+  creado_en       DateTime                    @default(now()) @db.DateTime(0)
+  notificado      oblea_historial_notificado? @default(no)
+
+  @@index([habilitacion_id], map: "idx_habilitacion")
+}
+
+model obleas {
+  id                   Int      @id @default(autoincrement())
+  habilitacion_id      Int
+  nro_licencia         String   @db.VarChar(50)
+  titular              String   @db.VarChar(255)
+  fecha_colocacion     DateTime @db.DateTime(0)
+  path_foto            String   @db.VarChar(255)
+  path_firma_receptor  String   @db.VarChar(255)
+  path_firma_inspector String   @db.VarChar(255)
+
+  @@index([habilitacion_id], map: "idx_habilitacion_id")
+  @@index([nro_licencia], map: "idx_nro_licencia")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model personas {
+  id                  Int     @id @default(autoincrement())
+  nombre              String? @db.VarChar(100)
+  genero              String? @db.VarChar(10)
+  dni                 String  @unique(map: "dni") @db.VarChar(20)
+  cuit                String? @db.VarChar(20)
+  telefono            String? @db.VarChar(30)
+  email               String? @db.VarChar(100)
+  foto_url            String? @db.MediumText
+  domicilio_calle     String? @db.VarChar(150)
+  domicilio_nro       String? @db.VarChar(20)
+  domicilio_localidad String? @db.VarChar(100)
+  push_token          String? @db.VarChar(255)
+  domicilio           Int
+}
+
+model remiserias {
+  id               Int      @id @default(autoincrement())
+  nombre           String   @db.VarChar(100)
+  direccion        String?  @db.VarChar(150)
+  latitud          Decimal? @db.Decimal(10, 8)
+  longitud         Decimal? @db.Decimal(11, 8)
+  creado_en        DateTime @default(now()) @db.Timestamp(0)
+  localidad        String?  @db.VarChar(100)
+  nro_habilitacion String   @unique(map: "nro_habilitacion") @db.VarChar(50)
+  nro_expediente   String   @unique(map: "nro_expediente") @db.VarChar(50)
+}
+
+model tokens_acceso {
+  id               Int       @id @default(autoincrement())
+  habilitacion_id  Int
+  token            String    @unique(map: "token") @db.VarChar(255)
+  fecha_expiracion DateTime  @db.DateTime(0)
+  creado_en        DateTime? @default(now()) @db.DateTime(0)
+}
+
+model turnos {
+  id                   Int            @id @default(autoincrement())
+  habilitacion_id      Int
+  fecha_hora           DateTime       @db.DateTime(0)
+  fecha                DateTime       @db.Date
+  hora                 DateTime       @db.Time(0)
+  observaciones        String?        @db.Text
+  creado_en            DateTime       @default(now()) @db.Timestamp(0)
+  recordatorio_enviado Boolean?       @default(false)
+  estado               turnos_estado? @default(PENDIENTE)
+
+  @@index([habilitacion_id], map: "habilitacion_id")
+}
+
+model usuarios {
+  id              Int              @id @default(autoincrement())
+  usuario         String?          @db.VarChar(50)
+  legajo          String?          @db.VarChar(20)
+  hwid            String?          @db.VarChar(100)
+  estado          usuarios_estado? @default(inactivo)
+  creado_en       DateTime         @default(now()) @db.Timestamp(0)
+  nombre_completo String?          @db.VarChar(100)
+  rol             usuarios_rol?    @default(usuario)
+  token_autologin String?          @db.VarChar(64)
+  email           String?          @db.VarChar(100)
+}
+
+model vehiculos {
+  id                  Int       @id @default(autoincrement())
+  dominio             String?   @unique(map: "dominio") @db.VarChar(10)
+  marca               String?   @db.VarChar(50)
+  modelo              String?   @db.VarChar(50)
+  tipo                String?   @db.VarChar(50)
+  chasis              String?   @db.VarChar(100)
+  ano                 Int?
+  motor               String?   @db.VarChar(50)
+  asientos            Int?
+  inscripcion_inicial DateTime? @db.Date
+  Aseguradora         String?   @db.VarChar(100)
+  poliza              String?   @db.VarChar(100)
+  Vencimiento_Poliza  DateTime? @db.Date
+  Vencimiento_VTV     DateTime? @db.Date
+}
+
+model verificaciones_historial {
+  id             Int      @id @default(autoincrement())
+  nro_licencia   String   @db.VarChar(50)
+  fecha          DateTime @db.Date
+  hora           DateTime @db.Time(0)
+  nombre_titular String   @db.VarChar(100)
+  dominio        String   @db.VarChar(20)
+  resultado      String   @db.VarChar(50)
+  expediente     String?  @db.VarChar(50)
+  creado_en      DateTime @default(now()) @db.Timestamp(0)
+}
+
+enum habilitaciones_establecimientos_tipo {
+  establecimiento
+  remiseria
+}
+
+enum habilitaciones_personas_rol {
+  TITULAR
+  CONDUCTOR
+  CELADOR
+}
+
+enum usuarios_estado {
+  activo
+  inactivo
+}
+
+enum admin_rol {
+  admin
+  lector
+  inspector
+  due_o     @map("dueño")
+  master
+}
+
+enum oblea_historial_notificado {
+  si
+  no
+}
+
+enum usuarios_rol {
+  usuario
+  admin
+}
+
+enum habilitaciones_generales_estado {
+  HABILITADO
+  NO_HABILITADO @map("NO HABILITADO")
+  EN_TRAMITE    @map("EN TRAMITE")
+  INICIADO
+}
+
+enum turnos_estado {
+  PENDIENTE
+  CONFIRMADO
+  CANCELADO
+  FINALIZADO
+  ANULADO
+}
+
+enum habilitaciones_generales_tipo_transporte {
+  Escolar
+  Remis
+  Demo
+}
