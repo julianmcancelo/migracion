@@ -20,10 +20,10 @@ export async function GET(
     }
 
     // Buscar habilitación con todas las relaciones
-    // @ts-ignore - Las relaciones existen en Prisma
-    const habilitacion = await prisma.habilitaciones_generales.findUnique({
+    const habilitacion: any = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
       include: {
+        // @ts-expect-error - Relaciones definidas en Prisma schema
         habilitaciones_personas: {
           where: {
             rol: { in: ['TITULAR', 'CONDUCTOR', 'CHOFER', 'CELADOR'] },
