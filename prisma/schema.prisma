@@ -65,8 +65,8 @@ model habilitaciones_establecimientos {
   
   // Relaciones
   habilitacion       habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
-  establecimiento    establecimientos?        @relation(fields: [establecimiento_id], references: [id])
-  remiseria          remiserias?              @relation(fields: [establecimiento_id], references: [id])
+  establecimiento    establecimientos?        @relation(fields: [establecimiento_id], references: [id], map: "hab_est_establecimiento_fk")
+  remiseria          remiserias?              @relation(fields: [establecimiento_id], references: [id], map: "hab_est_remiseria_fk")
 
   @@index([establecimiento_id], map: "establecimiento_id")
   @@index([habilitacion_id], map: "habilitacion_id")
