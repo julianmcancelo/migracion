@@ -153,6 +153,7 @@
   display: none !important;
 }
 
+/* Comentado temporalmente - conflicto con @layer base existente
 @layer base {
   * {
     @apply border-border;
@@ -161,3 +162,4 @@
     @apply bg-background text-foreground;
   }
 }
+*/

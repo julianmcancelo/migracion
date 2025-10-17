@@ -4,13 +4,16 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "dev:clean": "node scripts/setup-local.js && next dev",
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "prisma:generate": "prisma generate",
     "prisma:push": "prisma db push",
     "prisma:studio": "prisma studio",
+    "prisma:clean": "rimraf node_modules/.prisma && prisma generate",
     "test:db": "node scripts/test-db-connection.js",
+    "setup": "node scripts/setup-local.js",
     "vercel:deploy": "vercel --prod",
     "postinstall": "prisma generate"
   },

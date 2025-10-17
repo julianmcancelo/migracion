@@ -10,11 +10,9 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET() {
   try {
+    // Debug route - permite acceso sin autenticación para diagnóstico
     const session = await getSession()
-    
-    if (!session) {
-      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
-    }
+    const isAuthenticated = !!session
 
     // Test 1: Conexión básica
     const count = await prisma.habilitaciones_generales.count()
@@ -62,6 +60,12 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
+      environment: {
+        isAuthenticated,
+        user: session?.nombre || 'Anonymous',
+        nodeEnv: process.env.NODE_ENV,
+        timestamp: new Date().toISOString(),
+      },
       tests: {
         count,
         simple: simple ? 'OK' : 'No data',
