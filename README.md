@@ -243,3 +243,4 @@ Municipio de Lanús © 2025
 ---
 
 **¿Preguntas?** Este es un prototipo funcional. Puedes expandirlo módulo por módulo según tus necesidades.
+
