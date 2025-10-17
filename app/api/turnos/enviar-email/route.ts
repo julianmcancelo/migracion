@@ -19,7 +19,7 @@ export async function POST(request: Request) {
     }
 
     // Configurar transporter de nodemailer con Gmail
-    const transporter = nodemailer.createTransporter({
+    const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER, // tu-email@gmail.com
