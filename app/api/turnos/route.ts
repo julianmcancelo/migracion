@@ -43,9 +43,20 @@ export async function GET(request: Request) {
       where.habilitacion_id = Number(habilitacionId)
     }
 
-    // Obtener turnos
+    // Obtener turnos - Excluir fecha_hora que puede tener valores inválidos
     const turnos = await prisma.turnos.findMany({
       where,
+      select: {
+        id: true,
+        habilitacion_id: true,
+        fecha: true,
+        hora: true,
+        estado: true,
+        observaciones: true,
+        recordatorio_enviado: true,
+        creado_en: true
+        // NO seleccionar fecha_hora que puede tener 0000-00-00
+      },
       orderBy: [
         { fecha: 'asc' },
         { hora: 'asc' }

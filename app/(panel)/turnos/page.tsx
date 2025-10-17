@@ -10,9 +10,10 @@ interface Turno {
   habilitacion_id: number
   fecha: string
   hora: string
-  fecha_hora: string
   estado: 'PENDIENTE' | 'CONFIRMADO' | 'FINALIZADO' | 'CANCELADO'
   observaciones?: string
+  recordatorio_enviado?: number
+  creado_en?: string
   habilitacion?: {
     id: number
     nro_licencia: string
