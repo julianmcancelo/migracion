@@ -156,7 +156,7 @@ export async function POST(request: Request) {
     // Enviar email de confirmación si tiene email
     if (habPersona?.persona?.email) {
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/turnos/enviar-email`, {
+        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/turnos/enviar-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
