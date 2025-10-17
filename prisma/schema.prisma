@@ -27,6 +27,9 @@ model establecimientos {
   latitud         Decimal? @db.Decimal(10, 8)
   longitud        Decimal? @db.Decimal(11, 8)
   direccion       String?  @db.MediumText
+  
+  // Relaciones
+  habilitaciones_establecimientos habilitaciones_establecimientos[]
 
   @@index([habilitacion_id], map: "habilitacion_id")
 }
@@ -59,30 +62,40 @@ model habilitaciones_establecimientos {
   habilitacion_id    Int
   establecimiento_id Int
   tipo               habilitaciones_establecimientos_tipo? @default(establecimiento)
+  
+  // Relaciones
+  habilitacion       habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  establecimiento    establecimientos?        @relation(fields: [establecimiento_id], references: [id])
+  remiseria          remiserias?              @relation(fields: [establecimiento_id], references: [id])
 
   @@index([establecimiento_id], map: "establecimiento_id")
   @@index([habilitacion_id], map: "habilitacion_id")
 }
 
 model habilitaciones_generales {
-  id                        Int                                       @id @default(autoincrement())
-  anio                      Int?
-  nro_licencia              String?                                   @db.VarChar(20)
-  resolucion                String?                                   @db.VarChar(50)
-  resolucion_pdf_path       String?                                   @db.VarChar(255)
-  vigencia_inicio           DateTime?                                 @db.Date
-  vigencia_fin              DateTime?                                 @db.Date
-  estado                    habilitaciones_generales_estado?
-  oblea_colocada            Boolean                                   @default(false)
-  tipo                      String?                                   @db.VarChar(50)
-  observaciones             String?                                   @db.MediumText
-  expte                     String?                                   @db.VarChar(50)
-  establecimiento_id        Int?
-  tipo_transporte           habilitaciones_generales_tipo_transporte? @default(Escolar)
-  remiseria_id              Int?
-  notificado                Boolean                                   @default(false)
-  is_deleted                Boolean                                   @default(false)
-  habilitaciones_documentos habilitaciones_documentos[]
+  id                             Int                                       @id @default(autoincrement())
+  anio                           Int?
+  nro_licencia                   String?                                   @db.VarChar(20)
+  resolucion                     String?                                   @db.VarChar(50)
+  resolucion_pdf_path            String?                                   @db.VarChar(255)
+  vigencia_inicio                DateTime?                                 @db.Date
+  vigencia_fin                   DateTime?                                 @db.Date
+  estado                         habilitaciones_generales_estado?
+  oblea_colocada                 Boolean                                   @default(false)
+  tipo                           String?                                   @db.VarChar(50)
+  observaciones                  String?                                   @db.MediumText
+  expte                          String?                                   @db.VarChar(50)
+  establecimiento_id             Int?
+  tipo_transporte                habilitaciones_generales_tipo_transporte? @default(Escolar)
+  remiseria_id                   Int?
+  notificado                     Boolean                                   @default(false)
+  is_deleted                     Boolean                                   @default(false)
+  
+  // Relaciones
+  habilitaciones_documentos      habilitaciones_documentos[]
+  habilitaciones_personas        habilitaciones_personas[]
+  habilitaciones_vehiculos       habilitaciones_vehiculos[]
+  habilitaciones_establecimientos habilitaciones_establecimientos[]
 }
 
 model habilitaciones_personas {
@@ -91,6 +104,10 @@ model habilitaciones_personas {
   persona_id         Int?
   rol                habilitaciones_personas_rol?
   licencia_categoria String?                      @db.VarChar(50)
+  
+  // Relaciones
+  habilitacion       habilitaciones_generales?    @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  persona            personas?                    @relation(fields: [persona_id], references: [id])
 
   @@index([habilitacion_id], map: "habilitacion_id")
   @@index([persona_id], map: "persona_id")
@@ -100,6 +117,10 @@ model habilitaciones_vehiculos {
   id              Int  @id @default(autoincrement())
   habilitacion_id Int?
   vehiculo_id     Int?
+  
+  // Relaciones
+  habilitacion    habilitaciones_generales? @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  vehiculo        vehiculos?                @relation(fields: [vehiculo_id], references: [id])
 
   @@index([habilitacion_id], map: "habilitacion_id")
   @@index([vehiculo_id], map: "vehiculo_id")
@@ -217,6 +238,9 @@ model personas {
   domicilio_localidad String? @db.VarChar(100)
   push_token          String? @db.VarChar(255)
   domicilio           Int
+  
+  // Relaciones
+  habilitaciones_personas habilitaciones_personas[]
 }
 
 model remiserias {
@@ -229,6 +253,9 @@ model remiserias {
   localidad        String?  @db.VarChar(100)
   nro_habilitacion String   @unique(map: "nro_habilitacion") @db.VarChar(50)
   nro_expediente   String   @unique(map: "nro_expediente") @db.VarChar(50)
+  
+  // Relaciones
+  habilitaciones_establecimientos habilitaciones_establecimientos[]
 }
 
 model tokens_acceso {
@@ -281,6 +308,9 @@ model vehiculos {
   poliza              String?   @db.VarChar(100)
   Vencimiento_Poliza  DateTime? @db.Date
   Vencimiento_VTV     DateTime? @db.Date
+  
+  // Relaciones
+  habilitaciones_vehiculos habilitaciones_vehiculos[]
 }
 
 model verificaciones_historial {

@@ -75,32 +75,80 @@ export async function GET(request: NextRequest) {
     // Obtener total de registros
     const total = await prisma.habilitaciones_generales.count({ where })
 
-    // Obtener habilitaciones
+    // Obtener habilitaciones con relaciones
     const habilitaciones = await prisma.habilitaciones_generales.findMany({
       where,
       orderBy,
       skip,
       take: limite,
+      include: {
+        habilitaciones_personas: {
+          include: {
+            persona: true,
+          },
+        },
+        habilitaciones_vehiculos: {
+          include: {
+            vehiculo: true,
+          },
+        },
+        habilitaciones_establecimientos: {
+          include: {
+            establecimiento: true,
+            remiseria: true,
+          },
+        },
+        habilitaciones_documentos: {
+          where: {
+            tipo_documento: 'Resolución',
+          },
+          take: 1,
+        },
+      },
     })
 
-    // Formatear datos (sin relaciones por ahora)
-    const habilitacionesFormateadas = habilitaciones.map((hab) => ({
-      id: hab.id,
-      nro_licencia: hab.nro_licencia,
-      resolucion: hab.resolucion,
-      estado: hab.estado,
-      vigencia_inicio: hab.vigencia_inicio,
-      vigencia_fin: hab.vigencia_fin,
-      tipo_transporte: hab.tipo_transporte,
-      expte: hab.expte,
-      observaciones: hab.observaciones,
-      titular_principal: null, // TODO: Agregar query separada
-      personas: [], // TODO: Agregar query separada
-      vehiculos: [], // TODO: Agregar query separada
-      establecimientos: [], // TODO: Agregar query separada
-      tiene_resolucion: false, // TODO: Agregar query separada
-      resolucion_doc_id: null,
-    }))
+    // Formatear datos con relaciones
+    const habilitacionesFormateadas = habilitaciones.map((hab) => {
+      // Obtener titular principal
+      const titular = hab.habilitaciones_personas.find(
+        (hp) => hp.rol === 'TITULAR'
+      )
+
+      return {
+        id: hab.id,
+        nro_licencia: hab.nro_licencia,
+        resolucion: hab.resolucion,
+        estado: hab.estado,
+        vigencia_inicio: hab.vigencia_inicio,
+        vigencia_fin: hab.vigencia_fin,
+        tipo_transporte: hab.tipo_transporte,
+        expte: hab.expte,
+        observaciones: hab.observaciones,
+        titular_principal: titular?.persona?.nombre || null,
+        personas: hab.habilitaciones_personas.map((hp) => ({
+          id: hp.id,
+          nombre: hp.persona?.nombre,
+          dni: hp.persona?.dni,
+          rol: hp.rol,
+          licencia_categoria: hp.licencia_categoria,
+        })),
+        vehiculos: hab.habilitaciones_vehiculos.map((hv) => ({
+          id: hv.id,
+          dominio: hv.vehiculo?.dominio,
+          marca: hv.vehiculo?.marca,
+          modelo: hv.vehiculo?.modelo,
+        })),
+        establecimientos: hab.habilitaciones_establecimientos.map((he) => ({
+          id: he.id,
+          nombre: he.tipo === 'remiseria' 
+            ? he.remiseria?.nombre 
+            : he.establecimiento?.nombre,
+          tipo: he.tipo,
+        })),
+        tiene_resolucion: hab.habilitaciones_documentos.length > 0,
+        resolucion_doc_id: hab.habilitaciones_documentos[0]?.id || null,
+      }
+    })
 
     return NextResponse.json({
       success: true,
