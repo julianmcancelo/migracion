@@ -56,7 +56,7 @@ export async function GET(request: Request) {
           select: {
             id: true,
             nro_licencia: true,
-            tipo: true,
+            tipo_transporte: true,
           }
         })
 
