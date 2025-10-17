@@ -65,19 +65,19 @@ export async function GET() {
       tests: {
         count,
         simple: simple ? 'OK' : 'No data',
-        withPersonas: withPersonas?.error || 'OK',
-        withAll: withAll?.error || 'OK',
+        withPersonas: (withPersonas as any)?.error || 'OK',
+        withAll: (withAll as any)?.error || 'OK',
       },
       sample: {
         simple: simple ? {
           id: simple.id,
           nro_licencia: simple.nro_licencia,
         } : null,
-        withAll: withAll && !withAll.error ? {
-          id: withAll.id,
-          personas: withAll.habilitaciones_personas?.length || 0,
-          vehiculos: withAll.habilitaciones_vehiculos?.length || 0,
-          establecimientos: withAll.habilitaciones_establecimientos?.length || 0,
+        withAll: withAll && !(withAll as any).error ? {
+          id: (withAll as any).id,
+          personas: (withAll as any).habilitaciones_personas?.length || 0,
+          vehiculos: (withAll as any).habilitaciones_vehiculos?.length || 0,
+          establecimientos: (withAll as any).habilitaciones_establecimientos?.length || 0,
         } : withAll,
       },
     })
