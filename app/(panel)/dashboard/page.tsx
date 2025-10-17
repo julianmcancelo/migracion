@@ -1,7 +1,24 @@
 import type { Metadata } from 'next'
+import Link from 'next/link'
 
 export const metadata: Metadata = {
   title: 'Dashboard | Panel de Gestión',
+}
+
+/**
+ * Obtener estadísticas del servidor
+ */
+async function getStats() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/habilitaciones/stats`, {
+      cache: 'no-store',
+    })
+    const data = await response.json()
+    return data.success ? data.data : null
+  } catch (error) {
+    console.error('Error al obtener estadísticas:', error)
+    return null
+  }
 }
 
 /**
@@ -10,7 +27,10 @@ export const metadata: Metadata = {
  * - Gráfico de distribución
  * - Acciones rápidas
  */
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const stats = await getStats()
+  const kpis = stats?.kpis || { activas: 0, en_tramite: 0, por_vencer: 0, obleas_pendientes: 0 }
+
   return (
     <div className="space-y-8">
       {/* Header de la página */}
@@ -38,13 +58,7 @@ export default function DashboardPage() {
                 <dl>
                   <dt className="truncate text-sm font-medium text-gray-500">Habilitadas</dt>
                   <dd className="flex items-baseline">
-                    <div className="text-2xl font-semibold text-gray-900">156</div>
-                    <div className="ml-2 flex items-baseline text-sm font-semibold text-green-600">
-                      <svg className="h-5 w-5 flex-shrink-0 self-center text-green-500" viewBox="0 0 20 20" fill="currentColor">
-                        <path fillRule="evenodd" d="M10 17a.75.75 0 01-.75-.75V5.612L5.29 9.77a.75.75 0 01-1.08-1.04l5.25-5.5a.75.75 0 011.08 0l5.25 5.5a.75.75 0 11-1.08 1.04l-3.96-4.158V16.25A.75.75 0 0110 17z" clipRule="evenodd" />
-                      </svg>
-                      12%
-                    </div>
+                    <div className="text-2xl font-semibold text-gray-900">{kpis.activas}</div>
                   </dd>
                 </dl>
               </div>
