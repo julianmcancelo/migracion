@@ -83,6 +83,9 @@ export async function GET(request: NextRequest) {
       take: limite,
       include: {
         habilitaciones_personas: {
+          where: {
+            rol: { not: null },
+          },
           include: {
             persona: true,
           },
