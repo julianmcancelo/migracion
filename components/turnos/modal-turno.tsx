@@ -174,6 +174,13 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
         const data = await response.json()
 
         if (data.success) {
+          // Mostrar mensaje de éxito con info del email
+          const mensajeEmail = data.email_enviado 
+            ? '\n\n✅ Email de confirmación enviado al titular.'
+            : '\n\n⚠️ El titular no tiene email registrado.'
+          
+          alert('✅ Turno creado exitosamente!' + mensajeEmail)
+          
           onSuccess()
           onClose()
           limpiarFormulario()
