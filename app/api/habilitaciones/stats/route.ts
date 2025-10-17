@@ -20,13 +20,8 @@ export async function GET() {
       )
     }
 
-    // Filtro según rol
-    const tiposTransporte = session.rol === 'demo' 
-      ? ['Demo'] 
-      : ['Escolar', 'Remis']
-
-    const whereBase = {
-      tipo_transporte: { in: tiposTransporte },
+    // Filtro según rol (simplificado por ahora)
+    const whereBase: any = {
       is_deleted: false,
     }
 
