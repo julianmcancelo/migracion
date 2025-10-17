@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     // Obtener parámetros de la URL
     const searchParams = request.nextUrl.searchParams
     const tipo = searchParams.get('tipo') || 'Escolar'
-    const buscar = searchParams.get('buscar') || ''
+    const buscar = searchParams.get('buscar') || searchParams.get('search') || ''
     const pagina = parseInt(searchParams.get('pagina') || '1')
     const limite = parseInt(searchParams.get('limite') || '15')
     const ordenarParam = searchParams.get('ordenar') || 'id_desc'

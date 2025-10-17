@@ -1,8 +1,9 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { ModalTurno } from '@/components/turnos/modal-turno'
 
 interface Turno {
   id: number
@@ -27,6 +28,8 @@ export default function TurnosPage() {
   const [turnos, setTurnos] = useState<Turno[]>([])
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
+  const [modalAbierto, setModalAbierto] = useState(false)
+  const [turnoEditar, setTurnoEditar] = useState<Turno | null>(null)
 
   useEffect(() => {
     cargarTurnos()
@@ -54,7 +57,24 @@ export default function TurnosPage() {
     }
   }
 
+  const abrirModalNuevo = () => {
+    setTurnoEditar(null)
+    setModalAbierto(true)
+  }
+
+  const abrirModalEditar = (turno: Turno) => {
+    setTurnoEditar(turno)
+    setModalAbierto(true)
+  }
+
+  const cerrarModal = () => {
+    setModalAbierto(false)
+    setTurnoEditar(null)
+  }
+
   const cambiarEstado = async (id: number, nuevoEstado: string) => {
+    if (!confirm(`¿Confirmar cambio de estado a ${nuevoEstado}?`)) return
+
     try {
       const response = await fetch(`/api/turnos/${id}`, {
         method: 'PATCH',
@@ -67,6 +87,22 @@ export default function TurnosPage() {
       }
     } catch (error) {
       console.error('Error al actualizar turno:', error)
+    }
+  }
+
+  const eliminarTurno = async (id: number) => {
+    if (!confirm('¿Está seguro de cancelar este turno?')) return
+
+    try {
+      const response = await fetch(`/api/turnos/${id}`, {
+        method: 'DELETE'
+      })
+
+      if (response.ok) {
+        cargarTurnos()
+      }
+    } catch (error) {
+      console.error('Error al cancelar turno:', error)
     }
   }
 
@@ -122,7 +158,7 @@ export default function TurnosPage() {
           </p>
         </div>
         
-        <Button className="bg-blue-600 hover:bg-blue-700">
+        <Button onClick={abrirModalNuevo} className="bg-blue-600 hover:bg-blue-700">
           <Plus className="h-5 w-5 mr-2" />
           Nuevo Turno
         </Button>
@@ -266,28 +302,48 @@ export default function TurnosPage() {
                       {turno.observaciones || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
+                        {/* Editar */}
+                        {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
+                          <button
+                            onClick={() => abrirModalEditar(turno)}
+                            className="inline-flex items-center gap-1 text-gray-600 hover:text-gray-900 font-medium"
+                            title="Editar observaciones"
+                          >
+                            <Edit className="h-4 w-4" />
+                            Editar
+                          </button>
+                        )}
+
+                        {/* Confirmar */}
                         {turno.estado === 'PENDIENTE' && (
                           <button
                             onClick={() => cambiarEstado(turno.id, 'CONFIRMADO')}
-                            className="text-blue-600 hover:text-blue-900 font-medium"
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 font-medium"
                           >
+                            <CheckCircle className="h-4 w-4" />
                             Confirmar
                           </button>
                         )}
+
+                        {/* Inspeccionar */}
                         {turno.estado === 'CONFIRMADO' && (
                           <a
                             href={`/inspecciones/nueva?turno_id=${turno.id}&habilitacion_id=${turno.habilitacion_id}`}
-                            className="text-green-600 hover:text-green-900 font-medium"
+                            className="inline-flex items-center gap-1 text-green-600 hover:text-green-900 font-medium"
                           >
+                            <CheckCircle className="h-4 w-4" />
                             Inspeccionar
                           </a>
                         )}
+
+                        {/* Cancelar */}
                         {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
                           <button
-                            onClick={() => cambiarEstado(turno.id, 'CANCELADO')}
-                            className="text-red-600 hover:text-red-900 font-medium"
+                            onClick={() => eliminarTurno(turno.id)}
+                            className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
                           >
+                            <Trash2 className="h-4 w-4" />
                             Cancelar
                           </button>
                         )}
@@ -300,6 +356,14 @@ export default function TurnosPage() {
           </div>
         )}
       </div>
+
+      {/* Modal de Crear/Editar Turno */}
+      <ModalTurno
+        isOpen={modalAbierto}
+        onClose={cerrarModal}
+        onSuccess={cargarTurnos}
+        turnoEdit={turnoEditar}
+      />
     </div>
   )
 }
