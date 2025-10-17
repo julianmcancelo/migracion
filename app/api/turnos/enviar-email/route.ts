@@ -8,7 +8,7 @@ import nodemailer from 'nodemailer'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { email, nombre, nro_licencia, fecha, hora, tipo_transporte } = body
+    const { email, nombre, nro_licencia, fecha, hora, tipo_transporte, turno_id } = body
 
     // Validaciones
     if (!email || !nombre || !nro_licencia || !fecha || !hora) {
@@ -43,33 +43,208 @@ export async function POST(request: Request) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-    .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-    .header { background: linear-gradient(135deg, #3B82F6, #1E40AF); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
-    .content { background: #ffffff; padding: 30px; border: 1px solid #e5e7eb; border-top: none; }
-    .info-box { background: #EFF6FF; border-left: 4px solid #3B82F6; padding: 15px; margin: 20px 0; border-radius: 5px; }
-    .info-row { display: flex; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
-    .info-label { font-weight: bold; color: #1F2937; min-width: 140px; }
-    .info-value { color: #3B82F6; font-weight: 600; }
-    .footer { background: #F9FAFB; padding: 20px; text-align: center; color: #6B7280; font-size: 12px; border-radius: 0 0 10px 10px; }
-    .button { display: inline-block; padding: 12px 30px; background: #3B82F6; color: white; text-decoration: none; border-radius: 6px; margin-top: 20px; font-weight: bold; }
-    .alert { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; margin: 20px 0; border-radius: 5px; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      line-height: 1.6; 
+      color: #1F2937;
+      background: #F3F4F6;
+      padding: 20px;
+    }
+    .container { 
+      max-width: 600px; 
+      margin: 0 auto; 
+      background: #ffffff;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+    .header { 
+      background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%);
+      color: white; 
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+    }
+    .logo { 
+      width: 80px; 
+      height: 80px; 
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 40px;
+      backdrop-filter: blur(10px);
+      border: 3px solid rgba(255, 255, 255, 0.3);
+    }
+    .header h1 { 
+      margin: 0; 
+      font-size: 32px;
+      font-weight: 700;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .header p { 
+      margin: 8px 0 0 0; 
+      opacity: 0.95;
+      font-size: 16px;
+      font-weight: 500;
+    }
+    .content { 
+      padding: 40px 30px;
+    }
+    .greeting { 
+      font-size: 18px;
+      color: #111827;
+      margin-bottom: 16px;
+    }
+    .message { 
+      font-size: 16px;
+      color: #4B5563;
+      margin-bottom: 30px;
+      line-height: 1.8;
+    }
+    .info-box { 
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+      border: 2px solid #3B82F6;
+      border-radius: 12px;
+      padding: 24px;
+      margin: 30px 0;
+    }
+    .info-box h3 { 
+      margin: 0 0 20px 0; 
+      color: #1E40AF;
+      font-size: 20px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .info-row { 
+      display: flex; 
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(59, 130, 246, 0.2);
+      align-items: center;
+    }
+    .info-row:last-child { border-bottom: none; }
+    .info-label { 
+      font-weight: 600;
+      color: #374151;
+      min-width: 160px;
+      font-size: 15px;
+    }
+    .info-value { 
+      color: #1E40AF;
+      font-weight: 700;
+      font-size: 16px;
+      flex: 1;
+    }
+    .buttons-container { 
+      text-align: center; 
+      margin: 35px 0;
+      padding: 20px;
+      background: #F9FAFB;
+      border-radius: 12px;
+    }
+    .button { 
+      display: inline-block;
+      padding: 16px 32px;
+      color: white;
+      text-decoration: none;
+      border-radius: 10px;
+      margin: 8px 6px;
+      font-weight: 700;
+      font-size: 15px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    .button-confirm { 
+      background: linear-gradient(135deg, #059669, #10B981);
+    }
+    .button-cancel { 
+      background: linear-gradient(135deg, #DC2626, #EF4444);
+    }
+    .alert { 
+      background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+      border-left: 5px solid #F59E0B;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 10px;
+    }
+    .alert strong { 
+      color: #92400E;
+      font-size: 16px;
+      display: block;
+      margin-bottom: 12px;
+    }
+    .alert ul { 
+      margin: 12px 0 0 0;
+      padding-left: 24px;
+      color: #78350F;
+    }
+    .alert li { 
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    .contact-box { 
+      background: linear-gradient(135deg, #F3F4F6, #E5E7EB);
+      padding: 28px;
+      border-radius: 12px;
+      margin-top: 30px;
+      border: 2px solid #D1D5DB;
+    }
+    .contact-box h4 { 
+      margin: 0 0 16px 0;
+      color: #111827;
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .contact-box p { 
+      margin: 8px 0;
+      color: #374151;
+      font-size: 15px;
+    }
+    .contact-box a { 
+      color: #2563EB;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer { 
+      background: #1F2937;
+      color: #9CA3AF;
+      padding: 30px;
+      text-align: center;
+      font-size: 13px;
+    }
+    .footer p { margin: 8px 0; }
+    .footer a { color: #60A5FA; text-decoration: none; }
+    .divider { 
+      height: 1px;
+      background: linear-gradient(to right, transparent, #E5E7EB, transparent);
+      margin: 30px 0;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <div class="header">
-      <h1 style="margin: 0; font-size: 28px;">🚌 Turno Confirmado</h1>
-      <p style="margin: 10px 0 0 0; opacity: 0.9;">Municipalidad de Lanús</p>
+      <div class="logo">🏛️</div>
+      <h1>Turno Confirmado</h1>
+      <p>Dirección de Movilidad y Transporte</p>
+      <p style="font-size: 14px; margin-top: 4px;">Municipalidad de Lanús</p>
     </div>
     
     <div class="content">
-      <p>Estimado/a <strong>${nombre}</strong>,</p>
+      <p class="greeting">Estimado/a <strong>${nombre}</strong>,</p>
       
-      <p>Su turno para la inspección vehicular ha sido <strong>confirmado exitosamente</strong>.</p>
+      <p class="message">
+        Su turno para la <strong>inspección vehicular</strong> ha sido registrado y confirmado exitosamente en nuestro sistema.
+        A continuación encontrará todos los detalles importantes.
+      </p>
       
       <div class="info-box">
-        <h3 style="margin-top: 0; color: #1F2937;">📋 Detalles del Turno</h3>
+        <h3><span>📋</span> Detalles del Turno</h3>
         <div class="info-row">
           <span class="info-label">Nro. de Licencia:</span>
           <span class="info-value">${nro_licencia}</span>
@@ -88,6 +263,22 @@ export async function POST(request: Request) {
         </div>
       </div>
       
+      <div class="divider"></div>
+      
+      <div class="buttons-container">
+        <p style="margin-bottom: 16px; color: #6B7280; font-size: 14px;">
+          <strong>Gestione su turno:</strong>
+        </p>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos/confirmar/${turno_id || 'ID'}" class="button button-confirm">
+          ✅ Confirmar Asistencia
+        </a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos/cancelar/${turno_id || 'ID'}" class="button button-cancel">
+          ❌ Cancelar Turno
+        </a>
+      </div>
+      
+      <div class="divider"></div>
+      
       <div class="alert">
         <strong>⚠️ Importante:</strong>
         <ul style="margin: 10px 0 0 0; padding-left: 20px;">
@@ -98,19 +289,24 @@ export async function POST(request: Request) {
         </ul>
       </div>
       
-      <p style="margin-top: 25px;">Si necesita reprogramar o cancelar su turno, por favor comuníquese con nosotros con anticipación.</p>
-      
-      <p style="margin-top: 20px; color: #6B7280; font-size: 14px;">
-        <strong>Dirección Gral. de Movilidad y Transporte</strong><br>
-        Municipalidad de Lanús<br>
-        📧 Email: transporte@lanus.gob.ar<br>
-        📞 Teléfono: [COMPLETAR]
-      </p>
+      <div class="contact-box">
+        <h4>📞 ¿Necesita Ayuda?</h4>
+        <p><strong>Dirección Gral. de Movilidad y Transporte</strong></p>
+        <p>Municipalidad de Lanús</p>
+        <p>📞 Teléfono: <strong>4357-5100</strong> interno <strong>7137</strong></p>
+        <p>📧 Email: <a href="mailto:transportepublicolanus@gmail.com">transportepublicolanus@gmail.com</a></p>
+        <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #D1D5DB; font-size: 14px; color: #6B7280;">
+          ⏰ Horario de atención: <strong>Lunes a Viernes de 8:00 a 16:00 hs</strong>
+        </p>
+      </div>
     </div>
     
     <div class="footer">
-      <p style="margin: 0;">Este es un email automático, por favor no responda a este mensaje.</p>
-      <p style="margin: 5px 0 0 0;">© ${new Date().getFullYear()} Municipalidad de Lanús - Todos los derechos reservados</p>
+      <p><strong>Municipalidad de Lanús</strong></p>
+      <p>Puede responder a este email o contactarnos al <a href="tel:43575100">4357-5100</a> int. 7137</p>
+      <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #374151;">
+        © ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados
+      </p>
     </div>
   </div>
 </body>
@@ -121,6 +317,7 @@ export async function POST(request: Request) {
     const info = await transporter.sendMail({
       from: `"Municipalidad de Lanús" <${process.env.GMAIL_USER}>`,
       to: email,
+      replyTo: 'transportepublicolanus@gmail.com',
       subject: `✅ Turno Confirmado - Inspección Vehicular - Licencia ${nro_licencia}`,
       html: htmlContent
     })

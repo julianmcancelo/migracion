@@ -171,6 +171,7 @@ export async function POST(request: Request) {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
+            turno_id: turno.id,
             email: habPersona.persona.email,
             nombre: habPersona.persona.nombre,
             nro_licencia: habilitacion.nro_licencia,
