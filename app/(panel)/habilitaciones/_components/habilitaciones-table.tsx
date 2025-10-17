@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download } from 'lucide-react'
+import { VehiculoModal } from './vehiculo-modal'
+import { PersonaModal } from './persona-modal'
 import {
   Table,
   TableBody,
@@ -52,6 +54,10 @@ interface HabilitacionesTableProps {
  */
 export function HabilitacionesTable({ habilitaciones, loading = false }: HabilitacionesTableProps) {
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
+  const [selectedVehiculo, setSelectedVehiculo] = useState<any>(null)
+  const [selectedPersona, setSelectedPersona] = useState<any>(null)
+  const [showVehiculoModal, setShowVehiculoModal] = useState(false)
+  const [showPersonaModal, setShowPersonaModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -207,7 +213,14 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                     <h4 className="text-sm font-semibold text-gray-700 mb-2">Personas ({hab.personas.length})</h4>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {hab.personas.map((persona) => (
-                        <div key={persona.id} className="flex items-center gap-2 text-sm bg-white p-2 rounded border">
+                        <button
+                          key={persona.id}
+                          onClick={() => {
+                            setSelectedPersona(persona)
+                            setShowPersonaModal(true)
+                          }}
+                          className="flex items-center gap-2 text-sm bg-white p-2 rounded border hover:bg-blue-50 hover:border-blue-300 transition-colors cursor-pointer text-left"
+                        >
                           <Badge variant="outline" className="text-xs">
                             {persona.rol}
                           </Badge>
@@ -215,7 +228,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                           {persona.licencia_categoria && (
                             <span className="text-xs text-gray-500">Cat: {persona.licencia_categoria}</span>
                           )}
-                        </div>
+                          <Eye className="h-3 w-3 ml-auto text-gray-400" />
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -224,12 +238,20 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Vehículos */}
                 {hab.vehiculos.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Vehículos ({hab.vehiculos.length})</h4>
+                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Vehículos ({hab.vehiculos.length}) - Click para ver detalles</h4>
                     <div className="flex flex-wrap gap-2">
                       {hab.vehiculos.map((vehiculo) => (
-                        <Badge key={vehiculo.id} variant="secondary">
-                          {vehiculo.dominio || 'N/A'}
-                        </Badge>
+                        <button
+                          key={vehiculo.id}
+                          onClick={() => {
+                            setSelectedVehiculo(vehiculo)
+                            setShowVehiculoModal(true)
+                          }}
+                          className="inline-flex items-center gap-2 px-3 py-1 bg-white border-2 border-gray-300 rounded-full font-semibold text-sm hover:bg-blue-50 hover:border-blue-400 transition-colors cursor-pointer"
+                        >
+                          🚗 {vehiculo.dominio || 'N/A'}
+                          <Eye className="h-3 w-3 text-gray-400" />
+                        </button>
                       ))}
                     </div>
                   </div>
@@ -261,6 +283,19 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
           </div>
         )
       })}
+
+      {/* Modales */}
+      <VehiculoModal
+        vehiculo={selectedVehiculo}
+        open={showVehiculoModal}
+        onClose={() => setShowVehiculoModal(false)}
+      />
+      
+      <PersonaModal
+        persona={selectedPersona}
+        open={showPersonaModal}
+        onClose={() => setShowPersonaModal(false)}
+      />
     </div>
   )
 }
