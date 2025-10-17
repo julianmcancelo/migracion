@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { getSession } from '@/lib/auth'
+import { habilitacionSchema } from '@/lib/validations/habilitacion'
 
 // Marcar como ruta dinámica
 export const dynamic = 'force-dynamic'
@@ -182,6 +183,143 @@ export async function GET(request: NextRequest) {
         error: 'Error al obtener habilitaciones',
         details: error.message,
         stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/habilitaciones
+ * Crea una nueva habilitación con sus relaciones
+ * 
+ * Body:
+ * - Datos de la habilitación (ver habilitacionSchema)
+ * - personas: array de personas vinculadas
+ * - vehiculos: array de vehículos vinculados
+ * - establecimientos: array de establecimientos vinculados (opcional)
+ */
+export async function POST(request: NextRequest) {
+  try {
+    // Verificar autenticación
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json(
+        { error: 'No autenticado' },
+        { status: 401 }
+      )
+    }
+
+    // Verificar permisos (solo admin puede crear)
+    if (session.rol === 'demo' || session.rol === 'lector') {
+      return NextResponse.json(
+        { error: 'No tiene permisos para crear habilitaciones' },
+        { status: 403 }
+      )
+    }
+
+    // Obtener y validar datos del body
+    const body = await request.json()
+    const validacion = habilitacionSchema.safeParse(body)
+
+    if (!validacion.success) {
+      return NextResponse.json(
+        { 
+          error: 'Datos inválidos',
+          detalles: validacion.error.errors 
+        },
+        { status: 400 }
+      )
+    }
+
+    const data = validacion.data
+
+    // Crear habilitación con transacción
+    const nuevaHabilitacion = await prisma.$transaction(async (tx) => {
+      // 1. Crear la habilitación
+      const habilitacion = await tx.habilitaciones_generales.create({
+        data: {
+          tipo_transporte: data.tipo_transporte,
+          estado: data.estado,
+          anio: data.anio || new Date().getFullYear(),
+          vigencia_inicio: data.vigencia_inicio ? new Date(data.vigencia_inicio) : null,
+          vigencia_fin: data.vigencia_fin ? new Date(data.vigencia_fin) : null,
+          nro_licencia: data.nro_licencia,
+          expte: data.expte,
+          resolucion: data.resolucion || null,
+          observaciones: data.observaciones || null,
+          oblea_colocada: data.oblea_colocada,
+          is_deleted: false,
+          notificado: false,
+        },
+      })
+
+      // 2. Vincular personas
+      if (data.personas && data.personas.length > 0) {
+        await tx.habilitaciones_personas.createMany({
+          data: data.personas.map((p) => ({
+            habilitacion_id: habilitacion.id,
+            persona_id: p.persona_id,
+            rol: p.rol,
+            licencia_categoria: p.licencia_categoria || null,
+          })),
+        })
+      }
+
+      // 3. Vincular vehículos
+      if (data.vehiculos && data.vehiculos.length > 0) {
+        await tx.habilitaciones_vehiculos.createMany({
+          data: data.vehiculos.map((v) => ({
+            habilitacion_id: habilitacion.id,
+            vehiculo_id: v.vehiculo_id,
+          })),
+        })
+      }
+
+      // 4. Vincular establecimientos (opcional)
+      if (data.establecimientos && data.establecimientos.length > 0) {
+        await tx.habilitaciones_establecimientos.createMany({
+          data: data.establecimientos.map((e) => ({
+            habilitacion_id: habilitacion.id,
+            establecimiento_id: e.establecimiento_id,
+            tipo: e.tipo,
+          })),
+        })
+      }
+
+      return habilitacion
+    })
+
+    // Obtener habilitación completa con relaciones
+    const habilitacionCompleta = await prisma.habilitaciones_generales.findUnique({
+      where: { id: nuevaHabilitacion.id },
+      include: {
+        habilitaciones_personas: {
+          include: { persona: true },
+        },
+        habilitaciones_vehiculos: {
+          include: { vehiculo: true },
+        },
+        habilitaciones_establecimientos: true,
+      },
+    })
+
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Habilitación creada exitosamente',
+        data: habilitacionCompleta,
+      },
+      { status: 201 }
+    )
+
+  } catch (error: any) {
+    console.error('Error al crear habilitación:', error)
+    return NextResponse.json(
+      {
+        error: 'Error al crear habilitación',
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       },
       { status: 500 }
     )

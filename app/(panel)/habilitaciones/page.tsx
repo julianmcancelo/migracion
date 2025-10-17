@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { SearchBar } from './_components/search-bar'
 import { HabilitacionesTable } from './_components/habilitaciones-table'
 import { Pagination } from './_components/pagination'
+import { NuevaHabilitacionDialog } from './_components/nueva-habilitacion-dialog'
 
 type TipoTransporte = 'Escolar' | 'Remis'
 
@@ -31,6 +32,7 @@ export default function HabilitacionesPage() {
   const [habilitaciones, setHabilitaciones] = useState<any[]>([])
   const [pagination, setPagination] = useState<PaginationData | null>(null)
   const [loading, setLoading] = useState(false)
+  const [modalOpen, setModalOpen] = useState(false)
 
   // Cargar habilitaciones
   const cargarHabilitaciones = useCallback(async () => {
@@ -76,6 +78,11 @@ export default function HabilitacionesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const handleNuevaHabilitacionSuccess = () => {
+    // Recargar lista después de crear
+    cargarHabilitaciones()
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -86,7 +93,7 @@ export default function HabilitacionesPage() {
             Gestión de habilitaciones de transporte escolar y remis
           </p>
         </div>
-        <Button>
+        <Button onClick={() => setModalOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Nueva Habilitación
         </Button>
@@ -145,6 +152,13 @@ export default function HabilitacionesPage() {
           </div>
         </TabsContent>
       </Tabs>
+
+      {/* Modal de Nueva Habilitación */}
+      <NuevaHabilitacionDialog
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onSuccess={handleNuevaHabilitacionSuccess}
+      />
     </div>
   )
 }

@@ -1,5 +1,43 @@
 # 📝 Changelog - Sistema de Credenciales Lanús
 
+## [0.3.0] - 2025-01-17
+
+### ✨ Añadido
+- **Formulario de nueva habilitación**: Modal multi-paso (4 pasos) completo
+- **Validación Zod**: Schemas para habilitaciones, personas, vehículos y establecimientos
+- **APIs de búsqueda**:
+  - GET `/api/personas` - Buscar por nombre/DNI
+  - GET `/api/vehiculos` - Buscar por dominio/marca/modelo
+  - GET `/api/establecimientos` - Buscar establecimientos y remiserías
+  - POST `/api/habilitaciones` - Crear habilitación con transacción
+- **Componentes de formulario**:
+  - `DatosBasicosStep` - Información general de la habilitación
+  - `PersonasStep` - Búsqueda y vinculación de personas con roles
+  - `VehiculosStep` - Búsqueda y vinculación de vehículos
+  - `EstablecimientosStep` - Búsqueda y vinculación de establecimientos (opcional)
+- **Búsqueda en tiempo real**: Debouncing de 500ms en todos los selectores
+- **Transacciones Prisma**: Creación atómica de habilitación con todas sus relaciones
+
+### 🔧 Cambiado
+- API de habilitaciones ahora soporta GET (lista) y POST (crear)
+- Botón "Nueva Habilitación" conectado con modal funcional
+
+### 🎨 Componentes Creados
+- `NuevaHabilitacionDialog` - Dialog principal con stepper
+- `datos-basicos-step.tsx` - Paso 1 del formulario
+- `personas-step.tsx` - Paso 2 con búsqueda incremental
+- `vehiculos-step.tsx` - Paso 3 con búsqueda incremental
+- `establecimientos-step.tsx` - Paso 4 opcional
+
+### 📦 Features
+- Indicador visual de progreso (4 pasos)
+- Validación en cliente y servidor
+- Loading states y manejo de errores
+- Recarga automática de lista al crear
+- Prevención de duplicados
+
+---
+
 ## [0.2.0] - 2025-01-17
 
 ### ✨ Añadido
