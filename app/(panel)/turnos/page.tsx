@@ -16,7 +16,7 @@ interface Turno {
   habilitacion?: {
     id: number
     nro_licencia: string
-    tipo: string
+    tipo_transporte: string
   }
 }
 
@@ -290,7 +290,7 @@ export default function TurnosPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {turno.habilitacion?.tipo || '-'}
+                      {turno.habilitacion?.tipo_transporte || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getEstadoBadge(turno.estado)}`}>
