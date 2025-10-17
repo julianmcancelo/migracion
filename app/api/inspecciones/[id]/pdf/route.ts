@@ -104,8 +104,11 @@ export async function GET(
     // Generar PDF
     const pdfBuffer = await generarPDFInspeccion(datosCompletos)
 
+    // Convertir Buffer a Uint8Array para NextResponse
+    const pdfArray = new Uint8Array(pdfBuffer)
+
     // Retornar PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfArray, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="Inspeccion-${id}.pdf"`

@@ -135,9 +135,45 @@ export async function POST(request: Request) {
       }
     })
 
+    // Obtener datos del titular para enviar email
+    // @ts-ignore
+    const habPersona: any = await prisma.habilitaciones_personas.findFirst({
+      where: {
+        habilitacion_id: Number(habilitacion_id),
+        rol: 'TITULAR'
+      },
+      // @ts-ignore
+      include: {
+        persona: true
+      }
+    })
+
+    // Enviar email de confirmación si tiene email
+    if (habPersona?.persona?.email) {
+      try {
+        await fetch(`${process.env.NEXT_PUBLIC_URL || 'http://localhost:3000'}/api/turnos/enviar-email`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            email: habPersona.persona.email,
+            nombre: habPersona.persona.nombre,
+            nro_licencia: habilitacion.nro_licencia,
+            fecha: fecha,
+            hora: hora,
+            tipo_transporte: habilitacion.tipo_transporte
+          })
+        })
+        console.log('Email de confirmación enviado a:', habPersona.persona.email)
+      } catch (emailError) {
+        console.error('Error al enviar email, pero turno creado:', emailError)
+        // No fallar si el email falla, el turno ya está creado
+      }
+    }
+
     return NextResponse.json({
       success: true,
-      data: turno
+      data: turno,
+      email_enviado: !!habPersona?.persona?.email
     }, { status: 201 })
 
   } catch (error) {

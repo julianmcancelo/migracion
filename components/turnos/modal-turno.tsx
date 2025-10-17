@@ -289,11 +289,11 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
                               {hab.nro_licencia}
                             </p>
                             <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                              new Date(hab.vigencia_hasta) > new Date()
+                              new Date(hab.vigencia_fin) > new Date()
                                 ? 'bg-green-100 text-green-800'
                                 : 'bg-red-100 text-red-800'
                             }`}>
-                              {new Date(hab.vigencia_hasta) > new Date() ? 'Vigente' : 'Vencida'}
+                              {new Date(hab.vigencia_fin) > new Date() ? 'Vigente' : 'Vencida'}
                             </span>
                           </div>
                           <p className="text-sm font-medium text-gray-900">
@@ -375,32 +375,56 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
                             {habilitacionSeleccionada.nro_licencia}
                           </span>
                           <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                            new Date(habilitacionSeleccionada.vigencia_hasta) > new Date()
+                            new Date(habilitacionSeleccionada.vigencia_fin) > new Date()
                               ? 'bg-green-100 text-green-800'
                               : 'bg-red-100 text-red-800'
                           }`}>
-                            {new Date(habilitacionSeleccionada.vigencia_hasta) > new Date() ? 'Vigente' : 'Vencida'}
+                            {new Date(habilitacionSeleccionada.vigencia_fin) > new Date() ? 'Vigente' : 'Vencida'}
                           </span>
                         </div>
                         
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-gray-600">Tipo:</span>
                           <span className="text-sm font-medium text-gray-900">
-                            {habilitacionSeleccionada.tipo}
+                            {habilitacionSeleccionada.tipo_transporte}
                           </span>
                         </div>
+                        
+                        {/* Datos del Titular */}
+                        {habilitacionSeleccionada.titular_principal && (
+                          <div className="flex items-center gap-2 mt-2">
+                            <span className="text-xs font-medium text-gray-600">Titular:</span>
+                            <span className="text-sm font-semibold text-gray-900">
+                              {habilitacionSeleccionada.titular_principal}
+                            </span>
+                          </div>
+                        )}
+                        
+                        {/* Datos del Vehículo */}
+                        {habilitacionSeleccionada.vehiculos && habilitacionSeleccionada.vehiculos.length > 0 && (
+                          <div className="mt-2">
+                            <span className="text-xs font-medium text-gray-600">Vehículo:</span>
+                            <p className="text-sm font-semibold text-gray-900">
+                              {habilitacionSeleccionada.vehiculos[0].marca} {habilitacionSeleccionada.vehiculos[0].modelo}
+                            </p>
+                            <p className="text-xs text-gray-600">
+                              Dominio: <span className="font-semibold">{habilitacionSeleccionada.vehiculos[0].dominio}</span> | 
+                              Año: <span className="font-semibold">{habilitacionSeleccionada.vehiculos[0].ano}</span>
+                            </p>
+                          </div>
+                        )}
                         
                         <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-green-200">
                           <div>
                             <span className="text-xs font-medium text-gray-600">Vigencia desde</span>
                             <p className="text-sm font-semibold text-gray-900">
-                              {new Date(habilitacionSeleccionada.vigencia_desde).toLocaleDateString('es-AR')}
+                              {new Date(habilitacionSeleccionada.vigencia_inicio).toLocaleDateString('es-AR')}
                             </p>
                           </div>
                           <div>
                             <span className="text-xs font-medium text-gray-600">Vigencia hasta</span>
                             <p className="text-sm font-semibold text-gray-900">
-                              {new Date(habilitacionSeleccionada.vigencia_hasta).toLocaleDateString('es-AR')}
+                              {new Date(habilitacionSeleccionada.vigencia_fin).toLocaleDateString('es-AR')}
                             </p>
                           </div>
                         </div>
