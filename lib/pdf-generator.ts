@@ -137,7 +137,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(255, 255, 255)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(9)
-  doc.text('📋 DATOS DE LA INSPECCIÓN', 22, yLeft + 1)
+  doc.text('DATOS DE LA INSPECCION', 22, yLeft + 1)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yLeft += 9
 
@@ -169,7 +169,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(255, 255, 255)
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(9)
-  doc.text('🚗 DATOS DEL VEHÍCULO', 112, yRight + 1)
+  doc.text('DATOS DEL VEHICULO', 112, yRight + 1)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yRight += 9
 
@@ -247,7 +247,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(255, 255, 255)
-  doc.text('📝 DETALLE DE LA VERIFICACIÓN', 20, yPos + 3)
+  doc.text('DETALLE DE LA VERIFICACION', 20, yPos + 3)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yPos += 12
 
@@ -342,7 +342,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(255, 255, 255)
-  doc.text('✍️ FIRMAS DIGITALES', 20, yPos + 3)
+  doc.text('FIRMAS DIGITALES', 20, yPos + 3)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yPos += 15
 
@@ -419,7 +419,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setFontSize(11)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(255, 255, 255)
-    doc.text('📸 EVIDENCIA FOTOGRÁFICA', 20, yPos + 3)
+    doc.text('EVIDENCIA FOTOGRAFICA', 20, yPos + 3)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     yPos += 15
 
@@ -440,7 +440,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         doc.setFontSize(11)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(255, 255, 255)
-        doc.text('📸 EVIDENCIA FOTOGRÁFICA (Continuación)', 20, yPos + 3)
+        doc.text('EVIDENCIA FOTOGRAFICA (Continuacion)', 20, yPos + 3)
         doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
         yPos += 15
         xPos = 15
