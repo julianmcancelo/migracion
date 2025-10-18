@@ -68,6 +68,6 @@ export const config = {
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/auth|api/turnos/.*/(confirmar|cancelar|reprogramar)-publico|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
+    '/((?!api/auth|api/turnos/.*/confirmar-publico|api/turnos/.*/cancelar-publico|api/turnos/.*/reprogramar-publico|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
   ],
 }
