@@ -32,6 +32,8 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
   const [personaSeleccionada, setPersonaSeleccionada] = useState<Persona | null>(null)
   const [rolSeleccionado, setRolSeleccionado] = useState<string>('TITULAR')
   const [licenciaCategoria, setLicenciaCategoria] = useState('')
+  // Caché local para mantener información completa de personas agregadas
+  const [personasCache, setPersonasCache] = useState<Map<number, Persona>>(new Map())
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
@@ -75,6 +77,11 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
       licencia_categoria: licenciaCategoria || undefined,
     }
 
+    // Guardar en caché la información completa de la persona
+    const nuevoCache = new Map(personasCache)
+    nuevoCache.set(personaSeleccionada.id, personaSeleccionada)
+    setPersonasCache(nuevoCache)
+
     onChange([...personas, nuevaPersona])
     
     // Resetear campos
@@ -88,8 +95,13 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
     onChange(personas.filter((_, i) => i !== index))
   }
 
-  // Obtener info completa de persona por ID
+  // Obtener info completa de persona por ID desde caché o resultados
   const getPersonaInfo = (persona_id: number) => {
+    // Primero buscar en el caché
+    const personaCache = personasCache.get(persona_id)
+    if (personaCache) return personaCache
+    
+    // Luego en resultados actuales
     const persona = resultados.find(p => p.id === persona_id)
     if (persona) return persona
     

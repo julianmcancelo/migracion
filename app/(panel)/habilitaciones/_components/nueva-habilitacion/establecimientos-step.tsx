@@ -34,6 +34,8 @@ export function EstablecimientosStep({
   const [resultados, setResultados] = useState<Establecimiento[]>([])
   const [buscando, setBuscando] = useState(false)
   const [establecimientoSeleccionado, setEstablecimientoSeleccionado] = useState<Establecimiento | null>(null)
+  // Caché local para mantener información completa de establecimientos agregados
+  const [establecimientosCache, setEstablecimientosCache] = useState<Map<number, Establecimiento>>(new Map())
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
@@ -79,6 +81,11 @@ export function EstablecimientosStep({
       tipo: establecimientoSeleccionado.tipo_entidad,
     }
 
+    // Guardar en caché la información completa del establecimiento
+    const nuevoCache = new Map(establecimientosCache)
+    nuevoCache.set(establecimientoSeleccionado.id, establecimientoSeleccionado)
+    setEstablecimientosCache(nuevoCache)
+
     onChange([...establecimientos, nuevoEstablecimiento])
     
     // Resetear campos
@@ -91,10 +98,19 @@ export function EstablecimientosStep({
     onChange(establecimientos.filter((_, i) => i !== index))
   }
 
-  // Obtener info completa de establecimiento por ID (simulado)
+  // Obtener info completa de establecimiento por ID desde caché o resultados
   const getEstablecimientoInfo = (establecimiento_id: number) => {
+    // Primero buscar en el caché
+    const establecimientoCache = establecimientosCache.get(establecimiento_id)
+    if (establecimientoCache) return establecimientoCache
+    
+    // Luego en resultados actuales
     const establecimiento = resultados.find(e => e.id === establecimiento_id)
-    return establecimiento || { 
+    if (establecimiento) return establecimiento
+    
+    // Fallback
+    return { 
+      id: establecimiento_id,
       nombre: `Establecimiento ${establecimiento_id}`, 
       direccion: '-',
       tipo_entidad: 'establecimiento' as const

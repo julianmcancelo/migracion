@@ -30,6 +30,8 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   const [resultados, setResultados] = useState<Vehiculo[]>([])
   const [buscando, setBuscando] = useState(false)
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState<Vehiculo | null>(null)
+  // Caché local para mantener información completa de vehículos agregados
+  const [vehiculosCache, setVehiculosCache] = useState<Map<number, Vehiculo>>(new Map())
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
@@ -71,6 +73,11 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
       vehiculo_id: vehiculoSeleccionado.id,
     }
 
+    // Guardar en caché la información completa del vehículo
+    const nuevoCache = new Map(vehiculosCache)
+    nuevoCache.set(vehiculoSeleccionado.id, vehiculoSeleccionado)
+    setVehiculosCache(nuevoCache)
+
     onChange([...vehiculos, nuevoVehiculo])
     
     // Resetear campos
@@ -83,8 +90,13 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
     onChange(vehiculos.filter((_, i) => i !== index))
   }
 
-  // Obtener info completa de vehículo por ID
+  // Obtener info completa de vehículo por ID desde caché o resultados
   const getVehiculoInfo = (vehiculo_id: number): Vehiculo => {
+    // Primero buscar en el caché
+    const vehiculoCache = vehiculosCache.get(vehiculo_id)
+    if (vehiculoCache) return vehiculoCache
+    
+    // Luego en resultados actuales
     const vehiculo = resultados.find(v => v.id === vehiculo_id)
     if (vehiculo) return vehiculo
     
