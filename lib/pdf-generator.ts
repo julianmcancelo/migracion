@@ -42,52 +42,75 @@ interface DatosInspeccion {
 export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buffer> {
   const doc = new jsPDF('p', 'mm', 'a4')
   
-  // Colores del diseño
-  const colorAcento: [number, number, number] = [59, 130, 246] // Celeste
-  const colorTexto: [number, number, number] = [17, 24, 39] // Gris oscuro
+  // Colores del diseño - Paleta profesional municipal
+  const colorPrimario: [number, number, number] = [37, 99, 235] // Azul institucional
+  const colorSecundario: [number, number, number] = [16, 185, 129] // Verde éxito
+  const colorTexto: [number, number, number] = [31, 41, 55] // Gris oscuro
   const colorMutado: [number, number, number] = [107, 114, 128] // Gris medio
+  const colorFondo: [number, number, number] = [249, 250, 251] // Gris muy claro
+  const colorBorde: [number, number, number] = [229, 231, 235] // Gris claro
 
   let yPos = 15
 
   // ==================== HEADER ====================
   const agregarHeader = () => {
+    // Fondo del header con gradiente simulado
+    doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+    doc.rect(0, 0, 210, 40, 'F')
+    
+    // Franja decorativa inferior
+    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
+    doc.rect(0, 40, 210, 3, 'F')
+
     // Marca de agua
     doc.setFontSize(80)
-    doc.setTextColor(240, 240, 240)
-    doc.text('LANUS', 105, 160, {
+    doc.setTextColor(245, 245, 250)
+    doc.text('LANÚS', 105, 160, {
       align: 'center',
       angle: 45
     })
 
-    // Título
-    doc.setFontSize(18)
-    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+    // Título principal
+    doc.setFontSize(20)
+    doc.setTextColor(255, 255, 255)
     doc.setFont('helvetica', 'bold')
-    doc.text('Informe de Inspección Vehicular', 105, 20, { align: 'center' })
+    doc.text('INFORME DE INSPECCIÓN VEHICULAR', 105, 18, { align: 'center' })
 
     // Subtítulo
-    doc.setFontSize(11)
-    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+    doc.setFontSize(10)
     doc.setFont('helvetica', 'normal')
-    doc.text('Municipalidad de Lanús | Dirección Gral. de Movilidad y Transporte', 105, 27, { align: 'center' })
+    doc.text('Municipalidad de Lanús', 105, 26, { align: 'center' })
+    doc.setFontSize(9)
+    doc.text('Dirección General de Movilidad y Transporte', 105, 32, { align: 'center' })
 
-    // Línea divisoria
-    doc.setDrawColor(colorAcento[0], colorAcento[1], colorAcento[2])
-    doc.setLineWidth(0.6)
-    doc.line(15, 33, 195, 33)
-
-    yPos = 45
+    yPos = 52
   }
 
   // ==================== FOOTER ====================
   const agregarFooter = (pageNum: number, totalPages: number) => {
-    doc.setFontSize(8)
-    doc.setTextColor(156, 163, 175)
-    doc.setFont('helvetica', 'italic')
+    // Línea decorativa
+    doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
+    doc.setLineWidth(0.5)
+    doc.line(15, 278, 195, 278)
     
-    doc.line(15, 280, 195, 280)
-    doc.text('Este documento es un informe oficial del Sistema de Habilitaciones de Transporte.', 105, 285, { align: 'center' })
-    doc.text(`Página ${pageNum} de ${totalPages}`, 105, 290, { align: 'center' })
+    // Fondo del footer
+    doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
+    doc.rect(0, 280, 210, 17, 'F')
+    
+    // Texto del footer
+    doc.setFontSize(7)
+    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+    doc.setFont('helvetica', 'normal')
+    doc.text('Este documento es un informe oficial del Sistema de Habilitaciones de Transporte', 105, 285, { align: 'center' })
+    doc.text('Municipalidad de Lanús - Argentina', 105, 289, { align: 'center' })
+    
+    // Número de página
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(8)
+    doc.text(`${pageNum}`, 195, 285, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7)
+    doc.text(`de ${totalPages}`, 195, 289, { align: 'right' })
   }
 
   // Agregar primera página
@@ -98,10 +121,25 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
 
+  // Sección con fondo
+  doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
+  doc.roundedRect(15, yPos - 5, 180, 65, 3, 3, 'F')
+  
+  // Borde decorativo
+  doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.setLineWidth(0.3)
+  doc.roundedRect(15, yPos - 5, 180, 65, 3, 3, 'S')
+
   // Columna Izquierda - Datos de Inspección
   let yLeft = yPos
-  doc.text('DATOS DE LA INSPECCIÓN', 20, yLeft)
-  yLeft += 7
+  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.roundedRect(18, yLeft - 3, 80, 6, 2, 2, 'F')
+  doc.setTextColor(255, 255, 255)
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(9)
+  doc.text('📋 DATOS DE LA INSPECCIÓN', 22, yLeft + 1)
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  yLeft += 9
 
   doc.setFont('helvetica', 'normal')
   const datosInspeccion = [
@@ -114,17 +152,26 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
   datosInspeccion.forEach(([label, value]) => {
     doc.setFont('helvetica', 'bold')
-    doc.text(label, 20, yLeft)
+    doc.setFontSize(8)
+    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+    doc.text(label, 22, yLeft)
     doc.setFont('helvetica', 'normal')
-    doc.text(value, 55, yLeft)
-    yLeft += 6
+    doc.setFontSize(9)
+    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+    doc.text(value, 58, yLeft)
+    yLeft += 5.5
   })
 
   // Columna Derecha - Datos del Vehículo
   let yRight = yPos
+  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.roundedRect(108, yRight - 3, 80, 6, 2, 2, 'F')
+  doc.setTextColor(255, 255, 255)
   doc.setFont('helvetica', 'bold')
-  doc.text('DATOS DEL VEHÍCULO', 110, yRight)
-  yRight += 7
+  doc.setFontSize(9)
+  doc.text('🚗 DATOS DEL VEHÍCULO', 112, yRight + 1)
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  yRight += 9
 
   doc.setFont('helvetica', 'normal')
   const datosVehiculo = [
@@ -138,13 +185,17 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
   datosVehiculo.forEach(([label, value]) => {
     doc.setFont('helvetica', 'bold')
-    doc.text(label, 110, yRight)
+    doc.setFontSize(8)
+    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+    doc.text(label, 112, yRight)
     doc.setFont('helvetica', 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     // Recortar texto largo
-    const maxWidth = 70
+    const maxWidth = 65
     const lines = doc.splitTextToSize(value, maxWidth)
-    doc.text(lines[0], 135, yRight)
-    yRight += 6
+    doc.text(lines[0], 138, yRight)
+    yRight += 5.5
   })
 
   yPos = Math.max(yLeft, yRight) + 10
@@ -165,23 +216,40 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     veredictoColor = [255, 193, 7] // Amarillo/Naranja
   }
 
-  // Cuadro de veredicto
+  // Cuadro de veredicto con sombra
+  // Sombra
+  doc.setFillColor(200, 200, 200)
+  doc.roundedRect(16, yPos + 1, 180, 18, 4, 4, 'F')
+  
+  // Cuadro principal
   doc.setFillColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
+  doc.roundedRect(15, yPos, 180, 18, 4, 4, 'F')
+  
+  // Icono según veredicto
+  let icono = '✓'
+  if (veredicto === 'RECHAZADA') icono = '✗'
+  if (veredicto === 'CONDICIONAL') icono = '⚠'
+  
   doc.setTextColor(255, 255, 255)
+  doc.setFontSize(16)
+  doc.text(icono, 25, yPos + 12)
+  
   doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.rect(15, yPos, 180, 15, 'F')
-  doc.text(`VEREDICTO FINAL: ${veredicto}`, 105, yPos + 10, { align: 'center' })
+  doc.text(`VEREDICTO FINAL: ${veredicto}`, 105, yPos + 12, { align: 'center' })
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yPos += 25
+  yPos += 28
 
   // ==================== TABLA DE ITEMS ====================
-  doc.setFontSize(12)
+  // Título de sección
+  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
+  doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(colorAcento[0], colorAcento[1], colorAcento[2])
-  doc.text('Detalle de la Verificación', 15, yPos)
-  doc.line(15, yPos + 2, 195, yPos + 2)
-  yPos += 10
+  doc.setTextColor(255, 255, 255)
+  doc.text('📝 DETALLE DE LA VERIFICACIÓN', 20, yPos + 3)
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  yPos += 12
 
   // Agrupar items por categoría
   const itemsPorCategoria: { [key: string]: typeof datos.items } = {}
@@ -215,21 +283,26 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     startY: yPos,
     head: [['Ítem Verificado', 'Estado', 'Observaciones']],
     body: tableData,
-    theme: 'grid',
+    theme: 'striped',
     headStyles: {
-      fillColor: [240, 240, 240],
-      textColor: colorTexto,
-      fontSize: 10,
+      fillColor: colorPrimario,
+      textColor: [255, 255, 255],
+      fontSize: 9,
       fontStyle: 'bold',
-      halign: 'center'
+      halign: 'center',
+      cellPadding: 4
     },
     bodyStyles: {
-      fontSize: 9,
-      textColor: colorTexto
+      fontSize: 8.5,
+      textColor: colorTexto,
+      cellPadding: 3
+    },
+    alternateRowStyles: {
+      fillColor: [249, 250, 251]
     },
     columnStyles: {
-      0: { cellWidth: 80, halign: 'left' },
-      1: { cellWidth: 30, halign: 'center' },
+      0: { cellWidth: 80, halign: 'left', fontStyle: 'normal' },
+      1: { cellWidth: 30, halign: 'center', fontStyle: 'bold' },
       2: { cellWidth: 70, halign: 'left' }
     },
     didParseCell: function(data) {
@@ -259,14 +332,18 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   // ==================== FIRMAS ====================
   if (yPos > 220) {
     doc.addPage()
-    yPos = 20
+    agregarHeader()
+    yPos = 60
   }
 
-  doc.setFontSize(12)
+  // Título de sección
+  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
+  doc.setFontSize(11)
   doc.setFont('helvetica', 'bold')
-  doc.setTextColor(colorAcento[0], colorAcento[1], colorAcento[2])
-  doc.text('Firmas Digitales', 15, yPos)
-  doc.line(15, yPos + 2, 195, yPos + 2)
+  doc.setTextColor(255, 255, 255)
+  doc.text('✍️ FIRMAS DIGITALES', 20, yPos + 3)
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yPos += 15
 
   // Firma Inspector
@@ -315,6 +392,8 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'normal')
   doc.text(datos.titular.nombre, 150, yPos + 45, { align: 'center' })
 
+  yPos += 10
+
   // ==================== PÁGINA DE FOTOS ====================
   // Combinar fotos generales con fotos de items
   const todasLasFotos: Array<{ tipo: string; path: string }> = [...datos.fotos]
@@ -331,13 +410,17 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
   if (todasLasFotos.length > 0) {
     doc.addPage()
-    yPos = 20
+    agregarHeader()
+    yPos = 60
 
-    doc.setFontSize(12)
+    // Título de sección
+    doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+    doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
+    doc.setFontSize(11)
     doc.setFont('helvetica', 'bold')
-    doc.setTextColor(colorAcento[0], colorAcento[1], colorAcento[2])
-    doc.text('Evidencia Fotográfica', 15, yPos)
-    doc.line(15, yPos + 2, 195, yPos + 2)
+    doc.setTextColor(255, 255, 255)
+    doc.text('📸 EVIDENCIA FOTOGRÁFICA', 20, yPos + 3)
+    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     yPos += 15
 
     const imgWidth = 85
@@ -348,22 +431,32 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
     todasLasFotos.forEach((foto, index) => {
       // Verificar si necesita nueva página
-      if (yPos + imgHeight + 15 > 270) {
+      if (yPos + imgHeight + 15 > 265) {
         doc.addPage()
-        yPos = 20
-        doc.setFontSize(12)
+        agregarHeader()
+        yPos = 60
+        doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+        doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
+        doc.setFontSize(11)
         doc.setFont('helvetica', 'bold')
-        doc.setTextColor(colorAcento[0], colorAcento[1], colorAcento[2])
-        doc.text('Evidencia Fotográfica (Continuación)', 15, yPos)
-        doc.line(15, yPos + 2, 195, yPos + 2)
+        doc.setTextColor(255, 255, 255)
+        doc.text('📸 EVIDENCIA FOTOGRÁFICA (Continuación)', 20, yPos + 3)
+        doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
         yPos += 15
         xPos = 15
         fotosEnFila = 0
       }
 
-      // Dibujar borde de la foto
-      doc.setDrawColor(209, 213, 219)
-      doc.rect(xPos, yPos, imgWidth, imgHeight + 10)
+      // Sombra del marco
+      doc.setFillColor(220, 220, 220)
+      doc.roundedRect(xPos + 1, yPos + 1, imgWidth, imgHeight + 10, 2, 2, 'F')
+      
+      // Marco de la foto
+      doc.setFillColor(255, 255, 255)
+      doc.roundedRect(xPos, yPos, imgWidth, imgHeight + 10, 2, 2, 'F')
+      doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
+      doc.setLineWidth(0.3)
+      doc.roundedRect(xPos, yPos, imgWidth, imgHeight + 10, 2, 2, 'S')
 
       // Intentar agregar imagen
       let imagenAgregada = false
