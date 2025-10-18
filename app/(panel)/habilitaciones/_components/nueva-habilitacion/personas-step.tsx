@@ -88,10 +88,22 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
     onChange(personas.filter((_, i) => i !== index))
   }
 
-  // Obtener info completa de persona por ID (simulado)
+  // Obtener info completa de persona por ID
   const getPersonaInfo = (persona_id: number) => {
     const persona = resultados.find(p => p.id === persona_id)
-    return persona || { nombre: `Persona ${persona_id}`, dni: '-' }
+    if (persona) return persona
+    
+    // Fallback con estructura completa
+    return { 
+      id: persona_id,
+      nombre: `Persona ${persona_id}`, 
+      dni: 'No disponible',
+      telefono: undefined,
+      email: undefined,
+      domicilio_calle: undefined,
+      domicilio_nro: undefined,
+      domicilio_localidad: undefined
+    }
   }
 
   return (
@@ -219,25 +231,48 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
                       <User className="h-6 w-6 text-blue-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900">{info.nombre}</div>
-                      <div className="flex items-center gap-3 text-sm text-gray-600 mt-1 flex-wrap">
-                        <span className="font-medium">DNI: {info.dni}</span>
-                        <span className="text-gray-400">•</span>
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-semibold text-gray-900">{info.nombre}</span>
                         <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full text-xs font-medium">
                           {persona.rol}
                         </span>
+                      </div>
+                      
+                      <div className="flex items-center gap-3 text-sm text-gray-600 flex-wrap">
+                        <span className="font-medium">DNI: {info.dni || 'No especificado'}</span>
                         {persona.licencia_categoria && (
                           <>
                             <span className="text-gray-400">•</span>
-                            <span className="text-gray-600">Lic: {persona.licencia_categoria}</span>
+                            <span className="flex items-center gap-1">
+                              <span className="font-medium">Licencia:</span> {persona.licencia_categoria}
+                            </span>
                           </>
                         )}
                       </div>
-                      {(info as any).telefono && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          📞 {(info as any).telefono}
-                        </div>
-                      )}
+                      
+                      <div className="flex flex-col gap-1 mt-2">
+                        {(info as any).telefono && (
+                          <div className="text-xs text-gray-600 flex items-center gap-1">
+                            <span>📞</span>
+                            <span className="font-medium">{(info as any).telefono}</span>
+                          </div>
+                        )}
+                        {(info as any).email && (
+                          <div className="text-xs text-gray-600 flex items-center gap-1">
+                            <span>✉️</span>
+                            <span>{(info as any).email}</span>
+                          </div>
+                        )}
+                        {(info as any).domicilio_calle && (
+                          <div className="text-xs text-gray-600 flex items-center gap-1">
+                            <span>📍</span>
+                            <span>
+                              {(info as any).domicilio_calle} {(info as any).domicilio_nro}
+                              {(info as any).domicilio_localidad && `, ${(info as any).domicilio_localidad}`}
+                            </span>
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button

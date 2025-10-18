@@ -196,15 +196,44 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                       <Car className="h-6 w-6 text-green-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900">{info.dominio}</div>
-                      <div className="text-sm text-gray-600 mt-1">
+                      <div className="font-bold text-gray-900 text-lg">{info.dominio}</div>
+                      <div className="text-sm text-gray-700 mt-1 font-medium">
                         {info.marca} {info.modelo} {info.ano && `(${info.ano})`}
                       </div>
-                      {info.tipo && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          Tipo: {info.tipo}
-                        </div>
-                      )}
+                      
+                      <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
+                        {info.tipo && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Tipo:</span> {info.tipo}
+                          </div>
+                        )}
+                        {(info as any).chasis && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Chasis:</span> {(info as any).chasis}
+                          </div>
+                        )}
+                        {(info as any).motor && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Motor:</span> {(info as any).motor}
+                          </div>
+                        )}
+                        {(info as any).asientos && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Asientos:</span> {(info as any).asientos}
+                          </div>
+                        )}
+                        {(info as any).Vencimiento_VTV && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">VTV vence:</span> {new Date((info as any).Vencimiento_VTV).toLocaleDateString('es-AR')}
+                          </div>
+                        )}
+                        {(info as any).Aseguradora && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">Seguro:</span> {(info as any).Aseguradora}
+                            {(info as any).poliza && ` - Póliza: ${(info as any).poliza}`}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button

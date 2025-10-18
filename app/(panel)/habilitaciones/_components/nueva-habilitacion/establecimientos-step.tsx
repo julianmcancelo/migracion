@@ -204,17 +204,46 @@ export function EstablecimientosStep({
                       <Building2 className="h-6 w-6 text-purple-600" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-gray-900">{info.nombre}</div>
-                      {info.direccion && (
-                        <div className="text-sm text-gray-600 mt-1">
-                          📍 {info.direccion}
-                        </div>
-                      )}
-                      {(info as any).localidad && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          {(info as any).localidad}
-                        </div>
-                      )}
+                      <div className="flex items-center gap-2 mb-1">
+                        <span className="font-bold text-gray-900">{info.nombre}</span>
+                        {(info as any).tipo && (
+                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                            {(info as any).tipo}
+                          </span>
+                        )}
+                      </div>
+                      
+                      <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
+                        {info.direccion && (
+                          <div className="flex items-center gap-1">
+                            <span>📍</span>
+                            <span className="font-medium">{info.direccion}</span>
+                          </div>
+                        )}
+                        {(info as any).localidad && (
+                          <div className="flex items-center gap-1">
+                            <span>🏙️</span>
+                            <span>{(info as any).localidad}</span>
+                          </div>
+                        )}
+                        {(info as any).telefono && (
+                          <div className="flex items-center gap-1">
+                            <span>📞</span>
+                            <span className="font-medium">{(info as any).telefono}</span>
+                          </div>
+                        )}
+                        {(info as any).email && (
+                          <div className="flex items-center gap-1">
+                            <span>✉️</span>
+                            <span>{(info as any).email}</span>
+                          </div>
+                        )}
+                        {(info as any).cue && (
+                          <div className="flex items-center gap-1">
+                            <span className="font-medium">CUE:</span> {(info as any).cue}
+                          </div>
+                        )}
+                      </div>
                     </div>
                   </div>
                   <Button
