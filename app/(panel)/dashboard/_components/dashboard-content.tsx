@@ -150,7 +150,7 @@ export function DashboardContent() {
                 {totales.vencidas > 0 ? 'Requieren acción' : 'Todo al día'}
               </span>
             </div>
-            <Link href="/panel/habilitaciones?filtro=vencidas" className="mt-4 block">
+            <Link href="/panel/habilitaciones" className="mt-4 block">
               <Button size="sm" variant="destructive" className="w-full">
                 Ver habilitaciones
               </Button>
@@ -175,9 +175,9 @@ export function DashboardContent() {
               <p className="text-4xl font-bold text-orange-600">{kpis.por_vencer}</p>
               <span className="text-sm text-orange-500 font-medium">Renovar pronto</span>
             </div>
-            <Link href="/panel/habilitaciones?filtro=por-vencer" className="mt-4 block">
+            <Link href="/panel/habilitaciones" className="mt-4 block">
               <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
-                Planificar renovación
+                Ver habilitaciones
               </Button>
             </Link>
           </div>
@@ -198,11 +198,9 @@ export function DashboardContent() {
               <p className="text-4xl font-bold text-green-600">-</p>
               <span className="text-sm text-green-500 font-medium">Próximamente</span>
             </div>
-            <Link href="/panel/inspecciones" className="mt-4 block">
-              <Button size="sm" className="w-full bg-green-500 hover:bg-green-600">
-                Ver inspecciones
-              </Button>
-            </Link>
+            <Button size="sm" className="w-full bg-green-500 hover:bg-green-600" disabled>
+              Próximamente
+            </Button>
           </div>
         </Card>
       </div>
@@ -319,7 +317,7 @@ export function DashboardContent() {
         
         {vencimientos && vencimientos.por_vencer.length > 5 && (
           <div className="mt-4 text-center">
-            <Link href="/panel/habilitaciones?filtro=vencimientos">
+            <Link href="/panel/habilitaciones">
               <Button variant="outline" className="w-full">
                 Ver todos los vencimientos ({vencimientos.por_vencer.length})
               </Button>
@@ -343,23 +341,21 @@ export function DashboardContent() {
             </button>
           </Link>
           
-          <Link href="/panel/inspecciones">
-            <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-green-300 bg-green-50 p-8 hover:border-green-500 hover:bg-green-100 transition-all group">
-              <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <CheckCircle2 className="h-7 w-7 text-white" />
-              </div>
-              <span className="text-base font-semibold text-gray-900">Nueva Inspección</span>
-            </button>
-          </Link>
+          <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 cursor-not-allowed opacity-60">
+            <div className="w-14 h-14 bg-gray-400 rounded-2xl flex items-center justify-center">
+              <CheckCircle2 className="h-7 w-7 text-white" />
+            </div>
+            <span className="text-base font-semibold text-gray-600">Nueva Inspección</span>
+            <span className="text-xs text-gray-500">Próximamente</span>
+          </button>
           
-          <Link href="/panel/turnos">
-            <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50 p-8 hover:border-purple-500 hover:bg-purple-100 transition-all group">
-              <div className="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Calendar className="h-7 w-7 text-white" />
-              </div>
-              <span className="text-base font-semibold text-gray-900">Asignar Turno</span>
-            </button>
-          </Link>
+          <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 cursor-not-allowed opacity-60">
+            <div className="w-14 h-14 bg-gray-400 rounded-2xl flex items-center justify-center">
+              <Calendar className="h-7 w-7 text-white" />
+            </div>
+            <span className="text-base font-semibold text-gray-600">Asignar Turno</span>
+            <span className="text-xs text-gray-500">Próximamente</span>
+          </button>
         </div>
       </Card>
     </div>
