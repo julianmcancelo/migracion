@@ -6,6 +6,7 @@ import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download } f
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
 import { DetalleModal } from './detalle-modal'
+import { EditarHabilitacionDialog } from './editar-habilitacion-dialog'
 import {
   Table,
   TableBody,
@@ -63,6 +64,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showVehiculoModal, setShowVehiculoModal] = useState(false)
   const [showPersonaModal, setShowPersonaModal] = useState(false)
   const [showDetalleModal, setShowDetalleModal] = useState(false)
+  const [showEditarDialog, setShowEditarDialog] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -81,7 +83,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   const handleEditar = (hab: any) => {
-    router.push(`/habilitaciones/${hab.id}/editar`)
+    setSelectedHabilitacion(hab)
+    setShowEditarDialog(true)
   }
 
   const handleAsignarTurno = (hab: any) => {
@@ -330,6 +333,17 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
         habilitacion={selectedHabilitacion}
         open={showDetalleModal}
         onClose={() => setShowDetalleModal(false)}
+      />
+
+      <EditarHabilitacionDialog
+        habilitacion={selectedHabilitacion}
+        open={showEditarDialog}
+        onClose={() => setShowEditarDialog(false)}
+        onSaved={() => {
+          setShowEditarDialog(false)
+          // Recargar la página para reflejar los cambios
+          router.refresh()
+        }}
       />
     </div>
   )

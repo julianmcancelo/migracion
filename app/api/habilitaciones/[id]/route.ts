@@ -166,3 +166,118 @@ export async function GET(
     )
   }
 }
+
+/**
+ * PUT /api/habilitaciones/[id]
+ * Actualiza una habilitación existente
+ */
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const { id } = params
+    const body = await request.json()
+
+    if (!id || isNaN(Number(id))) {
+      return NextResponse.json(
+        { success: false, error: 'ID inválido' },
+        { status: 400 }
+      )
+    }
+
+    // Verificar que la habilitación exista
+    // @ts-ignore
+    const habilitacionExistente = await prisma.habilitaciones_generales.findUnique({
+      where: { id: Number(id) },
+    })
+
+    if (!habilitacionExistente) {
+      return NextResponse.json(
+        { success: false, error: 'Habilitación no encontrada' },
+        { status: 404 }
+      )
+    }
+
+    // Usar transacción para mantener integridad
+    const habilitacionActualizada = await prisma.$transaction(async (tx) => {
+      // 1. Actualizar datos básicos
+      // @ts-ignore
+      const hab = await tx.habilitaciones_generales.update({
+        where: { id: Number(id) },
+        data: {
+          tipo_transporte: body.tipo_transporte,
+          estado: body.estado,
+          nro_licencia: body.nro_licencia,
+          expte: body.expte,
+          resolucion: body.resolucion || null,
+          anio: body.anio ? parseInt(body.anio) : null,
+          vigencia_inicio: body.vigencia_inicio ? new Date(body.vigencia_inicio) : null,
+          vigencia_fin: body.vigencia_fin ? new Date(body.vigencia_fin) : null,
+          observaciones: body.observaciones || null,
+          oblea_colocada: body.oblea_colocada || false,
+        },
+      })
+
+      // 2. Actualizar personas (eliminar y recrear)
+      if (body.personas && Array.isArray(body.personas)) {
+        // Eliminar todas las personas existentes
+        // @ts-ignore
+        await tx.habilitaciones_personas.deleteMany({
+          where: { 
+            habilitacion_id: Number(id),
+            rol: { in: ['TITULAR', 'CONDUCTOR', 'CHOFER', 'CELADOR'] }
+          },
+        })
+
+        // Crear nuevas relaciones
+        for (const persona of body.personas) {
+          // @ts-ignore
+          await tx.habilitaciones_personas.create({
+            data: {
+              habilitacion_id: Number(id),
+              persona_id: persona.persona_id,
+              rol: persona.rol,
+              licencia_categoria: persona.licencia_categoria || null,
+            },
+          })
+        }
+      }
+
+      // 3. Actualizar vehículos (eliminar y recrear)
+      if (body.vehiculos && Array.isArray(body.vehiculos)) {
+        // Eliminar todos los vehículos existentes
+        // @ts-ignore
+        await tx.habilitaciones_vehiculos.deleteMany({
+          where: { habilitacion_id: Number(id) },
+        })
+
+        // Crear nuevas relaciones
+        for (const vehiculo of body.vehiculos) {
+          // @ts-ignore
+          await tx.habilitaciones_vehiculos.create({
+            data: {
+              habilitacion_id: Number(id),
+              vehiculo_id: vehiculo.vehiculo_id,
+            },
+          })
+        }
+      }
+
+      return hab
+    })
+
+    return NextResponse.json({
+      success: true,
+      message: 'Habilitación actualizada exitosamente',
+      data: habilitacionActualizada,
+    })
+
+  } catch (error: any) {
+    console.error('Error al actualizar habilitación:', error)
+    return NextResponse.json(
+      { success: false, error: 'Error al actualizar habilitación', details: error.message },
+      { status: 500 }
+    )
+  }
+}

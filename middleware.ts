@@ -7,7 +7,7 @@ const secret = new TextEncoder().encode(
 )
 
 // Rutas que requieren autenticación
-const protectedRoutes = ['/panel']
+const protectedRoutes = ['/dashboard', '/habilitaciones', '/inspecciones', '/turnos']
 
 // Rutas solo para invitados (no autenticados)
 const guestOnlyRoutes = ['/login']
@@ -28,8 +28,16 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Proteger rutas que requieren autenticación
-  if (protectedRoutes.some(route => pathname.startsWith(route))) {
+  // Rutas públicas de turnos (no requieren autenticación)
+  const publicTurnosRoutes = [
+    '/turnos/confirmar/',
+    '/turnos/cancelar/',
+    '/turnos/reprogramar/'
+  ]
+  const isPublicTurnosRoute = publicTurnosRoutes.some(route => pathname.startsWith(route))
+
+  // Proteger rutas que requieren autenticación (excepto rutas públicas de turnos)
+  if (protectedRoutes.some(route => pathname.startsWith(route)) && !isPublicTurnosRoute) {
     if (!isAuthenticated) {
       const loginUrl = new URL('/login', request.url)
       loginUrl.searchParams.set('error', 'acceso_denegado')
@@ -40,7 +48,7 @@ export async function middleware(request: NextRequest) {
   // Redirigir usuarios autenticados desde páginas de invitados
   if (guestOnlyRoutes.some(route => pathname.startsWith(route))) {
     if (isAuthenticated) {
-      return NextResponse.redirect(new URL('/panel', request.url))
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
   }
 
@@ -52,11 +60,14 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - api/auth (API routes de autenticación)
+     * - api/turnos/.../confirmar-publico (confirmación pública)
+     * - api/turnos/.../cancelar-publico (cancelación pública)
+     * - api/turnos/.../reprogramar-publico (reprogramación pública)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/auth|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
+    '/((?!api/auth|api/turnos/.*/(confirmar|cancelar|reprogramar)-publico|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
   ],
 }

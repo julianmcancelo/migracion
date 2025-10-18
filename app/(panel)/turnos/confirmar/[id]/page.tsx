@@ -21,10 +21,9 @@ export default function ConfirmarTurnoPage() {
 
   const confirmarTurno = async () => {
     try {
-      const response = await fetch(`/api/turnos/${params.id}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ estado: 'CONFIRMADO' })
+      const response = await fetch(`/api/turnos/${params.id}/confirmar-publico`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
       })
 
       const data = await response.json()

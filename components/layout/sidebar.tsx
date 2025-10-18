@@ -31,22 +31,22 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
   const navigation: NavItem[] = [
     {
       name: 'Dashboard',
-      href: '/panel/dashboard',
+      href: '/dashboard',
       icon: LayoutDashboard,
     },
     {
       name: 'Habilitaciones',
-      href: '/panel/habilitaciones',
+      href: '/habilitaciones',
       icon: ClipboardList,
     },
     {
       name: 'Inspecciones',
-      href: '/panel/inspecciones',
+      href: '/inspecciones',
       icon: CheckCircle,
     },
     {
       name: 'Turnos',
-      href: '/panel/turnos',
+      href: '/turnos',
       icon: Calendar,
       badge: 3,
     },

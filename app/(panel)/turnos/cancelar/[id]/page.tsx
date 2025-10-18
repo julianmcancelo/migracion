@@ -25,8 +25,8 @@ export default function CancelarTurnoPage() {
   const cancelarTurno = async () => {
     setConfirming(true)
     try {
-      const response = await fetch(`/api/turnos/${params.id}`, {
-        method: 'DELETE'
+      const response = await fetch(`/api/turnos/${params.id}/cancelar-publico`, {
+        method: 'POST'
       })
 
       const data = await response.json()

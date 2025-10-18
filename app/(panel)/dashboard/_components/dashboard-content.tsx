@@ -150,7 +150,7 @@ export function DashboardContent() {
                 {totales.vencidas > 0 ? 'Requieren acción' : 'Todo al día'}
               </span>
             </div>
-            <Link href="/panel/habilitaciones" className="mt-4 block">
+            <Link href="/habilitaciones" className="mt-4 block">
               <Button size="sm" variant="destructive" className="w-full">
                 Ver habilitaciones
               </Button>
@@ -175,7 +175,7 @@ export function DashboardContent() {
               <p className="text-4xl font-bold text-orange-600">{kpis.por_vencer}</p>
               <span className="text-sm text-orange-500 font-medium">Renovar pronto</span>
             </div>
-            <Link href="/panel/habilitaciones" className="mt-4 block">
+            <Link href="/habilitaciones" className="mt-4 block">
               <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
                 Ver habilitaciones
               </Button>
@@ -317,7 +317,7 @@ export function DashboardContent() {
         
         {vencimientos && vencimientos.por_vencer.length > 5 && (
           <div className="mt-4 text-center">
-            <Link href="/panel/habilitaciones">
+            <Link href="/habilitaciones">
               <Button variant="outline" className="w-full">
                 Ver todos los vencimientos ({vencimientos.por_vencer.length})
               </Button>
@@ -330,7 +330,7 @@ export function DashboardContent() {
       <Card className="p-6">
         <h2 className="text-xl font-bold text-gray-900 mb-6">Acciones Rápidas</h2>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <Link href="/panel/habilitaciones">
+          <Link href="/habilitaciones">
             <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-8 hover:border-blue-500 hover:bg-blue-100 transition-all group">
               <div className="w-14 h-14 bg-blue-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
                 <svg className="h-7 w-7 text-white" fill="none" viewBox="0 0 24 24" strokeWidth="2" stroke="currentColor">

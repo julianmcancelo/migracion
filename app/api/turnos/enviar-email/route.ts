@@ -60,24 +60,30 @@ export async function POST(request: Request) {
       box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     }
     .header { 
-      background: linear-gradient(135deg, #1E40AF 0%, #3B82F6 50%, #60A5FA 100%);
-      color: white; 
-      padding: 40px 30px;
+      background: #FFFFFF;
+      color: #1F2937; 
+      padding: 30px 30px 20px 30px;
       text-align: center;
       position: relative;
+      border-bottom: 4px solid #2563EB;
     }
     .logo { 
-      width: 80px; 
-      height: 80px; 
-      background: rgba(255, 255, 255, 0.2);
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      font-size: 40px;
-      backdrop-filter: blur(10px);
-      border: 3px solid rgba(255, 255, 255, 0.3);
+      width: 120px; 
+      height: auto; 
+      margin: 0 auto 15px;
+      display: block;
+    }
+    .municipality-name {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1F2937;
+      margin: 10px 0 5px 0;
+    }
+    .department-name {
+      font-size: 16px;
+      color: #6B7280;
+      margin: 0 0 5px 0;
+      font-weight: 500;
     }
     .header h1 { 
       margin: 0; 
@@ -232,10 +238,12 @@ export async function POST(request: Request) {
 <body>
   <div class="container">
     <div class="header">
-      <div class="logo">🏛️</div>
-      <h1>Turno Confirmado</h1>
-      <p>Dirección de Movilidad y Transporte</p>
-      <p style="font-size: 14px; margin-top: 4px;">Municipalidad de Lanús</p>
+      <img src="https://www.lanus.gob.ar/logo-200.png" alt="Municipalidad de Lanús" class="logo" />
+      <h1 class="municipality-name">Municipalidad de Lanús</h1>
+      <p class="department-name">Dirección General de Movilidad y Transporte</p>
+      <div style="background: linear-gradient(135deg, #2563EB, #3B82F6); color: white; padding: 15px; border-radius: 8px; margin-top: 15px;">
+        <strong style="font-size: 20px;">✅ Turno Confirmado</strong>
+      </div>
     </div>
     
     <div class="content">
@@ -286,23 +294,41 @@ export async function POST(request: Request) {
       <div class="divider"></div>
       
       <div class="alert">
-        <strong>⚠️ Importante:</strong>
+        <strong>⚠️ Importante - Requisitos para la Inspección:</strong>
         <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-          <li>Presentarse con <strong>15 minutos de anticipación</strong></li>
-          <li>Traer <strong>documentación del vehículo</strong> en regla</li>
-          <li>El vehículo debe estar en <strong>condiciones óptimas</strong></li>
-          <li>Traer <strong>DNI del titular</strong> y <strong>cédula verde</strong></li>
+          <li>Presentarse con <strong>15 minutos de anticipación</strong> a la hora asignada</li>
+          <li>Traer <strong>DNI original del titular</strong> de la habilitación</li>
+          <li>Presentar <strong>Cédula Verde o Azul</strong> del vehículo</li>
+          <li>El vehículo debe contar con <strong>VTV vigente</strong></li>
+          <li>Traer <strong>Póliza de seguro vigente</strong> (original y copia)</li>
+          <li>El vehículo debe estar en <strong>perfectas condiciones mecánicas</strong></li>
+          <li>Traer <strong>habilitación anterior</strong> (si corresponde renovación)</li>
+          <li>Asegúrese que el vehículo esté <strong>limpio y en condiciones</strong> para la inspección</li>
         </ul>
       </div>
       
+      <div style="background: #F0F9FF; border: 2px solid #0284C7; border-radius: 10px; padding: 20px; margin: 25px 0;">
+        <strong style="color: #0369A1; font-size: 16px; display: block; margin-bottom: 12px;">📍 Lugar de la Inspección:</strong>
+        <p style="margin: 8px 0; color: #1F2937;"><strong>Dirección General de Movilidad y Transporte</strong></p>
+        <p style="margin: 8px 0; color: #374151;">Municipalidad de Lanús</p>
+        <p style="margin: 8px 0; color: #374151;">Av. Hipólito Yrigoyen 3863, Lanús Oeste</p>
+        <p style="margin: 8px 0; color: #374151;">Código Postal: 1824</p>
+      </div>
+      
       <div class="contact-box">
-        <h4>📞 ¿Necesita Ayuda?</h4>
-        <p><strong>Dirección Gral. de Movilidad y Transporte</strong></p>
+        <h4>📞 Consultas y Asistencia</h4>
+        <p><strong>Dirección General de Movilidad y Transporte</strong></p>
         <p>Municipalidad de Lanús</p>
-        <p>📞 Teléfono: <strong>4357-5100</strong> interno <strong>7137</strong></p>
-        <p>📧 Email: <a href="mailto:transportepublicolanus@gmail.com">transportepublicolanus@gmail.com</a></p>
+        <div style="margin: 15px 0; padding: 15px; background: white; border-radius: 8px;">
+          <p style="margin: 5px 0;">📞 <strong>Teléfono:</strong> 4357-5100 interno 7137</p>
+          <p style="margin: 5px 0;">📧 <strong>Email:</strong> <a href="mailto:transportepublicolanus@gmail.com">transportepublicolanus@gmail.com</a></p>
+          <p style="margin: 5px 0;">🌐 <strong>Web:</strong> <a href="https://www.lanus.gob.ar">www.lanus.gob.ar</a></p>
+        </div>
         <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #D1D5DB; font-size: 14px; color: #6B7280;">
-          ⏰ Horario de atención: <strong>Lunes a Viernes de 8:00 a 16:00 hs</strong>
+          ⏰ <strong>Horario de atención:</strong> Lunes a Viernes de 8:00 a 16:00 hs
+        </p>
+        <p style="font-size: 13px; color: #9CA3AF; margin-top: 12px;">
+          Para consultas fuera del horario de atención, envíenos un email y le responderemos a la brevedad.
         </p>
       </div>
     </div>
