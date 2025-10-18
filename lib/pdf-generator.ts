@@ -14,6 +14,7 @@ interface DatosInspeccion {
   }
   titular: {
     nombre: string
+    dni?: string
   }
   vehiculo: {
     dominio: string
@@ -24,8 +25,10 @@ interface DatosInspeccion {
   }
   items: Array<{
     nombre: string
+    categoria?: string
     estado: string
     observacion: string
+    foto_path?: string
   }>
   fotos: Array<{
     tipo: string
@@ -104,9 +107,9 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   const datosInspeccion = [
     [`N° Inspección:`, datos.inspeccion.id.toString()],
     [`N° Licencia:`, datos.inspeccion.nro_licencia],
+    [`Tipo Transporte:`, datos.inspeccion.tipo_transporte || 'N/A'],
     [`Fecha:`, new Date(datos.inspeccion.fecha).toLocaleString('es-AR')],
-    [`Inspector:`, datos.inspeccion.inspector],
-    [`Resultado:`, datos.inspeccion.resultado || 'Pendiente']
+    [`Inspector:`, datos.inspeccion.inspector]
   ]
 
   datosInspeccion.forEach(([label, value]) => {
@@ -126,8 +129,10 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'normal')
   const datosVehiculo = [
     [`Titular:`, datos.titular.nombre],
+    [`DNI:`, datos.titular.dni || 'N/A'],
     [`Dominio:`, datos.vehiculo.dominio],
-    [`Vehículo:`, `${datos.vehiculo.marca} ${datos.vehiculo.modelo} (${datos.vehiculo.ano})`],
+    [`Vehículo:`, `${datos.vehiculo.marca} ${datos.vehiculo.modelo}`],
+    [`Año:`, datos.vehiculo.ano],
     [`Chasis:`, datos.vehiculo.chasis]
   ]
 
@@ -144,6 +149,32 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
   yPos = Math.max(yLeft, yRight) + 10
 
+  // ==================== VEREDICTO ====================
+  // Calcular veredicto automático
+  const malCount = datos.items.filter(item => item.estado.toLowerCase() === 'mal').length
+  const regularCount = datos.items.filter(item => item.estado.toLowerCase() === 'regular').length
+  
+  let veredicto = 'APROBADA'
+  let veredictoColor: [number, number, number] = [76, 175, 80] // Verde
+  
+  if (malCount > 0) {
+    veredicto = 'RECHAZADA'
+    veredictoColor = [244, 67, 54] // Rojo
+  } else if (regularCount >= 3) {
+    veredicto = 'CONDICIONAL'
+    veredictoColor = [255, 193, 7] // Amarillo/Naranja
+  }
+
+  // Cuadro de veredicto
+  doc.setFillColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(14)
+  doc.setFont('helvetica', 'bold')
+  doc.rect(15, yPos, 180, 15, 'F')
+  doc.text(`VEREDICTO FINAL: ${veredicto}`, 105, yPos + 10, { align: 'center' })
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  yPos += 25
+
   // ==================== TABLA DE ITEMS ====================
   doc.setFontSize(12)
   doc.setFont('helvetica', 'bold')
@@ -152,24 +183,45 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.line(15, yPos + 2, 195, yPos + 2)
   yPos += 10
 
-  // Preparar datos para la tabla
-  const tableData = datos.items.map(item => [
-    item.nombre.replace(/_/g, ' ').toUpperCase(),
-    item.estado.toUpperCase(),
-    item.observacion || '-'
-  ])
+  // Agrupar items por categoría
+  const itemsPorCategoria: { [key: string]: typeof datos.items } = {}
+  datos.items.forEach(item => {
+    const categoria = item.categoria || 'GENERAL'
+    if (!itemsPorCategoria[categoria]) {
+      itemsPorCategoria[categoria] = []
+    }
+    itemsPorCategoria[categoria].push(item)
+  })
+
+  // Preparar datos para la tabla con categorías
+  const tableData: any[] = []
+  Object.keys(itemsPorCategoria).sort().forEach(categoria => {
+    // Fila de categoría
+    tableData.push([
+      { content: categoria.toUpperCase(), colSpan: 3, styles: { fillColor: [220, 220, 220], fontStyle: 'bold', halign: 'left' } }
+    ])
+    
+    // Items de la categoría
+    itemsPorCategoria[categoria].forEach(item => {
+      tableData.push([
+        item.nombre.replace(/_/g, ' '),
+        item.estado.toUpperCase(),
+        item.observacion || '-'
+      ])
+    })
+  })
 
   autoTable(doc, {
     startY: yPos,
     head: [['Ítem Verificado', 'Estado', 'Observaciones']],
     body: tableData,
-    theme: 'striped',
+    theme: 'grid',
     headStyles: {
-      fillColor: colorAcento,
-      textColor: [255, 255, 255],
+      fillColor: [240, 240, 240],
+      textColor: colorTexto,
       fontSize: 10,
       fontStyle: 'bold',
-      halign: 'left'
+      halign: 'center'
     },
     bodyStyles: {
       fontSize: 9,
@@ -181,15 +233,20 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       2: { cellWidth: 70, halign: 'left' }
     },
     didParseCell: function(data) {
-      // Colorear celdas de estado
+      // Colorear celdas de estado (solo si no es una fila de categoría)
       if (data.column.index === 1 && data.section === 'body') {
-        const estado = data.cell.text[0].toLowerCase()
-        if (estado === 'bien') {
-          data.cell.styles.fillColor = [220, 252, 231] // Verde claro
-        } else if (estado === 'regular') {
-          data.cell.styles.fillColor = [254, 249, 195] // Amarillo claro
-        } else if (estado === 'mal') {
-          data.cell.styles.fillColor = [254, 226, 226] // Rojo claro
+        const cellContent = data.cell.text[0]?.toLowerCase() || ''
+        // Verificar que no sea una fila de categoría (que tendría colSpan)
+        const isCategory = typeof data.cell.raw === 'object' && data.cell.raw !== null && 'colSpan' in data.cell.raw
+        
+        if (!isCategory) {
+          if (cellContent === 'bien') {
+            data.cell.styles.fillColor = [200, 255, 200] // Verde claro
+          } else if (cellContent === 'regular') {
+            data.cell.styles.fillColor = [255, 255, 200] // Amarillo claro
+          } else if (cellContent === 'mal') {
+            data.cell.styles.fillColor = [255, 200, 200] // Rojo claro
+          }
         }
       }
     },
@@ -231,6 +288,9 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   doc.text('Firma del Inspector', 60, yPos + 40, { align: 'center' })
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.inspeccion.inspector, 60, yPos + 45, { align: 'center' })
 
   // Firma Contribuyente
   if (datos.inspeccion.firma_contribuyente) {
@@ -251,9 +311,25 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   doc.text('Firma del Contribuyente', 150, yPos + 40, { align: 'center' })
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.titular.nombre, 150, yPos + 45, { align: 'center' })
 
   // ==================== PÁGINA DE FOTOS ====================
-  if (datos.fotos.length > 0) {
+  // Combinar fotos generales con fotos de items
+  const todasLasFotos: Array<{ tipo: string; path: string }> = [...datos.fotos]
+  
+  // Agregar fotos de items individuales
+  datos.items.forEach(item => {
+    if (item.foto_path) {
+      todasLasFotos.push({
+        tipo: `Evidencia: ${item.nombre}`,
+        path: item.foto_path
+      })
+    }
+  })
+
+  if (todasLasFotos.length > 0) {
     doc.addPage()
     yPos = 20
 
@@ -270,7 +346,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     let xPos = 15
     let fotosEnFila = 0
 
-    datos.fotos.forEach((foto, index) => {
+    todasLasFotos.forEach((foto, index) => {
       // Verificar si necesita nueva página
       if (yPos + imgHeight + 15 > 270) {
         doc.addPage()

@@ -24,6 +24,9 @@ export async function GET(
     const inspeccion = await prisma.inspecciones.findUnique({
       where: { id: Number(id) },
       include: {
+        inspeccion_detalles: {
+          orderBy: { id: 'asc' }
+        },
         inspeccion_items: true,
         inspeccion_fotos: {
           orderBy: { id: 'asc' }
@@ -81,7 +84,8 @@ export async function GET(
         firma_contribuyente: inspeccion.firma_contribuyente || null
       },
       titular: {
-        nombre: habPersona?.persona?.nombre || 'N/A'
+        nombre: habPersona?.persona?.nombre || 'N/A',
+        dni: habPersona?.persona?.dni || 'N/A'
       },
       vehiculo: {
         dominio: habVehiculo?.vehiculo?.dominio || 'N/A',
@@ -90,10 +94,15 @@ export async function GET(
         ano: habVehiculo?.vehiculo?.ano?.toString() || 'N/A',
         chasis: habVehiculo?.vehiculo?.chasis || 'N/A'
       },
-      items: inspeccion.inspeccion_items.map(item => ({
-        nombre: item.item_id_original,
+      items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0 
+        ? inspeccion.inspeccion_detalles 
+        : inspeccion.inspeccion_items
+      ).map((item: any) => ({
+        nombre: item.nombre_item || item.item_id_original,
+        categoria: item.item_id || 'GENERAL', // Usar item_id como categoría
         estado: item.estado,
-        observacion: item.observacion || ''
+        observacion: item.observacion || '',
+        foto_path: item.foto_path || undefined
       })),
       fotos: inspeccion.inspeccion_fotos.map(foto => ({
         tipo: foto.tipo_foto || 'Adicional',
