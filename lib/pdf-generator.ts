@@ -58,9 +58,14 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.rect(0, 0, 210, 40, 'F')
     
-    // Franja decorativa inferior
+    // Franja decorativa inferior con patrón
     doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
     doc.rect(0, 40, 210, 3, 'F')
+    
+    // Líneas decorativas blancas
+    doc.setDrawColor(255, 255, 255)
+    doc.setLineWidth(0.5)
+    doc.line(15, 38, 195, 38)
 
     // Marca de agua
     doc.setFontSize(80)
@@ -71,17 +76,25 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     })
 
     // Título principal
-    doc.setFontSize(20)
+    doc.setFontSize(22)
     doc.setTextColor(255, 255, 255)
     doc.setFont('helvetica', 'bold')
-    doc.text('INFORME DE INSPECCIÓN VEHICULAR', 105, 18, { align: 'center' })
+    doc.text('INFORME DE INSPECCIÓN VEHICULAR', 105, 16, { align: 'center' })
 
     // Subtítulo
     doc.setFontSize(10)
     doc.setFont('helvetica', 'normal')
-    doc.text('Municipalidad de Lanús', 105, 26, { align: 'center' })
-    doc.setFontSize(9)
-    doc.text('Dirección General de Movilidad y Transporte', 105, 32, { align: 'center' })
+    doc.text('Municipalidad de Lanús', 105, 24, { align: 'center' })
+    doc.setFontSize(8.5)
+    doc.text('Dirección General de Movilidad y Transporte', 105, 30, { align: 'center' })
+    
+    // Info de inspección en header
+    doc.setFontSize(7.5)
+    doc.setFont('helvetica', 'bold')
+    doc.text(`Inspeccion N° ${datos.inspeccion.id}`, 195, 36, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(7)
+    doc.text(new Date(datos.inspeccion.fecha).toLocaleDateString('es-AR'), 195, 39.5, { align: 'right' })
 
     yPos = 52
   }
@@ -121,14 +134,22 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
 
-  // Sección con fondo
-  doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
+  // Sección con fondo y sombra
+  doc.setFillColor(210, 210, 210)
+  doc.roundedRect(16, yPos - 4, 180, 65, 3, 3, 'F')
+  
+  doc.setFillColor(255, 255, 255)
   doc.roundedRect(15, yPos - 5, 180, 65, 3, 3, 'F')
   
   // Borde decorativo
   doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.setLineWidth(0.3)
+  doc.setLineWidth(0.5)
   doc.roundedRect(15, yPos - 5, 180, 65, 3, 3, 'S')
+  
+  // Línea divisoria vertical
+  doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
+  doc.setLineWidth(0.3)
+  doc.line(105, yPos - 3, 105, yPos + 58)
 
   // Columna Izquierda - Datos de Inspección
   let yLeft = yPos
@@ -150,15 +171,19 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     [`Inspector:`, datos.inspeccion.inspector]
   ]
 
-  datosInspeccion.forEach(([label, value]) => {
+  datosInspeccion.forEach(([label, value], index) => {
+    // Bullet point decorativo
+    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
+    doc.circle(20, yLeft - 1, 1, 'F')
+    
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text(label, 22, yLeft)
+    doc.text(label, 24, yLeft)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    doc.text(value, 58, yLeft)
+    doc.text(value, 60, yLeft)
     yLeft += 5.5
   })
 
@@ -183,18 +208,22 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     [`Chasis:`, datos.vehiculo.chasis]
   ]
 
-  datosVehiculo.forEach(([label, value]) => {
+  datosVehiculo.forEach(([label, value], index) => {
+    // Bullet point decorativo
+    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
+    doc.circle(110, yRight - 1, 1, 'F')
+    
     doc.setFont('helvetica', 'bold')
     doc.setFontSize(8)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text(label, 112, yRight)
+    doc.text(label, 114, yRight)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     // Recortar texto largo
     const maxWidth = 65
     const lines = doc.splitTextToSize(value, maxWidth)
-    doc.text(lines[0], 138, yRight)
+    doc.text(lines[0], 140, yRight)
     yRight += 5.5
   })
 
@@ -216,29 +245,46 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     veredictoColor = [255, 193, 7] // Amarillo/Naranja
   }
 
-  // Cuadro de veredicto con sombra
+  // Cuadro de veredicto con diseño mejorado
   // Sombra
-  doc.setFillColor(200, 200, 200)
-  doc.roundedRect(16, yPos + 1, 180, 18, 4, 4, 'F')
+  doc.setFillColor(190, 190, 190)
+  doc.roundedRect(16.5, yPos + 1.5, 180, 20, 5, 5, 'F')
   
-  // Cuadro principal
+  // Cuadro principal con gradiente simulado
+  doc.setFillColor(veredictoColor[0] - 10, veredictoColor[1] - 10, veredictoColor[2] - 10)
+  doc.roundedRect(15, yPos, 180, 20, 5, 5, 'F')
   doc.setFillColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
-  doc.roundedRect(15, yPos, 180, 18, 4, 4, 'F')
+  doc.roundedRect(15, yPos, 180, 17, 5, 5, 'F')
+  
+  // Borde decorativo
+  doc.setDrawColor(255, 255, 255)
+  doc.setLineWidth(1)
+  doc.roundedRect(17, yPos + 2, 176, 13, 4, 4, 'S')
   
   // Icono según veredicto
   let icono = '✓'
   if (veredicto === 'RECHAZADA') icono = '✗'
   if (veredicto === 'CONDICIONAL') icono = '⚠'
   
-  doc.setTextColor(255, 255, 255)
+  // Círculo para el icono
+  doc.setFillColor(255, 255, 255)
+  doc.circle(28, yPos + 10, 4.5, 'F')
+  doc.setTextColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
   doc.setFontSize(16)
-  doc.text(icono, 25, yPos + 12)
+  doc.text(icono, 28, yPos + 12.5, { align: 'center' })
   
-  doc.setFontSize(14)
+  doc.setTextColor(255, 255, 255)
+  doc.setFontSize(15)
   doc.setFont('helvetica', 'bold')
   doc.text(`VEREDICTO FINAL: ${veredicto}`, 105, yPos + 12, { align: 'center' })
+  
+  // Estadísticas pequeñas
+  doc.setFontSize(7)
+  doc.setFont('helvetica', 'normal')
+  doc.text(`Items mal: ${malCount} | Items regular: ${regularCount}`, 105, yPos + 17, { align: 'center' })
+  
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yPos += 28
+  yPos += 30
 
   // ==================== TABLA DE ITEMS ====================
   // Título de sección
@@ -344,55 +390,85 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(255, 255, 255)
   doc.text('FIRMAS DIGITALES', 20, yPos + 3)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yPos += 15
+  yPos += 18
+  
+  // Cajas para las firmas
+  // Caja Inspector
+  doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
+  doc.roundedRect(20, yPos - 3, 75, 50, 3, 3, 'F')
+  doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
+  doc.setLineWidth(0.3)
+  doc.roundedRect(20, yPos - 3, 75, 50, 3, 3, 'S')
+  
+  // Caja Contribuyente
+  doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
+  doc.roundedRect(115, yPos - 3, 75, 50, 3, 3, 'F')
+  doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
+  doc.roundedRect(115, yPos - 3, 75, 50, 3, 3, 'S')
 
   // Firma Inspector
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('INSPECTOR', 57.5, yPos + 2, { align: 'center' })
+  
   if (datos.inspeccion.firma_inspector) {
     try {
-      doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 30, yPos, 60, 30)
+      doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 27, yPos + 5, 60, 25)
     } catch (e) {
-      doc.setFontSize(9)
+      doc.setFontSize(8)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('Firma no disponible', 60, yPos + 15, { align: 'center' })
+      doc.text('Firma no disponible', 57.5, yPos + 18, { align: 'center' })
     }
   } else {
-    doc.setFontSize(9)
+    doc.setFontSize(8)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text('Firma no registrada', 60, yPos + 15, { align: 'center' })
+    doc.text('Firma no registrada', 57.5, yPos + 18, { align: 'center' })
   }
-  doc.line(30, yPos + 35, 90, yPos + 35)
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  doc.text('Firma del Inspector', 60, yPos + 40, { align: 'center' })
-  doc.setFontSize(9)
+  
+  doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.setLineWidth(0.5)
+  doc.line(27, yPos + 32, 88, yPos + 32)
+  doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.inspeccion.inspector, 60, yPos + 45, { align: 'center' })
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  doc.text(datos.inspeccion.inspector, 57.5, yPos + 37, { align: 'center' })
+  doc.setFontSize(7)
+  doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+  doc.text('Inspector Municipal', 57.5, yPos + 41, { align: 'center' })
 
   // Firma Contribuyente
+  doc.setFontSize(8)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('CONTRIBUYENTE', 152.5, yPos + 2, { align: 'center' })
+  
   if (datos.inspeccion.firma_contribuyente) {
     try {
-      doc.addImage(datos.inspeccion.firma_contribuyente, 'PNG', 120, yPos, 60, 30)
+      doc.addImage(datos.inspeccion.firma_contribuyente, 'PNG', 122, yPos + 5, 60, 25)
     } catch (e) {
-      doc.setFontSize(9)
+      doc.setFontSize(8)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('Firma no disponible', 150, yPos + 15, { align: 'center' })
+      doc.text('Firma no disponible', 152.5, yPos + 18, { align: 'center' })
     }
   } else {
-    doc.setFontSize(9)
+    doc.setFontSize(8)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text('Firma no registrada', 150, yPos + 15, { align: 'center' })
+    doc.text('Firma no registrada', 152.5, yPos + 18, { align: 'center' })
   }
-  doc.line(120, yPos + 35, 180, yPos + 35)
-  doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  doc.text('Firma del Contribuyente', 150, yPos + 40, { align: 'center' })
-  doc.setFontSize(9)
+  
+  doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.setLineWidth(0.5)
+  doc.line(122, yPos + 32, 183, yPos + 32)
+  doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.titular.nombre, 150, yPos + 45, { align: 'center' })
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  doc.text(datos.titular.nombre, 152.5, yPos + 37, { align: 'center' })
+  doc.setFontSize(7)
+  doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+  doc.text('Titular del Vehiculo', 152.5, yPos + 41, { align: 'center' })
 
-  yPos += 10
+  yPos += 50
 
   // ==================== PÁGINA DE FOTOS ====================
   // Combinar fotos generales con fotos de items
