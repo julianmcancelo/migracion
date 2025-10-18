@@ -70,46 +70,70 @@ export async function GET(
       tipo_transporte: habilitacion.tipo_transporte,
       expte: habilitacion.expte,
       observaciones: habilitacion.observaciones,
+      anio: habilitacion.anio,
+      oblea_colocada: habilitacion.oblea_colocada,
       titular_principal: titular?.persona?.nombre || null,
       
-      // Personas con todos los campos
+      // Relaciones anidadas completas para el modal de detalle
+      // @ts-ignore
+      habilitaciones_personas: habilitacion.habilitaciones_personas?.map((hp: any) => ({
+        id: hp.id,
+        rol: hp.rol,
+        licencia_categoria: hp.licencia_categoria,
+        persona: {
+          id: hp.persona?.id,
+          nombre: hp.persona?.nombre,
+          genero: hp.persona?.genero,
+          dni: hp.persona?.dni,
+          cuit: hp.persona?.cuit,
+          telefono: hp.persona?.telefono,
+          email: hp.persona?.email,
+          foto_url: hp.persona?.foto_url,
+          domicilio_calle: hp.persona?.domicilio_calle,
+          domicilio_nro: hp.persona?.domicilio_nro,
+          domicilio_localidad: hp.persona?.domicilio_localidad,
+        }
+      })) || [],
+      
+      // @ts-ignore
+      habilitaciones_vehiculos: habilitacion.habilitaciones_vehiculos?.map((hv: any) => ({
+        id: hv.id,
+        vehiculo: {
+          id: hv.vehiculo?.id,
+          dominio: hv.vehiculo?.dominio,
+          marca: hv.vehiculo?.marca,
+          modelo: hv.vehiculo?.modelo,
+          tipo: hv.vehiculo?.tipo,
+          anio: hv.vehiculo?.ano,
+          cantidad_asientos: hv.vehiculo?.asientos,
+          nro_chasis: hv.vehiculo?.chasis,
+          nro_motor: hv.vehiculo?.motor,
+          aseguradora: hv.vehiculo?.Aseguradora,
+          poliza_nro: hv.vehiculo?.poliza,
+          poliza_vencimiento: hv.vehiculo?.Vencimiento_Poliza,
+          vtv_vencimiento: hv.vehiculo?.Vencimiento_VTV,
+        }
+      })) || [],
+      
+      // Personas (formato plano para compatibilidad)
       // @ts-ignore
       personas: habilitacion.habilitaciones_personas?.map((hp: any) => ({
         id: hp.id,
         nombre: hp.persona?.nombre,
-        genero: hp.persona?.genero,
         dni: hp.persona?.dni,
-        cuit: hp.persona?.cuit,
-        telefono: hp.persona?.telefono,
-        email: hp.persona?.email,
-        foto_url: hp.persona?.foto_url,
-        domicilio_calle: hp.persona?.domicilio_calle,
-        domicilio_nro: hp.persona?.domicilio_nro,
-        domicilio_localidad: hp.persona?.domicilio_localidad,
         rol: hp.rol,
-        licencia_categoria: hp.licencia_categoria,
       })) || [],
       
-      // Vehículos con todos los campos
+      // Vehículos (formato plano para compatibilidad)
       // @ts-ignore
       vehiculos: habilitacion.habilitaciones_vehiculos?.map((hv: any) => ({
         id: hv.id,
         dominio: hv.vehiculo?.dominio,
         marca: hv.vehiculo?.marca,
         modelo: hv.vehiculo?.modelo,
-        tipo: hv.vehiculo?.tipo,
-        chasis: hv.vehiculo?.chasis,
-        ano: hv.vehiculo?.ano,
-        motor: hv.vehiculo?.motor,
-        asientos: hv.vehiculo?.asientos,
-        inscripcion_inicial: hv.vehiculo?.inscripcion_inicial,
-        Aseguradora: hv.vehiculo?.Aseguradora,
-        poliza: hv.vehiculo?.poliza,
-        Vencimiento_Poliza: hv.vehiculo?.Vencimiento_Poliza,
-        Vencimiento_VTV: hv.vehiculo?.Vencimiento_VTV,
       })) || [],
       
-      // Establecimientos con nombre real
+      // Establecimientos
       // @ts-ignore
       establecimientos: habilitacion.habilitaciones_establecimientos?.map((he: any) => ({
         id: he.id,
@@ -119,6 +143,10 @@ export async function GET(
         tipo: he.tipo,
         domicilio: he.establecimiento?.domicilio || null,
       })) || [],
+      
+      // Historial (TODO: implementar consultas a tablas de historial)
+      verificaciones: [],
+      inspecciones: [],
       
       // @ts-ignore
       tiene_resolucion: habilitacion.habilitaciones_documentos?.length > 0,

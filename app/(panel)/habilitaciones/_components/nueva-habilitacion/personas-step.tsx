@@ -5,9 +5,10 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Plus, Search, Trash2, User } from 'lucide-react'
+import { Plus, Search, Trash2, User, UserPlus } from 'lucide-react'
 import { PersonaHabilitacion } from '@/lib/validations/habilitacion'
 import { useDebounce } from '@/lib/hooks/use-debounce'
+import { RegistrarPersonaDialog } from './registrar-persona-dialog'
 
 interface PersonasStepProps {
   personas: PersonaHabilitacion[]
@@ -34,6 +35,7 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
   const [licenciaCategoria, setLicenciaCategoria] = useState('')
   // Caché local para mantener información completa de personas agregadas
   const [personasCache, setPersonasCache] = useState<Map<number, Persona>>(new Map())
+  const [registrarDialogOpen, setRegistrarDialogOpen] = useState(false)
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
@@ -204,8 +206,20 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
                   </button>
                 ))
               ) : (
-                <div className="p-4 text-center text-sm text-gray-500">
-                  No se encontraron personas
+                <div className="p-4 space-y-2">
+                  <div className="text-center text-sm text-gray-500">
+                    No se encontraron personas
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => setRegistrarDialogOpen(true)}
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Registrar Nueva Persona
+                  </Button>
                 </div>
               )}
             </div>
@@ -334,6 +348,26 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
           </div>
         )}
       </div>
+
+      {/* Dialog para registrar nueva persona */}
+      <RegistrarPersonaDialog
+        open={registrarDialogOpen}
+        onOpenChange={setRegistrarDialogOpen}
+        dniInicial={busqueda}
+        onPersonaCreada={(persona) => {
+          // Agregar la persona recién creada al caché
+          const nuevoCache = new Map(personasCache)
+          nuevoCache.set(persona.id, persona)
+          setPersonasCache(nuevoCache)
+          
+          // Seleccionarla automáticamente
+          setPersonaSeleccionada(persona)
+          setBusqueda(persona.nombre)
+          
+          // Agregar a resultados para que aparezca en la lista
+          setResultados(prev => [persona, ...prev])
+        }}
+      />
     </div>
   )
 }
