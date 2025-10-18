@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import { Menu } from 'lucide-react'
 
 interface HeaderProps {
   user?: {
@@ -9,6 +10,7 @@ interface HeaderProps {
     email: string
     rol: string
   }
+  onMenuClick?: () => void
 }
 
 /**
@@ -16,8 +18,9 @@ interface HeaderProps {
  * - Menú de usuario
  * - Notificaciones
  * - Búsqueda global
+ * - Botón hamburguesa para móvil
  */
-export function Header({ user }: HeaderProps) {
+export function Header({ user, onMenuClick }: HeaderProps) {
   const router = useRouter()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
@@ -39,6 +42,15 @@ export function Header({ user }: HeaderProps) {
       <div className="px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           
+          {/* Botón hamburguesa (móvil) */}
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden rounded-lg p-2 text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-colors"
+            aria-label="Abrir menú"
+          >
+            <Menu className="h-6 w-6" />
+          </button>
+
           {/* Logo y título */}
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-4">
