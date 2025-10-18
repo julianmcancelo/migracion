@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { generarPDFInspeccion } from '@/lib/pdf-generator'
-import fs from 'fs'
 import path from 'path'
 
 /**
@@ -14,17 +13,27 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
       return rutaImagen
     }
 
-    // Si es una URL http/https, retornarla (el PDF mostrará placeholder)
+    // Construir URL completa para descargar la imagen
+    let urlImagen = ''
+    
     if (rutaImagen.startsWith('http://') || rutaImagen.startsWith('https://')) {
-      return rutaImagen
+      // Ya es una URL completa
+      urlImagen = rutaImagen
+    } else {
+      // Construir URL desde la ruta relativa
+      // Remover cualquier prefijo de ruta local si existe
+      const nombreArchivo = rutaImagen.replace(/^.*[\\\/]/, '')
+      urlImagen = `https://credenciales.transportelanus.com.ar/uploads/inspecciones_fotos/${nombreArchivo}`
     }
 
-    // Intentar leer el archivo local
-    // Ajustar la ruta según donde estén almacenadas las imágenes
-    const rutaCompleta = path.join(process.cwd(), rutaImagen)
+    // Intentar descargar la imagen
+    const response = await fetch(urlImagen)
     
-    if (fs.existsSync(rutaCompleta)) {
-      const imagenBuffer = fs.readFileSync(rutaCompleta)
+    if (response.ok) {
+      const arrayBuffer = await response.arrayBuffer()
+      const buffer = Buffer.from(arrayBuffer)
+      
+      // Detectar tipo MIME
       const extension = path.extname(rutaImagen).toLowerCase()
       let mimeType = 'image/jpeg'
       
@@ -34,10 +43,11 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
         mimeType = 'image/jpeg'
       }
       
-      const base64 = imagenBuffer.toString('base64')
+      const base64 = buffer.toString('base64')
       return `data:${mimeType};base64,${base64}`
     }
     
+    console.log(`No se pudo descargar la imagen: ${urlImagen}`)
     return null
   } catch (error) {
     console.error('Error al convertir imagen:', error)
