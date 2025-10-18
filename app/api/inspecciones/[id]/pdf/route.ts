@@ -1,6 +1,49 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { generarPDFInspeccion } from '@/lib/pdf-generator'
+import fs from 'fs'
+import path from 'path'
+
+/**
+ * Convierte una ruta de imagen a base64 data URL
+ */
+async function convertirImagenABase64(rutaImagen: string): Promise<string | null> {
+  try {
+    // Si ya es base64, retornar tal cual
+    if (rutaImagen.startsWith('data:image')) {
+      return rutaImagen
+    }
+
+    // Si es una URL http/https, retornarla (el PDF mostrará placeholder)
+    if (rutaImagen.startsWith('http://') || rutaImagen.startsWith('https://')) {
+      return rutaImagen
+    }
+
+    // Intentar leer el archivo local
+    // Ajustar la ruta según donde estén almacenadas las imágenes
+    const rutaCompleta = path.join(process.cwd(), rutaImagen)
+    
+    if (fs.existsSync(rutaCompleta)) {
+      const imagenBuffer = fs.readFileSync(rutaCompleta)
+      const extension = path.extname(rutaImagen).toLowerCase()
+      let mimeType = 'image/jpeg'
+      
+      if (extension === '.png') {
+        mimeType = 'image/png'
+      } else if (extension === '.jpg' || extension === '.jpeg') {
+        mimeType = 'image/jpeg'
+      }
+      
+      const base64 = imagenBuffer.toString('base64')
+      return `data:${mimeType};base64,${base64}`
+    }
+    
+    return null
+  } catch (error) {
+    console.error('Error al convertir imagen:', error)
+    return null
+  }
+}
 
 /**
  * GET /api/inspecciones/[id]/pdf
@@ -108,6 +151,25 @@ export async function GET(
         tipo: foto.tipo_foto || 'Adicional',
         path: foto.foto_path || ''
       }))
+    }
+
+    // Convertir fotos a base64
+    for (const item of datosCompletos.items) {
+      if (item.foto_path) {
+        const base64 = await convertirImagenABase64(item.foto_path)
+        if (base64) {
+          item.foto_path = base64
+        }
+      }
+    }
+
+    for (const foto of datosCompletos.fotos) {
+      if (foto.path) {
+        const base64 = await convertirImagenABase64(foto.path)
+        if (base64) {
+          foto.path = base64
+        }
+      }
     }
 
     // Generar PDF

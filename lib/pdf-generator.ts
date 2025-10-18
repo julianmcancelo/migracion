@@ -366,24 +366,61 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       doc.rect(xPos, yPos, imgWidth, imgHeight + 10)
 
       // Intentar agregar imagen
-      if (foto.path && foto.path.startsWith('data:image')) {
+      let imagenAgregada = false
+      
+      if (foto.path) {
         try {
-          doc.addImage(foto.path, 'JPEG', xPos, yPos, imgWidth, imgHeight)
+          // Detectar tipo de imagen
+          let formato: 'PNG' | 'JPEG' | 'JPG' = 'JPEG'
+          
+          if (foto.path.includes('data:image/png') || foto.path.toLowerCase().endsWith('.png')) {
+            formato = 'PNG'
+          } else if (foto.path.includes('data:image/jpg') || foto.path.includes('data:image/jpeg')) {
+            formato = 'JPEG'
+          }
+          
+          // Intentar agregar la imagen
+          if (foto.path.startsWith('data:image')) {
+            // Es una imagen base64
+            doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
+            imagenAgregada = true
+          } else if (foto.path.startsWith('http://') || foto.path.startsWith('https://')) {
+            // Es una URL - mostrar placeholder con mensaje
+            doc.setFillColor(240, 240, 250)
+            doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
+            doc.setFontSize(8)
+            doc.setTextColor(100, 100, 150)
+            doc.text('Foto disponible en:', xPos + imgWidth / 2, yPos + imgHeight / 2 - 3, { align: 'center' })
+            doc.setFontSize(7)
+            doc.text('el sistema web', xPos + imgWidth / 2, yPos + imgHeight / 2 + 3, { align: 'center' })
+            imagenAgregada = true
+          } else {
+            // Ruta de archivo local - placeholder
+            doc.setFillColor(245, 245, 245)
+            doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
+            doc.setFontSize(8)
+            doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+            doc.text('Foto almacenada', xPos + imgWidth / 2, yPos + imgHeight / 2 - 2, { align: 'center' })
+            doc.setFontSize(7)
+            const nombreArchivo = foto.path.split('/').pop()?.substring(0, 20) || 'archivo'
+            doc.text(nombreArchivo, xPos + imgWidth / 2, yPos + imgHeight / 2 + 4, { align: 'center' })
+            imagenAgregada = true
+          }
         } catch (e) {
-          // Rectángulo gris si falla
-          doc.setFillColor(230, 230, 230)
-          doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
-          doc.setFontSize(9)
-          doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-          doc.text('Imagen no disponible', xPos + imgWidth / 2, yPos + imgHeight / 2, { align: 'center' })
+          console.error('Error al agregar imagen:', e)
+          imagenAgregada = false
         }
-      } else {
-        // Rectángulo gris
-        doc.setFillColor(230, 230, 230)
+      }
+      
+      // Si no se pudo agregar, mostrar placeholder
+      if (!imagenAgregada) {
+        doc.setFillColor(250, 240, 240)
         doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
         doc.setFontSize(9)
-        doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('Imagen no encontrada', xPos + imgWidth / 2, yPos + imgHeight / 2, { align: 'center' })
+        doc.setTextColor(200, 100, 100)
+        doc.text('❌', xPos + imgWidth / 2, yPos + imgHeight / 2 - 5, { align: 'center' })
+        doc.setFontSize(8)
+        doc.text('Foto no disponible', xPos + imgWidth / 2, yPos + imgHeight / 2 + 3, { align: 'center' })
       }
 
       // Título de la foto
