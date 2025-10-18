@@ -39,6 +39,37 @@ export function EstablecimientosStep({
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
+  // Cargar datos completos de establecimientos ya agregados
+  useEffect(() => {
+    const cargarEstablecimientosAgregados = async () => {
+      const establecimientosSinDatos = establecimientos.filter(e => !establecimientosCache.has(e.establecimiento_id))
+      
+      if (establecimientosSinDatos.length === 0) return
+
+      try {
+        const promesas = establecimientosSinDatos.map(async (e) => {
+          const response = await fetch(`/api/establecimientos/${e.establecimiento_id}?tipo=${e.tipo}`)
+          const data = await response.json()
+          return data.success ? data.data : null
+        })
+
+        const establecimientosData = await Promise.all(promesas)
+        
+        const nuevoCache = new Map(establecimientosCache)
+        establecimientosData.forEach((establecimiento, index) => {
+          if (establecimiento) {
+            nuevoCache.set(establecimientosSinDatos[index].establecimiento_id, establecimiento)
+          }
+        })
+        setEstablecimientosCache(nuevoCache)
+      } catch (error) {
+        console.error('Error al cargar establecimientos agregados:', error)
+      }
+    }
+
+    cargarEstablecimientosAgregados()
+  }, [establecimientos, establecimientosCache])
+
   // Buscar establecimientos cuando cambia el término de búsqueda
   useEffect(() => {
     const buscarEstablecimientos = async () => {

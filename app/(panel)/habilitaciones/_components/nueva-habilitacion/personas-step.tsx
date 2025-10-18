@@ -37,6 +37,39 @@ export function PersonasStep({ personas, onChange }: PersonasStepProps) {
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
+  // Cargar datos completos de personas ya agregadas
+  useEffect(() => {
+    const cargarPersonasAgregadas = async () => {
+      const personasSinDatos = personas.filter(p => !personasCache.has(p.persona_id))
+      
+      if (personasSinDatos.length === 0) return
+
+      try {
+        // Cargar datos de cada persona que no está en caché
+        const promesas = personasSinDatos.map(async (p) => {
+          const response = await fetch(`/api/personas/${p.persona_id}`)
+          const data = await response.json()
+          return data.success ? data.data : null
+        })
+
+        const personasData = await Promise.all(promesas)
+        
+        // Actualizar caché con los datos obtenidos
+        const nuevoCache = new Map(personasCache)
+        personasData.forEach((persona, index) => {
+          if (persona) {
+            nuevoCache.set(personasSinDatos[index].persona_id, persona)
+          }
+        })
+        setPersonasCache(nuevoCache)
+      } catch (error) {
+        console.error('Error al cargar personas agregadas:', error)
+      }
+    }
+
+    cargarPersonasAgregadas()
+  }, [personas, personasCache])
+
   // Buscar personas cuando cambia el término de búsqueda
   useEffect(() => {
     const buscarPersonas = async () => {

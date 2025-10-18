@@ -35,6 +35,37 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
+  // Cargar datos completos de vehículos ya agregados
+  useEffect(() => {
+    const cargarVehiculosAgregados = async () => {
+      const vehiculosSinDatos = vehiculos.filter(v => !vehiculosCache.has(v.vehiculo_id))
+      
+      if (vehiculosSinDatos.length === 0) return
+
+      try {
+        const promesas = vehiculosSinDatos.map(async (v) => {
+          const response = await fetch(`/api/vehiculos/${v.vehiculo_id}`)
+          const data = await response.json()
+          return data.success ? data.data : null
+        })
+
+        const vehiculosData = await Promise.all(promesas)
+        
+        const nuevoCache = new Map(vehiculosCache)
+        vehiculosData.forEach((vehiculo, index) => {
+          if (vehiculo) {
+            nuevoCache.set(vehiculosSinDatos[index].vehiculo_id, vehiculo)
+          }
+        })
+        setVehiculosCache(nuevoCache)
+      } catch (error) {
+        console.error('Error al cargar vehículos agregados:', error)
+      }
+    }
+
+    cargarVehiculosAgregados()
+  }, [vehiculos, vehiculosCache])
+
   // Buscar vehículos cuando cambia el término de búsqueda
   useEffect(() => {
     const buscarVehiculos = async () => {
