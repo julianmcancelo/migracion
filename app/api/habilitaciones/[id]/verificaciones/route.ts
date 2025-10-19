@@ -17,7 +17,7 @@ export async function GET(
     // Obtener número de licencia de la habilitación
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
-      select: { licencia_nro: true }
+      select: { nro_licencia: true }
     })
 
     if (!habilitacion) {
@@ -29,7 +29,7 @@ export async function GET(
 
     const verificaciones = await prisma.verificaciones_historial.findMany({
       where: {
-        nro_licencia: habilitacion.licencia_nro || ''
+        nro_licencia: habilitacion.nro_licencia || ''
       },
       orderBy: {
         fecha: 'desc'
