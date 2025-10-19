@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
+// Forzar renderizado dinámico
+export const dynamic = 'force-dynamic'
+
 /**
  * GET /api/credencial?token=xxx
  * Obtiene los datos completos de la credencial usando el token
