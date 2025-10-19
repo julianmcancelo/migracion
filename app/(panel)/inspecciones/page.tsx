@@ -46,23 +46,33 @@ export default function InspeccionesPage() {
   }
 
   const getResultadoBadge = (resultado: string) => {
-    const badges = {
-      APROBADO: 'bg-green-100 text-green-800 border-green-300',
-      CONDICIONAL: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      RECHAZADO: 'bg-red-100 text-red-800 border-red-300'
+    if (!resultado) return 'bg-gray-100 text-gray-800 border-gray-300'
+    
+    const resultadoUpper = resultado.toUpperCase()
+    
+    if (resultadoUpper.includes('APROBAD')) {
+      return 'bg-green-100 text-green-800 border-green-300'
+    } else if (resultadoUpper.includes('RECHAZAD')) {
+      return 'bg-red-100 text-red-800 border-red-300'
+    } else if (resultadoUpper.includes('CONDICIONAL')) {
+      return 'bg-yellow-100 text-yellow-800 border-yellow-300'
     }
-    return badges[resultado as keyof typeof badges] || badges.APROBADO
+    
+    return 'bg-blue-100 text-blue-800 border-blue-300'
   }
 
   const getResultadoIcon = (resultado: string) => {
-    switch (resultado) {
-      case 'APROBADO':
-        return <CheckCircle className="h-4 w-4" />
-      case 'RECHAZADO':
-        return <XCircle className="h-4 w-4" />
-      default:
-        return <AlertCircle className="h-4 w-4" />
+    if (!resultado) return <AlertCircle className="h-4 w-4" />
+    
+    const resultadoUpper = resultado.toUpperCase()
+    
+    if (resultadoUpper.includes('APROBAD')) {
+      return <CheckCircle className="h-4 w-4" />
+    } else if (resultadoUpper.includes('RECHAZAD')) {
+      return <XCircle className="h-4 w-4" />
     }
+    
+    return <AlertCircle className="h-4 w-4" />
   }
 
   const enviarEmail = async (inspeccionId: number, email: string) => {
@@ -239,7 +249,7 @@ export default function InspeccionesPage() {
                     <td className="px-4 py-3 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getResultadoBadge(inspeccion.resultado)}`}>
                         {getResultadoIcon(inspeccion.resultado)}
-                        {inspeccion.resultado === 'APROBADO' ? 'aprobado' : inspeccion.resultado === 'RECHAZADO' ? 'rechazado' : 'condicional'}
+                        {inspeccion.resultado || 'Sin resultado'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
