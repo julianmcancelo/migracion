@@ -230,19 +230,24 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   yPos = Math.max(yLeft, yRight) + 6
 
   // ==================== VEREDICTO ====================
-  // Calcular veredicto automático
-  const malCount = datos.items.filter(item => item.estado.toLowerCase() === 'mal').length
-  const regularCount = datos.items.filter(item => item.estado.toLowerCase() === 'regular').length
+  // Usar el resultado guardado en la base de datos
+  const resultadoNormalizado = datos.inspeccion.resultado?.trim().toUpperCase()
   
   let veredicto = 'APROBADA'
   let veredictoColor: [number, number, number] = [76, 175, 80] // Verde
   
-  if (malCount > 0) {
+  if (resultadoNormalizado === 'APROBADO') {
+    veredicto = 'APROBADA'
+    veredictoColor = [76, 175, 80] // Verde
+  } else if (resultadoNormalizado === 'RECHAZADO') {
     veredicto = 'RECHAZADA'
     veredictoColor = [244, 67, 54] // Rojo
-  } else if (regularCount >= 3) {
+  } else if (resultadoNormalizado === 'CONDICIONAL') {
     veredicto = 'CONDICIONAL'
     veredictoColor = [255, 193, 7] // Amarillo/Naranja
+  } else {
+    veredicto = 'PENDIENTE'
+    veredictoColor = [96, 125, 139] // Gris azulado
   }
 
   // Cuadro de veredicto con diseño mejorado (más compacto)
@@ -279,9 +284,13 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.text(`VEREDICTO: ${veredicto}`, 105, yPos + 9, { align: 'center' })
   
   // Estadísticas pequeñas
+  const malCount = datos.items.filter(item => item.estado.toLowerCase() === 'mal').length
+  const regularCount = datos.items.filter(item => item.estado.toLowerCase() === 'regular').length
+  const bienCount = datos.items.filter(item => item.estado.toLowerCase() === 'bien').length
+  
   doc.setFontSize(6.5)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Mal: ${malCount} | Regular: ${regularCount}`, 105, yPos + 13, { align: 'center' })
+  doc.text(`Bien: ${bienCount} | Regular: ${regularCount} | Mal: ${malCount}`, 105, yPos + 13, { align: 'center' })
   
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   yPos += 22
