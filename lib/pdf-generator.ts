@@ -42,61 +42,49 @@ interface DatosInspeccion {
 export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buffer> {
   const doc = new jsPDF('p', 'mm', 'a4')
   
-  // Colores del diseño - Paleta profesional municipal
-  const colorPrimario: [number, number, number] = [37, 99, 235] // Azul institucional
-  const colorSecundario: [number, number, number] = [16, 185, 129] // Verde éxito
-  const colorTexto: [number, number, number] = [31, 41, 55] // Gris oscuro
-  const colorMutado: [number, number, number] = [107, 114, 128] // Gris medio
-  const colorFondo: [number, number, number] = [249, 250, 251] // Gris muy claro
-  const colorBorde: [number, number, number] = [229, 231, 235] // Gris claro
+  // Colores del diseño - Estilo certificado oficial
+  const colorPrimario: [number, number, number] = [139, 35, 50] // Rojo bordó institucional
+  const colorSecundario: [number, number, number] = [76, 175, 80] // Verde para aprobado
+  const colorTexto: [number, number, number] = [0, 0, 0] // Negro
+  const colorMutado: [number, number, number] = [100, 100, 100] // Gris medio
+  const colorBorde: [number, number, number] = [0, 0, 0] // Negro
+  const colorFondo: [number, number, number] = [245, 245, 245] // Gris muy claro
 
   let yPos = 15
 
   // ==================== HEADER ====================
   const agregarHeader = () => {
-    // Fondo del header con gradiente simulado
+    // Fondo rojo bordó del header
     doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.rect(0, 0, 210, 40, 'F')
+    doc.roundedRect(10, 10, 190, 25, 3, 3, 'F')
     
-    // Franja decorativa inferior con patrón
-    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
-    doc.rect(0, 40, 210, 3, 'F')
-    
-    // Líneas decorativas blancas
-    doc.setDrawColor(255, 255, 255)
-    doc.setLineWidth(0.5)
-    doc.line(15, 38, 195, 38)
-
-    // Marca de agua
-    doc.setFontSize(80)
-    doc.setTextColor(245, 245, 250)
-    doc.text('LANÚS', 105, 160, {
-      align: 'center',
-      angle: 45
-    })
-
-    // Título principal
-    doc.setFontSize(22)
+    // Logo placeholder - texto "Lanús"
+    doc.setFontSize(14)
     doc.setTextColor(255, 255, 255)
     doc.setFont('helvetica', 'bold')
-    doc.text('INFORME DE INSPECCIÓN VEHICULAR', 105, 16, { align: 'center' })
-
-    // Subtítulo
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'normal')
-    doc.text('Municipalidad de Lanús', 105, 24, { align: 'center' })
-    doc.setFontSize(8.5)
-    doc.text('Dirección General de Movilidad y Transporte', 105, 30, { align: 'center' })
-    
-    // Info de inspección en header
-    doc.setFontSize(7.5)
-    doc.setFont('helvetica', 'bold')
-    doc.text(`Inspeccion N° ${datos.inspeccion.id}`, 195, 36, { align: 'right' })
-    doc.setFont('helvetica', 'normal')
+    doc.text('◊ Lanús', 15, 20)
     doc.setFontSize(7)
-    doc.text(new Date(datos.inspeccion.fecha).toLocaleDateString('es-AR'), 195, 39.5, { align: 'right' })
+    doc.setFont('helvetica', 'normal')
+    doc.text('PARTIDO', 15, 24)
+    
+    // Subsecretaría
+    doc.setFontSize(7)
+    doc.text('Subsecretaría de Ordenamiento Urbano', 15, 28.5)
+    doc.text('Dirección Gral. de Movilidad y Transporte', 15, 31.5)
 
-    yPos = 48
+    // Título principal centrado
+    doc.setFontSize(14)
+    doc.setFont('helvetica', 'bold')
+    doc.text('CERTIFICADO DE VERIFICACIÓN VEHICULAR', 105, 22, { align: 'center' })
+    
+    // Fecha y hora en la esquina derecha
+    const fecha = new Date(datos.inspeccion.fecha)
+    doc.setFontSize(8)
+    doc.setFont('helvetica', 'normal')
+    doc.text(`Fecha: ${fecha.toLocaleDateString('es-AR')}`, 195, 20, { align: 'right' })
+    doc.text(`Hora: ${fecha.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`, 195, 24, { align: 'right' })
+
+    yPos = 42
   }
 
   // ==================== FOOTER ====================
@@ -129,254 +117,161 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   // Agregar primera página
   agregarHeader()
 
-  // ==================== DATOS PRINCIPALES ====================
+  // ==================== INFO PRINCIPAL ====================
+  yPos += 3
+  
+  // Línea superior
+  doc.setFontSize(9)
+  doc.setFont('helvetica', 'bold')
+  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
+  
+  // Primera fila: Expediente y Licencia
+  doc.text('Expediente N°:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text('---', 45, yPos)
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Licencia N°:', 110, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.inspeccion.nro_licencia, 140, yPos)
+  
+  yPos += 6
+  
+  // Segunda fila: Tipo de Habilitación y Transporte
+  doc.setFont('helvetica', 'bold')
+  doc.text('Tipo de Habilitación:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text('---', 50, yPos)
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Transporte:', 110, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.inspeccion.tipo_transporte || 'Escolar', 135, yPos)
+  
+  yPos += 8
+
+  // ==================== TITULAR ====================
+  doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-
-  // Sección con fondo y sombra (más compacta)
-  doc.setFillColor(210, 210, 210)
-  doc.roundedRect(16, yPos - 4, 180, 55, 3, 3, 'F')
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('Titular', 15, yPos)
+  yPos += 5
   
-  doc.setFillColor(255, 255, 255)
-  doc.roundedRect(15, yPos - 5, 180, 55, 3, 3, 'F')
-  
-  // Borde decorativo
-  doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.setLineWidth(0.5)
-  doc.roundedRect(15, yPos - 5, 180, 55, 3, 3, 'S')
-  
-  // Línea divisoria vertical
-  doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
-  doc.setLineWidth(0.3)
-  doc.line(105, yPos - 3, 105, yPos + 48)
-
-  // Columna Izquierda - Datos de Inspección
-  let yLeft = yPos
-  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.roundedRect(18, yLeft - 3, 80, 6, 2, 2, 'F')
-  doc.setTextColor(255, 255, 255)
-  doc.setFont('helvetica', 'bold')
   doc.setFontSize(9)
-  doc.text('DATOS DE LA INSPECCION', 22, yLeft + 1)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yLeft += 9
-
+  doc.text('Nombre:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  const datosInspeccion = [
-    [`N° Inspección:`, datos.inspeccion.id.toString()],
-    [`N° Licencia:`, datos.inspeccion.nro_licencia],
-    [`Tipo Transporte:`, datos.inspeccion.tipo_transporte || 'N/A'],
-    [`Fecha:`, new Date(datos.inspeccion.fecha).toLocaleString('es-AR')],
-    [`Inspector:`, datos.inspeccion.inspector]
-  ]
-
-  datosInspeccion.forEach(([label, value], index) => {
-    // Bullet point decorativo
-    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
-    doc.circle(20, yLeft - 1, 0.8, 'F')
-    
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7.5)
-    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text(label, 23, yLeft)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8.5)
-    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    doc.text(value, 57, yLeft)
-    yLeft += 5
-  })
-
-  // Columna Derecha - Datos del Vehículo
-  let yRight = yPos
-  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.roundedRect(108, yRight - 3, 80, 6, 2, 2, 'F')
-  doc.setTextColor(255, 255, 255)
+  doc.text(datos.titular.nombre, 35, yPos)
+  yPos += 5
+  
   doc.setFont('helvetica', 'bold')
+  doc.text('DNI:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.titular.dni || '---', 27, yPos)
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Domicilio:', 70, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text('0', 93, yPos)
+  yPos += 8
+
+  // ==================== CONDUCTOR ====================
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('Conductor', 110, yPos - 13)
+  
   doc.setFontSize(9)
-  doc.text('DATOS DEL VEHICULO', 112, yRight + 1)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yRight += 9
-
+  doc.text('Nombre:', 110, yPos - 8)
   doc.setFont('helvetica', 'normal')
-  const datosVehiculo = [
-    [`Titular:`, datos.titular.nombre],
-    [`DNI:`, datos.titular.dni || 'N/A'],
-    [`Dominio:`, datos.vehiculo.dominio],
-    [`Vehículo:`, `${datos.vehiculo.marca} ${datos.vehiculo.modelo}`],
-    [`Año:`, datos.vehiculo.ano],
-    [`Chasis:`, datos.vehiculo.chasis]
-  ]
-
-  datosVehiculo.forEach(([label, value], index) => {
-    // Bullet point decorativo
-    doc.setFillColor(colorSecundario[0], colorSecundario[1], colorSecundario[2])
-    doc.circle(110, yRight - 1, 0.8, 'F')
-    
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(7.5)
-    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text(label, 113, yRight)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(8.5)
-    doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    // Recortar texto largo
-    const maxWidth = 68
-    const lines = doc.splitTextToSize(value, maxWidth)
-    doc.text(lines[0], 137, yRight)
-    yRight += 5
-  })
-
-  yPos = Math.max(yLeft, yRight) + 6
-
-  // ==================== VEREDICTO ====================
-  // Usar el resultado guardado en la base de datos
-  const resultadoNormalizado = datos.inspeccion.resultado?.trim().toUpperCase()
+  doc.text(datos.inspeccion.inspector, 130, yPos - 8)
   
-  let veredicto = 'APROBADA'
-  let veredictoColor: [number, number, number] = [76, 175, 80] // Verde
-  
-  if (resultadoNormalizado === 'APROBADO') {
-    veredicto = 'APROBADA'
-    veredictoColor = [76, 175, 80] // Verde
-  } else if (resultadoNormalizado === 'RECHAZADO') {
-    veredicto = 'RECHAZADA'
-    veredictoColor = [244, 67, 54] // Rojo
-  } else if (resultadoNormalizado === 'CONDICIONAL') {
-    veredicto = 'CONDICIONAL'
-    veredictoColor = [255, 193, 7] // Amarillo/Naranja
-  } else {
-    veredicto = 'PENDIENTE'
-    veredictoColor = [96, 125, 139] // Gris azulado
-  }
-
-  // Cuadro de veredicto con diseño mejorado (más compacto)
-  // Sombra
-  doc.setFillColor(190, 190, 190)
-  doc.roundedRect(16.5, yPos + 1.5, 180, 16, 4, 4, 'F')
-  
-  // Cuadro principal con gradiente simulado
-  doc.setFillColor(veredictoColor[0] - 10, veredictoColor[1] - 10, veredictoColor[2] - 10)
-  doc.roundedRect(15, yPos, 180, 16, 4, 4, 'F')
-  doc.setFillColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
-  doc.roundedRect(15, yPos, 180, 14, 4, 4, 'F')
-  
-  // Borde decorativo
-  doc.setDrawColor(255, 255, 255)
-  doc.setLineWidth(0.8)
-  doc.roundedRect(17, yPos + 2, 176, 10, 3, 3, 'S')
-  
-  // Icono según veredicto
-  let icono = '✓'
-  if (veredicto === 'RECHAZADA') icono = '✗'
-  if (veredicto === 'CONDICIONAL') icono = '⚠'
-  
-  // Círculo para el icono
-  doc.setFillColor(255, 255, 255)
-  doc.circle(26, yPos + 8, 3.5, 'F')
-  doc.setTextColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
-  doc.setFontSize(14)
-  doc.text(icono, 26, yPos + 10, { align: 'center' })
-  
-  doc.setTextColor(255, 255, 255)
-  doc.setFontSize(13)
   doc.setFont('helvetica', 'bold')
-  doc.text(`VEREDICTO: ${veredicto}`, 105, yPos + 9, { align: 'center' })
-  
-  // Estadísticas pequeñas
-  const malCount = datos.items.filter(item => item.estado.toLowerCase() === 'mal').length
-  const regularCount = datos.items.filter(item => item.estado.toLowerCase() === 'regular').length
-  const bienCount = datos.items.filter(item => item.estado.toLowerCase() === 'bien').length
-  
-  doc.setFontSize(6.5)
+  doc.text('DNI:', 110, yPos - 3)
   doc.setFont('helvetica', 'normal')
-  doc.text(`Bien: ${bienCount} | Regular: ${regularCount} | Mal: ${malCount}`, 105, yPos + 13, { align: 'center' })
+  doc.text('---', 122, yPos - 3)
   
+  // ==================== VEHÍCULO ====================
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('Vehículo', 15, yPos)
+  yPos += 5
+  
+  doc.setFontSize(9)
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yPos += 22
+  doc.text('Dominio:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.vehiculo.dominio, 36, yPos)
+  yPos += 5
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Marca:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.vehiculo.marca, 31, yPos)
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Modelo:', 90, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text(datos.vehiculo.modelo, 110, yPos)
+  yPos += 5
+  
+  doc.setFont('helvetica', 'bold')
+  doc.text('Inscripción Inicial:', 15, yPos)
+  doc.setFont('helvetica', 'normal')
+  doc.text('---', 50, yPos)
+  yPos += 10
+
+  // ==================== TÍTULO DE TABLA ====================
+  doc.setFont('helvetica', 'bold')
+  doc.setFontSize(10)
+  doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+  doc.text('DETALLES Y OBSERVACIONES DEL VEHÍCULO', 105, yPos, { align: 'center' })
+  yPos += 6
 
   // ==================== TABLA DE ITEMS ====================
-  // Título de sección
-  doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
-  doc.setFontSize(11)
-  doc.setFont('helvetica', 'bold')
-  doc.setTextColor(255, 255, 255)
-  doc.text('DETALLE DE LA VERIFICACION', 20, yPos + 3)
-  doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  yPos += 12
-
-  // Agrupar items por categoría
-  const itemsPorCategoria: { [key: string]: typeof datos.items } = {}
-  datos.items.forEach(item => {
-    const categoria = item.categoria || 'GENERAL'
-    if (!itemsPorCategoria[categoria]) {
-      itemsPorCategoria[categoria] = []
-    }
-    itemsPorCategoria[categoria].push(item)
-  })
-
-  // Preparar datos para la tabla con categorías
+  // Preparar datos para la tabla estilo certificado
   const tableData: any[] = []
-  Object.keys(itemsPorCategoria).sort().forEach(categoria => {
-    // Fila de categoría
+  
+  datos.items.forEach(item => {
+    const estado = item.estado.toUpperCase()
     tableData.push([
-      { content: categoria.toUpperCase(), colSpan: 3, styles: { fillColor: [220, 220, 220], fontStyle: 'bold', halign: 'left' } }
+      item.nombre.replace(/_/g, ' '),
+      estado === 'BIEN' ? 'X' : '',
+      estado === 'REGULAR' ? 'X' : '',
+      estado === 'MAL' ? 'X' : '',
+      item.observacion || ''
     ])
-    
-    // Items de la categoría
-    itemsPorCategoria[categoria].forEach(item => {
-      tableData.push([
-        item.nombre.replace(/_/g, ' '),
-        item.estado.toUpperCase(),
-        item.observacion || '-'
-      ])
-    })
   })
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Ítem Verificado', 'Estado', 'Observaciones']],
+    head: [['Descripción', 'Bien', 'Regular', 'Mal', 'Observaciones']],
     body: tableData,
-    theme: 'striped',
+    theme: 'grid',
     headStyles: {
-      fillColor: colorPrimario,
-      textColor: [255, 255, 255],
-      fontSize: 9,
+      fillColor: [255, 255, 255],
+      textColor: [0, 0, 0],
+      fontSize: 8,
       fontStyle: 'bold',
       halign: 'center',
-      cellPadding: 4
+      lineWidth: 0.5,
+      lineColor: [0, 0, 0]
     },
     bodyStyles: {
-      fontSize: 8,
+      fontSize: 7,
       textColor: colorTexto,
-      cellPadding: 2
-    },
-    alternateRowStyles: {
-      fillColor: [249, 250, 251]
+      cellPadding: 2,
+      lineWidth: 0.5,
+      lineColor: [0, 0, 0]
     },
     columnStyles: {
-      0: { cellWidth: 80, halign: 'left', fontStyle: 'normal' },
-      1: { cellWidth: 30, halign: 'center', fontStyle: 'bold' },
-      2: { cellWidth: 70, halign: 'left' }
-    },
-    didParseCell: function(data) {
-      // Colorear celdas de estado (solo si no es una fila de categoría)
-      if (data.column.index === 1 && data.section === 'body') {
-        const cellContent = data.cell.text[0]?.toLowerCase() || ''
-        // Verificar que no sea una fila de categoría (que tendría colSpan)
-        const isCategory = typeof data.cell.raw === 'object' && data.cell.raw !== null && 'colSpan' in data.cell.raw
-        
-        if (!isCategory) {
-          if (cellContent === 'bien') {
-            data.cell.styles.fillColor = [200, 255, 200] // Verde claro
-          } else if (cellContent === 'regular') {
-            data.cell.styles.fillColor = [255, 255, 200] // Amarillo claro
-          } else if (cellContent === 'mal') {
-            data.cell.styles.fillColor = [255, 200, 200] // Rojo claro
-          }
-        }
-      }
+      0: { cellWidth: 75, halign: 'left' },
+      1: { cellWidth: 15, halign: 'center', fillColor: [255, 230, 230] },
+      2: { cellWidth: 15, halign: 'center', fillColor: [255, 255, 230] },
+      3: { cellWidth: 15, halign: 'center', fillColor: [255, 230, 230] },
+      4: { cellWidth: 60, halign: 'left' }
     },
     margin: { left: 15, right: 15 }
   })
