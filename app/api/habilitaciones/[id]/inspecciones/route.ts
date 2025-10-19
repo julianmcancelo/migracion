@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/habilitaciones/[id]/inspecciones
- * Obtiene el historial de inspecciones de una habilitación
+ * Obtiene el historial de inspecciones del vehículo asociado a la habilitación
  */
 export async function GET(
   request: Request,
@@ -14,9 +14,43 @@ export async function GET(
   try {
     const { id } = params
 
-    const inspecciones = await prisma.inspecciones.findMany({
+    // Obtener el vehículo asociado a la habilitación
+    const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
       where: {
         habilitacion_id: Number(id)
+      },
+      select: {
+        vehiculo_id: true
+      }
+    })
+
+    if (!habVehiculo?.vehiculo_id) {
+      return NextResponse.json({
+        success: true,
+        data: []
+      })
+    }
+
+    // Buscar todas las habilitaciones que tienen el mismo vehículo
+    const habilitacionesConMismoVehiculo = await prisma.habilitaciones_vehiculos.findMany({
+      where: {
+        vehiculo_id: habVehiculo.vehiculo_id
+      },
+      select: {
+        habilitacion_id: true
+      }
+    })
+
+    const habilitacionIds = habilitacionesConMismoVehiculo
+      .map(h => h.habilitacion_id)
+      .filter((id): id is number => id !== null)
+
+    // Buscar todas las inspecciones de esas habilitaciones
+    const inspecciones = await prisma.inspecciones.findMany({
+      where: {
+        habilitacion_id: {
+          in: habilitacionIds
+        }
       },
       orderBy: {
         fecha_inspeccion: 'desc'
