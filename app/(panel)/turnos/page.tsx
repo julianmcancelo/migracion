@@ -34,14 +34,21 @@ interface Turno {
  */
 export default function TurnosPage() {
   const [turnos, setTurnos] = useState<Turno[]>([])
+  const [turnosFiltrados, setTurnosFiltrados] = useState<Turno[]>([])
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
+  const [buscarDNI, setBuscarDNI] = useState('')
+  const [buscarDominio, setBuscarDominio] = useState('')
   const [modalAbierto, setModalAbierto] = useState(false)
   const [turnoEditar, setTurnoEditar] = useState<Turno | null>(null)
 
   useEffect(() => {
     cargarTurnos()
   }, [filtroEstado])
+
+  useEffect(() => {
+    aplicarFiltros()
+  }, [turnos, buscarDNI, buscarDominio])
 
   const cargarTurnos = async () => {
     try {
@@ -57,12 +64,31 @@ export default function TurnosPage() {
 
       if (data.success) {
         setTurnos(data.data)
+        setTurnosFiltrados(data.data)
       }
     } catch (error) {
       console.error('Error al cargar turnos:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const aplicarFiltros = () => {
+    let resultado = [...turnos]
+
+    if (buscarDNI.trim()) {
+      resultado = resultado.filter(t => 
+        t.titular_dni?.toLowerCase().includes(buscarDNI.toLowerCase())
+      )
+    }
+
+    if (buscarDominio.trim()) {
+      resultado = resultado.filter(t => 
+        t.vehiculo_patente?.toLowerCase().includes(buscarDominio.toLowerCase())
+      )
+    }
+
+    setTurnosFiltrados(resultado)
   }
 
   const abrirModalNuevo = () => {
@@ -90,11 +116,17 @@ export default function TurnosPage() {
         body: JSON.stringify({ estado: nuevoEstado })
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        alert('Estado actualizado correctamente')
         cargarTurnos()
+      } else {
+        alert(`Error: ${data.error || 'No se pudo actualizar el estado'}`)
       }
     } catch (error) {
       console.error('Error al actualizar turno:', error)
+      alert('Error al actualizar el turno')
     }
   }
 
@@ -173,11 +205,43 @@ export default function TurnosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Filtrar por estado:</span>
-          
+          <span className="text-sm font-medium text-gray-700">Filtros:</span>
+        </div>
+        
+        {/* Búsqueda por DNI y Dominio */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              🔍 Buscar por DNI:
+            </label>
+            <input
+              type="text"
+              placeholder="Ingrese DNI del titular..."
+              value={buscarDNI}
+              onChange={(e) => setBuscarDNI(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              🚗 Buscar por Dominio:
+            </label>
+            <input
+              type="text"
+              placeholder="Ingrese patente del vehículo..."
+              value={buscarDominio}
+              onChange={(e) => setBuscarDominio(e.target.value.toUpperCase())}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+            />
+          </div>
+        </div>
+
+        {/* Estado */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-medium text-gray-700">Por estado:</span>
           {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
             <button
               key={estado}
@@ -192,6 +256,23 @@ export default function TurnosPage() {
             </button>
           ))}
         </div>
+
+        {/* Resumen de búsqueda */}
+        {(buscarDNI || buscarDominio) && (
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Filtrando:</strong>
+              {buscarDNI && <span className="ml-2">DNI: "{buscarDNI}"</span>}
+              {buscarDominio && <span className="ml-2">Dominio: "{buscarDominio}"</span>}
+              <button
+                onClick={() => { setBuscarDNI(''); setBuscarDominio(''); }}
+                className="ml-4 text-blue-600 hover:text-blue-800 font-semibold"
+              >
+                ❌ Limpiar
+              </button>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Estadísticas */}
@@ -201,7 +282,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-yellow-700 font-medium">Pendientes</p>
               <p className="text-2xl font-bold text-yellow-900">
-                {turnos.filter(t => t.estado === 'PENDIENTE').length}
+                {turnosFiltrados.filter(t => t.estado === 'PENDIENTE').length}
               </p>
             </div>
             <Clock className="h-8 w-8 text-yellow-600" />
@@ -213,7 +294,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-blue-700 font-medium">Confirmados</p>
               <p className="text-2xl font-bold text-blue-900">
-                {turnos.filter(t => t.estado === 'CONFIRMADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'CONFIRMADO').length}
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-blue-600" />
@@ -225,7 +306,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-green-700 font-medium">Finalizados</p>
               <p className="text-2xl font-bold text-green-900">
-                {turnos.filter(t => t.estado === 'FINALIZADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'FINALIZADO').length}
               </p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-600" />
@@ -237,7 +318,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-red-700 font-medium">Cancelados</p>
               <p className="text-2xl font-bold text-red-900">
-                {turnos.filter(t => t.estado === 'CANCELADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'CANCELADO').length}
               </p>
             </div>
             <XCircle className="h-8 w-8 text-red-600" />
@@ -251,7 +332,7 @@ export default function TurnosPage() {
           <div className="p-12 text-center text-gray-500">
             Cargando turnos...
           </div>
-        ) : turnos.length === 0 ? (
+        ) : turnosFiltrados.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             No hay turnos para mostrar
           </div>
@@ -278,7 +359,7 @@ export default function TurnosPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {turnos.map((turno) => (
+                {turnosFiltrados.map((turno) => (
                   <tr key={turno.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex flex-col gap-1">
