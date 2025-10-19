@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, ClipboardList, CheckCircle, Calendar, ChevronLeft, X } from 'lucide-react'
+import { LayoutDashboard, ClipboardList, CheckCircle, Calendar, ChevronLeft, X, FileCheck } from 'lucide-react'
 
 interface NavItem {
   name: string
@@ -43,6 +43,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       name: 'Inspecciones',
       href: '/inspecciones',
       icon: CheckCircle,
+    },
+    {
+      name: 'Verificaciones',
+      href: '/verificaciones',
+      icon: FileCheck,
     },
     {
       name: 'Turnos',
