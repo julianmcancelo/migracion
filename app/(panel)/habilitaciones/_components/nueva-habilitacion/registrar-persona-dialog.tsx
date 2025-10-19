@@ -6,8 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { UserPlus, Loader2 } from 'lucide-react'
+import { UserPlus, Loader2, Scan } from 'lucide-react'
 import { CrearPersonaInput } from '@/lib/validations/persona'
+import { OCRScanner } from '@/components/ocr-scanner'
 
 interface RegistrarPersonaDialogProps {
   open: boolean
@@ -28,6 +29,7 @@ export function RegistrarPersonaDialog({
 }: RegistrarPersonaDialogProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [showOCR, setShowOCR] = useState(false)
   
   const [formData, setFormData] = useState<CrearPersonaInput>({
     nombre: '',
@@ -40,6 +42,44 @@ export function RegistrarPersonaDialog({
     domicilio_nro: '',
     domicilio_localidad: 'LANUS',
   })
+
+  // Procesar datos del OCR y llenar formulario
+  const handleOCRData = (data: any) => {
+    console.log('Datos OCR recibidos:', data)
+    
+    // Actualizar form con datos del DNI
+    if (data.nombre) {
+      setFormData(prev => ({ ...prev, nombre: data.nombre }))
+    }
+    if (data.dni) {
+      setFormData(prev => ({ ...prev, dni: data.dni }))
+    }
+    if (data.cuil) {
+      setFormData(prev => ({ ...prev, cuit: data.cuil }))
+    }
+    if (data.sexo) {
+      const genero = data.sexo === 'M' ? 'Masculino' : data.sexo === 'F' ? 'Femenino' : 'Otro'
+      setFormData(prev => ({ ...prev, genero }))
+    }
+    
+    // Procesar domicilio si viene completo
+    if (data.domicilio) {
+      // Intentar separar calle y número del domicilio
+      const partes = data.domicilio.split(/\s+(\d+)/)
+      if (partes.length >= 2) {
+        setFormData(prev => ({
+          ...prev,
+          domicilio_calle: partes[0].trim(),
+          domicilio_nro: partes[1].trim()
+        }))
+      } else {
+        setFormData(prev => ({ ...prev, domicilio_calle: data.domicilio }))
+      }
+    }
+    
+    // Cerrar OCR
+    setShowOCR(false)
+  }
 
   const handleChange = (field: keyof CrearPersonaInput, value: string) => {
     setFormData(prev => ({ ...prev, [field]: value }))
@@ -102,6 +142,55 @@ export function RegistrarPersonaDialog({
           {error && (
             <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
               {error}
+            </div>
+          )}
+
+          {/* Botón para activar OCR */}
+          {!showOCR && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                    <Scan className="h-4 w-4" />
+                    ¿Tenés el DNI a mano?
+                  </h4>
+                  <p className="text-sm text-blue-700 mt-1">
+                    Escaneá el DNI y llenamos los datos automáticamente con IA
+                  </p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => setShowOCR(true)}
+                  variant="outline"
+                  className="border-blue-300 text-blue-700 hover:bg-blue-100"
+                >
+                  <Scan className="h-4 w-4 mr-2" />
+                  Escanear DNI
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Componente OCR */}
+          {showOCR && (
+            <div className="border-2 border-blue-300 rounded-lg p-4 bg-blue-50">
+              <div className="flex justify-between items-center mb-3">
+                <h4 className="font-semibold text-blue-900">Escanear DNI con IA</h4>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setShowOCR(false)}
+                  className="text-blue-700"
+                >
+                  Cerrar
+                </Button>
+              </div>
+              <OCRScanner
+                type="dni"
+                onDataExtracted={handleOCRData}
+                buttonText="Escanear DNI del Titular"
+              />
             </div>
           )}
 

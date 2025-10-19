@@ -4,9 +4,10 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Plus, Search, Trash2, Car } from 'lucide-react'
+import { Plus, Search, Trash2, Car, Scan } from 'lucide-react'
 import { VehiculoHabilitacion } from '@/lib/validations/habilitacion'
 import { useDebounce } from '@/lib/hooks/use-debounce'
+import { OCRScanner } from '@/components/ocr-scanner'
 
 interface VehiculosStepProps {
   vehiculos: VehiculoHabilitacion[]
@@ -30,10 +31,25 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   const [resultados, setResultados] = useState<Vehiculo[]>([])
   const [buscando, setBuscando] = useState(false)
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState<Vehiculo | null>(null)
+  const [showOCR, setShowOCR] = useState(false)
   // Caché local para mantener información completa de vehículos agregados
   const [vehiculosCache, setVehiculosCache] = useState<Map<number, Vehiculo>>(new Map())
 
   const busquedaDebounced = useDebounce(busqueda, 500)
+
+  // Procesar datos del OCR de cédula verde
+  const handleOCRData = (data: any) => {
+    console.log('Datos OCR Cédula recibidos:', data)
+    
+    // Buscar el vehículo por dominio automáticamente
+    if (data.dominio) {
+      setBusqueda(data.dominio.toUpperCase())
+      // El useEffect se encargará de buscar automáticamente
+    }
+    
+    // Cerrar OCR
+    setShowOCR(false)
+  }
 
   // Cargar datos completos de vehículos ya agregados
   useEffect(() => {
@@ -155,6 +171,56 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
       {/* Formulario de búsqueda y agregar */}
       <div className="bg-gray-50 p-4 rounded-lg border space-y-4">
         <h4 className="font-medium">Agregar Vehículo</h4>
+        
+        {/* Botón OCR */}
+        {!showOCR && (
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+            <div className="flex items-center justify-between">
+              <div className="flex-1">
+                <h5 className="font-semibold text-blue-900 text-sm flex items-center gap-2">
+                  <Scan className="h-4 w-4" />
+                  ¿Tenés la Cédula Verde?
+                </h5>
+                <p className="text-xs text-blue-700 mt-1">
+                  Escaneá y autocompletamos los datos del vehículo
+                </p>
+              </div>
+              <Button
+                type="button"
+                onClick={() => setShowOCR(true)}
+                variant="outline"
+                size="sm"
+                className="border-blue-300 text-blue-700 hover:bg-blue-100"
+              >
+                <Scan className="h-3 w-3 mr-1" />
+                Escanear
+              </Button>
+            </div>
+          </div>
+        )}
+
+        {/* Componente OCR */}
+        {showOCR && (
+          <div className="border-2 border-blue-300 rounded-lg p-3 bg-blue-50">
+            <div className="flex justify-between items-center mb-2">
+              <h5 className="font-semibold text-blue-900 text-sm">Escanear Cédula Verde</h5>
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                onClick={() => setShowOCR(false)}
+                className="text-blue-700 h-6"
+              >
+                Cerrar
+              </Button>
+            </div>
+            <OCRScanner
+              type="cedula"
+              onDataExtracted={handleOCRData}
+              buttonText="Escanear Cédula del Vehículo"
+            />
+          </div>
+        )}
         
         {/* Búsqueda */}
         <div className="space-y-2">
