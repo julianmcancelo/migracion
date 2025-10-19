@@ -183,6 +183,14 @@ export async function POST(request: Request) {
     // Enviar email de confirmación si tiene email
     if (habPersona?.persona?.email) {
       try {
+        // Obtener datos del vehículo
+        // @ts-ignore
+        const habVehiculo: any = await prisma.habilitaciones_vehiculos.findFirst({
+          where: { habilitacion_id: Number(habilitacion_id) },
+          // @ts-ignore
+          include: { vehiculo: true }
+        })
+
         await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/turnos/enviar-email`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -190,10 +198,15 @@ export async function POST(request: Request) {
             turno_id: turno.id,
             email: habPersona.persona.email,
             nombre: habPersona.persona.nombre,
+            dni: habPersona.persona.dni,
+            telefono: habPersona.persona.telefono,
             nro_licencia: habilitacion.nro_licencia,
             fecha: fecha,
             hora: hora,
-            tipo_transporte: habilitacion.tipo_transporte
+            tipo_transporte: habilitacion.tipo_transporte,
+            vehiculo_patente: habVehiculo?.vehiculo?.dominio,
+            vehiculo_marca: habVehiculo?.vehiculo?.marca,
+            vehiculo_modelo: habVehiculo?.vehiculo?.modelo
           })
         })
         console.log('Email de confirmación enviado a:', habPersona.persona.email)
