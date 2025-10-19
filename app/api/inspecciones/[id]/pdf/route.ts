@@ -112,6 +112,19 @@ export async function GET(
       }
     })
 
+    // Obtener primer conductor
+    // @ts-ignore - Relaciones de Prisma
+    const habConductor: any = await prisma.habilitaciones_personas.findFirst({
+      where: {
+        habilitacion_id: inspeccion.habilitacion_id,
+        rol: 'CONDUCTOR'
+      },
+      // @ts-ignore
+      include: {
+        persona: true
+      }
+    })
+
     // Obtener datos del vehículo
     // @ts-ignore - Relaciones de Prisma
     const habVehiculo: any = await prisma.habilitaciones_vehiculos.findFirst({
@@ -131,6 +144,8 @@ export async function GET(
         fecha: inspeccion.fecha_inspeccion,
         inspector: inspeccion.nombre_inspector,
         nro_licencia: inspeccion.nro_licencia,
+        nro_expediente: habilitacion?.expte || undefined,
+        tipo_habilitacion: habilitacion?.tipo || undefined,
         tipo_transporte: inspeccion.tipo_transporte,
         resultado: inspeccion.resultado,
         firma_inspector: inspeccion.firma_inspector,
@@ -138,14 +153,20 @@ export async function GET(
       },
       titular: {
         nombre: habPersona?.persona?.nombre || 'N/A',
-        dni: habPersona?.persona?.dni || 'N/A'
+        dni: habPersona?.persona?.dni || 'N/A',
+        domicilio: habPersona?.persona?.domicilio || null
       },
+      conductor: habConductor ? {
+        nombre: habConductor.persona?.nombre || 'N/A',
+        dni: habConductor.persona?.dni || null
+      } : undefined,
       vehiculo: {
         dominio: habVehiculo?.vehiculo?.dominio || 'N/A',
         marca: habVehiculo?.vehiculo?.marca || 'N/A',
         modelo: habVehiculo?.vehiculo?.modelo || 'N/A',
         ano: habVehiculo?.vehiculo?.ano?.toString() || 'N/A',
-        chasis: habVehiculo?.vehiculo?.chasis || 'N/A'
+        chasis: habVehiculo?.vehiculo?.chasis || 'N/A',
+        inscripcion_inicial: habVehiculo?.vehiculo?.inscripcion_inicial || null
       },
       items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0 
         ? inspeccion.inspeccion_detalles 

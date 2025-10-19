@@ -57,6 +57,7 @@ export async function POST(
     // Obtener titular
     let nombreTitular = 'Contribuyente'
     let dniTitular = 'N/A'
+    let domicilioTitular = null
     
     if (habilitacion) {
       const habPersona = await prisma.habilitaciones_personas.findFirst({
@@ -73,6 +74,28 @@ export async function POST(
         if (persona) {
           nombreTitular = persona.nombre || 'Contribuyente'
           dniTitular = persona.dni || 'N/A'
+          domicilioTitular = persona.domicilio || null
+        }
+      }
+
+      // Obtener conductor
+      const habConductor = await prisma.habilitaciones_personas.findFirst({
+        where: {
+          habilitacion_id: habilitacion.id,
+          rol: 'CONDUCTOR'
+        }
+      })
+
+      let conductorData = undefined
+      if (habConductor && habConductor.persona_id) {
+        const conductorPersona = await prisma.personas.findUnique({
+          where: { id: habConductor.persona_id }
+        })
+        if (conductorPersona) {
+          conductorData = {
+            nombre: conductorPersona.nombre || 'N/A',
+            dni: conductorPersona.dni || undefined
+          }
         }
       }
 
@@ -86,6 +109,7 @@ export async function POST(
       let modelo = 'N/A'
       let ano = 'N/A'
       let chasis = 'N/A'
+      let inscripcion_inicial: string | undefined = undefined
 
       if (habVehiculo && habVehiculo.vehiculo_id) {
         const vehiculo = await prisma.vehiculos.findUnique({
@@ -97,6 +121,7 @@ export async function POST(
           modelo = vehiculo.modelo || 'N/A'
           ano = vehiculo.ano?.toString() || 'N/A'
           chasis = vehiculo.chasis || 'N/A'
+          inscripcion_inicial = vehiculo.inscripcion_inicial ? String(vehiculo.inscripcion_inicial) : undefined
         }
       }
 
@@ -107,6 +132,8 @@ export async function POST(
           fecha: inspeccion.fecha_inspeccion,
           inspector: inspeccion.nombre_inspector,
           nro_licencia: inspeccion.nro_licencia,
+          nro_expediente: habilitacion?.expte || undefined,
+          tipo_habilitacion: habilitacion?.tipo || undefined,
           tipo_transporte: inspeccion.tipo_transporte,
           resultado: inspeccion.resultado,
           firma_inspector: inspeccion.firma_inspector,
@@ -114,14 +141,17 @@ export async function POST(
         },
         titular: {
           nombre: nombreTitular,
-          dni: dniTitular
+          dni: dniTitular,
+          domicilio: domicilioTitular ? String(domicilioTitular) : undefined
         },
+        conductor: conductorData,
         vehiculo: {
           dominio,
           marca,
           modelo,
           ano,
-          chasis
+          chasis,
+          inscripcion_inicial
         },
         items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0 
           ? inspeccion.inspeccion_detalles 
