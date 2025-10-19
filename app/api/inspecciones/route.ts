@@ -10,89 +10,59 @@ export async function GET(request: Request) {
     const habilitacionId = searchParams.get('habilitacion_id')
     const resultado = searchParams.get('resultado')
 
-    const where: any = {}
+    // Construir filtros WHERE
+    let whereClause = 'WHERE 1=1'
+    const params: any[] = []
 
     if (habilitacionId) {
-      where.habilitacion_id = Number(habilitacionId)
+      whereClause += ' AND i.habilitacion_id = ?'
+      params.push(Number(habilitacionId))
     }
 
     if (resultado) {
-      where.resultado = resultado
+      whereClause += ' AND i.resultado = ?'
+      params.push(resultado)
     }
 
-    const inspecciones = await prisma.inspecciones.findMany({
-      where,
-      orderBy: { fecha_inspeccion: 'desc' },
-      take: 100
-    })
+    // SQL optimizado con LEFT JOINs como en el código PHP original
+    const sql = `
+      SELECT 
+        i.id,
+        i.habilitacion_id,
+        i.nro_licencia,
+        i.fecha_inspeccion,
+        i.resultado,
+        i.nombre_inspector,
+        i.tipo_transporte,
+        i.email_contribuyente,
+        p.nombre as titular_nombre,
+        p.dni as titular_dni,
+        v.dominio as vehiculo_patente,
+        v.marca as vehiculo_marca,
+        v.modelo as vehiculo_modelo
+      FROM inspecciones AS i
+      LEFT JOIN habilitaciones_generales AS hg ON i.habilitacion_id = hg.id
+      LEFT JOIN habilitaciones_personas AS hp ON hg.id = hp.habilitacion_id
+      LEFT JOIN personas AS p ON hp.persona_id = p.id
+      LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id
+      LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
+      ${whereClause}
+      ORDER BY i.fecha_inspeccion DESC
+      LIMIT 100
+    `
 
-    // Enriquecer con datos de titular y vehículo
-    const inspeccionesFormateadas = await Promise.all(
-      inspecciones.map(async (insp: any) => {
-        try {
-          // Obtener habilitación
-          const habilitacion = await prisma.habilitaciones_generales.findUnique({
-            where: { id: insp.habilitacion_id }
-          })
+    // Ejecutar query raw SQL
+    const inspecciones: any[] = await prisma.$queryRawUnsafe(sql, ...params)
 
-          if (!habilitacion) {
-            return {
-              ...insp,
-              titular_nombre: 'Sin datos',
-              titular_dni: '',
-              vehiculo_patente: 'Sin patente',
-              vehiculo_marca: '',
-              vehiculo_modelo: ''
-            }
-          }
-
-          // Obtener datos del titular
-          // @ts-ignore
-          const habPersona = await prisma.habilitaciones_personas.findFirst({
-            where: { habilitacion_id: habilitacion.id }
-          })
-
-          let titular = null
-          if (habPersona?.persona_id) {
-            titular = await prisma.personas.findUnique({
-              where: { id: habPersona.persona_id }
-            })
-          }
-
-          // Obtener datos del vehículo
-          // @ts-ignore
-          const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
-            where: { habilitacion_id: habilitacion.id }
-          })
-
-          let vehiculo = null
-          if (habVehiculo?.vehiculo_id) {
-            vehiculo = await prisma.vehiculos.findUnique({
-              where: { id: habVehiculo.vehiculo_id }
-            })
-          }
-
-          return {
-            ...insp,
-            titular_nombre: titular?.nombre || 'Sin datos',
-            titular_dni: titular?.dni || '',
-            vehiculo_patente: vehiculo?.dominio || 'Sin patente',
-            vehiculo_marca: vehiculo?.marca || '',
-            vehiculo_modelo: vehiculo?.modelo || ''
-          }
-        } catch (err) {
-          console.error('Error al enriquecer inspección:', err)
-          return {
-            ...insp,
-            titular_nombre: 'Sin datos',
-            titular_dni: '',
-            vehiculo_patente: 'Sin patente',
-            vehiculo_marca: '',
-            vehiculo_modelo: ''
-          }
-        }
-      })
-    )
+    // Formatear datos
+    const inspeccionesFormateadas = inspecciones.map((insp: any) => ({
+      ...insp,
+      titular_nombre: insp.titular_nombre || 'Sin datos',
+      titular_dni: insp.titular_dni || '',
+      vehiculo_patente: insp.vehiculo_patente || 'Sin patente',
+      vehiculo_marca: insp.vehiculo_marca || '',
+      vehiculo_modelo: insp.vehiculo_modelo || ''
+    }))
 
     return NextResponse.json({
       success: true,
