@@ -212,6 +212,8 @@ export async function POST(request: Request) {
     } else if (itemsRegulares > 2) {
       resultado = 'CONDICIONAL'
     }
+    
+    console.log('🔍 Items malos:', itemsMalos, '| Regulares:', itemsRegulares, '| Resultado:', resultado)
 
     // Crear inspección
     const inspeccion = await prisma.inspecciones.create({

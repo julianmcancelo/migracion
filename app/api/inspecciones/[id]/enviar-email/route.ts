@@ -143,9 +143,12 @@ export async function POST(
       const pdfBuffer = await generarPDFInspeccion(datosCompletos)
 
       // Enviar email
-      console.log('📧 Resultado de inspección:', inspeccion.resultado)
-      const resultadoTexto = inspeccion.resultado === 'APROBADO' ? 'APROBADA' : 
-                            inspeccion.resultado === 'RECHAZADO' ? 'RECHAZADA' : 'CONDICIONAL'
+      const resultadoNormalizado = inspeccion.resultado?.trim().toUpperCase()
+      console.log('📧 Resultado de inspección:', inspeccion.resultado, '→ Normalizado:', resultadoNormalizado)
+      
+      const resultadoTexto = resultadoNormalizado === 'APROBADO' ? 'APROBADA' : 
+                            resultadoNormalizado === 'RECHAZADO' ? 'RECHAZADA' : 
+                            resultadoNormalizado === 'CONDICIONAL' ? 'CONDICIONAL' : 'PENDIENTE'
       console.log('📧 Texto email:', resultadoTexto)
       
       const emailHtml = `
@@ -161,6 +164,7 @@ export async function POST(
             .resultado.aprobada { background: #d1fae5; color: #065f46; }
             .resultado.rechazada { background: #fee2e2; color: #991b1b; }
             .resultado.condicional { background: #fef3c7; color: #92400e; }
+            .resultado.pendiente { background: #e0e7ff; color: #3730a3; }
             .info { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
             .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
             .label { font-weight: bold; color: #6b7280; }
@@ -215,7 +219,9 @@ export async function POST(
                 '<p style="color: #991b1b;"><strong>Nota:</strong> Su vehículo no ha aprobado la inspección. Por favor, realice las correcciones necesarias y solicite una nueva inspección.</p>' : 
                 resultadoTexto === 'CONDICIONAL' ? 
                 '<p style="color: #92400e;"><strong>Nota:</strong> Su vehículo ha obtenido una aprobación condicional. Revise las observaciones en el informe adjunto.</p>' :
-                '<p style="color: #065f46;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>'
+                resultadoTexto === 'APROBADA' ?
+                '<p style="color: #065f46;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>' :
+                '<p style="color: #3730a3;"><strong>Nota:</strong> La inspección está pendiente de resolución final.</p>'
               }
             </div>
             <div class="footer">
