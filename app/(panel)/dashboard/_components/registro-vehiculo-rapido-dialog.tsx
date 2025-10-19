@@ -22,6 +22,7 @@ interface VehiculoFormData {
   chasis: string
   motor: string
   asientos: string
+  inscripcion_inicial: string
   Aseguradora: string
   poliza: string
   Vencimiento_VTV: string
@@ -46,6 +47,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
     chasis: '',
     motor: '',
     asientos: '',
+    inscripcion_inicial: '',
     Aseguradora: '',
     poliza: '',
     Vencimiento_VTV: '',
@@ -112,6 +114,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
         chasis: '',
         motor: '',
         asientos: '',
+        inscripcion_inicial: '',
         Aseguradora: '',
         poliza: '',
         Vencimiento_VTV: '',
@@ -140,6 +143,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
       chasis: '',
       motor: '',
       asientos: '',
+      inscripcion_inicial: '',
       Aseguradora: '',
       poliza: '',
       Vencimiento_VTV: '',
@@ -305,6 +309,29 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                   onChange={(e) => handleChange('motor', e.target.value.toUpperCase())}
                   disabled={loading}
                   className="uppercase"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="asientos">Asientos</Label>
+                <Input
+                  id="asientos"
+                  type="number"
+                  value={formData.asientos}
+                  onChange={(e) => handleChange('asientos', e.target.value)}
+                  disabled={loading}
+                  min="1"
+                />
+              </div>
+
+              <div>
+                <Label htmlFor="inscripcion_inicial">Inscripción Inicial</Label>
+                <Input
+                  id="inscripcion_inicial"
+                  type="date"
+                  value={formData.inscripcion_inicial}
+                  onChange={(e) => handleChange('inscripcion_inicial', e.target.value)}
+                  disabled={loading}
                 />
               </div>
             </div>
