@@ -15,12 +15,10 @@ export async function POST(
     const turnoId = parseInt(params.id)
 
     // Verificar que el turno existe
-    // @ts-ignore
-    const turno: any = await prisma.turnos.findUnique({
+    const turno = await prisma.turnos.findUnique({
       where: { id: turnoId },
-      // @ts-ignore
       include: {
-        habilitaciones_generales: {
+        habilitacion: {
           select: {
             nro_licencia: true,
             tipo_transporte: true
@@ -63,7 +61,7 @@ export async function POST(
       data: {
         dni_usuario: 'SISTEMA',
         tipo: 'TURNO_CANCELADO',
-        titulo: `Turno cancelado - Lic. ${turno.habilitaciones_generales?.nro_licencia || turnoId}`,
+        titulo: `Turno cancelado - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
         texto: `El titular ha cancelado el turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}.`,
         leida: false
       }

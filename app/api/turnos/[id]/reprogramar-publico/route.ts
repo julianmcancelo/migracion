@@ -17,12 +17,10 @@ export async function POST(
     const { observaciones } = body
 
     // Verificar que el turno existe
-    // @ts-ignore
-    const turno: any = await prisma.turnos.findUnique({
+    const turno = await prisma.turnos.findUnique({
       where: { id: turnoId },
-      // @ts-ignore
       include: {
-        habilitaciones_generales: {
+        habilitacion: {
           select: {
             nro_licencia: true,
             tipo_transporte: true
@@ -69,7 +67,7 @@ export async function POST(
       data: {
         dni_usuario: 'SISTEMA',
         tipo: 'TURNO_REPROGRAMAR',
-        titulo: `Reprogramación - Lic. ${turno.habilitaciones_generales?.nro_licencia || turnoId}`,
+        titulo: `Reprogramación - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
         texto: `Solicitud de reprogramación del turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. ${observaciones ? `Motivo: ${observaciones}` : 'Sin motivo especificado'}`,
         leida: false
       }
