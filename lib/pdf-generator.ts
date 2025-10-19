@@ -62,20 +62,20 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setFontSize(14)
     doc.setTextColor(255, 255, 255)
     doc.setFont('helvetica', 'bold')
-    doc.text('◊ Lanús', 15, 20)
+    doc.text('Lanus', 15, 20)
     doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.text('PARTIDO', 15, 24)
     
-    // Subsecretaría
+    // Subsecretaria
     doc.setFontSize(7)
-    doc.text('Subsecretaría de Ordenamiento Urbano', 15, 28.5)
-    doc.text('Dirección Gral. de Movilidad y Transporte', 15, 31.5)
+    doc.text('Subsecretaria de Ordenamiento Urbano', 15, 28.5)
+    doc.text('Direccion Gral. de Movilidad y Transporte', 15, 31.5)
 
-    // Título principal centrado
+    // Titulo principal centrado
     doc.setFontSize(14)
     doc.setFont('helvetica', 'bold')
-    doc.text('CERTIFICADO DE VERIFICACIÓN VEHICULAR', 105, 22, { align: 'center' })
+    doc.text('CERTIFICADO DE VERIFICACION VEHICULAR', 105, 22, { align: 'center' })
     
     // Fecha y hora en la esquina derecha
     const fecha = new Date(datos.inspeccion.fecha)
@@ -137,9 +137,9 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   
   yPos += 6
   
-  // Segunda fila: Tipo de Habilitación y Transporte
+  // Segunda fila: Tipo de Habilitacion y Transporte
   doc.setFont('helvetica', 'bold')
-  doc.text('Tipo de Habilitación:', 15, yPos)
+  doc.text('Tipo de Habilitacion:', 15, yPos)
   doc.setFont('helvetica', 'normal')
   doc.text('---', 50, yPos)
   
@@ -196,7 +196,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.text('Vehículo', 15, yPos)
+  doc.text('Vehiculo', 15, yPos)
   yPos += 5
   
   doc.setFontSize(9)
@@ -218,16 +218,16 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   yPos += 5
   
   doc.setFont('helvetica', 'bold')
-  doc.text('Inscripción Inicial:', 15, yPos)
+  doc.text('Inscripcion Inicial:', 15, yPos)
   doc.setFont('helvetica', 'normal')
   doc.text('---', 50, yPos)
   yPos += 10
 
-  // ==================== TÍTULO DE TABLA ====================
+  // ==================== TITULO DE TABLA ====================
   doc.setFont('helvetica', 'bold')
   doc.setFontSize(10)
   doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-  doc.text('DETALLES Y OBSERVACIONES DEL VEHÍCULO', 105, yPos, { align: 'center' })
+  doc.text('DETALLES Y OBSERVACIONES DEL VEHICULO', 105, yPos, { align: 'center' })
   yPos += 6
 
   // ==================== TABLA DE ITEMS ====================
@@ -247,7 +247,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Descripción', 'Bien', 'Regular', 'Mal', 'Observaciones']],
+    head: [['Descripcion', 'Bien', 'Regular', 'Mal', 'Observaciones']],
     body: tableData,
     theme: 'grid',
     headStyles: {
