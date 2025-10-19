@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Image from 'next/image'
 import { QRCodeSVG } from 'qrcode.react'
 import { Copy, Check, Printer } from 'lucide-react'
@@ -14,10 +14,19 @@ interface CredencialCardProps {
 
 export function CredencialCard({ data, token }: CredencialCardProps) {
   const [copied, setCopied] = useState(false)
+  const [currentTime, setCurrentTime] = useState(new Date())
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || window.location.origin
   const credencialUrl = `${baseUrl}/credencial/${token}`
 
   const esRemis = data.habilitacion.tipo_transporte === 'Remis'
+
+  // Actualizar hora cada segundo para dificultar capturas
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentTime(new Date())
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const handleCopyLink = async () => {
     try {
@@ -85,8 +94,15 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
   return (
     <>
       {/* Contenedor de la credencial */}
-      <div className="max-w-md mx-auto">
-        <div className="bg-white shadow-xl border-2 border-gray-300 overflow-hidden">
+      <div className="max-w-md mx-auto" onContextMenu={(e) => e.preventDefault()}>
+        {/* Marca de agua dinámica */}
+        <div className="fixed inset-0 pointer-events-none select-none z-50 flex items-center justify-center opacity-10">
+          <div className="text-6xl font-black text-red-900 rotate-[-45deg] whitespace-nowrap">
+            {currentTime.toLocaleTimeString('es-AR')}
+          </div>
+        </div>
+        
+        <div className="bg-white shadow-xl border-2 border-gray-300 overflow-hidden relative" style={{ userSelect: 'none' }}>
           {/* Header */}
           <div className="bg-gray-800 text-white p-5 text-center border-b-4 border-gray-900">
             <div className="flex justify-center mb-3">
@@ -146,22 +162,10 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
                   Titular de la Habilitación
                 </h3>
                 <div className="flex items-center gap-3 bg-white p-3 border border-gray-300">
-                  <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
-                    {data.titular.foto_url ? (
-                      <Image 
-                        src={data.titular.foto_url} 
-                        alt="Foto Titular" 
-                        width={64} 
-                        height={80}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                        </svg>
-                      </div>
-                    )}
+                  <div className="w-14 h-14 bg-gray-300 flex-shrink-0 flex items-center justify-center">
+                    <div className="text-2xl font-bold text-gray-600">
+                      {data.titular.nombre?.charAt(0) || '?'}
+                    </div>
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="font-bold text-base text-gray-900 truncate">{data.titular.nombre}</p>
@@ -249,22 +253,10 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
                 <div className="space-y-2">
                   {data.conductores.map((conductor: any, idx: number) => (
                     <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
-                      <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
-                        {conductor.foto_url ? (
-                          <Image 
-                            src={conductor.foto_url} 
-                            alt="Foto Conductor" 
-                            width={64} 
-                            height={80}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                        )}
+                      <div className="w-10 h-10 bg-gray-300 flex-shrink-0 flex items-center justify-center">
+                        <div className="text-lg font-bold text-gray-600">
+                          {conductor.nombre?.charAt(0) || '?'}
+                        </div>
                       </div>
                       <div className="flex-1">
                         <p className="font-semibold text-sm text-gray-900">{conductor.nombre}</p>
@@ -288,22 +280,10 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
                 <div className="space-y-2">
                   {data.celadores.map((celador: any, idx: number) => (
                     <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
-                      <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
-                        {celador.foto_url ? (
-                          <Image 
-                            src={celador.foto_url} 
-                            alt="Foto Celador" 
-                            width={64} 
-                            height={80}
-                            className="w-full h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-full flex items-center justify-center text-gray-400">
-                            <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
-                            </svg>
-                          </div>
-                        )}
+                      <div className="w-10 h-10 bg-gray-300 flex-shrink-0 flex items-center justify-center">
+                        <div className="text-lg font-bold text-gray-600">
+                          {celador.nombre?.charAt(0) || '?'}
+                        </div>
                       </div>
                       <div className="flex-1">
                         <p className="font-bold text-base text-gray-900">{celador.nombre}</p>
@@ -344,6 +324,23 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
               />
             </div>
             <p className="text-xs text-gray-600 mt-2 font-medium">Escanee para verificar autenticidad</p>
+            
+            {/* Timestamp de visualización */}
+            <div className="mt-3 pt-3 border-t border-gray-300">
+              <p className="text-xs text-gray-500 font-mono">
+                Visualizado: {currentTime.toLocaleString('es-AR')}
+              </p>
+            </div>
+          </div>
+          
+          {/* Advertencia anti-piratería */}
+          <div className="bg-red-50 border-t-2 border-red-300 p-3 text-center">
+            <p className="text-xs text-red-700 font-semibold">
+              ⚠️ DOCUMENTO OFICIAL - Uso exclusivo para verificación
+            </p>
+            <p className="text-xs text-red-600 mt-1">
+              La captura, reproducción o falsificación está penada por ley
+            </p>
           </div>
         </div>
 
@@ -379,7 +376,7 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
         </div>
       </div>
 
-      {/* CSS para impresión */}
+      {/* CSS para impresión y seguridad */}
       <style jsx global>{`
         @media print {
           body {
@@ -390,6 +387,23 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
           .no-print {
             display: none !important;
           }
+        }
+        
+        /* Dificultar selección de texto */
+        .credencial-content {
+          -webkit-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+        
+        /* Desactivar arrastrar imágenes */
+        img {
+          -webkit-user-drag: none;
+          -khtml-user-drag: none;
+          -moz-user-drag: none;
+          -o-user-drag: none;
+          user-drag: none;
         }
       `}</style>
     </>
