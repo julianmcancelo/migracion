@@ -92,10 +92,11 @@ model habilitaciones_generales {
   is_deleted                     Boolean                                   @default(false)
   
   // Relaciones
-  habilitaciones_documentos      habilitaciones_documentos[]
-  habilitaciones_personas        habilitaciones_personas[]
-  habilitaciones_vehiculos       habilitaciones_vehiculos[]
+  habilitaciones_documentos       habilitaciones_documentos[]
+  habilitaciones_personas         habilitaciones_personas[]
+  habilitaciones_vehiculos        habilitaciones_vehiculos[]
   habilitaciones_establecimientos habilitaciones_establecimientos[]
+  turnos                          turnos[]
 }
 
 model habilitaciones_personas {
@@ -267,15 +268,18 @@ model tokens_acceso {
 }
 
 model turnos {
-  id                   Int            @id @default(autoincrement())
+  id                   Int                       @id @default(autoincrement())
   habilitacion_id      Int
-  fecha_hora           DateTime?      @db.DateTime(0)  // Opcional: puede tener valores inválidos en BD legacy
-  fecha                DateTime       @db.Date
-  hora                 DateTime       @db.Time(0)
-  observaciones        String?        @db.Text
-  creado_en            DateTime       @default(now()) @db.Timestamp(0)
-  recordatorio_enviado Boolean?       @default(false)
-  estado               turnos_estado? @default(PENDIENTE)
+  fecha_hora           DateTime?                 @db.DateTime(0)  // Opcional: puede tener valores inválidos en BD legacy
+  fecha                DateTime                  @db.Date
+  hora                 DateTime                  @db.Time(0)
+  observaciones        String?                   @db.Text
+  creado_en            DateTime                  @default(now()) @db.Timestamp(0)
+  recordatorio_enviado Boolean?                  @default(false)
+  estado               turnos_estado?            @default(PENDIENTE)
+
+  // Relaciones
+  habilitacion         habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
 
   @@index([habilitacion_id], map: "habilitacion_id")
 }
