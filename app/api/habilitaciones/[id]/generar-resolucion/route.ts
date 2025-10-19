@@ -181,7 +181,7 @@ export async function GET(
     const fileName = `Resolucion-${data.licencia_nro?.replace(/[^a-zA-Z0-9-]/g, '_')}.docx`
 
     // Retornar el documento
-    return new NextResponse(buffer, {
+    return new NextResponse(Buffer.from(buffer), {
       headers: {
         'Content-Type': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
         'Content-Disposition': `attachment; filename="${fileName}"`,
