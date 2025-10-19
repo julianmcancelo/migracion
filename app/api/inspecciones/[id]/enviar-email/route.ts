@@ -143,8 +143,10 @@ export async function POST(
       const pdfBuffer = await generarPDFInspeccion(datosCompletos)
 
       // Enviar email
+      console.log('📧 Resultado de inspección:', inspeccion.resultado)
       const resultadoTexto = inspeccion.resultado === 'APROBADO' ? 'APROBADA' : 
                             inspeccion.resultado === 'RECHAZADO' ? 'RECHAZADA' : 'CONDICIONAL'
+      console.log('📧 Texto email:', resultadoTexto)
       
       const emailHtml = `
         <!DOCTYPE html>

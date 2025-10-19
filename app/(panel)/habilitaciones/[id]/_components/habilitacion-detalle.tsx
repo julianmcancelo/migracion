@@ -22,9 +22,13 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [alertas, setAlertas] = useState<any[]>([])
+  const [obleas, setObleas] = useState<any[]>([])
+  const [verificaciones, setVerificaciones] = useState<any[]>([])
+  const [inspecciones, setInspecciones] = useState<any[]>([])
 
   useEffect(() => {
     fetchHabilitacion()
+    fetchHistoriales()
   }, [id])
 
   const fetchHabilitacion = async () => {
@@ -41,6 +45,33 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
       setError(err.message)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const fetchHistoriales = async () => {
+    try {
+      // Cargar obleas
+      const obleasRes = await fetch(`/api/habilitaciones/${id}/obleas`)
+      if (obleasRes.ok) {
+        const obleasData = await obleasRes.json()
+        setObleas(obleasData.data || [])
+      }
+
+      // Cargar verificaciones
+      const verifRes = await fetch(`/api/habilitaciones/${id}/verificaciones`)
+      if (verifRes.ok) {
+        const verifData = await verifRes.json()
+        setVerificaciones(verifData.data || [])
+      }
+
+      // Cargar inspecciones
+      const inspRes = await fetch(`/api/habilitaciones/${id}/inspecciones`)
+      if (inspRes.ok) {
+        const inspData = await inspRes.json()
+        setInspecciones(inspData.data || [])
+      }
+    } catch (err) {
+      console.error('Error cargando historiales:', err)
     }
   }
 
@@ -350,9 +381,44 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 <CheckCircle className="h-6 w-6 text-blue-600" />
                 Historial de Colocación de Obleas
               </h3>
-              <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
-                <p>No hay registros de colocación de obleas para esta habilitación.</p>
-              </div>
+              {obleas.length === 0 ? (
+                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                  <p>No hay registros de colocación de obleas para esta habilitación.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha Solicitud</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Hora</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {obleas.map((oblea: any) => (
+                        <tr key={oblea.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            {new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')}
+                          </td>
+                          <td className="px-4 py-3">
+                            {oblea.hora_solicitud}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              oblea.notificado === 'si' 
+                                ? 'bg-green-100 text-green-800' 
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {oblea.notificado === 'si' ? 'Notificado' : 'Pendiente'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Historial de Verificaciones */}
@@ -361,9 +427,38 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 <CheckCircle className="h-6 w-6 text-blue-600" />
                 Historial de Verificaciones
               </h3>
-              <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
-                <p>No hay verificaciones externas registradas.</p>
-              </div>
+              {verificaciones.length === 0 ? (
+                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                  <p>No hay verificaciones técnicas registradas.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">N° Licencia</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Estado</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {verificaciones.map((verif: any) => (
+                        <tr key={verif.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3 font-mono font-medium">{verif.nro_licencia}</td>
+                          <td className="px-4 py-3">
+                            {new Date(verif.fecha).toLocaleDateString('es-AR')}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
+                              Verificada
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
 
             {/* Historial de Inspecciones */}
@@ -372,9 +467,56 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 <ClipboardCheck className="h-6 w-6 text-blue-600" />
                 Historial de Inspecciones
               </h3>
-              <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
-                <p>No hay inspecciones técnicas registradas.</p>
-              </div>
+              {inspecciones.length === 0 ? (
+                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                  <p>No hay inspecciones técnicas registradas.</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                      <tr>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Inspector</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Resultado</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Acciones</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-200">
+                      {inspecciones.map((insp: any) => (
+                        <tr key={insp.id} className="hover:bg-gray-50">
+                          <td className="px-4 py-3">
+                            {new Date(insp.fecha_inspeccion).toLocaleDateString('es-AR')}
+                          </td>
+                          <td className="px-4 py-3">{insp.nombre_inspector}</td>
+                          <td className="px-4 py-3">
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              insp.resultado === 'APROBADO' 
+                                ? 'bg-green-100 text-green-800'
+                                : insp.resultado === 'RECHAZADO'
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-yellow-100 text-yellow-800'
+                            }`}>
+                              {insp.resultado || 'PENDIENTE'}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <a
+                              href={`/api/inspecciones/${insp.id}/pdf`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                            >
+                              <FileText className="h-4 w-4" />
+                              Ver PDF
+                            </a>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </div>
           </div>
         </div>
