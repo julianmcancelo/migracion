@@ -42,6 +42,7 @@ export default function TurnosPage() {
   const [buscarDominio, setBuscarDominio] = useState('')
   const [modalAbierto, setModalAbierto] = useState(false)
   const [turnoEditar, setTurnoEditar] = useState<Turno | null>(null)
+  const [precargarLicencia, setPrecargarLicencia] = useState('')
 
   useEffect(() => {
     cargarTurnos()
@@ -119,6 +120,7 @@ export default function TurnosPage() {
   const cerrarModal = () => {
     setModalAbierto(false)
     setTurnoEditar(null)
+    setPrecargarLicencia('')
   }
 
   const cambiarEstado = async (id: number, nuevoEstado: string) => {
@@ -263,18 +265,8 @@ export default function TurnosPage() {
                 
                 <Button 
                   onClick={() => {
-                    setTurnoEditar({
-                      id: 0,
-                      habilitacion_id: hab.id,
-                      fecha: '',
-                      hora: '',
-                      estado: 'PENDIENTE',
-                      habilitacion: {
-                        id: hab.id,
-                        nro_licencia: hab.nro_licencia,
-                        tipo_transporte: hab.tipo_transporte || 'Escolar'
-                      }
-                    } as Turno)
+                    setTurnoEditar(null)
+                    setPrecargarLicencia(hab.nro_licencia)
                     setModalAbierto(true)
                   }}
                   size="sm"
@@ -567,6 +559,7 @@ export default function TurnosPage() {
           cargarHabilitacionesSinTurno()
         }}
         turnoEdit={turnoEditar}
+        precargarLicencia={precargarLicencia}
       />
     </div>
   )

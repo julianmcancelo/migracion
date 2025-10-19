@@ -40,12 +40,13 @@ interface ModalTurnoProps {
       nro_licencia: string
     }
   } | null
+  precargarLicencia?: string
 }
 
 /**
  * Modal para crear o editar un turno
  */
-export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurnoProps) {
+export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLicencia = '' }: ModalTurnoProps) {
   const [tipoTransporte, setTipoTransporte] = useState<'Escolar' | 'Remis'>('Escolar')
   const [busqueda, setBusqueda] = useState('')
   const [habilitaciones, setHabilitaciones] = useState<Habilitacion[]>([])
@@ -66,8 +67,12 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
       setBusqueda(turnoEdit.habilitacion?.nro_licencia || '')
     } else {
       limpiarFormulario()
+      // Si hay una licencia precargada, iniciar búsqueda
+      if (precargarLicencia) {
+        setBusqueda(precargarLicencia)
+      }
     }
-  }, [turnoEdit, isOpen])
+  }, [turnoEdit, isOpen, precargarLicencia])
 
   const limpiarFormulario = () => {
     setTipoTransporte('Escolar')
