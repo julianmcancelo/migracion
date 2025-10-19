@@ -60,8 +60,8 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit }: ModalTurno
   // Cargar datos si es edición
   useEffect(() => {
     if (turnoEdit) {
-      setFecha(turnoEdit.fecha.split('T')[0])
-      setHora(turnoEdit.hora.split('T')[1]?.substring(0, 5) || '')
+      setFecha(turnoEdit.fecha ? turnoEdit.fecha.split('T')[0] : '')
+      setHora(turnoEdit.hora ? (turnoEdit.hora.split('T')[1]?.substring(0, 5) || '') : '')
       setObservaciones(turnoEdit.observaciones || '')
       setBusqueda(turnoEdit.habilitacion?.nro_licencia || '')
     } else {

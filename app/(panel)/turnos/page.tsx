@@ -263,7 +263,18 @@ export default function TurnosPage() {
                 
                 <Button 
                   onClick={() => {
-                    setTurnoEditar({ habilitacion_id: hab.id } as Turno)
+                    setTurnoEditar({
+                      id: 0,
+                      habilitacion_id: hab.id,
+                      fecha: '',
+                      hora: '',
+                      estado: 'PENDIENTE',
+                      habilitacion: {
+                        id: hab.id,
+                        nro_licencia: hab.nro_licencia,
+                        tipo_transporte: hab.tipo_transporte || 'Escolar'
+                      }
+                    } as Turno)
                     setModalAbierto(true)
                   }}
                   size="sm"
