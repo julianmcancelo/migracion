@@ -8,9 +8,10 @@ import nodemailer from 'nodemailer'
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const turnoId = parseInt(params.id)
 
     // Verificar que el turno existe
@@ -100,104 +101,11 @@ export async function POST(
         })
 
         await transporter.sendMail({
-          from: `"Municipalidad de Lanús" <${process.env.GMAIL_USER}>`,
+          from: `"Municipalidad de Lanús - Transporte" <${process.env.GMAIL_USER}>`,
           to: habPersona.persona.email,
           replyTo: 'transportepublicolanus@gmail.com',
-          subject: '✅ Confirmación Recibida - Inspección Vehicular',
-          html: `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #1F2937; background: #F3F4F6; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .header { background: #FFFFFF; color: #1F2937; padding: 30px; text-align: center; border-bottom: 4px solid #10B981; }
-    .logo { width: 120px; height: auto; margin: 0 auto 15px; display: block; }
-    .success-badge { background: linear-gradient(135deg, #059669, #10B981); color: white; padding: 15px; border-radius: 8px; margin-top: 15px; }
-    .content { padding: 40px 30px; }
-    .info-box { background: #F0FDF4; border: 2px solid #10B981; border-radius: 12px; padding: 24px; margin: 30px 0; }
-    .info-row { padding: 12px 0; border-bottom: 1px solid rgba(16, 185, 129, 0.2); }
-    .info-row:last-child { border-bottom: none; }
-    .alert-box { background: linear-gradient(135deg, #FEF3C7, #FDE68A); border-left: 5px solid #F59E0B; padding: 20px; margin: 25px 0; border-radius: 10px; }
-    .location-box { background: #DBEAFE; border: 2px solid #3B82F6; border-radius: 10px; padding: 20px; margin: 25px 0; }
-    .contact-box { background: #F3F4F6; padding: 28px; border-radius: 12px; margin-top: 30px; }
-    .footer { background: #1F2937; color: #9CA3AF; padding: 30px; text-align: center; font-size: 13px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <img src="https://www.lanus.gob.ar/logo-200.png" alt="Municipalidad de Lanús" class="logo" />
-      <h1 style="font-size: 24px; font-weight: 700; color: #1F2937; margin: 10px 0 5px 0;">Municipalidad de Lanús</h1>
-      <p style="font-size: 16px; color: #6B7280; margin: 0;">Dirección General de Movilidad y Transporte</p>
-      <div class="success-badge">
-        <strong style="font-size: 20px;">✅ Confirmación Recibida</strong>
-      </div>
-    </div>
-    <div class="content">
-      <p style="font-size: 18px; color: #111827; margin-bottom: 16px;">Estimado/a <strong>${habPersona.persona.nombre}</strong>,</p>
-      <p style="font-size: 16px; color: #4B5563; margin-bottom: 30px; line-height: 1.8;">
-        Hemos recibido la <strong>confirmación de su asistencia</strong> al turno de inspección vehicular. Le esperamos en la fecha y hora asignada.
-      </p>
-      
-      <div class="info-box">
-        <h3 style="margin: 0 0 20px 0; color: #059669; font-size: 20px; font-weight: 700;">📋 Detalles del Turno</h3>
-        <div class="info-row">
-          <strong style="color: #374151;">Nro. de Licencia:</strong>
-          <span style="color: #059669; font-weight: 700; margin-left: 10px;">${turno.habilitaciones_generales?.nro_licencia}</span>
-        </div>
-        <div class="info-row">
-          <strong style="color: #374151;">Fecha:</strong>
-          <span style="color: #059669; font-weight: 700; margin-left: 10px;">${fechaFormateada}</span>
-        </div>
-        <div class="info-row">
-          <strong style="color: #374151;">Estado:</strong>
-          <span style="color: #059669; font-weight: 700; margin-left: 10px;">CONFIRMADO ✓</span>
-        </div>
-      </div>
-      
-      <div class="alert-box">
-        <strong style="color: #92400E; font-size: 16px; display: block; margin-bottom: 12px;">⚠️ Recuerde traer:</strong>
-        <ul style="margin: 10px 0 0 0; padding-left: 20px; color: #78350F;">
-          <li style="margin: 8px 0;">DNI original del titular</li>
-          <li style="margin: 8px 0;">Cédula Verde o Azul del vehículo</li>
-          <li style="margin: 8px 0;">VTV vigente</li>
-          <li style="margin: 8px 0;">Póliza de seguro (original y copia)</li>
-          <li style="margin: 8px 0;">Presentarse 15 minutos antes</li>
-        </ul>
-      </div>
-      
-      <div class="location-box">
-        <strong style="color: #1E40AF; font-size: 16px; display: block; margin-bottom: 12px;">📍 Lugar de la Inspección:</strong>
-        <p style="margin: 8px 0; color: #1F2937;"><strong>Dirección General de Movilidad y Transporte</strong></p>
-        <p style="margin: 8px 0; color: #374151;">Av. Hipólito Yrigoyen 3863, Lanús Oeste</p>
-        <p style="margin: 8px 0; color: #374151;">CP: 1824</p>
-      </div>
-      
-      <div class="contact-box">
-        <h4 style="margin: 0 0 16px 0; color: #111827; font-size: 18px;">📞 Consultas</h4>
-        <p style="margin: 8px 0; color: #374151;">📞 Teléfono: <strong>4357-5100 int. 7137</strong></p>
-        <p style="margin: 8px 0; color: #374151;">📧 Email: <a href="mailto:transportepublicolanus@gmail.com" style="color: #2563EB; text-decoration: none;">transportepublicolanus@gmail.com</a></p>
-        <p style="margin: 8px 0; color: #374151;">🌐 Web: <a href="https://www.lanus.gob.ar" style="color: #2563EB; text-decoration: none;">www.lanus.gob.ar</a></p>
-        <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #D1D5DB; font-size: 14px; color: #6B7280;">
-          ⏰ Horario: Lunes a Viernes de 8:00 a 16:00 hs
-        </p>
-      </div>
-    </div>
-    <div class="footer">
-      <p><strong>Municipalidad de Lanús</strong></p>
-      <p style="margin-top: 8px;">Dirección General de Movilidad y Transporte</p>
-      <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #374151;">
-        © ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados
-      </p>
-    </div>
-  </div>
-</body>
-</html>
-          `
+          subject: '✅ Turno Confirmado - Inspección Vehicular - Lanús',
+          html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);padding:40px 20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.15);overflow:hidden}.header{background:linear-gradient(135deg,#059669 0%,#10B981 50%,#34D399 100%);padding:50px 30px;text-align:center;position:relative}.header::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%)}.success-badge{width:100px;height:100px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;border:4px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px);position:relative}.success-icon{font-size:50px;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1))}.header h1{color:#fff;font-size:32px;font-weight:700;margin-bottom:8px;text-shadow:0 2px 10px rgba(0,0,0,0.2);position:relative;z-index:1}.header p{color:rgba(255,255,255,0.95);font-size:16px;font-weight:500;position:relative;z-index:1}.content{padding:40px 35px}.greeting{font-size:20px;color:#111827;font-weight:600;margin-bottom:16px}.message{font-size:16px;color:#4B5563;line-height:1.7;margin-bottom:30px}.info-card{background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border:2px solid #10B981;border-radius:16px;padding:30px;margin:30px 0;box-shadow:0 4px 12px rgba(16,185,129,0.1)}.info-card h3{color:#059669;font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}.info-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(16,185,129,0.2)}.info-row:last-child{border-bottom:none}.info-label{color:#374151;font-weight:600;font-size:15px}.info-value{color:#059669;font-weight:700;font-size:16px}.status-badge{display:inline-block;background:linear-gradient(135deg,#059669,#10B981);color:#fff;padding:8px 20px;border-radius:20px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(16,185,129,0.3)}.alert-box{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border-left:5px solid #F59E0B;padding:20px;border-radius:12px;margin:25px 0}.contact-box{background:linear-gradient(135deg,#F3F4F6,#E5E7EB);border-radius:16px;padding:25px;margin-top:30px;border:1px solid #D1D5DB}.footer{background:linear-gradient(135deg,#1F2937,#111827);padding:30px;text-align:center}.footer p{color:#9CA3AF;font-size:13px;line-height:1.6}@media only screen and (max-width:600px){body{padding:20px 10px}.content{padding:30px 20px}.header{padding:40px 20px}.info-row{flex-direction:column;gap:8px}.info-value{text-align:left}}</style></head><body><div class="container"><div class="header"><div class="success-badge"><div class="success-icon">✅</div></div><h1>¡Confirmación Recibida!</h1><p>Dirección de Movilidad y Transporte</p><p style="font-size:14px;margin-top:5px">Municipalidad de Lanús</p></div><div class="content"><p class="greeting">Estimado/a <strong>${habPersona.persona.nombre}</strong>,</p><p class="message">Hemos registrado exitosamente la <strong>confirmación de su asistencia</strong> al turno de inspección vehicular. Su turno está confirmado y lo esperamos en la fecha y hora acordada.</p><div class="info-card"><h3><span>📋</span> Detalles del Turno</h3><div class="info-row"><span class="info-label">Nro. de Licencia</span><span class="info-value">${turno.habilitaciones_generales?.nro_licencia}</span></div><div class="info-row"><span class="info-label">Tipo de Vehículo</span><span class="info-value">${turno.habilitaciones_generales?.tipo_transporte || 'N/A'}</span></div><div class="info-row"><span class="info-label">Fecha</span><span class="info-value">${fechaFormateada}</span></div><div class="info-row" style="border:none;padding-top:20px;margin-top:10px;border-top:2px solid #10B981"><span class="info-label">Estado del Turno</span><span class="status-badge">✓ CONFIRMADO</span></div></div><div class="alert-box"><p style="color:#92400E;font-weight:700;margin-bottom:12px;font-size:16px">⚠️ Recordatorios Importantes</p><ul style="color:#78350F;margin:0;padding-left:20px;line-height:1.8"><li>Presentarse con <strong>15 minutos de anticipación</strong></li><li>Traer <strong>DNI del titular y cédula verde</strong></li><li>El vehículo debe estar en <strong>condiciones óptimas</strong></li><li>Documentación del vehículo <strong>al día</strong></li></ul></div><div class="contact-box"><p style="color:#111827;font-size:17px;font-weight:700;margin-bottom:15px">📞 ¿Necesita Ayuda?</p><p style="color:#374151;font-size:15px;line-height:1.8;margin:0"><strong>Dirección Gral. de Movilidad y Transporte</strong><br>Municipalidad de Lanús<br><br>📞 Teléfono: <strong>4357-5100 int. 7137</strong><br>📧 Email: <a href="mailto:transportepublicolanus@gmail.com" style="color:#2563EB;text-decoration:none;font-weight:600">transportepublicolanus@gmail.com</a><br><br><span style="color:#6B7280;font-size:14px">⏰ Lunes a Viernes de 8:00 a 16:00 hs</span></p></div></div><div class="footer"><p style="color:#F3F4F6;font-weight:700;font-size:16px;margin-bottom:10px">🏛️ Municipalidad de Lanús</p><p>Dirección General de Movilidad y Transporte</p><p style="margin-top:15px;padding-top:15px;border-top:1px solid #374151">© ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados</p></div></div></body></html>`
         })
 
         console.log('Email de confirmación enviado a:', habPersona.persona.email)
