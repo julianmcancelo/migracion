@@ -20,52 +20,79 @@ export async function GET(request: Request) {
       where.resultado = resultado
     }
 
-    // @ts-ignore
     const inspecciones = await prisma.inspecciones.findMany({
       where,
       orderBy: { fecha_inspeccion: 'desc' },
-      take: 100,
-      // @ts-ignore
-      include: {
-        // @ts-ignore
-        habilitaciones_generales: {
-          // @ts-ignore
-          include: {
-            // @ts-ignore
-            habilitaciones_personas: {
-              // @ts-ignore
-              include: {
-                // @ts-ignore
-                persona: true
-              }
-            },
-            // @ts-ignore
-            habilitaciones_vehiculos: {
-              // @ts-ignore
-              include: {
-                // @ts-ignore
-                vehiculo: true
-              }
-            }
-          }
-        }
-      }
+      take: 100
     })
 
-    // Formatear datos para incluir info del titular y vehículo
-    const inspeccionesFormateadas = inspecciones.map((insp: any) => {
-      const habPersona = insp.habilitaciones_generales?.habilitaciones_personas?.[0]
-      const habVehiculo = insp.habilitaciones_generales?.habilitaciones_vehiculos?.[0]
-      
-      return {
-        ...insp,
-        titular_nombre: habPersona?.persona?.nombre || 'Sin datos',
-        titular_dni: habPersona?.persona?.dni || '',
-        vehiculo_patente: habVehiculo?.vehiculo?.patente || 'Sin patente',
-        vehiculo_marca: habVehiculo?.vehiculo?.marca || '',
-        vehiculo_modelo: habVehiculo?.vehiculo?.modelo || ''
-      }
-    })
+    // Enriquecer con datos de titular y vehículo
+    const inspeccionesFormateadas = await Promise.all(
+      inspecciones.map(async (insp: any) => {
+        try {
+          // Obtener habilitación
+          const habilitacion = await prisma.habilitaciones_generales.findUnique({
+            where: { id: insp.habilitacion_id }
+          })
+
+          if (!habilitacion) {
+            return {
+              ...insp,
+              titular_nombre: 'Sin datos',
+              titular_dni: '',
+              vehiculo_patente: 'Sin patente',
+              vehiculo_marca: '',
+              vehiculo_modelo: ''
+            }
+          }
+
+          // Obtener datos del titular
+          // @ts-ignore
+          const habPersona = await prisma.habilitaciones_personas.findFirst({
+            where: { habilitacion_id: habilitacion.id }
+          })
+
+          let titular = null
+          if (habPersona?.persona_id) {
+            titular = await prisma.personas.findUnique({
+              where: { id: habPersona.persona_id }
+            })
+          }
+
+          // Obtener datos del vehículo
+          // @ts-ignore
+          const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
+            where: { habilitacion_id: habilitacion.id }
+          })
+
+          let vehiculo = null
+          if (habVehiculo?.vehiculo_id) {
+            vehiculo = await prisma.vehiculos.findUnique({
+              where: { id: habVehiculo.vehiculo_id }
+            })
+          }
+
+          return {
+            ...insp,
+            titular_nombre: titular?.nombre || 'Sin datos',
+            titular_dni: titular?.dni || '',
+            vehiculo_patente: vehiculo?.dominio || 'Sin patente',
+            vehiculo_marca: vehiculo?.marca || '',
+            vehiculo_modelo: vehiculo?.modelo || ''
+          }
+        } catch (err) {
+          console.error('Error al enriquecer inspección:', err)
+          return {
+            ...insp,
+            titular_nombre: 'Sin datos',
+            titular_dni: '',
+            vehiculo_patente: 'Sin patente',
+            vehiculo_marca: '',
+            vehiculo_modelo: ''
+          }
+        }
+      })
+    )
 
     return NextResponse.json({
       success: true,
