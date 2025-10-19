@@ -436,21 +436,31 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                   <table className="w-full text-sm">
                     <thead className="bg-gray-50 border-b-2 border-gray-200">
                       <tr>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">N° Licencia</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Estado</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Hora</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Titular</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Dominio</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Resultado</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
                       {verificaciones.map((verif: any) => (
                         <tr key={verif.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3 font-mono font-medium">{verif.nro_licencia}</td>
                           <td className="px-4 py-3">
                             {new Date(verif.fecha).toLocaleDateString('es-AR')}
                           </td>
+                          <td className="px-4 py-3">{verif.hora}</td>
+                          <td className="px-4 py-3">{verif.nombre_titular}</td>
+                          <td className="px-4 py-3 font-mono font-medium">{verif.dominio}</td>
                           <td className="px-4 py-3">
-                            <span className="px-2 py-1 rounded text-xs font-medium bg-blue-100 text-blue-800">
-                              Verificada
+                            <span className={`px-2 py-1 rounded text-xs font-medium ${
+                              verif.resultado?.toLowerCase().includes('aprobad') 
+                                ? 'bg-green-100 text-green-800'
+                                : verif.resultado?.toLowerCase().includes('rechazad') || verif.resultado?.toLowerCase().includes('desaprob')
+                                ? 'bg-red-100 text-red-800'
+                                : 'bg-blue-100 text-blue-800'
+                            }`}>
+                              {verif.resultado || 'Verificada'}
                             </span>
                           </td>
                         </tr>
