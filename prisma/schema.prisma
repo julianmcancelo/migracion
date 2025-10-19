@@ -266,7 +266,6 @@ model tokens_acceso {
   token            String                   @unique(map: "token") @db.VarChar(255)
   fecha_expiracion DateTime                 @db.DateTime(0)
   creado_en        DateTime?                @default(now()) @db.DateTime(0)
-  activo           Boolean                  @default(true)
   
   // Relación con habilitación
   habilitacion     habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
