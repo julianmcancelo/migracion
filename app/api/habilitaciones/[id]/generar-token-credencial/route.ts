@@ -16,13 +16,14 @@ export async function POST(
     const params = await context.params
     const habilitacionId = parseInt(params.id)
 
-    // Verificar que la habilitación existe
+    // Verificar que la habilitación existe y obtener su vigencia
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
       where: { id: habilitacionId },
       select: {
         id: true,
         nro_licencia: true,
-        estado: true
+        estado: true,
+        vigencia_fin: true
       }
     })
 
@@ -33,20 +34,25 @@ export async function POST(
       )
     }
 
+    if (!habilitacion.vigencia_fin) {
+      return NextResponse.json(
+        { success: false, error: 'La habilitación no tiene fecha de vigencia' },
+        { status: 400 }
+      )
+    }
+
     // Generar token único
     const token = uuidv4()
     
-    // Calcular fecha de expiración (90 días desde hoy)
-    const fechaExpiracion = new Date()
-    fechaExpiracion.setDate(fechaExpiracion.getDate() + 90)
+    // La fecha de expiración del token es la misma que la vigencia de la habilitación
+    const fechaExpiracion = new Date(habilitacion.vigencia_fin)
 
     // Crear token en la base de datos
     const tokenCreado = await prisma.tokens_acceso.create({
       data: {
         token,
         habilitacion_id: habilitacionId,
-        fecha_expiracion: fechaExpiracion,
-        activo: true
+        fecha_expiracion: fechaExpiracion
       }
     })
 
@@ -91,13 +97,12 @@ export async function GET(
     const tokens = await prisma.tokens_acceso.findMany({
       where: {
         habilitacion_id: habilitacionId,
-        activo: true,
         fecha_expiracion: {
           gte: new Date() // Solo tokens no expirados
         }
       },
       orderBy: {
-        fecha_creacion: 'desc'
+        creado_en: 'desc'
       },
       take: 5 // Últimos 5 tokens
     })

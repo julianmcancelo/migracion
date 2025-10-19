@@ -93,14 +93,6 @@ export async function GET(request: Request) {
       )
     }
 
-    // Verificar si el token está activo
-    if (!tokenData.activo) {
-      return NextResponse.json(
-        { success: false, error: 'Este token ha sido desactivado' },
-        { status: 403 }
-      )
-    }
-
     // Verificar si el token ha expirado
     if (new Date(tokenData.fecha_expiracion) < new Date()) {
       return NextResponse.json(
