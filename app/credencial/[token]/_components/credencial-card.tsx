@@ -39,34 +39,25 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
     switch (estado) {
       case 'HABILITADO':
         return (
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 flex items-center justify-center gap-2 font-bold">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-            </svg>
-            ✓ HABILITADO
+          <div className="bg-green-600 text-white px-4 py-2 text-center font-semibold uppercase text-sm border-b-2 border-green-700">
+            HABILITADO
           </div>
         )
       case 'NO_HABILITADO':
         return (
-          <div className="bg-gradient-to-r from-red-500 to-rose-600 text-white px-4 py-2 flex items-center justify-center gap-2 font-bold animate-pulse">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-            </svg>
-            ✗ NO HABILITADO
+          <div className="bg-red-600 text-white px-4 py-2 text-center font-semibold uppercase text-sm border-b-2 border-red-700">
+            NO HABILITADO
           </div>
         )
       case 'EN_TRAMITE':
         return (
-          <div className="bg-gradient-to-r from-amber-400 to-orange-500 text-white px-4 py-2 flex items-center justify-center gap-2 font-bold">
-            <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-              <path d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.332-.21 3.03-1.742 3.03H4.42c-1.532 0-2.492-1.698-1.742-3.03l5.58-9.92z" />
-            </svg>
-            ⏳ EN TRÁMITE
+          <div className="bg-yellow-500 text-white px-4 py-2 text-center font-semibold uppercase text-sm border-b-2 border-yellow-600">
+            EN TRÁMITE
           </div>
         )
       default:
         return (
-          <div className="bg-gray-300 text-gray-800 px-4 py-2 flex items-center justify-center gap-2 font-bold">
+          <div className="bg-gray-400 text-white px-4 py-2 text-center font-semibold uppercase text-sm border-b-2 border-gray-500">
             {estado || 'N/A'}
           </div>
         )
@@ -95,26 +86,20 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
     <>
       {/* Contenedor de la credencial */}
       <div className="max-w-md mx-auto">
-        <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden relative">
-          {/* Marca de agua */}
-          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-[-30deg] opacity-[0.03] font-black text-[5rem] text-red-900 pointer-events-none select-none">
-            LANÚS
-          </div>
-
-          {/* Borde decorativo superior */}
-          <div className="h-1 bg-gradient-to-r from-red-600 via-red-700 to-red-800" />
-
+        <div className="bg-white shadow-xl border-2 border-gray-300 overflow-hidden">
           {/* Header */}
-          <div className="bg-gradient-to-br from-red-600 to-red-800 text-white p-6 text-center relative z-10">
+          <div className="bg-gray-800 text-white p-5 text-center border-b-4 border-gray-900">
             <div className="flex justify-center mb-3">
-              <div className="bg-white p-2 rounded-lg">
-                <svg className="w-12 h-12 text-red-700" viewBox="0 0 24 24" fill="currentColor">
-                  <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
-                </svg>
-              </div>
+              <Image 
+                src="https://www.lanus.gob.ar/logo-200.png" 
+                alt="Municipalidad de Lanús" 
+                width={80} 
+                height={80}
+                className="h-16 w-auto"
+              />
             </div>
-            <h1 className="text-sm font-medium uppercase tracking-wider">Municipalidad de Lanús</h1>
-            <p className="text-xs opacity-90 mt-1">Movilidad y Transporte</p>
+            <h1 className="text-base font-bold uppercase tracking-wide">Municipalidad de Lanús</h1>
+            <p className="text-xs mt-1 font-medium">Dirección General de Movilidad y Transporte</p>
           </div>
 
           {/* Badge de estado */}
@@ -123,32 +108,32 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
           {/* Body */}
           <div className="p-6 relative z-10">
             {/* Tipo y número de licencia */}
-            <div className="text-center mb-6">
-              <p className="text-xl font-extrabold text-gray-800 uppercase tracking-wide">
+            <div className="border-b border-gray-200 pb-4 mb-4">
+              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-1">
                 {data.habilitacion.tipo_transporte}
               </p>
-              <p className="text-3xl font-black text-red-700 tracking-tight mt-2">
-                LIC. N° {data.habilitacion.nro_licencia}
+              <p className="text-2xl font-bold text-gray-900 tracking-wide">
+                LICENCIA N° {data.habilitacion.nro_licencia}
               </p>
             </div>
 
             {/* Vigencias */}
-            <div className="grid grid-cols-2 gap-4 mb-6 text-xs">
+            <div className="grid grid-cols-2 gap-3 mb-4 text-xs bg-gray-50 p-3 border border-gray-200">
               <div>
-                <span className="text-gray-600 block font-medium">VIGENCIA DESDE</span>
-                <span className="text-sm font-bold text-gray-900">{formatDate(data.habilitacion.vigencia_inicio)}</span>
+                <span className="text-gray-500 block font-medium uppercase">Vigencia Desde</span>
+                <span className="text-sm font-semibold text-gray-900">{formatDate(data.habilitacion.vigencia_inicio)}</span>
               </div>
               <div>
-                <span className="text-gray-600 block font-medium">VIGENCIA HASTA</span>
-                <span className="text-sm font-bold text-gray-900">{formatDate(data.habilitacion.vigencia_fin)}</span>
+                <span className="text-gray-500 block font-medium uppercase">Vigencia Hasta</span>
+                <span className="text-sm font-semibold text-gray-900">{formatDate(data.habilitacion.vigencia_fin)}</span>
               </div>
               <div>
-                <span className="text-gray-600 block font-medium">TIPO TRÁMITE</span>
-                <span className="text-sm font-bold text-gray-900">{data.habilitacion.tipo || 'N/A'}</span>
+                <span className="text-gray-500 block font-medium uppercase">Tipo Trámite</span>
+                <span className="text-sm font-semibold text-gray-900">{data.habilitacion.tipo || 'N/A'}</span>
               </div>
               <div>
-                <span className="text-gray-600 block font-medium">FECHA EMISIÓN</span>
-                <span className="text-sm font-bold text-gray-900">{new Date().toLocaleDateString('es-AR')}</span>
+                <span className="text-gray-500 block font-medium uppercase">Fecha Emisión</span>
+                <span className="text-sm font-semibold text-gray-900">{new Date().toLocaleDateString('es-AR')}</span>
               </div>
             </div>
 
@@ -156,11 +141,11 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Titular */}
             {data.titular && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 pb-1 border-b border-dashed border-gray-300">
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
                   Titular de la Habilitación
                 </h3>
-                <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                <div className="flex items-center gap-3 bg-white p-3 border border-gray-300">
                   <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                     {data.titular.foto_url ? (
                       <Image 
@@ -195,59 +180,57 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Vehículo */}
             {data.vehiculo && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 pb-1 border-b border-dashed border-gray-300">
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
                   Vehículo Afectado
                 </h3>
-                <div className="bg-gray-50 p-4 rounded-lg border border-gray-200">
-                  <div className="mb-3">
-                    <span className="text-xs text-gray-600 font-medium">DOMINIO:</span>
-                    <div className="inline-block ml-2 bg-yellow-100 text-yellow-800 px-3 py-1 rounded font-mono text-base font-bold">
+                <div className="bg-white p-3 border border-gray-300">
+                  <div className="mb-3 pb-2 border-b border-gray-200">
+                    <span className="text-xs text-gray-500 font-medium uppercase">Dominio:</span>
+                    <div className="inline-block ml-2 bg-gray-100 border border-gray-400 px-3 py-1 font-mono text-base font-bold text-gray-900">
                       {data.vehiculo.dominio}
                     </div>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div>
-                      <span className="text-gray-600">MARCA:</span>
-                      <p className="font-bold text-gray-900">{data.vehiculo.marca}</p>
+                  <div className="grid grid-cols-2 gap-2 text-xs mb-2">
+                    <div className="border-r border-gray-200 pr-2">
+                      <span className="text-gray-500 font-medium uppercase">Marca:</span>
+                      <p className="font-semibold text-gray-900">{data.vehiculo.marca}</p>
                     </div>
-                    <div>
-                      <span className="text-gray-600">AÑO:</span>
-                      <p className="font-bold text-gray-900">{data.vehiculo.ano}</p>
+                    <div className="pl-2">
+                      <span className="text-gray-500 font-medium uppercase">Año:</span>
+                      <p className="font-semibold text-gray-900">{data.vehiculo.ano}</p>
                     </div>
-                    <div className="col-span-2">
-                      <span className="text-gray-600">MODELO:</span>
-                      <p className="font-bold text-gray-900">{data.vehiculo.modelo}</p>
+                    <div className="col-span-2 pt-2 border-t border-gray-200">
+                      <span className="text-gray-500 font-medium uppercase">Modelo:</span>
+                      <p className="font-semibold text-gray-900">{data.vehiculo.modelo}</p>
                     </div>
-                    <div className="col-span-2">
-                      <span className="text-gray-600">CHASIS:</span>
-                      <p className="font-mono text-xs font-bold text-gray-900">{data.vehiculo.chasis}</p>
+                    <div className="col-span-2 pt-2 border-t border-gray-200">
+                      <span className="text-gray-500 font-medium uppercase">Chasis:</span>
+                      <p className="font-mono text-xs font-semibold text-gray-900">{data.vehiculo.chasis}</p>
                     </div>
                   </div>
 
-                  <hr className="my-3" />
-
-                  <div className="space-y-2 text-xs">
-                    <div>
-                      <span className="text-gray-600">ASEGURADORA:</span>
-                      <p className="font-bold text-gray-900">{data.vehiculo.Aseguradora || 'N/A'}</p>
+                  <div className="pt-2 border-t-2 border-gray-300 space-y-2 text-xs">
+                    <div className="border-b border-gray-200 pb-1">
+                      <span className="text-gray-500 font-medium uppercase">Aseguradora:</span>
+                      <p className="font-semibold text-gray-900">{data.vehiculo.Aseguradora || 'N/A'}</p>
                     </div>
-                    <div>
-                      <span className="text-gray-600">PÓLIZA N°:</span>
-                      <p className="font-bold text-gray-900">{data.vehiculo.poliza || 'N/A'}</p>
+                    <div className="border-b border-gray-200 pb-1">
+                      <span className="text-gray-500 font-medium uppercase">Póliza N°:</span>
+                      <p className="font-semibold text-gray-900">{data.vehiculo.poliza || 'N/A'}</p>
                     </div>
                     
-                    <div className="grid grid-cols-2 gap-3 pt-2">
+                    <div className="grid grid-cols-2 gap-2 pt-1">
                       <div>
-                        <span className="text-gray-600">VENC. VTV:</span>
-                        <p className={`font-bold ${getVencimientoClass(data.vehiculo.Vencimiento_VTV)}`}>
+                        <span className="text-gray-500 font-medium uppercase block">Venc. VTV:</span>
+                        <p className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_VTV)}`}>
                           {formatDate(data.vehiculo.Vencimiento_VTV)}
                         </p>
                       </div>
                       <div>
-                        <span className="text-gray-600">VENC. PÓLIZA:</span>
-                        <p className={`font-bold ${getVencimientoClass(data.vehiculo.Vencimiento_Poliza)}`}>
+                        <span className="text-gray-500 font-medium uppercase block">Venc. Póliza:</span>
+                        <p className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_Poliza)}`}>
                           {formatDate(data.vehiculo.Vencimiento_Poliza)}
                         </p>
                       </div>
@@ -259,13 +242,13 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Conductores */}
             {data.conductores && data.conductores.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 pb-1 border-b border-dashed border-gray-300">
-                  {data.conductores.length > 1 ? 'Conductores Asignados' : 'Conductor Asignado'}
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
+                  {data.conductores.length > 1 ? 'Conductores' : 'Conductor'}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {data.conductores.map((conductor: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
                       <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                         {conductor.foto_url ? (
                           <Image 
@@ -284,12 +267,10 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
                         )}
                       </div>
                       <div className="flex-1">
-                        <p className="font-bold text-base text-gray-900">{conductor.nombre}</p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          DNI: <span className="font-semibold">{conductor.dni}</span>
-                        </p>
-                        <p className="text-xs text-gray-600">
-                          Lic. Cat.: <span className="font-semibold">{conductor.licencia_categoria || 'N/A'}</span>
+                        <p className="font-semibold text-sm text-gray-900">{conductor.nombre}</p>
+                        <p className="text-xs text-gray-600 mt-0.5">
+                          DNI: <span className="font-medium">{conductor.dni}</span> | 
+                          Cat.: <span className="font-medium">{conductor.licencia_categoria || 'N/A'}</span>
                         </p>
                       </div>
                     </div>
@@ -300,13 +281,13 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Celadores (solo para Escolar) */}
             {!esRemis && data.celadores && data.celadores.length > 0 && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 pb-1 border-b border-dashed border-gray-300">
-                  {data.celadores.length > 1 ? 'Celadores Asignados' : 'Celador Asignado'}
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
+                  {data.celadores.length > 1 ? 'Celadores' : 'Celador'}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {data.celadores.map((celador: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 bg-gray-50 p-3 rounded-lg border border-gray-200">
+                    <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
                       <div className="w-16 h-20 bg-gray-200 rounded-md flex-shrink-0 overflow-hidden">
                         {celador.foto_url ? (
                           <Image 
@@ -338,12 +319,12 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Destino */}
             {data.destino && (
-              <div className="mb-6">
-                <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wider mb-3 pb-1 border-b border-dashed border-gray-300">
-                  {esRemis ? 'Remisería Adherida' : 'Establecimiento Educativo Asignado'}
+              <div className="mb-5">
+                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
+                  {esRemis ? 'Remisería' : 'Establecimiento'}
                 </h3>
-                <div className="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                  <p className="font-bold text-base text-gray-900">{data.destino.nombre}</p>
+                <div className="bg-white p-3 border border-gray-300">
+                  <p className="font-semibold text-sm text-gray-900">{data.destino.nombre}</p>
                   <p className="text-xs text-gray-600 mt-1">
                     {data.destino.direccion} - {data.destino.localidad}
                   </p>
@@ -353,43 +334,45 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
           </div>
 
           {/* QR Code */}
-          <div className="bg-gray-100 p-6 text-center border-t border-gray-200">
-            <div className="inline-block p-3 bg-white rounded-lg shadow-md">
+          <div className="bg-gray-100 p-5 text-center border-t-2 border-gray-400">
+            <div className="inline-block p-2 bg-white border-2 border-gray-400">
               <QRCodeSVG
                 value={credencialUrl}
-                size={140}
+                size={120}
                 level="H"
                 includeMargin={false}
               />
             </div>
-            <p className="text-xs text-gray-600 mt-3">Verifique autenticidad escaneando el código</p>
+            <p className="text-xs text-gray-600 mt-2 font-medium">Escanee para verificar autenticidad</p>
           </div>
         </div>
 
         {/* Botones de acción (no se imprimen) */}
-        <div className="mt-6 flex justify-center gap-3 no-print">
+        <div className="mt-4 flex justify-center gap-2 no-print">
           <Button
             onClick={handlePrint}
-            className="bg-blue-600 hover:bg-blue-700 text-white"
+            className="bg-gray-700 hover:bg-gray-800 text-white"
+            size="sm"
           >
-            <Printer className="w-4 h-4 mr-2" />
-            Imprimir Credencial
+            <Printer className="w-3 h-3 mr-1" />
+            Imprimir
           </Button>
           
           <Button
             onClick={handleCopyLink}
             variant="outline"
-            className="border-green-600 text-green-600 hover:bg-green-50"
+            size="sm"
+            className="border-gray-400 text-gray-700 hover:bg-gray-100"
           >
             {copied ? (
               <>
-                <Check className="w-4 h-4 mr-2" />
-                ¡Enlace Copiado!
+                <Check className="w-3 h-3 mr-1" />
+                Copiado
               </>
             ) : (
               <>
-                <Copy className="w-4 h-4 mr-2" />
-                Copiar Enlace
+                <Copy className="w-3 h-3 mr-1" />
+                Copiar
               </>
             )}
           </Button>
