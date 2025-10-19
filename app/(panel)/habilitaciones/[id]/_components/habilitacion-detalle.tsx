@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { 
   ArrowLeft, Edit, FileText, Download, AlertTriangle, 
-  Info, Users, Car, Calendar, CheckCircle, ClipboardCheck
+  Info, Users, Car, Calendar, CheckCircle, ClipboardCheck, Trash2
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -25,6 +25,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
   const [obleas, setObleas] = useState<any[]>([])
   const [verificaciones, setVerificaciones] = useState<any[]>([])
   const [inspecciones, setInspecciones] = useState<any[]>([])
+  const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
 
   useEffect(() => {
     fetchHabilitacion()
@@ -72,6 +73,34 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
       }
     } catch (err) {
       console.error('Error cargando historiales:', err)
+    }
+  }
+
+  const handleEliminarInspeccion = async (inspeccionId: number) => {
+    if (!confirm('¿Está seguro de eliminar esta inspección? Esta acción no se puede deshacer.')) {
+      return
+    }
+
+    setEliminandoInspeccion(inspeccionId)
+    try {
+      const res = await fetch(`/api/inspecciones/${inspeccionId}/eliminar`, {
+        method: 'DELETE'
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        alert('✅ Inspección eliminada exitosamente')
+        // Actualizar lista de inspecciones
+        setInspecciones(prev => prev.filter(insp => insp.id !== inspeccionId))
+      } else {
+        alert('❌ Error al eliminar inspección: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('❌ Error al eliminar inspección')
+    } finally {
+      setEliminandoInspeccion(null)
     }
   }
 
@@ -511,15 +540,35 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                             </span>
                           </td>
                           <td className="px-4 py-3">
-                            <a
-                              href={`/api/inspecciones/${insp.id}/pdf`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
-                            >
-                              <FileText className="h-4 w-4" />
-                              Ver PDF
-                            </a>
+                            <div className="flex items-center gap-2">
+                              <a
+                                href={`/api/inspecciones/${insp.id}/pdf`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                              >
+                                <FileText className="h-4 w-4" />
+                                Ver PDF
+                              </a>
+                              <button
+                                onClick={() => handleEliminarInspeccion(insp.id)}
+                                disabled={eliminandoInspeccion === insp.id}
+                                className="text-red-600 hover:text-red-800 font-medium flex items-center gap-1 disabled:opacity-50"
+                                title="Eliminar inspección"
+                              >
+                                {eliminandoInspeccion === insp.id ? (
+                                  <>
+                                    <div className="animate-spin h-4 w-4 border-2 border-red-600 border-t-transparent rounded-full" />
+                                    Eliminando...
+                                  </>
+                                ) : (
+                                  <>
+                                    <Trash2 className="h-4 w-4" />
+                                    Eliminar
+                                  </>
+                                )}
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))}

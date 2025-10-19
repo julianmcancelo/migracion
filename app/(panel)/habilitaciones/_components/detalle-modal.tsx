@@ -16,7 +16,8 @@ import {
   Car,
   Building2,
   ClipboardList,
-  Shield
+  Shield,
+  Trash2
 } from 'lucide-react'
 import {
   Dialog,
@@ -45,6 +46,7 @@ interface DetalleModalProps {
 export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps) {
   const [loading, setLoading] = useState(false)
   const [detalleCompleto, setDetalleCompleto] = useState<any>(null)
+  const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
 
   // Cargar detalle completo cuando se abre el modal
   useEffect(() => {
@@ -73,6 +75,34 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   if (!habilitacion) return null
 
   const hab = detalleCompleto || habilitacion
+
+  const handleEliminarInspeccion = async (inspeccionId: number) => {
+    if (!confirm('¿Está seguro de eliminar esta inspección? Esta acción no se puede deshacer.')) {
+      return
+    }
+
+    setEliminandoInspeccion(inspeccionId)
+    try {
+      const res = await fetch(`/api/inspecciones/${inspeccionId}/eliminar`, {
+        method: 'DELETE'
+      })
+
+      const data = await res.json()
+
+      if (data.success) {
+        alert('✅ Inspección eliminada exitosamente')
+        // Recargar el detalle completo
+        await cargarDetalleCompleto()
+      } else {
+        alert('❌ Error al eliminar inspección: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('❌ Error al eliminar inspección')
+    } finally {
+      setEliminandoInspeccion(null)
+    }
+  }
 
   const getEstadoBadge = (estado: string) => {
     const estados: Record<string, { variant: any; icon: any }> = {
@@ -419,7 +449,21 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                             </p>
                             <p className="text-sm text-gray-600">{insp.observaciones || 'Sin observaciones'}</p>
                           </div>
-                          <Badge variant="default">{insp.estado}</Badge>
+                          <div className="flex items-center gap-2">
+                            <Badge variant="default">{insp.estado}</Badge>
+                            <button
+                              onClick={() => handleEliminarInspeccion(insp.id)}
+                              disabled={eliminandoInspeccion === insp.id}
+                              className="text-red-600 hover:text-red-800 p-1 rounded disabled:opacity-50"
+                              title="Eliminar inspección"
+                            >
+                              {eliminandoInspeccion === insp.id ? (
+                                <div className="animate-spin h-4 w-4 border-2 border-red-600 border-t-transparent rounded-full" />
+                              ) : (
+                                <Trash2 className="h-4 w-4" />
+                              )}
+                            </button>
+                          </div>
                         </div>
                       ))}
                     </div>
