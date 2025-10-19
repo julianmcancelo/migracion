@@ -20,16 +20,57 @@ export async function GET(request: Request) {
       where.resultado = resultado
     }
 
+    // @ts-ignore
     const inspecciones = await prisma.inspecciones.findMany({
       where,
       orderBy: { fecha_inspeccion: 'desc' },
-      take: 100
+      take: 100,
+      // @ts-ignore
+      include: {
+        // @ts-ignore
+        habilitaciones_generales: {
+          // @ts-ignore
+          include: {
+            // @ts-ignore
+            habilitaciones_personas: {
+              // @ts-ignore
+              include: {
+                // @ts-ignore
+                persona: true
+              }
+            },
+            // @ts-ignore
+            habilitaciones_vehiculos: {
+              // @ts-ignore
+              include: {
+                // @ts-ignore
+                vehiculo: true
+              }
+            }
+          }
+        }
+      }
+    })
+
+    // Formatear datos para incluir info del titular y vehículo
+    const inspeccionesFormateadas = inspecciones.map((insp: any) => {
+      const habPersona = insp.habilitaciones_generales?.habilitaciones_personas?.[0]
+      const habVehiculo = insp.habilitaciones_generales?.habilitaciones_vehiculos?.[0]
+      
+      return {
+        ...insp,
+        titular_nombre: habPersona?.persona?.nombre || 'Sin datos',
+        titular_dni: habPersona?.persona?.dni || '',
+        vehiculo_patente: habVehiculo?.vehiculo?.patente || 'Sin patente',
+        vehiculo_marca: habVehiculo?.vehiculo?.marca || '',
+        vehiculo_modelo: habVehiculo?.vehiculo?.modelo || ''
+      }
     })
 
     return NextResponse.json({
       success: true,
-      data: inspecciones,
-      total: inspecciones.length
+      data: inspeccionesFormateadas,
+      total: inspeccionesFormateadas.length
     })
 
   } catch (error) {

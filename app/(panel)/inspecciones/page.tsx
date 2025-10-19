@@ -2,8 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Download } from 'lucide-react'
+import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Mail, User, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useToast } from '@/hooks/use-toast'
 
 interface Inspeccion {
   id: number
@@ -14,6 +15,11 @@ interface Inspeccion {
   tipo_transporte: string
   resultado: string
   email_contribuyente?: string
+  titular_nombre?: string
+  titular_dni?: string
+  vehiculo_patente?: string
+  vehiculo_marca?: string
+  vehiculo_modelo?: string
 }
 
 /**
@@ -23,6 +29,8 @@ interface Inspeccion {
 export default function InspeccionesPage() {
   const [inspecciones, setInspecciones] = useState<Inspeccion[]>([])
   const [loading, setLoading] = useState(true)
+  const [enviandoEmail, setEnviandoEmail] = useState<number | null>(null)
+  const { toast } = useToast()
 
   useEffect(() => {
     cargarInspecciones()
@@ -60,6 +68,45 @@ export default function InspeccionesPage() {
         return <XCircle className="h-4 w-4" />
       default:
         return <AlertCircle className="h-4 w-4" />
+    }
+  }
+
+  const enviarPorEmail = async (inspeccionId: number, email: string) => {
+    if (!email) {
+      toast({
+        title: 'Email no disponible',
+        description: 'Esta inspección no tiene email registrado',
+        variant: 'destructive'
+      })
+      return
+    }
+
+    setEnviandoEmail(inspeccionId)
+    try {
+      const response = await fetch(`/api/inspecciones/${inspeccionId}/enviar-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        toast({
+          title: '✅ Email enviado',
+          description: `Inspección enviada exitosamente a ${email}`
+        })
+      } else {
+        throw new Error(data.error)
+      }
+    } catch (error) {
+      toast({
+        title: 'Error al enviar',
+        description: 'No se pudo enviar el email',
+        variant: 'destructive'
+      })
+    } finally {
+      setEnviandoEmail(null)
     }
   }
 
@@ -161,16 +208,13 @@ export default function InspeccionesPage() {
                     Licencia
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Titular / Vehículo
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Inspector
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipo
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Resultado
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -179,20 +223,45 @@ export default function InspeccionesPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {inspecciones.map((inspeccion) => (
-                  <tr key={inspeccion.id} className="hover:bg-gray-50">
+                  <tr key={inspeccion.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
+                      <div className="flex items-center gap-2">
+                        <Calendar className="h-4 w-4 text-gray-400" />
+                        {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="font-mono font-bold text-blue-600">
-                        {inspeccion.nro_licencia}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-mono font-bold text-blue-600 text-base">
+                          {inspeccion.nro_licencia}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {inspeccion.tipo_transporte || 'N/A'}
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {inspeccion.nombre_inspector}
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-gray-900 font-semibold">
+                          <User className="h-4 w-4 text-gray-400" />
+                          {inspeccion.titular_nombre || 'Sin datos'}
+                        </div>
+                        {inspeccion.titular_dni && (
+                          <span className="text-xs text-gray-500 ml-6">DNI: {inspeccion.titular_dni}</span>
+                        )}
+                        <div className="flex items-center gap-2 text-gray-700 mt-1">
+                          <Car className="h-4 w-4 text-gray-400" />
+                          <span className="font-mono font-semibold">{inspeccion.vehiculo_patente || 'N/A'}</span>
+                          {(inspeccion.vehiculo_marca || inspeccion.vehiculo_modelo) && (
+                            <span className="text-xs text-gray-500">
+                              {inspeccion.vehiculo_marca} {inspeccion.vehiculo_modelo}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {inspeccion.tipo_transporte || '-'}
+                      {inspeccion.nombre_inspector}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getResultadoBadge(inspeccion.resultado)}`}>
@@ -200,20 +269,31 @@ export default function InspeccionesPage() {
                         {inspeccion.resultado}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {inspeccion.email_contribuyente || '-'}
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <a
-                        href={`/api/inspecciones/${inspeccion.id}/pdf`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
-                        title="Descargar PDF"
-                      >
-                        <FileText className="h-4 w-4" />
-                        PDF
-                      </a>
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`/api/inspecciones/${inspeccion.id}/pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-red-600 hover:text-red-800 font-medium transition-colors"
+                          title="Descargar PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                          PDF
+                        </a>
+                        {inspeccion.email_contribuyente && (
+                          <Button
+                            onClick={() => enviarPorEmail(inspeccion.id, inspeccion.email_contribuyente!)}
+                            disabled={enviandoEmail === inspeccion.id}
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 text-blue-600 hover:text-blue-800 hover:bg-blue-50"
+                            title={`Enviar a ${inspeccion.email_contribuyente}`}
+                          >
+                            <Mail className="h-4 w-4" />
+                          </Button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}
