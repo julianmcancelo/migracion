@@ -35,6 +35,7 @@ interface Turno {
 export default function TurnosPage() {
   const [turnos, setTurnos] = useState<Turno[]>([])
   const [turnosFiltrados, setTurnosFiltrados] = useState<Turno[]>([])
+  const [habilitacionesSinTurno, setHabilitacionesSinTurno] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
   const [buscarDNI, setBuscarDNI] = useState('')
@@ -44,6 +45,7 @@ export default function TurnosPage() {
 
   useEffect(() => {
     cargarTurnos()
+    cargarHabilitacionesSinTurno()
   }, [filtroEstado])
 
   useEffect(() => {
@@ -70,6 +72,19 @@ export default function TurnosPage() {
       console.error('Error al cargar turnos:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const cargarHabilitacionesSinTurno = async () => {
+    try {
+      const response = await fetch('/api/habilitaciones/sin-turno')
+      const data = await response.json()
+
+      if (data.success) {
+        setHabilitacionesSinTurno(data.data || [])
+      }
+    } catch (error) {
+      console.error('Error al cargar habilitaciones sin turno:', error)
     }
   }
 
@@ -203,6 +218,65 @@ export default function TurnosPage() {
           Nuevo Turno
         </Button>
       </div>
+
+      {/* Habilitaciones sin turno */}
+      {habilitacionesSinTurno.length > 0 && (
+        <div className="bg-gradient-to-r from-orange-50 to-red-50 border-2 border-orange-300 rounded-xl p-6 mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <AlertCircle className="h-6 w-6 text-orange-600" />
+            <div>
+              <h2 className="text-lg font-bold text-orange-900">
+                Habilitaciones en Trámite sin Turno Asignado
+              </h2>
+              <p className="text-sm text-orange-700">
+                Hay {habilitacionesSinTurno.length} habilitación{habilitacionesSinTurno.length !== 1 ? 'es' : ''} esperando asignación de turno
+              </p>
+            </div>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {habilitacionesSinTurno.map((hab: any) => (
+              <div key={hab.id} className="bg-white rounded-lg p-4 shadow-sm border border-orange-200 hover:shadow-md transition-shadow">
+                <div className="flex justify-between items-start mb-3">
+                  <div>
+                    <p className="text-xs text-gray-500 font-medium">N° Licencia</p>
+                    <p className="font-mono font-bold text-blue-700">{hab.nro_licencia}</p>
+                  </div>
+                  <span className="px-2 py-1 bg-orange-100 text-orange-800 text-xs font-semibold rounded">
+                    SIN TURNO
+                  </span>
+                </div>
+                
+                <div className="space-y-2 mb-3">
+                  <div className="flex items-center gap-2 text-sm">
+                    <User className="h-4 w-4 text-gray-400" />
+                    <span className="text-gray-700">{hab.titular_nombre || 'N/A'}</span>
+                  </div>
+                  <div className="flex items-center gap-2 text-sm">
+                    <Car className="h-4 w-4 text-gray-400" />
+                    <span className="font-mono text-gray-700">{hab.vehiculo_patente || 'N/A'}</span>
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    Tipo: <span className="font-medium">{hab.tipo_transporte || 'N/A'}</span>
+                  </div>
+                </div>
+                
+                <Button 
+                  onClick={() => {
+                    setTurnoEditar({ habilitacion_id: hab.id } as Turno)
+                    setModalAbierto(true)
+                  }}
+                  size="sm"
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  Asignar Turno
+                </Button>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Filtros */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
@@ -477,7 +551,10 @@ export default function TurnosPage() {
       <ModalTurno
         isOpen={modalAbierto}
         onClose={cerrarModal}
-        onSuccess={cargarTurnos}
+        onSuccess={() => {
+          cargarTurnos()
+          cargarHabilitacionesSinTurno()
+        }}
         turnoEdit={turnoEditar}
       />
     </div>
