@@ -128,13 +128,8 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
-<<<<<<< HEAD
       data: inspeccionesEnriquecidas,
       total: inspeccionesEnriquecidas.length
-=======
-      data: inspeccionesFormateadas,
-      total: inspeccionesFormateadas.length
->>>>>>> 01475c20185009700f2fe96b239069762f600db6
     })
 
   } catch (error) {
