@@ -2,10 +2,12 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, CheckCircle2, Clock, FileX, Calendar, Bell, TrendingUp, AlertCircle, Mail, Eye, RefreshCw } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Clock, FileX, Calendar, Bell, TrendingUp, AlertCircle, Mail, Eye, RefreshCw, UserPlus, Car } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import { RegistroPersonaRapidoDialog } from './registro-persona-rapido-dialog'
+import { RegistroVehiculoRapidoDialog } from './registro-vehiculo-rapido-dialog'
 
 interface Stats {
   kpis: {
@@ -75,6 +77,8 @@ export function DashboardContent() {
   const [turnos, setTurnos] = useState<Turno[]>([])
   const [loading, setLoading] = useState(true)
   const [reenviando, setReenviando] = useState<number | null>(null)
+  const [showRegistroPersona, setShowRegistroPersona] = useState(false)
+  const [showRegistroVehiculo, setShowRegistroVehiculo] = useState(false)
 
   useEffect(() => {
     async function cargarDatos() {
@@ -510,23 +514,44 @@ export function DashboardContent() {
             </button>
           </Link>
           
-          <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 cursor-not-allowed opacity-60">
-            <div className="w-14 h-14 bg-gray-400 rounded-2xl flex items-center justify-center">
-              <CheckCircle2 className="h-7 w-7 text-white" />
+          <button 
+            onClick={() => setShowRegistroPersona(true)}
+            className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-green-300 bg-green-50 p-8 hover:border-green-500 hover:bg-green-100 transition-all group"
+          >
+            <div className="w-14 h-14 bg-green-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <UserPlus className="h-7 w-7 text-white" />
             </div>
-            <span className="text-base font-semibold text-gray-600">Nueva Inspección</span>
-            <span className="text-xs text-gray-500">Próximamente</span>
+            <span className="text-base font-semibold text-gray-900">Registrar Persona</span>
+            <span className="text-xs text-green-600 flex items-center gap-1">
+              <span>✨</span> Con OCR de DNI
+            </span>
           </button>
           
-          <button className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 p-8 cursor-not-allowed opacity-60">
-            <div className="w-14 h-14 bg-gray-400 rounded-2xl flex items-center justify-center">
-              <Calendar className="h-7 w-7 text-white" />
+          <button 
+            onClick={() => setShowRegistroVehiculo(true)}
+            className="w-full flex flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-purple-300 bg-purple-50 p-8 hover:border-purple-500 hover:bg-purple-100 transition-all group"
+          >
+            <div className="w-14 h-14 bg-purple-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform">
+              <Car className="h-7 w-7 text-white" />
             </div>
-            <span className="text-base font-semibold text-gray-600">Asignar Turno</span>
-            <span className="text-xs text-gray-500">Próximamente</span>
+            <span className="text-base font-semibold text-gray-900">Registrar Vehículo</span>
+            <span className="text-xs text-purple-600 flex items-center gap-1">
+              <span>✨</span> Con OCR de Cédula
+            </span>
           </button>
         </div>
       </Card>
+
+      {/* Diálogos de registro rápido */}
+      <RegistroPersonaRapidoDialog 
+        open={showRegistroPersona} 
+        onOpenChange={setShowRegistroPersona} 
+      />
+      
+      <RegistroVehiculoRapidoDialog 
+        open={showRegistroVehiculo} 
+        onOpenChange={setShowRegistroVehiculo} 
+      />
     </div>
   )
 }

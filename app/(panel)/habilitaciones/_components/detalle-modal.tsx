@@ -389,11 +389,36 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                   </h3>
                 </div>
                 <div className="p-4">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
-                    <p className="text-sm text-blue-700">
-                      No hay registros de colocación de obleas para esta habilitación.
-                    </p>
-                  </div>
+                  {hab.obleas?.length > 0 ? (
+                    <div className="space-y-3">
+                      {hab.obleas.map((oblea: any, idx: number) => (
+                        <div key={idx} className="bg-gray-50 p-3 rounded-lg border border-gray-200">
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <p className="font-semibold text-gray-900">
+                                {new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')}
+                              </p>
+                              <p className="text-sm text-gray-600">
+                                Hora: {oblea.hora_solicitud?.toString() || 'N/A'}
+                              </p>
+                              <p className="text-xs text-gray-500 mt-1">
+                                Notificado: {oblea.notificado === 'si' ? '✅ Sí' : '⏳ No'}
+                              </p>
+                            </div>
+                            <Badge variant={oblea.notificado === 'si' ? 'default' : 'secondary'}>
+                              {oblea.notificado === 'si' ? 'Notificado' : 'Pendiente'}
+                            </Badge>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-center">
+                      <p className="text-sm text-blue-700">
+                        No hay registros de colocación de obleas para esta habilitación.
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -445,12 +470,16 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                         <div key={idx} className="bg-gray-50 p-3 rounded-lg flex items-center justify-between">
                           <div>
                             <p className="font-semibold text-gray-900">
-                              {new Date(insp.fecha).toLocaleDateString('es-AR')}
+                              {new Date(insp.fecha_inspeccion).toLocaleDateString('es-AR')}
                             </p>
-                            <p className="text-sm text-gray-600">{insp.observaciones || 'Sin observaciones'}</p>
+                            <p className="text-sm text-gray-600">
+                              Inspector: {insp.nombre_inspector}
+                            </p>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge variant="default">{insp.estado}</Badge>
+                            <Badge variant={insp.resultado === 'APROBADO' ? 'default' : 'destructive'}>
+                              {insp.resultado || 'Pendiente'}
+                            </Badge>
                             <button
                               onClick={() => handleEliminarInspeccion(insp.id)}
                               disabled={eliminandoInspeccion === insp.id}

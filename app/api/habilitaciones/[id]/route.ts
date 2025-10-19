@@ -144,9 +144,48 @@ export async function GET(
         domicilio: he.establecimiento?.domicilio || null,
       })) || [],
       
-      // Historial (TODO: implementar consultas a tablas de historial)
-      verificaciones: [],
-      inspecciones: [],
+      // Historial de inspecciones
+      inspecciones: await prisma.inspecciones.findMany({
+        where: { habilitacion_id: Number(id) },
+        orderBy: { fecha_inspeccion: 'desc' },
+        select: {
+          id: true,
+          fecha_inspeccion: true,
+          nombre_inspector: true,
+          resultado: true,
+          tipo_transporte: true,
+          firma_inspector: true,
+          firma_contribuyente: true
+        }
+      }),
+
+      // Historial de verificaciones técnicas
+      verificaciones: await prisma.verificaciones_historial.findMany({
+        where: { nro_licencia: habilitacion.nro_licencia },
+        orderBy: { fecha: 'desc' },
+        select: {
+          id: true,
+          fecha: true,
+          hora: true,
+          resultado: true,
+          nombre_titular: true,
+          dominio: true,
+          expediente: true
+        }
+      }),
+      
+      // Historial de obleas
+      obleas: await prisma.oblea_historial.findMany({
+        where: { habilitacion_id: Number(id) },
+        orderBy: { fecha_solicitud: 'desc' },
+        select: {
+          id: true,
+          fecha_solicitud: true,
+          hora_solicitud: true,
+          notificado: true,
+          creado_en: true
+        }
+      }),
       
       // @ts-ignore
       tiene_resolucion: habilitacion.habilitaciones_documentos?.length > 0,
