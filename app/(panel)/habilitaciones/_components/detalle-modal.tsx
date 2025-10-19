@@ -48,6 +48,33 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   const [detalleCompleto, setDetalleCompleto] = useState<any>(null)
   const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
 
+  // Helper para formatear hora TIME de MySQL (formato HH:MM:SS o timestamp)
+  const formatearHora = (hora: any): string => {
+    if (!hora) return 'N/A'
+    
+    // Si es un string tipo "09:00:00" o "09:07:56"
+    if (typeof hora === 'string' && hora.includes(':')) {
+      const partes = hora.split(':')
+      return `${partes[0]}:${partes[1]}` // HH:MM
+    }
+    
+    // Si es un Date object o timestamp ISO
+    try {
+      const date = new Date(hora)
+      if (!isNaN(date.getTime())) {
+        return date.toLocaleTimeString('es-AR', { 
+          hour: '2-digit', 
+          minute: '2-digit',
+          hour12: false
+        })
+      }
+    } catch (e) {
+      // Si falla, intentar extraer HH:MM del string
+    }
+    
+    return String(hora).substring(0, 5) // Fallback: primeros 5 caracteres
+  }
+
   // Cargar detalle completo cuando se abre el modal
   useEffect(() => {
     if (open && habilitacion) {
@@ -396,10 +423,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                           <div className="flex items-center justify-between">
                             <div>
                               <p className="font-semibold text-gray-900">
-                                {new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')}
-                              </p>
-                              <p className="text-sm text-gray-600">
-                                Hora: {oblea.hora_solicitud?.toString() || 'N/A'}
+                                {new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')} - {formatearHora(oblea.hora_solicitud)}
                               </p>
                               <p className="text-xs text-gray-500 mt-1">
                                 Notificado: {oblea.notificado === 'si' ? '✅ Sí' : '⏳ No'}
@@ -436,9 +460,14 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                       <div key={idx} className="bg-gray-50 p-3 rounded-lg flex items-center justify-between">
                         <div>
                           <p className="font-semibold text-gray-900">
-                            {new Date(verif.fecha).toLocaleDateString('es-AR')} {verif.hora || ''}
+                            {new Date(verif.fecha).toLocaleDateString('es-AR')} - {formatearHora(verif.hora)}
                           </p>
-                          <p className="text-sm text-gray-600">Resultado: <Badge variant="default">{verif.resultado}</Badge></p>
+                          <p className="text-sm text-gray-600">
+                            Resultado: <Badge variant="default">{verif.resultado}</Badge>
+                          </p>
+                          {verif.dominio && (
+                            <p className="text-xs text-gray-500 mt-1">Vehículo: {verif.dominio}</p>
+                          )}
                         </div>
                         <Button variant="ghost" size="sm">
                           Ver Detalle
