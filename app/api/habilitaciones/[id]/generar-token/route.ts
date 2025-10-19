@@ -46,8 +46,7 @@ export async function POST(
         where: { id: tokenExistente.id },
         data: {
           token,
-          fecha_expiracion: fechaExpiracion,
-          fecha_creacion: new Date()
+          fecha_expiracion: fechaExpiracion
         }
       })
     } else {
@@ -56,8 +55,7 @@ export async function POST(
         data: {
           token,
           habilitacion_id: habilitacionId,
-          fecha_expiracion: fechaExpiracion,
-          fecha_creacion: new Date()
+          fecha_expiracion: fechaExpiracion
         }
       })
     }
