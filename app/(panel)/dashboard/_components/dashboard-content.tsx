@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { AlertTriangle, CheckCircle2, Clock, FileX, Calendar, Bell, TrendingUp, AlertCircle } from 'lucide-react'
+import { AlertTriangle, CheckCircle2, Clock, FileX, Calendar, Bell, TrendingUp, AlertCircle, Mail, Eye, RefreshCw } from 'lucide-react'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -45,24 +45,53 @@ interface Vencimientos {
   }
 }
 
+interface Turno {
+  id: number
+  fecha: string
+  hora: string
+  estado: string
+  observaciones: string | null
+  recordatorio_enviado: boolean
+  habilitacion: {
+    id: number
+    nro_licencia: string
+    tipo_transporte: string
+  }
+  titular: {
+    nombre: string
+    email: string
+    dni: string
+  } | null
+  vehiculo: {
+    dominio: string
+    marca: string | null
+    modelo: string | null
+  } | null
+}
+
 export function DashboardContent() {
   const [stats, setStats] = useState<Stats | null>(null)
   const [vencimientos, setVencimientos] = useState<Vencimientos | null>(null)
+  const [turnos, setTurnos] = useState<Turno[]>([])
   const [loading, setLoading] = useState(true)
+  const [reenviando, setReenviando] = useState<number | null>(null)
 
   useEffect(() => {
     async function cargarDatos() {
       try {
-        const [statsRes, vencimientosRes] = await Promise.all([
+        const [statsRes, vencimientosRes, turnosRes] = await Promise.all([
           fetch('/api/habilitaciones/stats'),
-          fetch('/api/habilitaciones/vencimientos')
+          fetch('/api/habilitaciones/vencimientos'),
+          fetch('/api/turnos/proximos?limite=10')
         ])
 
         const statsData = await statsRes.json()
         const vencimientosData = await vencimientosRes.json()
+        const turnosData = await turnosRes.json()
 
         if (statsData.success) setStats(statsData.data)
         if (vencimientosData.success) setVencimientos(vencimientosData.data)
+        if (turnosData.success) setTurnos(turnosData.data)
       } catch (error) {
         console.error('Error al cargar datos:', error)
       } finally {
@@ -72,6 +101,32 @@ export function DashboardContent() {
 
     cargarDatos()
   }, [])
+
+  const handleReenviarNotificacion = async (turnoId: number) => {
+    setReenviando(turnoId)
+    try {
+      const res = await fetch(`/api/turnos/${turnoId}/reenviar-notificacion`, {
+        method: 'POST'
+      })
+      
+      const data = await res.json()
+      
+      if (data.success) {
+        alert('✅ Notificación enviada exitosamente')
+        // Actualizar el estado del turno
+        setTurnos(prev => prev.map(t => 
+          t.id === turnoId ? { ...t, recordatorio_enviado: true } : t
+        ))
+      } else {
+        alert('❌ Error al enviar notificación: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      alert('❌ Error al enviar notificación')
+    } finally {
+      setReenviando(null)
+    }
+  }
 
   const kpis = stats?.kpis || { activas: 0, en_tramite: 0, por_vencer: 0, obleas_pendientes: 0 }
   const totales = vencimientos?.totales || { vencidas: 0, proximos_7_dias: 0, proximos_15_dias: 0, proximos_30_dias: 0 }
@@ -320,6 +375,120 @@ export function DashboardContent() {
             <Link href="/habilitaciones">
               <Button variant="outline" className="w-full">
                 Ver todos los vencimientos ({vencimientos.por_vencer.length})
+              </Button>
+            </Link>
+          </div>
+        )}
+      </Card>
+
+      {/* PRÓXIMOS TURNOS DE INSPECCIÓN */}
+      <Card className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">Próximos Turnos de Inspección</h2>
+            <p className="text-sm text-gray-600 mt-1">Turnos agendados para los próximos días</p>
+          </div>
+          <Badge className="bg-blue-100 text-blue-700">
+            <Calendar className="h-4 w-4 mr-1 inline" />
+            {turnos.length} turnos
+          </Badge>
+        </div>
+        
+        {turnos.length > 0 ? (
+          <div className="space-y-3">
+            {turnos.map((turno) => {
+              const fechaTurno = new Date(turno.fecha)
+              const horaTurno = turno.hora.split(':').slice(0, 2).join(':')
+              const esHoy = fechaTurno.toDateString() === new Date().toDateString()
+              const esMañana = new Date(fechaTurno.getTime() - 86400000).toDateString() === new Date().toDateString()
+              
+              let badgeFecha = formatFecha(turno.fecha)
+              let badgeColor = 'bg-gray-500'
+              
+              if (esHoy) {
+                badgeFecha = '¡HOY!'
+                badgeColor = 'bg-red-500 animate-pulse'
+              } else if (esMañana) {
+                badgeFecha = 'MAÑANA'
+                badgeColor = 'bg-orange-500'
+              }
+
+              return (
+                <div
+                  key={turno.id}
+                  className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg hover:shadow-md transition-shadow"
+                >
+                  <div className="flex items-center gap-4 flex-1">
+                    <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center">
+                      <Calendar className="h-6 w-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <p className="font-semibold text-gray-900">
+                        {turno.habilitacion.tipo_transporte} - Lic. {turno.habilitacion.nro_licencia}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        {turno.titular?.nombre || 'Sin titular'} • {turno.vehiculo?.dominio || 'Sin dominio'}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Clock className="h-3 w-3 text-gray-500" />
+                        <span className="text-xs text-gray-500">
+                          {horaTurno}hs
+                        </span>
+                        {turno.estado === 'CONFIRMADO' && (
+                          <Badge className="bg-green-500 text-white text-xs ml-2">
+                            ✓ Confirmado
+                          </Badge>
+                        )}
+                        {turno.recordatorio_enviado && (
+                          <Badge className="bg-gray-500 text-white text-xs ml-2">
+                            <Mail className="h-3 w-3 mr-1" />
+                            Notificado
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex flex-col items-end gap-2">
+                    <Badge className={`${badgeColor} text-white px-3 py-1`}>
+                      {badgeFecha}
+                    </Badge>
+                    <div className="flex gap-2">
+                      <Link href={`/habilitaciones/${turno.habilitacion.id}`}>
+                        <Button size="sm" variant="outline" className="h-8">
+                          <Eye className="h-4 w-4" />
+                        </Button>
+                      </Link>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="h-8"
+                        onClick={() => handleReenviarNotificacion(turno.id)}
+                        disabled={reenviando === turno.id}
+                      >
+                        {reenviando === turno.id ? (
+                          <RefreshCw className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <Mail className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          <div className="text-center py-8 text-gray-500">
+            <Calendar className="h-12 w-12 mx-auto mb-3 text-gray-400" />
+            <p>No hay turnos programados próximamente</p>
+          </div>
+        )}
+        
+        {turnos.length > 0 && (
+          <div className="mt-4 text-center">
+            <Link href="/turnos">
+              <Button variant="outline" className="w-full">
+                Ver todos los turnos
               </Button>
             </Link>
           </div>
