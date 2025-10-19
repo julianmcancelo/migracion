@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2 } from 'lucide-react'
+import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2, User, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ModalTurno } from '@/components/turnos/modal-turno'
 
@@ -19,6 +19,13 @@ interface Turno {
     nro_licencia: string
     tipo_transporte: string
   }
+  titular_nombre?: string
+  titular_dni?: string
+  titular_email?: string
+  titular_telefono?: string
+  vehiculo_patente?: string
+  vehiculo_marca?: string
+  vehiculo_modelo?: string
 }
 
 /**
@@ -254,22 +261,16 @@ export default function TurnosPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Hora
+                    Fecha / Hora
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Licencia
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipo
+                    Titular / Vehículo
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Observaciones
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -278,29 +279,62 @@ export default function TurnosPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {turnos.map((turno) => (
-                  <tr key={turno.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatearFecha(turno.fecha)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      {formatearHora(turno.hora)}
+                  <tr key={turno.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-gray-900 font-semibold">
+                          <Calendar className="h-4 w-4 text-gray-400" />
+                          {formatearFecha(turno.fecha)}
+                        </div>
+                        <div className="flex items-center gap-2 text-blue-600 font-medium ml-6">
+                          <Clock className="h-4 w-4" />
+                          {formatearHora(turno.hora)}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="font-mono font-bold text-blue-600">
-                        {turno.habilitacion?.nro_licencia || '-'}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-mono font-bold text-blue-600 text-base">
+                          {turno.habilitacion?.nro_licencia || 'N/A'}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {turno.habilitacion?.tipo_transporte || 'N/A'}
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {turno.habilitacion?.tipo_transporte || '-'}
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-gray-900 font-semibold">
+                          <User className="h-4 w-4 text-gray-400" />
+                          {turno.titular_nombre || 'Sin datos'}
+                        </div>
+                        {turno.titular_dni && (
+                          <span className="text-xs text-gray-500 ml-6">DNI: {turno.titular_dni}</span>
+                        )}
+                        {turno.titular_telefono && (
+                          <span className="text-xs text-gray-500 ml-6">📞 {turno.titular_telefono}</span>
+                        )}
+                        <div className="flex items-center gap-2 text-gray-700 mt-1">
+                          <Car className="h-4 w-4 text-gray-400" />
+                          <span className="font-mono font-semibold">{turno.vehiculo_patente || 'N/A'}</span>
+                          {(turno.vehiculo_marca || turno.vehiculo_modelo) && (
+                            <span className="text-xs text-gray-500">
+                              {turno.vehiculo_marca} {turno.vehiculo_modelo}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getEstadoBadge(turno.estado)}`}>
                         {getEstadoIcon(turno.estado)}
                         {turno.estado}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                      {turno.observaciones || '-'}
+                      {turno.observaciones && (
+                        <p className="text-xs text-gray-500 mt-2 max-w-xs truncate" title={turno.observaciones}>
+                          {turno.observaciones}
+                        </p>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex gap-2 flex-wrap">

@@ -17,76 +17,92 @@ export async function GET(request: Request) {
     const fechaHasta = searchParams.get('fecha_hasta')
     const habilitacionId = searchParams.get('habilitacion_id')
 
-    // Construir filtros
-    const where: any = {
-      // Filtrar fechas inválidas (0000-00-00)
-      fecha: {
-        gt: new Date('1970-01-01')
-      }
-    }
+    // Construir filtros WHERE
+    let whereClause = "WHERE t.fecha > '1970-01-01'"
+    const params: any[] = []
 
     if (estado) {
-      where.estado = estado
+      whereClause += ' AND t.estado = ?'
+      params.push(estado)
     }
 
-    if (fechaDesde || fechaHasta) {
-      if (!where.fecha) where.fecha = {}
-      if (fechaDesde) {
-        where.fecha.gte = new Date(fechaDesde)
-      }
-      if (fechaHasta) {
-        where.fecha.lte = new Date(fechaHasta)
-      }
+    if (fechaDesde) {
+      whereClause += ' AND t.fecha >= ?'
+      params.push(fechaDesde)
+    }
+
+    if (fechaHasta) {
+      whereClause += ' AND t.fecha <= ?'
+      params.push(fechaHasta)
     }
 
     if (habilitacionId) {
-      where.habilitacion_id = Number(habilitacionId)
+      whereClause += ' AND t.habilitacion_id = ?'
+      params.push(Number(habilitacionId))
     }
 
-    // Obtener turnos - Excluir fecha_hora que puede tener valores inválidos
-    const turnos = await prisma.turnos.findMany({
-      where,
-      select: {
-        id: true,
-        habilitacion_id: true,
-        fecha: true,
-        hora: true,
-        estado: true,
-        observaciones: true,
-        recordatorio_enviado: true,
-        creado_en: true
-        // NO seleccionar fecha_hora que puede tener 0000-00-00
+    // SQL optimizado con LEFT JOINs (como en inspecciones)
+    const sql = `
+      SELECT 
+        t.id,
+        t.habilitacion_id,
+        t.fecha,
+        t.hora,
+        t.estado,
+        t.observaciones,
+        t.recordatorio_enviado,
+        t.creado_en,
+        hg.nro_licencia,
+        hg.tipo_transporte,
+        p.nombre as titular_nombre,
+        p.dni as titular_dni,
+        p.email as titular_email,
+        p.telefono as titular_telefono,
+        v.dominio as vehiculo_patente,
+        v.marca as vehiculo_marca,
+        v.modelo as vehiculo_modelo
+      FROM turnos AS t
+      LEFT JOIN habilitaciones_generales AS hg ON t.habilitacion_id = hg.id
+      LEFT JOIN habilitaciones_personas AS hp ON hg.id = hp.habilitacion_id AND hp.rol = 'TITULAR'
+      LEFT JOIN personas AS p ON hp.persona_id = p.id
+      LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id
+      LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
+      ${whereClause}
+      ORDER BY t.fecha ASC, t.hora ASC
+      LIMIT 100
+    `
+
+    // Ejecutar query raw SQL
+    const turnos: any[] = await prisma.$queryRawUnsafe(sql, ...params)
+
+    // Formatear datos
+    const turnosFormateados = turnos.map((turno: any) => ({
+      id: turno.id,
+      habilitacion_id: turno.habilitacion_id,
+      fecha: turno.fecha,
+      hora: turno.hora,
+      estado: turno.estado,
+      observaciones: turno.observaciones,
+      recordatorio_enviado: turno.recordatorio_enviado,
+      creado_en: turno.creado_en,
+      habilitacion: {
+        id: turno.habilitacion_id,
+        nro_licencia: turno.nro_licencia || 'N/A',
+        tipo_transporte: turno.tipo_transporte || 'N/A'
       },
-      orderBy: [
-        { fecha: 'asc' },
-        { hora: 'asc' }
-      ],
-      take: 100
-    })
-
-    // Obtener información de habilitaciones para cada turno
-    const turnosConInfo = await Promise.all(
-      turnos.map(async (turno) => {
-        const habilitacion = await prisma.habilitaciones_generales.findUnique({
-          where: { id: turno.habilitacion_id },
-          select: {
-            id: true,
-            nro_licencia: true,
-            tipo_transporte: true,
-          }
-        })
-
-        return {
-          ...turno,
-          habilitacion
-        }
-      })
-    )
+      titular_nombre: turno.titular_nombre || 'Sin datos',
+      titular_dni: turno.titular_dni || '',
+      titular_email: turno.titular_email || '',
+      titular_telefono: turno.titular_telefono || '',
+      vehiculo_patente: turno.vehiculo_patente || 'Sin patente',
+      vehiculo_marca: turno.vehiculo_marca || '',
+      vehiculo_modelo: turno.vehiculo_modelo || ''
+    }))
 
     return NextResponse.json({
       success: true,
-      data: turnosConInfo,
-      total: turnosConInfo.length
+      data: turnosFormateados,
+      total: turnosFormateados.length
     })
 
   } catch (error) {
