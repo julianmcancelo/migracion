@@ -29,19 +29,14 @@ export async function GET() {
       }
     })
 
-    // Obtener IDs de habilitaciones que ya tienen turno
-    const turnosActivos = await prisma.turnos.findMany({
-      where: {
-        estado: {
-          in: ['PENDIENTE', 'CONFIRMADO']
-        }
-      },
+    // Obtener IDs de habilitaciones que ya tienen o tuvieron turno (cualquier estado)
+    const turnosExistentes = await prisma.turnos.findMany({
       select: {
         habilitacion_id: true
       }
     })
 
-    const idsConTurno = new Set(turnosActivos.map(t => t.habilitacion_id))
+    const idsConTurno = new Set(turnosExistentes.map(t => t.habilitacion_id))
 
     // Filtrar habilitaciones sin turno y formatear
     const sinTurno = habilitaciones
