@@ -97,6 +97,7 @@ model habilitaciones_generales {
   habilitaciones_vehiculos        habilitaciones_vehiculos[]
   habilitaciones_establecimientos habilitaciones_establecimientos[]
   turnos                          turnos[]
+  tokens_acceso                   tokens_acceso[]
 }
 
 model habilitaciones_personas {
@@ -260,11 +261,17 @@ model remiserias {
 }
 
 model tokens_acceso {
-  id               Int       @id @default(autoincrement())
+  id               Int                      @id @default(autoincrement())
   habilitacion_id  Int
-  token            String    @unique(map: "token") @db.VarChar(255)
-  fecha_expiracion DateTime  @db.DateTime(0)
-  creado_en        DateTime? @default(now()) @db.DateTime(0)
+  token            String                   @unique(map: "token") @db.VarChar(255)
+  fecha_expiracion DateTime                 @db.DateTime(0)
+  creado_en        DateTime?                @default(now()) @db.DateTime(0)
+  activo           Boolean                  @default(true)
+  
+  // Relación con habilitación
+  habilitacion     habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  
+  @@index([habilitacion_id], map: "idx_habilitacion_id")
 }
 
 model turnos {

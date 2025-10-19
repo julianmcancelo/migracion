@@ -153,7 +153,12 @@ export async function POST(
       </div>
 
       <div style="background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 15px; margin: 20px 0; border-radius: 5px;">
-        <p style="margin: 0; color: #92400E;"><strong>⚠️ Importante:</strong> Por favor llegue 10 minutos antes de su turno con toda la documentación requerida.</p>
+        <p style="margin: 0 0 10px 0; color: #92400E;"><strong>⚠️ Importante:</strong> Por favor llegue 10 minutos antes de su turno con toda la documentación requerida.</p>
+        <p style="margin: 5px 0; color: #92400E;"><strong>📄 Documentación Obligatoria:</strong></p>
+        <ul style="margin: 5px 0; padding-left: 20px; color: #92400E;">
+          <li>DNI del titular</li>
+          <li>Cédula Verde del vehículo</li>
+        </ul>
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
@@ -162,15 +167,21 @@ export async function POST(
       </div>
 
       <div style="background: #F3F4F6; padding: 20px; border-radius: 10px; margin-top: 20px;">
-        <h3 style="color: #1F2937; margin: 0 0 15px 0;">📍 Ubicación</h3>
-        <p style="margin: 5px 0;"><strong>Dirección:</strong> Avda. Hipólito Yrigoyen 3863, Lanús Oeste</p>
-        <p style="margin: 5px 0;"><strong>Email:</strong> transportepublicolanus@gmail.com</p>
+        <h3 style="color: #1F2937; margin: 0 0 15px 0;">📍 Ubicación de Inspección</h3>
+        <p style="margin: 5px 0; font-size: 15px;"><strong>Dirección:</strong> Intendente Manuel Quindimil 857, esquina Jujuy, Lanús</p>
+        <p style="margin: 15px 0 5px 0; color: #4B5563;"><strong>Por dudas o reprogramaciones, comuníquese a:</strong></p>
+        <p style="margin: 5px 0;"><strong>Email:</strong> <a href="mailto:transportepublicolanus@gmail.com" style="color: #3B82F6;">transportepublicolanus@gmail.com</a></p>
+        <div style="background: #DBEAFE; padding: 12px; border-radius: 6px; margin-top: 15px;">
+          <p style="margin: 0; color: #1E40AF; font-weight: 600;">📧 Por favor, confirme su asistencia respondiendo este correo.</p>
+        </div>
       </div>
     </div>
     
     <div class="footer">
-      <p>Este es un correo electrónico automático, por favor no responda a este mensaje.</p>
-      <p style="margin-top: 8px;">© 2025 Municipalidad de Lanús - Dirección de Movilidad y Transporte</p>
+      <p style="font-weight: 600; margin-bottom: 8px;">Dirección Gral. de Movilidad y Transporte</p>
+      <p style="margin: 4px 0;">Subsecretaría de Ordenamiento Urbano</p>
+      <p style="margin: 4px 0; font-weight: 600;">Municipalidad de Lanús</p>
+      <p style="margin-top: 12px; font-size: 11px; color: #9CA3AF;">Este es un correo electrónico automático. Para consultas, responda a este correo o contáctenos al email indicado.</p>
     </div>
   </div>
 </body>

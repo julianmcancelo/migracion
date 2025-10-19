@@ -354,24 +354,27 @@ export async function POST(request: Request) {
       
       <div class="alert">
         <strong>⚠️ Importante - Requisitos para la Inspección:</strong>
-        <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+        <p style="margin: 12px 0 8px 0; color: #92400E; font-size: 15px; font-weight: 600;">📄 Documentación Obligatoria:</p>
+        <ul style="margin: 8px 0 16px 0; padding-left: 20px;">
+          <li><strong>DNI del titular</strong></li>
+          <li><strong>Cédula Verde del vehículo</strong></li>
+        </ul>
+        <p style="margin: 12px 0 8px 0; color: #92400E; font-size: 15px; font-weight: 600;">✓ Recomendaciones adicionales:</p>
+        <ul style="margin: 8px 0 0 0; padding-left: 20px;">
           <li>Presentarse con <strong>15 minutos de anticipación</strong> a la hora asignada</li>
-          <li>Traer <strong>DNI original del titular</strong> de la habilitación</li>
-          <li>Presentar <strong>Cédula Verde o Azul</strong> del vehículo</li>
           <li>El vehículo debe contar con <strong>VTV vigente</strong></li>
-          <li>Traer <strong>Póliza de seguro vigente</strong> (original y copia)</li>
+          <li>Traer <strong>Póliza de seguro vigente</strong></li>
           <li>El vehículo debe estar en <strong>perfectas condiciones mecánicas</strong></li>
           <li>Traer <strong>habilitación anterior</strong> (si corresponde renovación)</li>
-          <li>Asegúrese que el vehículo esté <strong>limpio y en condiciones</strong> para la inspección</li>
         </ul>
       </div>
       
       <div style="background: #F0F9FF; border: 2px solid #0284C7; border-radius: 10px; padding: 20px; margin: 25px 0;">
         <strong style="color: #0369A1; font-size: 16px; display: block; margin-bottom: 12px;">📍 Lugar de la Inspección:</strong>
-        <p style="margin: 8px 0; color: #1F2937;"><strong>Dirección General de Movilidad y Transporte</strong></p>
-        <p style="margin: 8px 0; color: #374151;">Municipalidad de Lanús</p>
-        <p style="margin: 8px 0; color: #374151;">Av. Hipólito Yrigoyen 3863, Lanús Oeste</p>
-        <p style="margin: 8px 0; color: #374151;">Código Postal: 1824</p>
+        <p style="margin: 8px 0; color: #1F2937; font-size: 16px;"><strong>Intendente Manuel Quindimil 857, esquina Jujuy, Lanús</strong></p>
+        <div style="margin: 16px 0; padding: 12px; background: #DBEAFE; border-radius: 6px;">
+          <p style="margin: 0; color: #1E40AF; font-weight: 600;">📧 Por favor, confirme su asistencia respondiendo este correo.</p>
+        </div>
       </div>
       
       <div class="contact-box">
@@ -393,8 +396,10 @@ export async function POST(request: Request) {
     </div>
     
     <div class="footer">
-      <p><strong>Municipalidad de Lanús</strong></p>
-      <p>Puede responder a este email o contactarnos al <a href="tel:43575100">4357-5100</a> int. 7137</p>
+      <p style="font-weight: 600; margin-bottom: 4px;">Dirección Gral. de Movilidad y Transporte</p>
+      <p style="margin: 4px 0;">Subsecretaría de Ordenamiento Urbano</p>
+      <p style="margin: 4px 0; font-weight: 600;">Municipalidad de Lanús</p>
+      <p style="margin-top: 12px;">Para consultas, responda a este email o contáctenos al <a href="tel:43575100">4357-5100</a> int. 7137</p>
       <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #374151;">
         © ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados
       </p>
