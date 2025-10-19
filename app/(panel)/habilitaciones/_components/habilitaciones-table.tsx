@@ -104,28 +104,28 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const getEstadoBadge = (estado: string | null) => {
     const estados: Record<string, { className: string; label: string }> = {
       'HABILITADO': { 
-        className: 'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0 shadow-sm',
-        label: '✓ Habilitado' 
+        className: 'bg-green-600 text-white border-green-700',
+        label: 'Habilitado' 
       },
       'EN_TRAMITE': { 
-        className: 'bg-gradient-to-r from-amber-400 to-orange-500 text-white border-0 shadow-sm',
-        label: '⏳ En Trámite' 
+        className: 'bg-yellow-500 text-white border-yellow-600',
+        label: 'En Trámite' 
       },
       'NO_HABILITADO': { 
-        className: 'bg-gradient-to-r from-red-500 to-rose-600 text-white border-0 shadow-sm',
-        label: '✗ No Habilitado' 
+        className: 'bg-red-600 text-white border-red-700',
+        label: 'No Habilitado' 
       },
       'INICIADO': { 
-        className: 'bg-gradient-to-r from-blue-400 to-indigo-500 text-white border-0 shadow-sm',
-        label: '📝 Iniciado' 
+        className: 'bg-blue-600 text-white border-blue-700',
+        label: 'Iniciado' 
       },
     }
 
     const config = estados[estado || ''] || { 
-      className: 'bg-gray-200 text-gray-700 border-0',
+      className: 'bg-gray-400 text-white border-gray-500',
       label: estado || 'N/A' 
     }
-    return <Badge className={`${config.className} px-3 py-1 text-xs font-semibold`}>{config.label}</Badge>
+    return <Badge className={`${config.className} px-2.5 py-0.5 text-xs font-medium border uppercase`}>{config.label}</Badge>
   }
 
   const getEstadoVigencia = (fecha: Date | null) => {
@@ -137,22 +137,18 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
     if (diasRestantes < 0) {
       return (
-        <Badge className="bg-gradient-to-r from-red-500 to-rose-600 text-white border-0 shadow-sm px-2 py-0.5 text-xs font-semibold animate-pulse">
-          ⚠️ Vencida
+        <Badge variant="destructive" className="text-xs">
+          Vencida
         </Badge>
       )
     } else if (diasRestantes <= 30) {
       return (
-        <Badge className="bg-gradient-to-r from-orange-400 to-amber-500 text-white border-0 shadow-sm px-2 py-0.5 text-xs font-semibold">
-          🔔 {diasRestantes}d restantes
+        <Badge className="bg-orange-500 text-white text-xs">
+          {diasRestantes} días
         </Badge>
       )
     }
-    return (
-      <Badge className="bg-gradient-to-r from-green-400 to-emerald-500 text-white border-0 shadow-sm px-2 py-0.5 text-xs font-semibold">
-        ✓ Vigente
-      </Badge>
-    )
+    return null
   }
 
   if (loading) {
@@ -178,82 +174,72 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2">
       {habilitaciones.map((hab) => {
         const isExpanded = expandedRows.has(hab.id)
         
         return (
           <div 
             key={hab.id} 
-            className="group relative border-2 border-gray-200 rounded-xl bg-white overflow-hidden hover:shadow-lg hover:border-blue-300 transition-all duration-200"
+            className="border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
           >
-            {/* Borde decorativo superior con gradiente */}
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-blue-500 via-indigo-500 to-purple-500" />
-            
             {/* Fila principal */}
-            <div className="flex items-center p-5 gap-4 pt-6">
-              {/* Botón expandir con mejor diseño */}
+            <div className="flex items-center p-4 gap-4">
+              {/* Botón expandir */}
               <button
                 onClick={() => toggleRow(hab.id)}
-                className="shrink-0 p-2 hover:bg-blue-50 rounded-lg transition-all duration-200 hover:scale-110"
+                className="shrink-0 p-1 hover:bg-gray-200 transition-colors"
               >
                 <ChevronRight
                   className={cn(
-                    "h-5 w-5 text-blue-600 transition-transform duration-200",
+                    "h-4 w-4 text-gray-600 transition-transform",
                     isExpanded && "rotate-90"
                   )}
                 />
               </button>
 
-              {/* Licencia y Expediente con icono */}
-              <div className="min-w-0 flex-shrink-0 w-44">
-                <div className="flex items-center gap-2 mb-1">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                    <FileText className="h-4 w-4 text-white" />
-                  </div>
-                  <div className="min-w-0">
-                    <div className="font-bold text-lg text-blue-700 truncate">{hab.nro_licencia || 'N/A'}</div>
-                  </div>
-                </div>
-                <div className="text-xs text-gray-500 font-medium truncate pl-10">Exp: {hab.expte || 'N/A'}</div>
+              {/* Licencia y Expediente */}
+              <div className="min-w-0 flex-shrink-0 w-40">
+                <div className="font-semibold text-sm text-gray-900 truncate">{hab.nro_licencia || 'N/A'}</div>
+                <div className="text-xs text-gray-500 truncate">Exp: {hab.expte || 'N/A'}</div>
               </div>
 
-              {/* Titular con mejor diseño */}
+              {/* Titular */}
               <div className="min-w-0 flex-1">
-                <div className="font-semibold text-gray-900 truncate text-base">
-                  {hab.titular_principal || <span className="italic text-gray-400">Sin asignar</span>}
+                <div className="font-medium text-sm text-gray-900 truncate">
+                  {hab.titular_principal || <span className="italic text-gray-500">Sin asignar</span>}
                 </div>
-                <div className="text-xs text-gray-500 mt-1">
+                <div className="text-xs text-gray-500 mt-0.5">
                   {hab.tipo_transporte || 'Sin tipo'}
                 </div>
               </div>
 
-              {/* Estado con mejor estilo */}
+              {/* Estado */}
               <div className="flex-shrink-0">
                 {getEstadoBadge(hab.estado)}
               </div>
 
-              {/* Vigencia con diseño mejorado */}
-              <div className="flex-shrink-0 w-36 bg-gray-50 rounded-lg p-3 border border-gray-200">
-                <div className="text-xs text-gray-500 mb-1">Vence</div>
-                <div className="text-sm font-bold text-gray-900">
+              {/* Vigencia */}
+              <div className="flex-shrink-0 w-32">
+                <div className="text-xs text-gray-500 mb-0.5">Vence</div>
+                <div className="text-sm font-semibold text-gray-900">
                   {hab.vigencia_fin ? formatearFecha(hab.vigencia_fin) : 'N/A'}
                 </div>
-                <div className="mt-1.5">
+                <div className="mt-1">
                   {getEstadoVigencia(hab.vigencia_fin)}
                 </div>
               </div>
 
-              {/* Menú de acciones con mejor botón */}
+              {/* Menú de acciones */}
               <div className="flex-shrink-0">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
                     <Button 
                       variant="ghost" 
                       size="sm"
-                      className="hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                      className="h-8 w-8 p-0"
                     >
-                      <MoreVertical className="h-5 w-5" />
+                      <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
@@ -286,14 +272,14 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
             {/* Detalles expandibles */}
             {isExpanded && (
-              <div className="border-t bg-gradient-to-br from-gray-50 to-blue-50/30 p-5 space-y-4">
+              <div className="border-t bg-gray-50 p-4 space-y-3">
                 {/* Personas */}
                 {hab.personas.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                      👥 Personas ({hab.personas.length})
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                      Personas ({hab.personas.length})
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {hab.personas.map((persona) => (
                         <button
                           key={persona.id}
@@ -301,23 +287,16 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                             setSelectedPersona(persona)
                             setShowPersonaModal(true)
                           }}
-                          className="flex items-center gap-3 text-sm bg-white p-3 rounded-lg border-2 border-gray-200 hover:bg-blue-50 hover:border-blue-400 hover:shadow-md transition-all cursor-pointer text-left group"
+                          className="flex items-center gap-2 text-xs bg-white p-2 border border-gray-300 hover:bg-gray-100 transition-colors cursor-pointer text-left"
                         >
-                          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
-                            {persona.nombre?.charAt(0) || '?'}
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <div className="font-semibold text-gray-900 truncate">{persona.nombre}</div>
-                            <div className="flex items-center gap-2 mt-1">
-                              <Badge className="bg-blue-100 text-blue-700 border-0 text-xs px-2 py-0.5">
-                                {persona.rol}
-                              </Badge>
-                              {persona.licencia_categoria && (
-                                <span className="text-xs text-gray-600 font-medium">Cat: {persona.licencia_categoria}</span>
-                              )}
-                            </div>
-                          </div>
-                          <Eye className="h-4 w-4 ml-auto text-gray-400 group-hover:text-blue-600 transition-colors" />
+                          <Badge variant="outline" className="text-xs">
+                            {persona.rol}
+                          </Badge>
+                          <span className="font-medium text-gray-900 flex-1 truncate">{persona.nombre}</span>
+                          {persona.licencia_categoria && (
+                            <span className="text-gray-500">Cat: {persona.licencia_categoria}</span>
+                          )}
+                          <Eye className="h-3 w-3 text-gray-400" />
                         </button>
                       ))}
                     </div>
@@ -327,8 +306,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Vehículos */}
                 {hab.vehiculos.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                      🚗 Vehículos ({hab.vehiculos.length})
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                      Vehículos ({hab.vehiculos.length})
                     </h4>
                     <div className="flex flex-wrap gap-2">
                       {hab.vehiculos.map((vehiculo) => (
@@ -338,10 +317,10 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                             setSelectedVehiculo(vehiculo)
                             setShowVehiculoModal(true)
                           }}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-gray-300 rounded-full font-bold text-sm hover:bg-gradient-to-r hover:from-blue-500 hover:to-indigo-600 hover:text-white hover:border-transparent hover:shadow-md transition-all cursor-pointer group"
+                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 text-xs font-medium hover:bg-gray-100 transition-colors cursor-pointer"
                         >
-                          <span>🚗 {vehiculo.dominio || 'N/A'}</span>
-                          <Eye className="h-4 w-4 text-gray-400 group-hover:text-white transition-colors" />
+                          <span>{vehiculo.dominio || 'N/A'}</span>
+                          <Eye className="h-3 w-3 text-gray-400" />
                         </button>
                       ))}
                     </div>
@@ -351,12 +330,12 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Establecimientos */}
                 {hab.establecimientos.length > 0 && (
                   <div>
-                    <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                      🏢 Destinos ({hab.establecimientos.length})
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                      Destinos ({hab.establecimientos.length})
                     </h4>
-                    <div className="space-y-2">
+                    <div className="space-y-1">
                       {hab.establecimientos.map((est) => (
-                        <div key={est.id} className="text-sm bg-white p-3 rounded-lg border-2 border-gray-200 font-medium text-gray-700">
+                        <div key={est.id} className="text-xs bg-white p-2 border border-gray-300 text-gray-700">
                           {est.nombre || 'N/A'}
                         </div>
                       ))}
