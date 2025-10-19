@@ -56,3 +56,85 @@ export async function GET(request: NextRequest) {
     )
   }
 }
+
+/**
+ * POST /api/vehiculos
+ * Crear un nuevo vehículo
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const {
+      dominio,
+      marca,
+      modelo,
+      tipo,
+      ano,
+      chasis,
+      motor,
+      asientos,
+      inscripcion_inicial,
+      Aseguradora,
+      poliza,
+      Vencimiento_VTV,
+      Vencimiento_Poliza
+    } = body
+
+    // Validación básica
+    if (!dominio || dominio.trim() === '') {
+      return NextResponse.json(
+        { success: false, error: 'El dominio es obligatorio' },
+        { status: 400 }
+      )
+    }
+
+    // Verificar si ya existe
+    const existente = await prisma.vehiculos.findFirst({
+      where: { dominio: dominio.toUpperCase() }
+    })
+
+    if (existente) {
+      return NextResponse.json(
+        { success: false, error: 'Ya existe un vehículo con ese dominio' },
+        { status: 409 }
+      )
+    }
+
+    // Crear vehículo
+    const vehiculo = await prisma.vehiculos.create({
+      data: {
+        dominio: dominio.toUpperCase(),
+        marca: marca || null,
+        modelo: modelo || null,
+        tipo: tipo || null,
+        ano: ano || null,
+        chasis: chasis || null,
+        motor: motor || null,
+        asientos: asientos || null,
+        inscripcion_inicial: inscripcion_inicial || null,
+        Aseguradora: Aseguradora || null,
+        poliza: poliza || null,
+        Vencimiento_VTV: Vencimiento_VTV || null,
+        Vencimiento_Poliza: Vencimiento_Poliza || null
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      data: vehiculo,
+      message: 'Vehículo registrado exitosamente'
+    })
+
+  } catch (error: any) {
+    console.error('Error al crear vehículo:', error)
+    return NextResponse.json(
+      { success: false, error: 'Error al crear vehículo', details: error.message },
+      { status: 500 }
+    )
+  }
+}

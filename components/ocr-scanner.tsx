@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 
 interface OCRScannerProps {
-  type: 'dni' | 'cedula'
+  type: 'dni' | 'cedula' | 'poliza' | 'vtv' | 'titulo' | 'licencia'
   onDataExtracted: (data: any) => void
   buttonText?: string
 }
@@ -19,20 +19,44 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
   const fileInputRef = useRef<HTMLInputElement>(null)
   const cameraInputRef = useRef<HTMLInputElement>(null)
 
-  const endpoint = type === 'dni' ? '/api/ai/ocr-dni' : '/api/ai/ocr-cedula'
-  const docName = type === 'dni' ? 'DNI' : 'Cédula Verde'
+  // Mapear tipo a endpoint y nombre
+  const endpoints: Record<string, string> = {
+    dni: '/api/ai/ocr-dni',
+    cedula: '/api/ai/ocr-cedula',
+    poliza: '/api/ai/ocr-poliza',
+    vtv: '/api/ai/ocr-vtv',
+    titulo: '/api/ai/ocr-titulo',
+    licencia: '/api/ai/ocr-licencia'
+  }
+
+  const docNames: Record<string, string> = {
+    dni: 'DNI',
+    cedula: 'Cédula Verde',
+    poliza: 'Póliza de Seguro',
+    vtv: 'Certificado VTV',
+    titulo: 'Título del Vehículo',
+    licencia: 'Licencia de Conducir'
+  }
+
+  const endpoint = endpoints[type]
+  const docName = docNames[type]
 
   const processImage = async (file: File) => {
     setLoading(true)
     setError(null)
     setResult(null)
 
-    // Mostrar preview
-    const reader = new FileReader()
-    reader.onloadend = () => {
-      setPreview(reader.result as string)
+    // Mostrar preview (solo para imágenes)
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    } else {
+      // Para PDFs, mostrar nombre del archivo
+      setPreview('PDF: ' + file.name)
     }
-    reader.readAsDataURL(file)
 
     try {
       const formData = new FormData()
@@ -103,7 +127,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
               className="h-24 flex flex-col gap-2"
             >
               <Upload className="h-8 w-8" />
-              <span className="text-sm">Subir Imagen</span>
+              <span className="text-sm">Subir Imagen/PDF</span>
             </Button>
           </div>
         )}
@@ -120,19 +144,27 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,application/pdf"
           onChange={handleFileSelect}
           className="hidden"
         />
 
-        {/* Preview de imagen */}
+        {/* Preview de imagen o PDF */}
         {preview && (
           <div className="space-y-3">
-            <img 
-              src={preview} 
-              alt="Preview" 
-              className="w-full max-h-64 object-contain border rounded-lg bg-gray-50"
-            />
+            {preview.startsWith('PDF:') ? (
+              <div className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center">
+                <div className="text-red-600 text-4xl mb-2">📄</div>
+                <p className="text-sm font-semibold text-gray-700">{preview}</p>
+                <p className="text-xs text-gray-500 mt-1">Listo para procesar</p>
+              </div>
+            ) : (
+              <img 
+                src={preview} 
+                alt="Preview" 
+                className="w-full max-h-64 object-contain border rounded-lg bg-gray-50"
+              />
+            )}
             
             {!loading && !result && !error && (
               <Button
@@ -140,7 +172,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
                 variant="outline"
                 className="w-full"
               >
-                Cambiar Imagen
+                Cambiar {preview.startsWith('PDF:') ? 'Archivo' : 'Imagen'}
               </Button>
             )}
           </div>
