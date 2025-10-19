@@ -10,21 +10,59 @@ export async function GET(request: Request) {
     const habilitacionId = searchParams.get('habilitacion_id')
     const resultado = searchParams.get('resultado')
 
-    const where: any = {}
+    // Construir filtros WHERE
+    let whereClause = 'WHERE 1=1'
+    const params: any[] = []
 
     if (habilitacionId) {
-      where.habilitacion_id = Number(habilitacionId)
+      whereClause += ' AND i.habilitacion_id = ?'
+      params.push(Number(habilitacionId))
     }
 
     if (resultado) {
-      where.resultado = resultado
+      whereClause += ' AND i.resultado = ?'
+      params.push(resultado)
     }
 
-    const inspecciones = await prisma.inspecciones.findMany({
-      where,
-      orderBy: { fecha_inspeccion: 'desc' },
-      take: 100
-    })
+    // SQL optimizado con LEFT JOINs como en el código PHP original
+    const sql = `
+      SELECT 
+        i.id,
+        i.habilitacion_id,
+        i.nro_licencia,
+        i.fecha_inspeccion,
+        i.resultado,
+        i.nombre_inspector,
+        i.tipo_transporte,
+        i.email_contribuyente,
+        p.nombre as titular_nombre,
+        p.dni as titular_dni,
+        v.dominio as vehiculo_patente,
+        v.marca as vehiculo_marca,
+        v.modelo as vehiculo_modelo
+      FROM inspecciones AS i
+      LEFT JOIN habilitaciones_generales AS hg ON i.habilitacion_id = hg.id
+      LEFT JOIN habilitaciones_personas AS hp ON hg.id = hp.habilitacion_id
+      LEFT JOIN personas AS p ON hp.persona_id = p.id
+      LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id
+      LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
+      ${whereClause}
+      ORDER BY i.fecha_inspeccion DESC
+      LIMIT 100
+    `
+
+    // Ejecutar query raw SQL
+    const inspecciones: any[] = await prisma.$queryRawUnsafe(sql, ...params)
+
+    // Formatear datos
+    const inspeccionesFormateadas = inspecciones.map((insp: any) => ({
+      ...insp,
+      titular_nombre: insp.titular_nombre || 'Sin datos',
+      titular_dni: insp.titular_dni || '',
+      vehiculo_patente: insp.vehiculo_patente || 'Sin patente',
+      vehiculo_marca: insp.vehiculo_marca || '',
+      vehiculo_modelo: insp.vehiculo_modelo || ''
+    }))
 
     // Enriquecer con datos de habilitación (titular y vehículo)
     const inspeccionesEnriquecidas = await Promise.all(
@@ -90,8 +128,13 @@ export async function GET(request: Request) {
 
     return NextResponse.json({
       success: true,
+<<<<<<< HEAD
       data: inspeccionesEnriquecidas,
       total: inspeccionesEnriquecidas.length
+=======
+      data: inspeccionesFormateadas,
+      total: inspeccionesFormateadas.length
+>>>>>>> 01475c20185009700f2fe96b239069762f600db6
     })
 
   } catch (error) {

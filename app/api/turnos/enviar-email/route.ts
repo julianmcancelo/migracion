@@ -8,7 +8,20 @@ import nodemailer from 'nodemailer'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { email, nombre, nro_licencia, fecha, hora, tipo_transporte, turno_id } = body
+    const { 
+      email, 
+      nombre, 
+      nro_licencia, 
+      fecha, 
+      hora, 
+      tipo_transporte, 
+      turno_id,
+      dni,
+      telefono,
+      vehiculo_patente,
+      vehiculo_marca,
+      vehiculo_modelo
+    } = body
 
     // Validaciones
     if (!email || !nombre || !nro_licencia || !fecha || !hora) {
@@ -262,17 +275,63 @@ export async function POST(request: Request) {
         </div>
         <div class="info-row">
           <span class="info-label">Tipo de Transporte:</span>
-          <span class="info-value">${tipo_transporte}</span>
+          <span class="info-value">${tipo_transporte || 'Escolar/Remis'}</span>
         </div>
         <div class="info-row">
           <span class="info-label">Fecha:</span>
           <span class="info-value">${fechaFormateada}</span>
         </div>
-        <div class="info-row" style="border-bottom: none;">
+        <div class="info-row">
           <span class="info-label">Hora:</span>
           <span class="info-value">${hora} hs</span>
         </div>
       </div>
+
+      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 2px solid #10B981; border-radius: 12px; padding: 24px; margin: 30px 0;">
+        <h3 style="margin: 0 0 20px 0; color: #065F46; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <span>👤</span> Datos del Titular
+        </h3>
+        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(16, 185, 129, 0.2); align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Nombre Completo:</span>
+          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">${nombre}</span>
+        </div>
+        ${dni ? `
+        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(16, 185, 129, 0.2); align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">DNI:</span>
+          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">${dni}</span>
+        </div>
+        ` : ''}
+        ${telefono ? `
+        <div style="display: flex; padding: 12px 0; border-bottom: none; align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Teléfono:</span>
+          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">📞 ${telefono}</span>
+        </div>
+        ` : ''}
+      </div>
+
+      ${vehiculo_patente ? `
+      <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; border-radius: 12px; padding: 24px; margin: 30px 0;">
+        <h3 style="margin: 0 0 20px 0; color: #92400E; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
+          <span>🚗</span> Datos del Vehículo
+        </h3>
+        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Patente/Dominio:</span>
+          <span style="color: #92400E; font-weight: 700; font-size: 18px; flex: 1; font-family: monospace;">${vehiculo_patente}</span>
+        </div>
+        ${vehiculo_marca ? `
+        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Marca:</span>
+          <span style="color: #92400E; font-weight: 700; font-size: 16px; flex: 1;">${vehiculo_marca}</span>
+        </div>
+        ` : ''}
+        ${vehiculo_modelo ? `
+        <div style="display: flex; padding: 12px 0; border-bottom: none; align-items: center;">
+          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Modelo:</span>
+          <span style="color: #92400E; font-weight: 700; font-size: 16px; flex: 1;">${vehiculo_modelo}</span>
+        </div>
+        ` : ''}
+      </div>
+      ` : ''}
       
       <div class="divider"></div>
       

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2 } from 'lucide-react'
+import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2, User, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ModalTurno } from '@/components/turnos/modal-turno'
 
@@ -19,6 +19,13 @@ interface Turno {
     nro_licencia: string
     tipo_transporte: string
   }
+  titular_nombre?: string
+  titular_dni?: string
+  titular_email?: string
+  titular_telefono?: string
+  vehiculo_patente?: string
+  vehiculo_marca?: string
+  vehiculo_modelo?: string
 }
 
 /**
@@ -27,14 +34,21 @@ interface Turno {
  */
 export default function TurnosPage() {
   const [turnos, setTurnos] = useState<Turno[]>([])
+  const [turnosFiltrados, setTurnosFiltrados] = useState<Turno[]>([])
   const [loading, setLoading] = useState(true)
   const [filtroEstado, setFiltroEstado] = useState<string>('TODOS')
+  const [buscarDNI, setBuscarDNI] = useState('')
+  const [buscarDominio, setBuscarDominio] = useState('')
   const [modalAbierto, setModalAbierto] = useState(false)
   const [turnoEditar, setTurnoEditar] = useState<Turno | null>(null)
 
   useEffect(() => {
     cargarTurnos()
   }, [filtroEstado])
+
+  useEffect(() => {
+    aplicarFiltros()
+  }, [turnos, buscarDNI, buscarDominio])
 
   const cargarTurnos = async () => {
     try {
@@ -50,12 +64,31 @@ export default function TurnosPage() {
 
       if (data.success) {
         setTurnos(data.data)
+        setTurnosFiltrados(data.data)
       }
     } catch (error) {
       console.error('Error al cargar turnos:', error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const aplicarFiltros = () => {
+    let resultado = [...turnos]
+
+    if (buscarDNI.trim()) {
+      resultado = resultado.filter(t => 
+        t.titular_dni?.toLowerCase().includes(buscarDNI.toLowerCase())
+      )
+    }
+
+    if (buscarDominio.trim()) {
+      resultado = resultado.filter(t => 
+        t.vehiculo_patente?.toLowerCase().includes(buscarDominio.toLowerCase())
+      )
+    }
+
+    setTurnosFiltrados(resultado)
   }
 
   const abrirModalNuevo = () => {
@@ -83,11 +116,17 @@ export default function TurnosPage() {
         body: JSON.stringify({ estado: nuevoEstado })
       })
 
-      if (response.ok) {
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        alert('Estado actualizado correctamente')
         cargarTurnos()
+      } else {
+        alert(`Error: ${data.error || 'No se pudo actualizar el estado'}`)
       }
     } catch (error) {
       console.error('Error al actualizar turno:', error)
+      alert('Error al actualizar el turno')
     }
   }
 
@@ -166,11 +205,43 @@ export default function TurnosPage() {
       </div>
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <div className="flex items-center gap-2 flex-wrap">
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+        <div className="flex items-center gap-2 mb-4">
           <Filter className="h-5 w-5 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Filtrar por estado:</span>
-          
+          <span className="text-sm font-medium text-gray-700">Filtros:</span>
+        </div>
+        
+        {/* Búsqueda por DNI y Dominio */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              🔍 Buscar por DNI:
+            </label>
+            <input
+              type="text"
+              placeholder="Ingrese DNI del titular..."
+              value={buscarDNI}
+              onChange={(e) => setBuscarDNI(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              🚗 Buscar por Dominio:
+            </label>
+            <input
+              type="text"
+              placeholder="Ingrese patente del vehículo..."
+              value={buscarDominio}
+              onChange={(e) => setBuscarDominio(e.target.value.toUpperCase())}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
+            />
+          </div>
+        </div>
+
+        {/* Estado */}
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="text-sm font-medium text-gray-700">Por estado:</span>
           {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
             <button
               key={estado}
@@ -185,6 +256,23 @@ export default function TurnosPage() {
             </button>
           ))}
         </div>
+
+        {/* Resumen de búsqueda */}
+        {(buscarDNI || buscarDominio) && (
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>Filtrando:</strong>
+              {buscarDNI && <span className="ml-2">DNI: "{buscarDNI}"</span>}
+              {buscarDominio && <span className="ml-2">Dominio: "{buscarDominio}"</span>}
+              <button
+                onClick={() => { setBuscarDNI(''); setBuscarDominio(''); }}
+                className="ml-4 text-blue-600 hover:text-blue-800 font-semibold"
+              >
+                ❌ Limpiar
+              </button>
+            </p>
+          </div>
+        )}
       </div>
 
       {/* Estadísticas */}
@@ -194,7 +282,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-yellow-700 font-medium">Pendientes</p>
               <p className="text-2xl font-bold text-yellow-900">
-                {turnos.filter(t => t.estado === 'PENDIENTE').length}
+                {turnosFiltrados.filter(t => t.estado === 'PENDIENTE').length}
               </p>
             </div>
             <Clock className="h-8 w-8 text-yellow-600" />
@@ -206,7 +294,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-blue-700 font-medium">Confirmados</p>
               <p className="text-2xl font-bold text-blue-900">
-                {turnos.filter(t => t.estado === 'CONFIRMADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'CONFIRMADO').length}
               </p>
             </div>
             <AlertCircle className="h-8 w-8 text-blue-600" />
@@ -218,7 +306,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-green-700 font-medium">Finalizados</p>
               <p className="text-2xl font-bold text-green-900">
-                {turnos.filter(t => t.estado === 'FINALIZADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'FINALIZADO').length}
               </p>
             </div>
             <CheckCircle className="h-8 w-8 text-green-600" />
@@ -230,7 +318,7 @@ export default function TurnosPage() {
             <div>
               <p className="text-sm text-red-700 font-medium">Cancelados</p>
               <p className="text-2xl font-bold text-red-900">
-                {turnos.filter(t => t.estado === 'CANCELADO').length}
+                {turnosFiltrados.filter(t => t.estado === 'CANCELADO').length}
               </p>
             </div>
             <XCircle className="h-8 w-8 text-red-600" />
@@ -244,7 +332,7 @@ export default function TurnosPage() {
           <div className="p-12 text-center text-gray-500">
             Cargando turnos...
           </div>
-        ) : turnos.length === 0 ? (
+        ) : turnosFiltrados.length === 0 ? (
           <div className="p-12 text-center text-gray-500">
             No hay turnos para mostrar
           </div>
@@ -254,22 +342,16 @@ export default function TurnosPage() {
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Fecha
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Hora
+                    Fecha / Hora
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Licencia
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Tipo
+                    Titular / Vehículo
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Estado
-                  </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Observaciones
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
@@ -277,30 +359,63 @@ export default function TurnosPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {turnos.map((turno) => (
-                  <tr key={turno.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {formatearFecha(turno.fecha)}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">
-                      {formatearHora(turno.hora)}
+                {turnosFiltrados.map((turno) => (
+                  <tr key={turno.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-gray-900 font-semibold">
+                          <Calendar className="h-4 w-4 text-gray-400" />
+                          {formatearFecha(turno.fecha)}
+                        </div>
+                        <div className="flex items-center gap-2 text-blue-600 font-medium ml-6">
+                          <Clock className="h-4 w-4" />
+                          {formatearHora(turno.hora)}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <span className="font-mono font-bold text-blue-600">
-                        {turno.habilitacion?.nro_licencia || '-'}
-                      </span>
+                      <div className="flex flex-col">
+                        <span className="font-mono font-bold text-blue-600 text-base">
+                          {turno.habilitacion?.nro_licencia || 'N/A'}
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          {turno.habilitacion?.tipo_transporte || 'N/A'}
+                        </span>
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {turno.habilitacion?.tipo_transporte || '-'}
+                    <td className="px-6 py-4 text-sm">
+                      <div className="flex flex-col gap-1">
+                        <div className="flex items-center gap-2 text-gray-900 font-semibold">
+                          <User className="h-4 w-4 text-gray-400" />
+                          {turno.titular_nombre || 'Sin datos'}
+                        </div>
+                        {turno.titular_dni && (
+                          <span className="text-xs text-gray-500 ml-6">DNI: {turno.titular_dni}</span>
+                        )}
+                        {turno.titular_telefono && (
+                          <span className="text-xs text-gray-500 ml-6">📞 {turno.titular_telefono}</span>
+                        )}
+                        <div className="flex items-center gap-2 text-gray-700 mt-1">
+                          <Car className="h-4 w-4 text-gray-400" />
+                          <span className="font-mono font-semibold">{turno.vehiculo_patente || 'N/A'}</span>
+                          {(turno.vehiculo_marca || turno.vehiculo_modelo) && (
+                            <span className="text-xs text-gray-500">
+                              {turno.vehiculo_marca} {turno.vehiculo_modelo}
+                            </span>
+                          )}
+                        </div>
+                      </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getEstadoBadge(turno.estado)}`}>
                         {getEstadoIcon(turno.estado)}
                         {turno.estado}
                       </span>
-                    </td>
-                    <td className="px-6 py-4 text-sm text-gray-600 max-w-xs truncate">
-                      {turno.observaciones || '-'}
+                      {turno.observaciones && (
+                        <p className="text-xs text-gray-500 mt-2 max-w-xs truncate" title={turno.observaciones}>
+                          {turno.observaciones}
+                        </p>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex gap-2 flex-wrap">

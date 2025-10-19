@@ -8,9 +8,10 @@ import nodemailer from 'nodemailer'
  */
 export async function POST(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
+    const params = await context.params
     const turnoId = parseInt(params.id)
 
     // Verificar que el turno existe
@@ -100,95 +101,11 @@ export async function POST(
         })
 
         await transporter.sendMail({
-          from: `"Municipalidad de Lanús" <${process.env.GMAIL_USER}>`,
+          from: `"Municipalidad de Lanús - Transporte" <${process.env.GMAIL_USER}>`,
           to: habPersona.persona.email,
           replyTo: 'transportepublicolanus@gmail.com',
-          subject: '❌ Cancelación Confirmada - Inspección Vehicular',
-          html: `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: Arial, sans-serif; line-height: 1.6; color: #1F2937; background: #F3F4F6; padding: 20px; }
-    .container { max-width: 600px; margin: 0 auto; background: #fff; border-radius: 16px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-    .header { background: #FFFFFF; color: #1F2937; padding: 30px; text-align: center; border-bottom: 4px solid #DC2626; }
-    .logo { width: 120px; height: auto; margin: 0 auto 15px; display: block; }
-    .cancel-badge { background: linear-gradient(135deg, #DC2626, #EF4444); color: white; padding: 15px; border-radius: 8px; margin-top: 15px; }
-    .content { padding: 40px 30px; }
-    .info-box { background: #FEF2F2; border: 2px solid #DC2626; border-radius: 12px; padding: 24px; margin: 30px 0; }
-    .info-row { padding: 12px 0; border-bottom: 1px solid rgba(220, 38, 38, 0.2); }
-    .info-row:last-child { border-bottom: none; }
-    .new-turno-box { background: #DBEAFE; border: 2px solid #3B82F6; border-radius: 10px; padding: 20px; margin: 25px 0; }
-    .contact-box { background: #F3F4F6; padding: 28px; border-radius: 12px; margin-top: 30px; }
-    .footer { background: #1F2937; color: #9CA3AF; padding: 30px; text-align: center; font-size: 13px; }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <img src="https://www.lanus.gob.ar/logo-200.png" alt="Municipalidad de Lanús" class="logo" />
-      <h1 style="font-size: 24px; font-weight: 700; color: #1F2937; margin: 10px 0 5px 0;">Municipalidad de Lanús</h1>
-      <p style="font-size: 16px; color: #6B7280; margin: 0;">Dirección General de Movilidad y Transporte</p>
-      <div class="cancel-badge">
-        <strong style="font-size: 20px;">❌ Turno Cancelado</strong>
-      </div>
-    </div>
-    <div class="content">
-      <p style="font-size: 18px; color: #111827; margin-bottom: 16px;">Estimado/a <strong>${habPersona.persona.nombre}</strong>,</p>
-      <p style="font-size: 16px; color: #4B5563; margin-bottom: 30px; line-height: 1.8;">
-        Hemos recibido y procesado la <strong>cancelación de su turno</strong> de inspección vehicular. El turno ha sido eliminado de nuestro sistema.
-      </p>
-      
-      <div class="info-box">
-        <h3 style="margin: 0 0 20px 0; color: #DC2626; font-size: 20px; font-weight: 700;">📋 Turno Cancelado</h3>
-        <div class="info-row">
-          <strong style="color: #374151;">Nro. de Licencia:</strong>
-          <span style="color: #DC2626; font-weight: 700; margin-left: 10px;">${turno.habilitaciones_generales?.nro_licencia}</span>
-        </div>
-        <div class="info-row">
-          <strong style="color: #374151;">Fecha original:</strong>
-          <span style="color: #DC2626; font-weight: 700; margin-left: 10px;">${fechaFormateada}</span>
-        </div>
-        <div class="info-row">
-          <strong style="color: #374151;">Estado:</strong>
-          <span style="color: #DC2626; font-weight: 700; margin-left: 10px;">CANCELADO</span>
-        </div>
-      </div>
-      
-      <div class="new-turno-box">
-        <strong style="color: #1E40AF; font-size: 16px; display: block; margin-bottom: 12px;">📅 ¿Necesita un Nuevo Turno?</strong>
-        <p style="margin: 8px 0; color: #374151; line-height: 1.6;">
-          Puede solicitar un nuevo turno cuando lo necesite comunicándose con nosotros por cualquiera de nuestros canales de atención.
-        </p>
-        <p style="margin: 8px 0; color: #374151; line-height: 1.6;">
-          <strong>Horario de atención:</strong> Lunes a Viernes de 8:00 a 16:00 hs
-        </p>
-      </div>
-      
-      <div class="contact-box">
-        <h4 style="margin: 0 0 16px 0; color: #111827; font-size: 18px;">📞 Contacto</h4>
-        <p style="margin: 8px 0; color: #374151;">📞 Teléfono: <strong>4357-5100 int. 7137</strong></p>
-        <p style="margin: 8px 0; color: #374151;">📧 Email: <a href="mailto:transportepublicolanus@gmail.com" style="color: #2563EB; text-decoration: none;">transportepublicolanus@gmail.com</a></p>
-        <p style="margin: 8px 0; color: #374151;">🌐 Web: <a href="https://www.lanus.gob.ar" style="color: #2563EB; text-decoration: none;">www.lanus.gob.ar</a></p>
-        <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #D1D5DB; font-size: 14px; color: #6B7280;">
-          📍 Av. Hipólito Yrigoyen 3863, Lanús Oeste - CP: 1824
-        </p>
-      </div>
-    </div>
-    <div class="footer">
-      <p><strong>Municipalidad de Lanús</strong></p>
-      <p style="margin-top: 8px;">Dirección General de Movilidad y Transporte</p>
-      <p style="margin-top: 16px; padding-top: 16px; border-top: 1px solid #374151;">
-        © ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados
-      </p>
-    </div>
-  </div>
-</body>
-</html>
-          `
+          subject: '❌ Turno Cancelado - Inspección Vehicular - Lanús',
+          html: `<!DOCTYPE html><html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Helvetica Neue',Arial,sans-serif;background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);padding:40px 20px}.container{max-width:600px;margin:0 auto;background:#fff;border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,0.15);overflow:hidden}.header{background:linear-gradient(135deg,#DC2626 0%,#EF4444 50%,#F87171 100%);padding:50px 30px;text-align:center;position:relative}.header::before{content:'';position:absolute;top:-50%;right:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.1) 0%,transparent 70%)}.cancel-badge{width:100px;height:100px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;border:4px solid rgba(255,255,255,0.3);backdrop-filter:blur(10px);position:relative}.cancel-icon{font-size:50px;filter:drop-shadow(0 4px 6px rgba(0,0,0,0.1))}.header h1{color:#fff;font-size:32px;font-weight:700;margin-bottom:8px;text-shadow:0 2px 10px rgba(0,0,0,0.2);position:relative;z-index:1}.header p{color:rgba(255,255,255,0.95);font-size:16px;font-weight:500;position:relative;z-index:1}.content{padding:40px 35px}.greeting{font-size:20px;color:#111827;font-weight:600;margin-bottom:16px}.message{font-size:16px;color:#4B5563;line-height:1.7;margin-bottom:30px}.info-card{background:linear-gradient(135deg,#FEF2F2 0%,#FEE2E2 100%);border:2px solid#EF4444;border-radius:16px;padding:30px;margin:30px 0;box-shadow:0 4px 12px rgba(239,68,68,0.1)}.info-card h3{color:#DC2626;font-size:18px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}.info-row{display:flex;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(239,68,68,0.2)}.info-row:last-child{border-bottom:none}.info-label{color:#374151;font-weight:600;font-size:15px}.info-value{color:#DC2626;font-weight:700;font-size:16px}.status-badge{display:inline-block;background:linear-gradient(135deg,#DC2626,#EF4444);color:#fff;padding:8px 20px;border-radius:20px;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.5px;box-shadow:0 4px 12px rgba(239,68,68,0.3)}.info-box{background:linear-gradient(135deg,#DBEAFE,#BFDBFE);border-left:5px solid #3B82F6;padding:20px;border-radius:12px;margin:25px 0}.contact-box{background:linear-gradient(135deg,#F3F4F6,#E5E7EB);border-radius:16px;padding:25px;margin-top:30px;border:1px solid #D1D5DB}.footer{background:linear-gradient(135deg,#1F2937,#111827);padding:30px;text-align:center}.footer p{color:#9CA3AF;font-size:13px;line-height:1.6}@media only screen and (max-width:600px){body{padding:20px 10px}.content{padding:30px 20px}.header{padding:40px 20px}.info-row{flex-direction:column;gap:8px}.info-value{text-align:left}}</style></head><body><div class="container"><div class="header"><div class="cancel-badge"><div class="cancel-icon">❌</div></div><h1>Turno Cancelado</h1><p>Dirección de Movilidad y Transporte</p><p style="font-size:14px;margin-top:5px">Municipalidad de Lanús</p></div><div class="content"><p class="greeting">Estimado/a <strong>${habPersona.persona.nombre}</strong>,</p><p class="message">Hemos recibido y procesado la <strong>cancelación de su turno</strong> de inspección vehicular. El horario ha quedado liberado en nuestro sistema.</p><div class="info-card"><h3><span>📋</span> Turno Cancelado</h3><div class="info-row"><span class="info-label">Nro. de Licencia</span><span class="info-value">${turno.habilitaciones_generales?.nro_licencia}</span></div><div class="info-row"><span class="info-label">Tipo de Vehículo</span><span class="info-value">${turno.habilitaciones_generales?.tipo_transporte || 'N/A'}</span></div><div class="info-row"><span class="info-label">Fecha Original</span><span class="info-value">${fechaFormateada}</span></div><div class="info-row" style="border:none;padding-top:20px;margin-top:10px;border-top:2px solid #EF4444"><span class="info-label">Estado</span><span class="status-badge">CANCELADO</span></div></div><div class="info-box"><p style="color:#1E40AF;font-weight:700;margin-bottom:12px;font-size:16px">💡 ¿Necesita un Nuevo Turno?</p><p style="color:#1F2937;line-height:1.8;margin:0">Puede solicitar un nuevo turno cuando lo necesite comunicándose con nosotros. Estamos a su disposición para coordinar una nueva fecha.</p></div><div class="contact-box"><p style="color:#111827;font-size:17px;font-weight:700;margin-bottom:15px">📞 Contacto</p><p style="color:#374151;font-size:15px;line-height:1.8;margin:0"><strong>Dirección Gral. de Movilidad y Transporte</strong><br>Municipalidad de Lanús<br><br>📞 Teléfono: <strong>4357-5100 int. 7137</strong><br>📧 Email: <a href="mailto:transportepublicolanus@gmail.com" style="color:#2563EB;text-decoration:none;font-weight:600">transportepublicolanus@gmail.com</a><br><br><span style="color:#6B7280;font-size:14px">⏰ Lunes a Viernes de 8:00 a 16:00 hs</span></p></div></div><div class="footer"><p style="color:#F3F4F6;font-weight:700;font-size:16px;margin-bottom:10px">🏛️ Municipalidad de Lanús</p><p>Dirección General de Movilidad y Transporte</p><p style="margin-top:15px;padding-top:15px;border-top:1px solid #374151">© ${new Date().getFullYear()} Municipalidad de Lanús • Todos los derechos reservados</p></div></div></body></html>`
         })
 
         console.log('Email de cancelación enviado a:', habPersona.persona.email)

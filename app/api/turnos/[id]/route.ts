@@ -6,10 +6,10 @@ import { prisma } from '@/lib/db'
  */
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await context.params
 
     const turno = await prisma.turnos.findUnique({
       where: { id: Number(id) }
@@ -55,12 +55,14 @@ export async function GET(
  */
 export async function PATCH(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await context.params
     const body = await request.json()
     const { estado, observaciones } = body
+
+    console.log('Actualizando turno:', id, 'con estado:', estado)
 
     // Verificar que el turno existe
     const turnoExistente = await prisma.turnos.findUnique({
@@ -83,15 +85,22 @@ export async function PATCH(
       }
     })
 
+    console.log('Turno actualizado exitosamente:', turno)
+
     return NextResponse.json({
       success: true,
-      data: turno
+      data: turno,
+      message: `Turno actualizado a ${estado || turnoExistente.estado}`
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error al actualizar turno:', error)
     return NextResponse.json(
-      { success: false, error: 'Error al actualizar turno' },
+      { 
+        success: false, 
+        error: 'Error al actualizar turno',
+        details: error.message 
+      },
       { status: 500 }
     )
   }
@@ -102,10 +111,10 @@ export async function PATCH(
  */
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = params
+    const { id } = await context.params
 
     // Verificar que el turno existe
     const turnoExistente = await prisma.turnos.findUnique({
