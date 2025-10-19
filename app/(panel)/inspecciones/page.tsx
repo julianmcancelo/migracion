@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Download } from 'lucide-react'
+import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Inspeccion {
@@ -14,6 +14,8 @@ interface Inspeccion {
   tipo_transporte: string
   resultado: string
   email_contribuyente?: string
+  titular?: string | null
+  dominio?: string | null
 }
 
 /**
@@ -60,6 +62,30 @@ export default function InspeccionesPage() {
         return <XCircle className="h-4 w-4" />
       default:
         return <AlertCircle className="h-4 w-4" />
+    }
+  }
+
+  const enviarEmail = async (inspeccionId: number, email: string) => {
+    if (!confirm(`¿Enviar informe de inspección a ${email}?`)) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/inspecciones/${inspeccionId}/enviar-email`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        alert('✅ Email enviado correctamente')
+      } else {
+        alert('❌ Error al enviar email: ' + (data.error || 'Error desconocido'))
+      }
+    } catch (error) {
+      console.error('Error al enviar email:', error)
+      alert('❌ Error al enviar email')
     }
   }
 
@@ -154,25 +180,31 @@ export default function InspeccionesPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Licencia
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Titular
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Dominio
+                  </th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Inspector
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Tipo
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Resultado
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Email
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Acciones
                   </th>
                 </tr>
@@ -180,40 +212,63 @@ export default function InspeccionesPage() {
               <tbody className="divide-y divide-gray-200">
                 {inspecciones.map((inspeccion) => (
                   <tr key={inspeccion.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                       {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
                       <span className="font-mono font-bold text-blue-600">
                         {inspeccion.nro_licencia}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {inspeccion.nombre_inspector}
+                    <td className="px-4 py-3 text-sm text-gray-900">
+                      <div className="max-w-[150px] truncate" title={inspeccion.titular || '-'}>
+                        {inspeccion.titular || '-'}
+                      </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {inspeccion.tipo_transporte || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-semibold border ${getResultadoBadge(inspeccion.resultado)}`}>
-                        {getResultadoIcon(inspeccion.resultado)}
-                        {inspeccion.resultado}
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      <span className="font-mono font-bold text-gray-900">
+                        {inspeccion.dominio || '-'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                      {inspeccion.email_contribuyente || '-'}
+                    <td className="px-4 py-3 text-sm text-gray-700">
+                      {inspeccion.nombre_inspector}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <a
-                        href={`/api/inspecciones/${inspeccion.id}/pdf`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
-                        title="Descargar PDF"
-                      >
-                        <FileText className="h-4 w-4" />
-                        PDF
-                      </a>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                      {inspeccion.tipo_transporte || '-'}
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap">
+                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getResultadoBadge(inspeccion.resultado)}`}>
+                        {getResultadoIcon(inspeccion.resultado)}
+                        {inspeccion.resultado === 'APROBADO' ? 'aprobado' : inspeccion.resultado === 'RECHAZADO' ? 'rechazado' : 'condicional'}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-sm text-gray-600">
+                      <div className="max-w-[120px] truncate" title={inspeccion.email_contribuyente || '-'}>
+                        {inspeccion.email_contribuyente || '-'}
+                      </div>
+                    </td>
+                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                      <div className="flex items-center gap-2">
+                        <a
+                          href={`/api/inspecciones/${inspeccion.id}/pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                          title="Descargar PDF"
+                        >
+                          <FileText className="h-4 w-4" />
+                          PDF
+                        </a>
+                        {inspeccion.email_contribuyente && (
+                          <button
+                            onClick={() => enviarEmail(inspeccion.id, inspeccion.email_contribuyente!)}
+                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 font-medium"
+                            title="Enviar por email"
+                          >
+                            <Mail className="h-4 w-4" />
+                          </button>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

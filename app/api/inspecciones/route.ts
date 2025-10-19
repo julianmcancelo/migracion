@@ -26,10 +26,72 @@ export async function GET(request: Request) {
       take: 100
     })
 
+    // Enriquecer con datos de habilitación (titular y vehículo)
+    const inspeccionesEnriquecidas = await Promise.all(
+      inspecciones.map(async (inspeccion) => {
+        try {
+          // Obtener habilitación
+          const habilitacion = await prisma.habilitaciones_generales.findUnique({
+            where: { id: inspeccion.habilitacion_id }
+          })
+
+          if (!habilitacion) {
+            return {
+              ...inspeccion,
+              titular: null,
+              dominio: null
+            }
+          }
+
+          // Obtener titular
+          const habPersona = await prisma.habilitaciones_personas.findFirst({
+            where: {
+              habilitacion_id: habilitacion.id,
+              rol: 'TITULAR'
+            }
+          })
+
+          let titular: string | null = null
+          if (habPersona && habPersona.persona_id) {
+            const persona = await prisma.personas.findUnique({
+              where: { id: habPersona.persona_id }
+            })
+            titular = persona?.nombre || null
+          }
+
+          // Obtener vehículo
+          const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
+            where: { habilitacion_id: habilitacion.id }
+          })
+
+          let dominio: string | null = null
+          if (habVehiculo && habVehiculo.vehiculo_id) {
+            const vehiculo = await prisma.vehiculos.findUnique({
+              where: { id: habVehiculo.vehiculo_id }
+            })
+            dominio = vehiculo?.dominio || null
+          }
+
+          return {
+            ...inspeccion,
+            titular,
+            dominio
+          }
+        } catch (error) {
+          console.error(`Error al enriquecer inspección ${inspeccion.id}:`, error)
+          return {
+            ...inspeccion,
+            titular: null,
+            dominio: null
+          }
+        }
+      })
+    )
+
     return NextResponse.json({
       success: true,
-      data: inspecciones,
-      total: inspecciones.length
+      data: inspeccionesEnriquecidas,
+      total: inspeccionesEnriquecidas.length
     })
 
   } catch (error) {
