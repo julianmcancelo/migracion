@@ -65,7 +65,7 @@ export async function POST(request: Request) {
       padding: 20px;
     }
     .container { 
-      max-width: 600px; 
+      max-width: 750px; 
       margin: 0 auto; 
       background: #ffffff;
       border-radius: 16px;
