@@ -262,41 +262,55 @@ export async function POST(request: Request) {
     <div class="content">
       <p class="greeting">Estimado/a <strong>${nombre}</strong>,</p>
       
-      <p class="message">
-        Su turno para inspección vehicular ha sido confirmado. <strong>Recuerde traer DNI y Cédula Verde.</strong>
+      <p class="message" style="font-size: 17px; line-height: 1.8; margin-bottom: 35px;">
+        Su turno para la <strong>inspección vehicular</strong> ha sido confirmado exitosamente en nuestro sistema.
       </p>
       
-      <!-- Información Principal en Cards Compactos -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 25px 0;">
-        
-        <!-- Fecha y Hora -->
-        <div style="background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); border: 2px solid #3B82F6; border-radius: 12px; padding: 20px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 8px;">📅</div>
-          <div style="font-size: 14px; color: #1E40AF; font-weight: 600; margin-bottom: 6px;">FECHA</div>
-          <div style="font-size: 16px; color: #1E3A8A; font-weight: 700;">${fechaFormateada}</div>
-          <div style="font-size: 24px; color: #1E3A8A; font-weight: 700; margin-top: 10px;">⏰ ${hora} hs</div>
+      <!-- Card de Fecha y Hora -->
+      <div style="background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); border: 3px solid #3B82F6; border-radius: 16px; padding: 40px; margin: 30px 0; text-align: center; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.15);">
+        <div style="font-size: 48px; margin-bottom: 15px;">📅</div>
+        <div style="font-size: 16px; color: #1E40AF; font-weight: 700; letter-spacing: 1px; margin-bottom: 15px;">FECHA Y HORA DEL TURNO</div>
+        <div style="font-size: 22px; color: #1E3A8A; font-weight: 700; margin-bottom: 20px; line-height: 1.6;">
+          ${fechaFormateada}
         </div>
-
-        <!-- Licencia y Vehículo -->
-        <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; border-radius: 12px; padding: 20px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 8px;">🚗</div>
-          <div style="font-size: 14px; color: #92400E; font-weight: 600; margin-bottom: 6px;">LICENCIA</div>
-          <div style="font-size: 18px; color: #78350F; font-weight: 700; font-family: monospace;">${nro_licencia}</div>
-          ${vehiculo_patente ? `
-          <div style="font-size: 14px; color: #92400E; font-weight: 600; margin-top: 12px; margin-bottom: 6px;">PATENTE</div>
-          <div style="font-size: 20px; color: #78350F; font-weight: 700; font-family: monospace;">${vehiculo_patente}</div>
-          ` : ''}
+        <div style="background: white; border-radius: 12px; padding: 20px; display: inline-block; margin-top: 10px;">
+          <div style="font-size: 18px; color: #1E40AF; font-weight: 600; margin-bottom: 8px;">Horario</div>
+          <div style="font-size: 36px; color: #1E3A8A; font-weight: 700;">⏰ ${hora} hs</div>
         </div>
-
       </div>
 
-      <!-- Dirección Destacada -->
-      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 3px solid #10B981; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
-        <div style="font-size: 28px; margin-bottom: 10px;">📍</div>
-        <div style="font-size: 15px; color: #065F46; font-weight: 600; margin-bottom: 8px;">LUGAR DE LA INSPECCIÓN</div>
-        <div style="font-size: 18px; color: #047857; font-weight: 700; line-height: 1.4;">
-          INTENDENTE MANUEL QUINDIMIL 857<br/>
-          <span style="font-size: 15px;">(ESQUINA JUJUY)</span>
+      <!-- Card de Licencia y Vehículo -->
+      <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 3px solid #F59E0B; border-radius: 16px; padding: 40px; margin: 30px 0; text-align: center; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);">
+        <div style="font-size: 48px; margin-bottom: 15px;">🚗</div>
+        <div style="font-size: 16px; color: #92400E; font-weight: 700; letter-spacing: 1px; margin-bottom: 15px;">DATOS DEL VEHÍCULO</div>
+        <div style="background: white; border-radius: 12px; padding: 25px; margin: 20px auto; max-width: 400px;">
+          <div style="font-size: 15px; color: #92400E; font-weight: 600; margin-bottom: 10px;">N° de Licencia</div>
+          <div style="font-size: 28px; color: #78350F; font-weight: 700; font-family: monospace; letter-spacing: 2px;">${nro_licencia}</div>
+          ${vehiculo_patente ? `
+          <div style="border-top: 2px solid #FDE68A; margin: 20px 0; padding-top: 20px;">
+            <div style="font-size: 15px; color: #92400E; font-weight: 600; margin-bottom: 10px;">Dominio/Patente</div>
+            <div style="font-size: 32px; color: #78350F; font-weight: 700; font-family: monospace; letter-spacing: 3px;">${vehiculo_patente}</div>
+          </div>
+          ` : ''}
+        </div>
+      </div>
+
+      <!-- Dirección con Mapa -->
+      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 3px solid #10B981; border-radius: 16px; padding: 40px; margin: 30px 0; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <div style="font-size: 48px; margin-bottom: 15px;">📍</div>
+          <div style="font-size: 16px; color: #065F46; font-weight: 700; letter-spacing: 1px; margin-bottom: 20px;">LUGAR DE LA INSPECCIÓN</div>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 30px; text-align: center;">
+          <div style="font-size: 24px; color: #047857; font-weight: 700; line-height: 1.5; margin-bottom: 10px;">
+            INTENDENTE MANUEL QUINDIMIL 857
+          </div>
+          <div style="font-size: 18px; color: #065F46; font-weight: 600; margin-top: 8px;">
+            (ESQUINA JUJUY)
+          </div>
+          <div style="font-size: 16px; color: #6B7280; margin-top: 15px; padding-top: 15px; border-top: 2px solid #DCFCE7;">
+            📍 Lanús, Buenos Aires
+          </div>
         </div>
       </div>
       
@@ -319,13 +333,26 @@ export async function POST(request: Request) {
       
       <div class="divider"></div>
       
-      <div class="alert">
-        <strong>⚠️ Documentación Obligatoria:</strong>
-        <ul style="margin: 12px 0 0 0; padding-left: 20px;">
-          <li><strong>DNI del titular</strong></li>
-          <li><strong>Cédula Verde del vehículo</strong></li>
-          <li>Presentarse con <strong>15 minutos de anticipación</strong></li>
-        </ul>
+      <!-- Requisitos -->
+      <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 3px solid #F59E0B; border-radius: 16px; padding: 35px; margin: 30px 0;">
+        <div style="text-align: center; margin-bottom: 25px;">
+          <div style="font-size: 42px; margin-bottom: 10px;">⚠️</div>
+          <div style="font-size: 18px; color: #92400E; font-weight: 700; letter-spacing: 0.5px;">DOCUMENTACIÓN OBLIGATORIA</div>
+        </div>
+        <div style="background: white; border-radius: 12px; padding: 30px;">
+          <div style="margin-bottom: 20px; padding: 18px; background: #FEF3C7; border-left: 4px solid #F59E0B; border-radius: 8px;">
+            <div style="font-size: 17px; color: #92400E; font-weight: 700; margin-bottom: 5px;">📄 DNI del Titular</div>
+            <div style="font-size: 14px; color: #78350F;">Documento Nacional de Identidad vigente</div>
+          </div>
+          <div style="margin-bottom: 20px; padding: 18px; background: #FEF3C7; border-left: 4px solid #F59E0B; border-radius: 8px;">
+            <div style="font-size: 17px; color: #92400E; font-weight: 700; margin-bottom: 5px;">🚗 Cédula Verde del Vehículo</div>
+            <div style="font-size: 14px; color: #78350F;">Título de propiedad del automotor</div>
+          </div>
+          <div style="padding: 18px; background: #DBEAFE; border-left: 4px solid #3B82F6; border-radius: 8px;">
+            <div style="font-size: 17px; color: #1E40AF; font-weight: 700; margin-bottom: 5px;">⏰ Puntualidad</div>
+            <div style="font-size: 14px; color: #1E3A8A;">Presentarse con <strong>15 minutos de anticipación</strong></div>
+          </div>
+        </div>
       </div>
       
       <div class="contact-box">
