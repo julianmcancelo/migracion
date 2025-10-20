@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
+import { ModalGestionOblea } from '@/components/obleas/modal-gestion-oblea'
 
 interface Oblea {
   id: number
@@ -68,6 +69,8 @@ export default function ObleasPage() {
   const [selectedHabilitacion, setSelectedHabilitacion] = useState<Habilitacion | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [eliminandoOblea, setEliminandoOblea] = useState<number | null>(null)
+  const [obleaSeleccionada, setObleaSeleccionada] = useState<Oblea | null>(null)
+  const [showGestionModal, setShowGestionModal] = useState(false)
   
   // Estados para filtros avanzados
   const [filtros, setFiltros] = useState({
@@ -188,6 +191,11 @@ export default function ObleasPage() {
   const handleGestionarObleas = (hab: Habilitacion) => {
     setSelectedHabilitacion(hab)
     setShowModal(true)
+  }
+
+  const handleAbrirGestionOblea = (oblea: Oblea) => {
+    setObleaSeleccionada(oblea)
+    setShowGestionModal(true)
   }
 
   // Funciones para selección masiva
@@ -683,19 +691,13 @@ export default function ObleasPage() {
                       
                       <div className="flex items-center gap-2">
                         <Button
-                          onClick={() => handleGestionarObleas({ 
-                            id: oblea.habilitacion_id, 
-                            nro_licencia: oblea.nro_licencia,
-                            estado: oblea.estado_habilitacion,
-                            tipo_transporte: oblea.tipo_transporte,
-                            titular_principal: oblea.titular,
-                            vigencia_fin: ''
-                          })}
+                          onClick={() => handleAbrirGestionOblea(oblea)}
                           variant="outline"
                           size="sm"
+                          className="bg-blue-50 hover:bg-blue-100"
                         >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Ver
+                          <Settings className="h-4 w-4 mr-1" />
+                          Gestionar
                         </Button>
                         <Button
                           onClick={() => eliminarOblea(oblea.id)}
@@ -786,6 +788,17 @@ export default function ObleasPage() {
           onClose={() => setShowModal(false)}
         />
       )}
+
+      {/* Modal de gestión de oblea */}
+      <ModalGestionOblea
+        oblea={obleaSeleccionada}
+        open={showGestionModal}
+        onClose={() => {
+          setShowGestionModal(false)
+          setObleaSeleccionada(null)
+        }}
+        onUpdate={cargarDatos}
+      />
     </div>
   )
 }
