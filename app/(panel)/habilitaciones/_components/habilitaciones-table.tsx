@@ -2,11 +2,12 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download, QrCode } from 'lucide-react'
+import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download, QrCode, Shield } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
 import { DetalleModal } from './detalle-modal'
 import { EditarHabilitacionDialog } from './editar-habilitacion-dialog'
+import { ModalObleas } from '@/components/obleas/modal-obleas'
 import {
   Table,
   TableBody,
@@ -65,6 +66,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showPersonaModal, setShowPersonaModal] = useState(false)
   const [showDetalleModal, setShowDetalleModal] = useState(false)
   const [showEditarDialog, setShowEditarDialog] = useState(false)
+  const [showObleasModal, setShowObleasModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -123,6 +125,11 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
       console.error('Error al generar credencial:', error)
       alert('❌ Error al generar credencial')
     }
+  }
+
+  const handleGestionarObleas = (hab: any) => {
+    setSelectedHabilitacion(hab)
+    setShowObleasModal(true)
   }
 
   const getEstadoBadge = (estado: string | null) => {
@@ -279,6 +286,12 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <QrCode className="h-4 w-4 mr-2" />
                       Ver Credencial
                     </DropdownMenuItem>
+                    {hab.estado === 'HABILITADO' && (
+                      <DropdownMenuItem onClick={() => handleGestionarObleas(hab)} className="cursor-pointer">
+                        <Shield className="h-4 w-4 mr-2" />
+                        Gestionar Obleas
+                      </DropdownMenuItem>
+                    )}
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
                         <FileText className="h-4 w-4 mr-2" />
@@ -413,6 +426,15 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
           router.refresh()
         }}
       />
+
+      {selectedHabilitacion && (
+        <ModalObleas
+          habilitacionId={selectedHabilitacion.id}
+          nroLicencia={selectedHabilitacion.nro_licencia}
+          open={showObleasModal}
+          onClose={() => setShowObleasModal(false)}
+        />
+      )}
     </div>
   )
 }
