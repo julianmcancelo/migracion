@@ -11,16 +11,31 @@ export async function GET(
   try {
     const { id } = await context.params
 
-    const turno = await prisma.turnos.findUnique({
-      where: { id: Number(id) }
-    })
+    // Usar raw SQL para evitar problemas con fechas inválidas
+    const turnos: any[] = await prisma.$queryRaw`
+      SELECT 
+        t.id,
+        t.habilitacion_id,
+        t.fecha,
+        t.hora,
+        t.estado,
+        t.observaciones,
+        t.recordatorio_enviado,
+        t.creado_en
+      FROM turnos AS t
+      WHERE t.id = ${Number(id)}
+        AND t.fecha > '1970-01-01'
+      LIMIT 1
+    `
 
-    if (!turno) {
+    if (!turnos || turnos.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Turno no encontrado' },
         { status: 404 }
       )
     }
+
+    const turno = turnos[0]
 
     // Obtener info de habilitación
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
@@ -28,7 +43,7 @@ export async function GET(
       select: {
         id: true,
         nro_licencia: true,
-        tipo: true,
+        tipo_transporte: true,
       }
     })
 
@@ -64,19 +79,22 @@ export async function PATCH(
 
     console.log('Actualizando turno:', id, 'con estado:', estado)
 
-    // Verificar que el turno existe
-    const turnoExistente = await prisma.turnos.findUnique({
-      where: { id: Number(id) }
-    })
+    // Verificar que el turno existe usando raw SQL
+    const turnosExistentes: any[] = await prisma.$queryRaw`
+      SELECT id FROM turnos 
+      WHERE id = ${Number(id)} 
+        AND fecha > '1970-01-01'
+      LIMIT 1
+    `
 
-    if (!turnoExistente) {
+    if (!turnosExistentes || turnosExistentes.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Turno no encontrado' },
         { status: 404 }
       )
     }
 
-    // Actualizar turno
+    // Actualizar turno usando update (es seguro porque no lee fecha_hora)
     const turno = await prisma.turnos.update({
       where: { id: Number(id) },
       data: {
@@ -90,7 +108,7 @@ export async function PATCH(
     return NextResponse.json({
       success: true,
       data: turno,
-      message: `Turno actualizado a ${estado || turnoExistente.estado}`
+      message: `Turno actualizado a ${estado}`
     })
 
   } catch (error: any) {
@@ -116,12 +134,15 @@ export async function DELETE(
   try {
     const { id } = await context.params
 
-    // Verificar que el turno existe
-    const turnoExistente = await prisma.turnos.findUnique({
-      where: { id: Number(id) }
-    })
+    // Verificar que el turno existe usando raw SQL
+    const turnosExistentes: any[] = await prisma.$queryRaw`
+      SELECT id FROM turnos 
+      WHERE id = ${Number(id)} 
+        AND fecha > '1970-01-01'
+      LIMIT 1
+    `
 
-    if (!turnoExistente) {
+    if (!turnosExistentes || turnosExistentes.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Turno no encontrado' },
         { status: 404 }
