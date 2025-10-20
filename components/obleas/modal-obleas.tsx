@@ -202,7 +202,7 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
               <p>• Las obleas deben ser colocadas en un lugar visible del vehículo</p>
               <p>• El certificado de entrega debe ser firmado por el titular y el agente municipal</p>
               <p>• Conserve una copia del certificado como respaldo</p>
-              <p>• La oblea es válida mientras esté vigente la habilitación</p>
+              <p>• La oblea es válida mientras el estado sea HABILITADO</p>
             </div>
           </div>
         </div>

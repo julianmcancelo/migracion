@@ -55,7 +55,7 @@ export async function POST(
 
     if (habilitacion.estado !== 'HABILITADO') {
       return NextResponse.json(
-        { success: false, error: 'La habilitación debe estar en estado HABILITADO para generar oblea' },
+        { success: false, error: 'El estado debe ser HABILITADO para generar oblea' },
         { status: 400 }
       )
     }

@@ -78,11 +78,11 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 
 ## 🐛 **Posibles Errores y Soluciones**
 
-### **Error: "Habilitación no encontrada"**
-- **Causa:** ID de habilitación inválido
-- **Solución:** Usar una habilitación existente
+### **Causa 3: Estado Incorrecto**
+- El botón solo aparece en habilitaciones con estado **"HABILITADO"**
+- **Solución:** Asegúrate de abrir una habilitación con estado HABILITADO
 
-### **Error: "La habilitación debe estar en estado HABILITADO"**
+### **Error: "El estado debe ser HABILITADO para generar oblea"**
 - **Causa:** Habilitación inactiva o en trámite
 - **Solución:** Usar una habilitación con estado "HABILITADO"
 
