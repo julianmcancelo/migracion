@@ -227,8 +227,8 @@ export function DNIUploader({ onDatosExtraidos, onError, disabled = false }: DNI
           </div>
           
           <div className="grid grid-cols-2 gap-3 text-sm">
-            {Object.entries(resultado.datosExtraidos).map(([key, value]) => (
-              value && (
+            {Object.entries(resultado.datosExtraidos).map(([key, value]) => 
+              value ? (
                 <div key={key} className="flex justify-between">
                   <span className="text-gray-600 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
@@ -237,8 +237,8 @@ export function DNIUploader({ onDatosExtraidos, onError, disabled = false }: DNI
                     {value as string}
                   </span>
                 </div>
-              )
-            ))}
+              ) : null
+            )}
           </div>
 
           {resultado.confianza < 70 && (
