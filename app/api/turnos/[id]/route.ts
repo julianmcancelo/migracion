@@ -94,21 +94,32 @@ export async function PATCH(
       )
     }
 
-    // Actualizar turno usando update (es seguro porque no lee fecha_hora)
-    const turno = await prisma.turnos.update({
-      where: { id: Number(id) },
-      data: {
-        ...(estado && { estado }),
-        ...(observaciones !== undefined && { observaciones })
-      }
-    })
+    // Actualizar turno usando raw SQL para evitar leer fecha_hora
+    if (estado && observaciones !== undefined) {
+      await prisma.$executeRaw`
+        UPDATE turnos 
+        SET estado = ${estado}, observaciones = ${observaciones}
+        WHERE id = ${Number(id)}
+      `
+    } else if (estado) {
+      await prisma.$executeRaw`
+        UPDATE turnos 
+        SET estado = ${estado}
+        WHERE id = ${Number(id)}
+      `
+    } else if (observaciones !== undefined) {
+      await prisma.$executeRaw`
+        UPDATE turnos 
+        SET observaciones = ${observaciones}
+        WHERE id = ${Number(id)}
+      `
+    }
 
-    console.log('Turno actualizado exitosamente:', turno)
+    console.log('Turno actualizado exitosamente')
 
     return NextResponse.json({
       success: true,
-      data: turno,
-      message: `Turno actualizado a ${estado}`
+      message: `Turno actualizado exitosamente`
     })
 
   } catch (error: any) {
@@ -149,15 +160,16 @@ export async function DELETE(
       )
     }
 
-    // Marcar como cancelado en lugar de eliminar
-    const turno = await prisma.turnos.update({
-      where: { id: Number(id) },
-      data: { estado: 'CANCELADO' }
-    })
+    // Marcar como cancelado usando raw SQL
+    await prisma.$executeRaw`
+      UPDATE turnos 
+      SET estado = 'CANCELADO'
+      WHERE id = ${Number(id)}
+    `
 
     return NextResponse.json({
       success: true,
-      data: turno
+      message: 'Turno cancelado exitosamente'
     })
 
   } catch (error) {

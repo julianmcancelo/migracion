@@ -175,13 +175,16 @@ export default function TurnosPage() {
         method: 'DELETE'
       })
 
-      const data = await response.json()
-
-      if (response.ok && data.success) {
-        alert('✅ Turno cancelado exitosamente')
-        cargarTurnos() // Recargar la lista
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success) {
+          alert('✅ Turno cancelado exitosamente')
+          cargarTurnos() // Recargar la lista
+        } else {
+          alert('❌ Error: ' + (data.error || 'Error desconocido'))
+        }
       } else {
-        alert('❌ Error al cancelar el turno: ' + (data.error || 'Error desconocido'))
+        alert('❌ Error al cancelar el turno')
       }
     } catch (error) {
       console.error('Error al cancelar turno:', error)
