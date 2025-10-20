@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, Calendar, CheckCircle, AlertCircle } from 'lucide-react'
+import { X, FileText, Calendar, CheckCircle, AlertCircle, Image, UserCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CertificadoOblea } from './certificado-oblea'
 
@@ -14,6 +14,17 @@ interface Oblea {
   observaciones: string | null
 }
 
+interface ObleaConEvidencia {
+  id: number
+  habilitacion_id: number
+  nro_licencia: string
+  titular: string
+  fecha_colocacion: string
+  path_foto: string
+  path_firma_receptor: string
+  path_firma_inspector: string
+}
+
 interface ModalObleasProps {
   habilitacionId: number
   nroLicencia: string
@@ -23,11 +34,14 @@ interface ModalObleasProps {
 
 export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: ModalObleasProps) {
   const [obleas, setObleas] = useState<Oblea[]>([])
+  const [obleasConEvidencia, setObleasConEvidencia] = useState<ObleaConEvidencia[]>([])
   const [loading, setLoading] = useState(false)
+  const [loadingEvidencia, setLoadingEvidencia] = useState(false)
 
   useEffect(() => {
     if (open) {
       cargarObleas()
+      cargarObleasConEvidencia()
     }
   }, [open, habilitacionId])
 
@@ -44,6 +58,22 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
       console.error('Error al cargar obleas:', error)
     } finally {
       setLoading(false)
+    }
+  }
+
+  const cargarObleasConEvidencia = async () => {
+    setLoadingEvidencia(true)
+    try {
+      const response = await fetch(`/api/obleas/evidencias?habilitacion_id=${habilitacionId}`)
+      const result = await response.json()
+      
+      if (result.success) {
+        setObleasConEvidencia(result.data || [])
+      }
+    } catch (error) {
+      console.error('Error al cargar obleas con evidencia:', error)
+    } finally {
+      setLoadingEvidencia(false)
     }
   }
 
@@ -192,6 +222,67 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
               )}
             </div>
           </div>
+
+          {/* Historial de Colocación con Evidencia Física */}
+          {obleasConEvidencia.length > 0 && (
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                <Image className="h-5 w-5 text-purple-600" />
+                📸 Historial de Colocación con Evidencia Física
+              </h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {obleasConEvidencia.map((oblea) => (
+                  <div key={oblea.id} className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                    <div className="mb-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="font-semibold text-purple-900">Oblea #{oblea.id}</span>
+                        <span className="text-xs bg-purple-200 text-purple-800 px-2 py-1 rounded-full">
+                          Con Evidencia
+                        </span>
+                      </div>
+                      <p className="text-sm text-purple-700">
+                        Titular: {oblea.titular}
+                      </p>
+                      <p className="text-xs text-purple-600">
+                        Colocada: {new Date(oblea.fecha_colocacion).toLocaleString('es-AR')}
+                      </p>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <a 
+                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_foto}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
+                      >
+                        <Image className="h-4 w-4" />
+                        Ver foto de evidencia
+                      </a>
+                      <a 
+                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_firma_receptor}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
+                      >
+                        <UserCheck className="h-4 w-4" />
+                        Ver firma del receptor
+                      </a>
+                      <a 
+                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_firma_inspector}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
+                      >
+                        <UserCheck className="h-4 w-4" />
+                        Ver firma del inspector
+                      </a>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
 
           {/* Información adicional */}
           <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4">
