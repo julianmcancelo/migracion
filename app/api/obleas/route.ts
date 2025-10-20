@@ -89,7 +89,7 @@ export async function GET(request: NextRequest) {
       whereConditions.notificado = notificado
     }
 
-    // Obtener obleas con información relacionada
+    // Obtener obleas básicas primero
     const obleas = await prisma.oblea_historial.findMany({
       where: whereConditions,
       skip: offset,
@@ -98,34 +98,7 @@ export async function GET(request: NextRequest) {
         fecha_solicitud: 'desc'
       },
       include: {
-        habilitaciones_generales: {
-          include: {
-            habilitaciones_personas: {
-              where: { rol: 'TITULAR' },
-              include: {
-                persona: {
-                  select: {
-                    nombre: true,
-                    dni: true
-                  }
-                }
-              },
-              take: 1
-            },
-            habilitaciones_vehiculos: {
-              include: {
-                vehiculo: {
-                  select: {
-                    dominio: true,
-                    marca: true,
-                    modelo: true
-                  }
-                }
-              },
-              take: 1
-            }
-          }
-        }
+        habilitaciones_generales: true
       }
     })
 
@@ -134,23 +107,59 @@ export async function GET(request: NextRequest) {
       where: whereConditions
     })
 
-    // Formatear datos
-    const obleasFormateadas = obleas.map(oblea => ({
-      id: oblea.id,
-      habilitacion_id: oblea.habilitacion_id,
-      fecha_solicitud: oblea.fecha_solicitud,
-      hora_solicitud: oblea.hora_solicitud,
-      creado_en: oblea.creado_en,
-      notificado: oblea.notificado,
-      nro_licencia: oblea.habilitaciones_generales?.nro_licencia || 'N/A',
-      tipo_transporte: oblea.habilitaciones_generales?.tipo_transporte || 'N/A',
-      estado_habilitacion: oblea.habilitaciones_generales?.estado || 'N/A',
-      titular: oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.nombre || 'N/A',
-      titular_dni: oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.dni || 'N/A',
-      vehiculo_dominio: oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.dominio || 'N/A',
-      vehiculo_marca: oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.marca || 'N/A',
-      vehiculo_modelo: oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.modelo || 'N/A'
-    }))
+    // Para cada oblea, cargar datos relacionados manualmente
+    const obleasFormateadas = await Promise.all(
+      obleas.map(async (oblea) => {
+        // Obtener titular
+        const titular = await prisma.habilitaciones_personas.findFirst({
+          where: {
+            habilitacion_id: oblea.habilitacion_id,
+            rol: 'TITULAR'
+          },
+          include: {
+            persona: {
+              select: {
+                nombre: true,
+                dni: true
+              }
+            }
+          }
+        })
+
+        // Obtener vehículo
+        const vehiculoRel = await prisma.habilitaciones_vehiculos.findFirst({
+          where: {
+            habilitacion_id: oblea.habilitacion_id
+          },
+          include: {
+            vehiculo: {
+              select: {
+                dominio: true,
+                marca: true,
+                modelo: true
+              }
+            }
+          }
+        })
+
+        return {
+          id: oblea.id,
+          habilitacion_id: oblea.habilitacion_id,
+          fecha_solicitud: oblea.fecha_solicitud,
+          hora_solicitud: oblea.hora_solicitud,
+          creado_en: oblea.creado_en,
+          notificado: oblea.notificado,
+          nro_licencia: oblea.habilitaciones_generales?.nro_licencia || 'N/A',
+          tipo_transporte: oblea.habilitaciones_generales?.tipo_transporte || 'N/A',
+          estado_habilitacion: oblea.habilitaciones_generales?.estado || 'N/A',
+          titular: titular?.persona?.nombre || 'N/A',
+          titular_dni: titular?.persona?.dni || 'N/A',
+          vehiculo_dominio: vehiculoRel?.vehiculo?.dominio || 'N/A',
+          vehiculo_marca: vehiculoRel?.vehiculo?.marca || 'N/A',
+          vehiculo_modelo: vehiculoRel?.vehiculo?.modelo || 'N/A'
+        }
+      })
+    )
 
     const totalPaginas = Math.ceil(total / limite)
 
