@@ -106,7 +106,7 @@ export async function PATCH(
     const inspeccionId = parseInt(params.id)
     const body = await request.json()
 
-    const { nombre_inspector, resultado, observaciones } = body
+    const { nombre_inspector, resultado, observaciones, items } = body
 
     // Verificar que la inspección existe
     const inspeccion = await prisma.inspecciones.findUnique({
@@ -130,7 +130,24 @@ export async function PATCH(
       }
     })
 
-    // Si hay observaciones, guardarlas en inspeccion_detalles
+    // Guardar items del checklist
+    if (items && Array.isArray(items) && items.length > 0) {
+      for (const item of items) {
+        if (item.estado) {
+          await prisma.inspeccion_detalles.create({
+            data: {
+              inspeccion_id: inspeccionId,
+              item_id: item.nombre.substring(0, 50), // Limitar longitud
+              nombre_item: item.nombre,
+              estado: item.estado,
+              observacion: item.observacion || null
+            }
+          })
+        }
+      }
+    }
+
+    // Si hay observaciones generales, guardarlas también
     if (observaciones && observaciones.trim()) {
       await prisma.inspeccion_detalles.create({
         data: {

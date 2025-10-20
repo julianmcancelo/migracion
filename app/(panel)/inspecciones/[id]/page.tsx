@@ -9,6 +9,28 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import Link from 'next/link'
 
+// Items de checklist para vehículos escolares
+const ITEMS_CHECKLIST = [
+  'Pta. accionada cond. para desc./ asc. (Puerta derecha)',
+  'Pta. accionada cond. para desc./ asc. (Puerta izquierda)',
+  'Salida de Emer. indep. de la plataf. asc. / desc. (En Caso de Combi - L. Der. y Trasero)',
+  'Vent. Vidrio Temp. / inastillable (Apertura 10 cm)',
+  'Pisos rec. con mat. Antideslizables',
+  'Dimens. de Banquetas (desde el piso 0.40 mts - ancho min 0.45mts Prof. medida horiz. 0.40 mts)',
+  'Asientos: Fijos, Acolchados, Estructu. metalicas, revestimiento (Caucho o similar)',
+  'Puerta Izquierda de la Carroceria',
+  'Cinturones de Seguridad en todos los asientos',
+  'Cabezales o apoya Cabeza en todos los asientos',
+  'Espacios Libres',
+  'Pintura (Carroceria baja y capot naranja Nº 1054 IRAM - carroceria alta techo y parantes Color blanco)',
+  'Leyenda de Escolares o Niños Tamaño minimo: 0,20 mts'
+]
+
+interface ItemChecklist {
+  estado: 'BIEN' | 'REGULAR' | 'MAL' | null
+  observacion: string
+}
+
 interface Inspeccion {
   id: number
   habilitacion_id: number
@@ -47,6 +69,15 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
   const [nombreInspector, setNombreInspector] = useState('')
   const [resultado, setResultado] = useState<'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CONDICIONAL'>('PENDIENTE')
   const [observaciones, setObservaciones] = useState('')
+  
+  // Estado para checklist de items
+  const [items, setItems] = useState<Record<number, ItemChecklist>>(() => {
+    const initial: Record<number, ItemChecklist> = {}
+    ITEMS_CHECKLIST.forEach((_, index) => {
+      initial[index] = { estado: null, observacion: '' }
+    })
+    return initial
+  })
 
   useEffect(() => {
     cargarInspeccion()
@@ -72,6 +103,20 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
     }
   }
 
+  const setItemEstado = (index: number, estado: 'BIEN' | 'REGULAR' | 'MAL') => {
+    setItems(prev => ({
+      ...prev,
+      [index]: { ...prev[index], estado }
+    }))
+  }
+
+  const setItemObservacion = (index: number, observacion: string) => {
+    setItems(prev => ({
+      ...prev,
+      [index]: { ...prev[index], observacion }
+    }))
+  }
+
   const handleGuardar = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -88,13 +133,21 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
     setGuardando(true)
 
     try {
+      // Preparar items del checklist
+      const itemsChecklist = ITEMS_CHECKLIST.map((nombre, index) => ({
+        nombre,
+        estado: items[index].estado,
+        observacion: items[index].observacion
+      })).filter(item => item.estado !== null) // Solo enviar items con estado
+
       const response = await fetch(`/api/inspecciones/${params.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           nombre_inspector: nombreInspector.trim(),
           resultado,
-          observaciones: observaciones.trim()
+          observaciones: observaciones.trim(),
+          items: itemsChecklist
         })
       })
 
@@ -276,20 +329,83 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
           </div>
         </div>
 
+        {/* Checklist detallado */}
+        <div className="border-t pt-6">
+          <h3 className="text-lg font-bold text-red-600 mb-4 text-center">
+            DETALLES Y OBSERVACIONES DEL VEHÍCULO
+          </h3>
+          
+          <div className="overflow-x-auto border rounded-lg">
+            <table className="w-full text-sm">
+              <thead className="bg-gray-100 border-b">
+                <tr>
+                  <th className="text-left p-3 font-semibold border-r">Descripción</th>
+                  <th className="text-center p-3 font-semibold border-r w-24">Bien</th>
+                  <th className="text-center p-3 font-semibold border-r w-24">Regular</th>
+                  <th className="text-center p-3 font-semibold border-r w-24">Mal</th>
+                  <th className="text-left p-3 font-semibold w-48">Observaciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ITEMS_CHECKLIST.map((item, index) => (
+                  <tr key={index} className="border-b hover:bg-gray-50">
+                    <td className="p-3 border-r text-xs">{item}</td>
+                    <td className="p-3 border-r text-center">
+                      <input
+                        type="radio"
+                        name={`item-${index}`}
+                        checked={items[index].estado === 'BIEN'}
+                        onChange={() => setItemEstado(index, 'BIEN')}
+                        className="w-4 h-4 text-green-600 cursor-pointer"
+                      />
+                    </td>
+                    <td className="p-3 border-r text-center bg-pink-50">
+                      <input
+                        type="radio"
+                        name={`item-${index}`}
+                        checked={items[index].estado === 'REGULAR'}
+                        onChange={() => setItemEstado(index, 'REGULAR')}
+                        className="w-4 h-4 text-yellow-600 cursor-pointer"
+                      />
+                    </td>
+                    <td className="p-3 border-r text-center">
+                      <input
+                        type="radio"
+                        name={`item-${index}`}
+                        checked={items[index].estado === 'MAL'}
+                        onChange={() => setItemEstado(index, 'MAL')}
+                        className="w-4 h-4 text-red-600 cursor-pointer"
+                      />
+                    </td>
+                    <td className="p-2">
+                      <Input
+                        value={items[index].observacion}
+                        onChange={(e) => setItemObservacion(index, e.target.value)}
+                        placeholder="Detalles..."
+                        className="text-xs h-8"
+                      />
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
         <div>
           <Label htmlFor="observaciones" className="text-base font-semibold">
-            Observaciones
+            Observaciones Generales
           </Label>
           <Textarea
             id="observaciones"
             value={observaciones}
             onChange={(e) => setObservaciones(e.target.value)}
-            placeholder="Detalles adicionales de la inspección..."
-            rows={4}
+            placeholder="Observaciones adicionales sobre la inspección completa..."
+            rows={3}
             className="mt-2"
           />
           <p className="text-xs text-gray-500 mt-1">
-            Opcional - Agregue cualquier detalle relevante de la inspección
+            Opcional - Comentarios adicionales que no correspondan a los items anteriores
           </p>
         </div>
 
