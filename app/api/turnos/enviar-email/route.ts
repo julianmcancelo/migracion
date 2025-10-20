@@ -263,75 +263,42 @@ export async function POST(request: Request) {
       <p class="greeting">Estimado/a <strong>${nombre}</strong>,</p>
       
       <p class="message">
-        Su turno para la <strong>inspección vehicular</strong> ha sido registrado y confirmado exitosamente en nuestro sistema.
-        A continuación encontrará todos los detalles importantes.
+        Su turno para inspección vehicular ha sido confirmado. <strong>Recuerde traer DNI y Cédula Verde.</strong>
       </p>
       
-      <div class="info-box">
-        <h3><span>📋</span> Detalles del Turno</h3>
-        <div class="info-row">
-          <span class="info-label">Nro. de Licencia:</span>
-          <span class="info-value">${nro_licencia}</span>
+      <!-- Información Principal en Cards Compactos -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 25px 0;">
+        
+        <!-- Fecha y Hora -->
+        <div style="background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%); border: 2px solid #3B82F6; border-radius: 12px; padding: 20px; text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">📅</div>
+          <div style="font-size: 14px; color: #1E40AF; font-weight: 600; margin-bottom: 6px;">FECHA</div>
+          <div style="font-size: 16px; color: #1E3A8A; font-weight: 700;">${fechaFormateada}</div>
+          <div style="font-size: 24px; color: #1E3A8A; font-weight: 700; margin-top: 10px;">⏰ ${hora} hs</div>
         </div>
-        <div class="info-row">
-          <span class="info-label">Tipo de Transporte:</span>
-          <span class="info-value">${tipo_transporte || 'Escolar/Remis'}</span>
+
+        <!-- Licencia y Vehículo -->
+        <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; border-radius: 12px; padding: 20px; text-align: center;">
+          <div style="font-size: 32px; margin-bottom: 8px;">🚗</div>
+          <div style="font-size: 14px; color: #92400E; font-weight: 600; margin-bottom: 6px;">LICENCIA</div>
+          <div style="font-size: 18px; color: #78350F; font-weight: 700; font-family: monospace;">${nro_licencia}</div>
+          ${vehiculo_patente ? `
+          <div style="font-size: 14px; color: #92400E; font-weight: 600; margin-top: 12px; margin-bottom: 6px;">PATENTE</div>
+          <div style="font-size: 20px; color: #78350F; font-weight: 700; font-family: monospace;">${vehiculo_patente}</div>
+          ` : ''}
         </div>
-        <div class="info-row">
-          <span class="info-label">Fecha:</span>
-          <span class="info-value">${fechaFormateada}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Hora:</span>
-          <span class="info-value">${hora} hs</span>
-        </div>
+
       </div>
 
-      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 2px solid #10B981; border-radius: 12px; padding: 24px; margin: 30px 0;">
-        <h3 style="margin: 0 0 20px 0; color: #065F46; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-          <span>👤</span> Datos del Titular
-        </h3>
-        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(16, 185, 129, 0.2); align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Nombre Completo:</span>
-          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">${nombre}</span>
+      <!-- Dirección Destacada -->
+      <div style="background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%); border: 3px solid #10B981; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+        <div style="font-size: 28px; margin-bottom: 10px;">📍</div>
+        <div style="font-size: 15px; color: #065F46; font-weight: 600; margin-bottom: 8px;">LUGAR DE LA INSPECCIÓN</div>
+        <div style="font-size: 18px; color: #047857; font-weight: 700; line-height: 1.4;">
+          INTENDENTE MANUEL QUINDIMIL 857<br/>
+          <span style="font-size: 15px;">(ESQUINA JUJUY)</span>
         </div>
-        ${dni ? `
-        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(16, 185, 129, 0.2); align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">DNI:</span>
-          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">${dni}</span>
-        </div>
-        ` : ''}
-        ${telefono ? `
-        <div style="display: flex; padding: 12px 0; border-bottom: none; align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Teléfono:</span>
-          <span style="color: #065F46; font-weight: 700; font-size: 16px; flex: 1;">📞 ${telefono}</span>
-        </div>
-        ` : ''}
       </div>
-
-      ${vehiculo_patente ? `
-      <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 2px solid #F59E0B; border-radius: 12px; padding: 24px; margin: 30px 0;">
-        <h3 style="margin: 0 0 20px 0; color: #92400E; font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 8px;">
-          <span>🚗</span> Datos del Vehículo
-        </h3>
-        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Patente/Dominio:</span>
-          <span style="color: #92400E; font-weight: 700; font-size: 18px; flex: 1; font-family: monospace;">${vehiculo_patente}</span>
-        </div>
-        ${vehiculo_marca ? `
-        <div style="display: flex; padding: 12px 0; border-bottom: 1px solid rgba(245, 158, 11, 0.2); align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Marca:</span>
-          <span style="color: #92400E; font-weight: 700; font-size: 16px; flex: 1;">${vehiculo_marca}</span>
-        </div>
-        ` : ''}
-        ${vehiculo_modelo ? `
-        <div style="display: flex; padding: 12px 0; border-bottom: none; align-items: center;">
-          <span style="font-weight: 600; color: #374151; min-width: 160px; font-size: 15px;">Modelo:</span>
-          <span style="color: #92400E; font-weight: 700; font-size: 16px; flex: 1;">${vehiculo_modelo}</span>
-        </div>
-        ` : ''}
-      </div>
-      ` : ''}
       
       <div class="divider"></div>
       
@@ -353,28 +320,12 @@ export async function POST(request: Request) {
       <div class="divider"></div>
       
       <div class="alert">
-        <strong>⚠️ Importante - Requisitos para la Inspección:</strong>
-        <p style="margin: 12px 0 8px 0; color: #92400E; font-size: 15px; font-weight: 600;">📄 Documentación Obligatoria:</p>
-        <ul style="margin: 8px 0 16px 0; padding-left: 20px;">
+        <strong>⚠️ Documentación Obligatoria:</strong>
+        <ul style="margin: 12px 0 0 0; padding-left: 20px;">
           <li><strong>DNI del titular</strong></li>
           <li><strong>Cédula Verde del vehículo</strong></li>
+          <li>Presentarse con <strong>15 minutos de anticipación</strong></li>
         </ul>
-        <p style="margin: 12px 0 8px 0; color: #92400E; font-size: 15px; font-weight: 600;">✓ Recomendaciones adicionales:</p>
-        <ul style="margin: 8px 0 0 0; padding-left: 20px;">
-          <li>Presentarse con <strong>15 minutos de anticipación</strong> a la hora asignada</li>
-          <li>El vehículo debe contar con <strong>VTV vigente</strong></li>
-          <li>Traer <strong>Póliza de seguro vigente</strong></li>
-          <li>El vehículo debe estar en <strong>perfectas condiciones mecánicas</strong></li>
-          <li>Traer <strong>habilitación anterior</strong> (si corresponde renovación)</li>
-        </ul>
-      </div>
-      
-      <div style="background: #F0F9FF; border: 2px solid #0284C7; border-radius: 10px; padding: 20px; margin: 25px 0;">
-        <strong style="color: #0369A1; font-size: 16px; display: block; margin-bottom: 12px;">📍 Lugar de la Inspección:</strong>
-        <p style="margin: 8px 0; color: #1F2937; font-size: 16px;"><strong>Intendente Manuel Quindimil 857, esquina Jujuy, Lanús</strong></p>
-        <div style="margin: 16px 0; padding: 12px; background: #DBEAFE; border-radius: 6px;">
-          <p style="margin: 0; color: #1E40AF; font-weight: 600;">📧 Por favor, confirme su asistencia respondiendo este correo.</p>
-        </div>
       </div>
       
       <div class="contact-box">
