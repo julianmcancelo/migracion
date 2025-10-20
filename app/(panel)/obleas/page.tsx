@@ -1,12 +1,13 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Shield, Search, FileText, Download, Trash2, Edit, Plus, BarChart3, AlertCircle, CheckCircle, Clock } from 'lucide-react'
+import { Shield, Search, FileText, Download, Trash2, Edit, Plus, BarChart3, AlertCircle, CheckCircle, Clock, Filter, Calendar, Users, Settings, RefreshCw, Upload } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
 
 interface Oblea {
@@ -67,6 +68,21 @@ export default function ObleasPage() {
   const [selectedHabilitacion, setSelectedHabilitacion] = useState<Habilitacion | null>(null)
   const [showModal, setShowModal] = useState(false)
   const [eliminandoOblea, setEliminandoOblea] = useState<number | null>(null)
+  
+  // Estados para filtros avanzados
+  const [filtros, setFiltros] = useState({
+    fechaDesde: '',
+    fechaHasta: '',
+    tipoTransporte: '',
+    notificado: ''
+  })
+  const [mostrarFiltros, setMostrarFiltros] = useState(false)
+  
+  // Estados para selección masiva
+  const [obleasSeleccionadas, setObleasSeleccionadas] = useState<number[]>([])
+  const [seleccionarTodas, setSeleccionarTodas] = useState(false)
+  const [accionMasiva, setAccionMasiva] = useState('')
+  const [procesandoMasivo, setProcesandoMasivo] = useState(false)
 
   useEffect(() => {
     cargarDatos()
@@ -89,7 +105,14 @@ export default function ObleasPage() {
 
   const cargarObleas = async () => {
     try {
-      const response = await fetch('/api/obleas?limite=50')
+      // Construir parámetros con filtros
+      const params = new URLSearchParams({
+        limite: '50',
+        busqueda: busqueda,
+        ...filtros
+      })
+      
+      const response = await fetch(`/api/obleas?${params}`)
       const data = await response.json()
       
       if (data.success) {
@@ -167,6 +190,102 @@ export default function ObleasPage() {
     setShowModal(true)
   }
 
+  // Funciones para selección masiva
+  const toggleSeleccionOblea = (obleaId: number) => {
+    setObleasSeleccionadas(prev => 
+      prev.includes(obleaId) 
+        ? prev.filter(id => id !== obleaId)
+        : [...prev, obleaId]
+    )
+  }
+
+  const toggleSeleccionarTodas = () => {
+    if (seleccionarTodas) {
+      setObleasSeleccionadas([])
+    } else {
+      setObleasSeleccionadas(obleasFiltradas.map(oblea => oblea.id))
+    }
+    setSeleccionarTodas(!seleccionarTodas)
+  }
+
+  const ejecutarAccionMasiva = async () => {
+    if (!accionMasiva || obleasSeleccionadas.length === 0) return
+
+    if (!confirm(`¿Estás seguro de aplicar "${accionMasiva}" a ${obleasSeleccionadas.length} obleas?`)) return
+
+    setProcesandoMasivo(true)
+    try {
+      const response = await fetch('/api/obleas/bulk', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          accion: accionMasiva,
+          obleas_ids: obleasSeleccionadas
+        })
+      })
+
+      const data = await response.json()
+      
+      if (data.success) {
+        await cargarDatos()
+        setObleasSeleccionadas([])
+        setSeleccionarTodas(false)
+        alert(`✅ ${data.message}`)
+      } else {
+        alert('❌ Error: ' + data.error)
+      }
+    } catch (error) {
+      console.error('Error en acción masiva:', error)
+      alert('❌ Error al ejecutar acción masiva')
+    } finally {
+      setProcesandoMasivo(false)
+    }
+  }
+
+  const exportarObleas = async (formato: string = 'csv') => {
+    try {
+      const params = new URLSearchParams({
+        formato,
+        busqueda: busqueda,
+        ...filtros
+      })
+      
+      const response = await fetch(`/api/obleas/export?${params}`)
+      
+      if (formato === 'csv') {
+        const blob = await response.blob()
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = `obleas_export_${new Date().toISOString().split('T')[0]}.csv`
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      } else {
+        const data = await response.json()
+        console.log('Datos exportados:', data)
+      }
+    } catch (error) {
+      console.error('Error al exportar:', error)
+      alert('❌ Error al exportar obleas')
+    }
+  }
+
+  const aplicarFiltros = () => {
+    cargarObleas()
+  }
+
+  const limpiarFiltros = () => {
+    setFiltros({
+      fechaDesde: '',
+      fechaHasta: '',
+      tipoTransporte: '',
+      notificado: ''
+    })
+    setBusqueda('')
+  }
+
   const getEstadoBadge = (notificado: string) => {
     return notificado === 'si' ? (
       <Badge className="bg-green-100 text-green-800">
@@ -218,20 +337,148 @@ export default function ObleasPage() {
         </div>
       </Card>
 
-      {/* Búsqueda */}
-      <div className="flex items-center gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-          <Input
-            placeholder="Buscar por número de licencia o titular..."
-            value={busqueda}
-            onChange={(e) => setBusqueda(e.target.value)}
-            className="pl-10"
-          />
+      {/* Barra de búsqueda y herramientas */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-4">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              placeholder="Buscar por licencia, titular o dominio..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button 
+            onClick={() => setMostrarFiltros(!mostrarFiltros)} 
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Filter className="h-4 w-4" />
+            Filtros
+          </Button>
+          <Button 
+            onClick={() => exportarObleas('csv')} 
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <Download className="h-4 w-4" />
+            Exportar
+          </Button>
+          <Button 
+            onClick={cargarDatos} 
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Actualizar
+          </Button>
         </div>
-        <Button onClick={cargarHabilitaciones} variant="outline">
-          Actualizar
-        </Button>
+
+        {/* Panel de filtros avanzados */}
+        {mostrarFiltros && (
+          <Card className="p-4 bg-gray-50">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Fecha Desde</label>
+                <Input
+                  type="date"
+                  value={filtros.fechaDesde}
+                  onChange={(e) => setFiltros(prev => ({ ...prev, fechaDesde: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Fecha Hasta</label>
+                <Input
+                  type="date"
+                  value={filtros.fechaHasta}
+                  onChange={(e) => setFiltros(prev => ({ ...prev, fechaHasta: e.target.value }))}
+                />
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Tipo Transporte</label>
+                <Select value={filtros.tipoTransporte} onValueChange={(value) => setFiltros(prev => ({ ...prev, tipoTransporte: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="Escolar">Escolar</SelectItem>
+                    <SelectItem value="Remis">Remis</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div>
+                <label className="text-sm font-medium text-gray-700 mb-1 block">Estado</label>
+                <Select value={filtros.notificado} onValueChange={(value) => setFiltros(prev => ({ ...prev, notificado: value }))}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Todos" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="">Todos</SelectItem>
+                    <SelectItem value="si">Notificadas</SelectItem>
+                    <SelectItem value="no">Pendientes</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 mt-4">
+              <Button onClick={aplicarFiltros} className="flex items-center gap-2">
+                <Filter className="h-4 w-4" />
+                Aplicar Filtros
+              </Button>
+              <Button onClick={limpiarFiltros} variant="outline">
+                Limpiar
+              </Button>
+            </div>
+          </Card>
+        )}
+
+        {/* Barra de acciones masivas */}
+        {obleasSeleccionadas.length > 0 && (
+          <Card className="p-4 bg-blue-50 border-blue-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <span className="text-sm font-medium text-blue-900">
+                  {obleasSeleccionadas.length} obleas seleccionadas
+                </span>
+                <Select value={accionMasiva} onValueChange={setAccionMasiva}>
+                  <SelectTrigger className="w-48">
+                    <SelectValue placeholder="Seleccionar acción" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="marcar_notificadas">Marcar como Notificadas</SelectItem>
+                    <SelectItem value="marcar_pendientes">Marcar como Pendientes</SelectItem>
+                    <SelectItem value="eliminar_masivo">Eliminar Seleccionadas</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  onClick={ejecutarAccionMasiva} 
+                  disabled={!accionMasiva || procesandoMasivo}
+                  className="flex items-center gap-2"
+                >
+                  {procesandoMasivo ? (
+                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                  ) : (
+                    <Settings className="h-4 w-4" />
+                  )}
+                  Ejecutar
+                </Button>
+                <Button 
+                  onClick={() => {
+                    setObleasSeleccionadas([])
+                    setSeleccionarTodas(false)
+                  }} 
+                  variant="outline"
+                >
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          </Card>
+        )}
       </div>
 
       {/* Estadísticas */}

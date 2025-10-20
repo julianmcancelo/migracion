@@ -14,17 +14,24 @@ export async function GET(request: NextRequest) {
     const limite = parseInt(searchParams.get('limite') || '20')
     const busqueda = searchParams.get('busqueda') || ''
     const estado = searchParams.get('estado') || ''
+    const fechaDesde = searchParams.get('fecha_desde') || ''
+    const fechaHasta = searchParams.get('fecha_hasta') || ''
+    const tipoTransporte = searchParams.get('tipo_transporte') || ''
+    const notificado = searchParams.get('notificado') || ''
     
     const offset = (pagina - 1) * limite
 
     // Construir condiciones de búsqueda
     const whereConditions: any = {}
     
+    // Filtro por búsqueda general
     if (busqueda) {
       whereConditions.OR = [
         {
-          nro_licencia: {
-            contains: busqueda
+          habilitaciones_generales: {
+            nro_licencia: {
+              contains: busqueda
+            }
           }
         },
         {
@@ -39,8 +46,47 @@ export async function GET(request: NextRequest) {
               }
             }
           }
+        },
+        {
+          habilitaciones_generales: {
+            habilitaciones_vehiculos: {
+              some: {
+                vehiculo: {
+                  dominio: {
+                    contains: busqueda
+                  }
+                }
+              }
+            }
+          }
         }
       ]
+    }
+
+    // Filtro por rango de fechas
+    if (fechaDesde || fechaHasta) {
+      whereConditions.fecha_solicitud = {}
+      if (fechaDesde) {
+        whereConditions.fecha_solicitud.gte = new Date(fechaDesde)
+      }
+      if (fechaHasta) {
+        const fechaHastaDate = new Date(fechaHasta)
+        fechaHastaDate.setHours(23, 59, 59, 999)
+        whereConditions.fecha_solicitud.lte = fechaHastaDate
+      }
+    }
+
+    // Filtro por tipo de transporte
+    if (tipoTransporte) {
+      whereConditions.habilitaciones_generales = {
+        ...whereConditions.habilitaciones_generales,
+        tipo_transporte: tipoTransporte
+      }
+    }
+
+    // Filtro por estado de notificación
+    if (notificado) {
+      whereConditions.notificado = notificado
     }
 
     // Obtener obleas con información relacionada
