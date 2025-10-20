@@ -69,139 +69,184 @@ export function CertificadoOblea({ habilitacionId, onSuccess }: CertificadoOblea
     // Configuración de fuentes y colores
     const primaryColor = [59, 130, 246] // Azul
     const secondaryColor = [75, 85, 99] // Gris
+    const orangeColor = [234, 88, 12] // Naranja para obleas
     
-    // Header con logo y título
+    // HEADER COMPLETO - Ocupa más espacio
     pdf.setFillColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.rect(0, 0, 210, 30, 'F')
+    pdf.rect(0, 0, 210, 45, 'F')
     
+    // Logo y escudo (simulado con texto)
     pdf.setTextColor(255, 255, 255)
-    pdf.setFontSize(20)
-    pdf.setFont('helvetica', 'bold')
-    pdf.text('MUNICIPALIDAD DE LANÚS', 105, 12, { align: 'center' })
-    
-    pdf.setFontSize(12)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text('Subsecretaría de Ordenamiento Urbano', 105, 18, { align: 'center' })
-    pdf.text('Dirección General de Movilidad y Transporte', 105, 24, { align: 'center' })
-
-    // Título principal
-    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
     pdf.setFontSize(24)
     pdf.setFont('helvetica', 'bold')
-    pdf.text('CERTIFICADO DE ENTREGA DE OBLEA', 105, 50, { align: 'center' })
+    pdf.text('🏛️', 15, 25)
     
-    pdf.setFontSize(16)
+    pdf.setFontSize(22)
+    pdf.text('MUNICIPALIDAD DE LANÚS', 105, 18, { align: 'center' })
+    
+    pdf.setFontSize(14)
     pdf.setFont('helvetica', 'normal')
-    pdf.text(`Transporte ${datosOblea.habilitacion.tipo_transporte}`, 105, 60, { align: 'center' })
-
-    // Texto introductorio
-    pdf.setTextColor(0, 0, 0)
+    pdf.text('Subsecretaría de Ordenamiento Urbano', 105, 26, { align: 'center' })
+    pdf.text('Dirección General de Movilidad y Transporte', 105, 33, { align: 'center' })
+    
+    // Fecha en el header
     pdf.setFontSize(12)
+    pdf.text(`Fecha: ${datosOblea.fecha_emision}`, 170, 40, { align: 'center' })
+
+    // TÍTULO PRINCIPAL MÁS GRANDE
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.setFontSize(28)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text('CERTIFICADO DE ENTREGA DE OBLEA', 105, 65, { align: 'center' })
+    
+    pdf.setFontSize(18)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(`Transporte ${datosOblea.habilitacion.tipo_transporte}`, 105, 78, { align: 'center' })
+
+    // TEXTO INTRODUCTORIO MÁS ESPACIOSO
+    pdf.setTextColor(0, 0, 0)
+    pdf.setFontSize(14)
     pdf.setFont('helvetica', 'normal')
     const textoIntro = `Por medio del presente se deja constancia de la entrega de la oblea de habilitación reglamentaria, con fecha de emisión ${datosOblea.fecha_emision}, cuyos datos se detallan a continuación:`
     
     const lineasIntro = pdf.splitTextToSize(textoIntro, 170)
-    pdf.text(lineasIntro, 20, 80)
+    pdf.text(lineasIntro, 20, 95)
 
-    // Sección de datos del titular
-    let yPos = 100
+    // SECCIONES DE DATOS MÁS GRANDES Y ESPACIOSAS
+    let yPos = 115
     
+    // Datos del titular - Sección más grande
     pdf.setFillColor(240, 248, 255)
-    pdf.rect(20, yPos, 170, 25, 'F')
+    pdf.rect(15, yPos, 180, 35, 'F')
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.setLineWidth(0.5)
+    pdf.rect(15, yPos, 180, 35)
     
     pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setFontSize(14)
-    pdf.setFont('helvetica', 'bold')
-    pdf.text('DATOS DEL TITULAR:', 25, yPos + 8)
-    
-    pdf.setTextColor(0, 0, 0)
-    pdf.setFontSize(11)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(`Nombre: ${datosOblea.titular.nombre}`, 25, yPos + 16)
-    pdf.text(`DNI: ${datosOblea.titular.dni}`, 110, yPos + 16)
-
-    // Sección de datos del vehículo
-    yPos += 35
-    
-    pdf.setFillColor(240, 248, 255)
-    pdf.rect(20, yPos, 170, 25, 'F')
-    
-    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setFontSize(14)
-    pdf.setFont('helvetica', 'bold')
-    pdf.text('DATOS DEL VEHÍCULO:', 25, yPos + 8)
-    
-    pdf.setTextColor(0, 0, 0)
-    pdf.setFontSize(11)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(`Dominio: ${datosOblea.vehiculo.dominio}`, 25, yPos + 16)
-    pdf.text(`Marca: ${datosOblea.vehiculo.marca}`, 80, yPos + 16)
-    pdf.text(`Modelo: ${datosOblea.vehiculo.modelo}`, 130, yPos + 16)
-
-    // Sección de datos de la habilitación
-    yPos += 35
-    
-    pdf.setFillColor(240, 248, 255)
-    pdf.rect(20, yPos, 170, 25, 'F')
-    
-    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
-    pdf.setFontSize(14)
-    pdf.setFont('helvetica', 'bold')
-    pdf.text('DATOS DE LA HABILITACIÓN:', 25, yPos + 8)
-    
-    pdf.setTextColor(0, 0, 0)
-    pdf.setFontSize(11)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(`N° Expediente: ${datosOblea.habilitacion.expte}`, 25, yPos + 16)
-    pdf.text(`Resolución: ${datosOblea.habilitacion.resolucion}`, 110, yPos + 16)
-    pdf.text(`Vigencia Desde: ${datosOblea.habilitacion.vigencia_desde}`, 25, yPos + 22)
-
-    // Número de licencia destacado
-    yPos += 40
-    
-    pdf.setFillColor(59, 130, 246)
-    pdf.rect(20, yPos, 170, 35, 'F')
-    
-    pdf.setTextColor(255, 255, 255)
     pdf.setFontSize(16)
     pdf.setFont('helvetica', 'bold')
-    pdf.text('Licencia de Habilitación N°', 105, yPos + 12, { align: 'center' })
-    
-    pdf.setFontSize(28)
-    pdf.text(datosOblea.habilitacion.nro_licencia, 105, yPos + 22, { align: 'center' })
-    
-    pdf.setFontSize(12)
-    pdf.setFont('helvetica', 'normal')
-    pdf.text(`Vigencia hasta ${datosOblea.habilitacion.vigencia_mes_ano}`, 105, yPos + 30, { align: 'center' })
-
-    // Nota importante
-    yPos += 50
-    
-    pdf.setTextColor(100, 100, 100)
-    pdf.setFontSize(10)
-    pdf.setFont('helvetica', 'italic')
-    const textoNota = 'La oblea deberá ser exhibida en un lugar visible del vehículo en todo momento durante la prestación del servicio. El presente certificado acredita la entrega de la misma, pero no reemplaza la documentación reglamentaria del vehículo (VTV, seguro, etc.).'
-    const lineasNota = pdf.splitTextToSize(textoNota, 170)
-    pdf.text(lineasNota, 20, yPos)
-
-    // Firmas
-    yPos += 30
+    pdf.text('👤 DATOS DEL TITULAR', 25, yPos + 12)
     
     pdf.setTextColor(0, 0, 0)
-    pdf.setFontSize(11)
+    pdf.setFontSize(13)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(`Nombre: ${datosOblea.titular.nombre}`, 25, yPos + 22)
+    pdf.text(`DNI: ${datosOblea.titular.dni}`, 25, yPos + 30)
+
+    // Datos del vehículo - Sección más grande
+    yPos += 45
+    
+    pdf.setFillColor(248, 250, 252)
+    pdf.rect(15, yPos, 180, 35, 'F')
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.rect(15, yPos, 180, 35)
+    
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.setFontSize(16)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text('🚗 DATOS DEL VEHÍCULO', 25, yPos + 12)
+    
+    pdf.setTextColor(0, 0, 0)
+    pdf.setFontSize(13)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(`Dominio: ${datosOblea.vehiculo.dominio}`, 25, yPos + 22)
+    pdf.text(`Marca: ${datosOblea.vehiculo.marca}`, 100, yPos + 22)
+    pdf.text(`Modelo: ${datosOblea.vehiculo.modelo}`, 25, yPos + 30)
+
+    // Datos de la habilitación - Sección más grande
+    yPos += 45
+    
+    pdf.setFillColor(240, 248, 255)
+    pdf.rect(15, yPos, 180, 35, 'F')
+    pdf.setDrawColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.rect(15, yPos, 180, 35)
+    
+    pdf.setTextColor(primaryColor[0], primaryColor[1], primaryColor[2])
+    pdf.setFontSize(16)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text('📋 DATOS DE LA HABILITACIÓN', 25, yPos + 12)
+    
+    pdf.setTextColor(0, 0, 0)
+    pdf.setFontSize(13)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(`N° Expediente: ${datosOblea.habilitacion.expte}`, 25, yPos + 22)
+    pdf.text(`Resolución: ${datosOblea.habilitacion.resolucion}`, 25, yPos + 30)
+    pdf.text(`Vigencia Desde: ${datosOblea.habilitacion.vigencia_desde}`, 100, yPos + 30)
+
+    // NÚMERO DE LICENCIA DESTACADO - MÁS GRANDE
+    yPos += 50
+    
+    pdf.setFillColor(orangeColor[0], orangeColor[1], orangeColor[2])
+    pdf.rect(15, yPos, 180, 50, 'F')
+    pdf.setDrawColor(orangeColor[0], orangeColor[1], orangeColor[2])
+    pdf.setLineWidth(2)
+    pdf.rect(15, yPos, 180, 50)
+    
+    pdf.setTextColor(255, 255, 255)
+    pdf.setFontSize(18)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text('🛡️ LICENCIA DE HABILITACIÓN N°', 105, yPos + 18, { align: 'center' })
+    
+    pdf.setFontSize(36)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text(datosOblea.habilitacion.nro_licencia, 105, yPos + 32, { align: 'center' })
+    
+    pdf.setFontSize(14)
+    pdf.setFont('helvetica', 'normal')
+    pdf.text(`Vigencia hasta ${datosOblea.habilitacion.vigencia_mes_ano}`, 105, yPos + 42, { align: 'center' })
+
+    // NOTA IMPORTANTE - Más espaciosa
+    yPos += 60
+    
+    pdf.setFillColor(254, 249, 195)
+    pdf.rect(15, yPos, 180, 25, 'F')
+    pdf.setDrawColor(245, 158, 11)
+    pdf.setLineWidth(1)
+    pdf.rect(15, yPos, 180, 25)
+    
+    pdf.setTextColor(146, 64, 14)
+    pdf.setFontSize(12)
+    pdf.setFont('helvetica', 'bold')
+    pdf.text('⚠️ IMPORTANTE:', 20, yPos + 8)
+    
+    pdf.setFont('helvetica', 'normal')
+    const textoNota = 'La oblea deberá ser exhibida en un lugar visible del vehículo en todo momento durante la prestación del servicio. El presente certificado acredita la entrega de la misma.'
+    const lineasNota = pdf.splitTextToSize(textoNota, 170)
+    pdf.text(lineasNota, 20, yPos + 16)
+
+    // FIRMAS - Más espaciosas y profesionales
+    yPos += 35
+    
+    pdf.setTextColor(0, 0, 0)
+    pdf.setFontSize(12)
     pdf.setFont('helvetica', 'normal')
     
-    // Líneas para firmas
-    pdf.line(30, yPos, 90, yPos)
-    pdf.line(120, yPos, 180, yPos)
+    // Cajas para firmas
+    pdf.setDrawColor(100, 100, 100)
+    pdf.setLineWidth(0.5)
+    pdf.rect(25, yPos, 70, 25)
+    pdf.rect(115, yPos, 70, 25)
     
-    pdf.text('Firma y Aclaración del Receptor', 60, yPos + 8, { align: 'center' })
-    pdf.text('Firma y Sello del Agente Municipal', 150, yPos + 8, { align: 'center' })
+    // Líneas para firmas
+    pdf.line(30, yPos + 20, 90, yPos + 20)
+    pdf.line(120, yPos + 20, 180, yPos + 20)
+    
+    pdf.setFontSize(10)
+    pdf.text('Firma y Aclaración', 60, yPos + 8, { align: 'center' })
+    pdf.text('del Receptor', 60, yPos + 13, { align: 'center' })
+    
+    pdf.text('Firma y Sello del', 150, yPos + 8, { align: 'center' })
+    pdf.text('Agente Municipal', 150, yPos + 13, { align: 'center' })
 
-    // Footer
+    // FOOTER PROFESIONAL
+    pdf.setFillColor(240, 240, 240)
+    pdf.rect(0, 285, 210, 12, 'F')
+    
     pdf.setFontSize(8)
-    pdf.setTextColor(150, 150, 150)
-    pdf.text(`Certificado generado el ${new Date().toLocaleString('es-AR')} - ID: ${datosOblea.id}`, 105, 285, { align: 'center' })
+    pdf.setTextColor(100, 100, 100)
+    pdf.text(`Certificado generado el ${new Date().toLocaleString('es-AR')}`, 15, 291)
+    pdf.text(`ID de Oblea: ${datosOblea.id}`, 105, 291, { align: 'center' })
+    pdf.text('www.lanus.gob.ar', 195, 291, { align: 'right' })
 
     // Descargar PDF
     const nroLicenciaSeguro = datosOblea.habilitacion.nro_licencia.replace(/\//g, '-')
