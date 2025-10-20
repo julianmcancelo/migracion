@@ -18,14 +18,27 @@ export async function GET(
       where: {
         habilitacion_id: Number(id)
       },
-      orderBy: {
-        fecha_solicitud: 'desc'
-      }
+      orderBy: { fecha_solicitud: 'desc' }
     })
+
+    // Obtener información de la habilitación para el número de licencia
+    const habilitacion = await prisma.habilitaciones_generales.findUnique({
+      where: { id: Number(id) },
+      select: { nro_licencia: true }
+    })
+
+    // Agregar número de licencia a cada oblea
+    const obleasConLicencia = obleas.map(oblea => ({
+      ...oblea,
+      nro_licencia: habilitacion?.nro_licencia || 'N/A',
+      estado: 'ENTREGADA', // Por ahora todas las obleas en historial están entregadas
+      fecha_entrega: oblea.fecha_solicitud, // Usar fecha_solicitud como fecha_entrega
+      observaciones: 'Oblea registrada en el sistema'
+    }))
 
     return NextResponse.json({
       success: true,
-      data: obleas
+      data: obleasConLicencia
     })
   } catch (error) {
     console.error('Error al obtener obleas:', error)

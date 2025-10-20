@@ -4,10 +4,11 @@ import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { 
   ArrowLeft, Edit, FileText, Download, AlertTriangle, 
-  Info, Users, Car, Calendar, CheckCircle, ClipboardCheck, Trash2
+  Info, Users, Car, Calendar, CheckCircle, ClipboardCheck, Trash2, Shield
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
+import { ModalObleas } from '@/components/obleas/modal-obleas'
 
 interface HabilitacionDetalleProps {
   id: string
@@ -26,6 +27,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
   const [verificaciones, setVerificaciones] = useState<any[]>([])
   const [inspecciones, setInspecciones] = useState<any[]>([])
   const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
+  const [modalObleasOpen, setModalObleasOpen] = useState(false)
 
   useEffect(() => {
     fetchHabilitacion()
@@ -235,6 +237,15 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
               >
                 <FileText className="h-5 w-5 mr-2" />
                 Descargar Resolución
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={() => setModalObleasOpen(true)}
+                className="bg-orange-600 hover:bg-orange-700 text-white font-bold"
+              >
+                <Shield className="h-5 w-5 mr-2" />
+                Gestionar Obleas
               </Button>
             </div>
           </div>
@@ -580,6 +591,16 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
           </div>
         </div>
       </main>
+
+      {/* Modal de Obleas */}
+      {habilitacion && (
+        <ModalObleas
+          habilitacionId={parseInt(id)}
+          nroLicencia={habilitacion.nro_licencia}
+          open={modalObleasOpen}
+          onClose={() => setModalObleasOpen(false)}
+        />
+      )}
     </div>
   )
 }
