@@ -88,8 +88,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   const handleAsignarTurno = (hab: any) => {
-    // TODO: Implementar modal de turnos
-    alert(`Asignar turno a habilitación #${hab.id}`)
+    // Redirigir a la página de turnos con la licencia precargada
+    router.push(`/turnos?licencia=${hab.nro_licencia}`)
   }
 
   const handleDescargarPDF = async (hab: any) => {

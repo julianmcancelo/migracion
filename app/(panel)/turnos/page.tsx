@@ -48,6 +48,20 @@ export default function TurnosPage() {
   const [seleccionados, setSeleccionados] = useState<number[]>([])
   const [ordenamiento, setOrdenamiento] = useState<'fecha-asc' | 'fecha-desc' | 'licencia' | 'estado'>('fecha-asc')
 
+  // Detectar parámetro licencia en URL y abrir modal
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search)
+    const licencia = params.get('licencia')
+    
+    if (licencia) {
+      setPrecargarLicencia(licencia)
+      setModalAbierto(true)
+      
+      // Limpiar URL después de procesar el parámetro
+      window.history.replaceState({}, '', '/turnos')
+    }
+  }, [])
+
   useEffect(() => {
     cargarTurnos()
     cargarHabilitacionesSinTurno()
