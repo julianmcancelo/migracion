@@ -98,6 +98,7 @@ model habilitaciones_generales {
   habilitaciones_establecimientos habilitaciones_establecimientos[]
   turnos                          turnos[]
   tokens_acceso                   tokens_acceso[]
+  oblea_historial                 oblea_historial[]
 }
 
 model habilitaciones_personas {
@@ -201,12 +202,15 @@ model notificaciones {
 }
 
 model oblea_historial {
-  id              Int                         @id @default(autoincrement()) @db.UnsignedInt
-  habilitacion_id Int                         @db.UnsignedInt
-  fecha_solicitud DateTime                    @db.Date
-  hora_solicitud  DateTime                    @db.Time(0)
-  creado_en       DateTime                    @default(now()) @db.DateTime(0)
-  notificado      oblea_historial_notificado? @default(no)
+  id                       Int                         @id @default(autoincrement()) @db.UnsignedInt
+  habilitacion_id          Int                         @db.UnsignedInt
+  fecha_solicitud          DateTime                    @db.Date
+  hora_solicitud           DateTime                    @db.Time(0)
+  creado_en                DateTime                    @default(now()) @db.DateTime(0)
+  notificado               oblea_historial_notificado? @default(no)
+  
+  // Relación
+  habilitaciones_generales habilitaciones_generales    @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade, map: "oblea_historial_habilitacion_fk")
 
   @@index([habilitacion_id], map: "idx_habilitacion")
 }
