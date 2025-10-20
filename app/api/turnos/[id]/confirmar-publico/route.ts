@@ -56,13 +56,38 @@ export async function POST(
       data: { estado: 'CONFIRMADO' }
     })
 
+    // Crear registro de inspección automáticamente
+    const inspeccionExistente = await prisma.inspecciones.findFirst({
+      where: { 
+        habilitacion_id: turno.habilitacion_id,
+        nro_licencia: turno.habilitacion?.nro_licencia || 'SIN_NUMERO'
+      }
+    })
+
+    if (!inspeccionExistente) {
+      await prisma.inspecciones.create({
+        data: {
+          habilitacion_id: turno.habilitacion_id,
+          nro_licencia: turno.habilitacion?.nro_licencia || 'SIN_NUMERO',
+          nombre_inspector: 'PENDIENTE',
+          firma_digital: '',
+          fecha_inspeccion: new Date(turno.fecha),
+          tipo_transporte: turno.habilitacion?.tipo_transporte || null,
+          firma_inspector: '',
+          firma_contribuyente: null,
+          email_contribuyente: null,
+          resultado: 'PENDIENTE'
+        }
+      })
+    }
+
     // Crear notificación para el sistema
     await prisma.notificaciones.create({
       data: {
         dni_usuario: 'SISTEMA',
         tipo: 'TURNO_CONFIRMADO',
         titulo: `Turno confirmado - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
-        texto: `El titular ha confirmado su asistencia al turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}.`,
+        texto: `El titular ha confirmado su asistencia al turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. Inspección creada automáticamente.`,
         leida: false
       }
     })

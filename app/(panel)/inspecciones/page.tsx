@@ -46,7 +46,9 @@ export default function InspeccionesPage() {
   }
 
   const getResultadoBadge = (resultado: string) => {
-    if (!resultado) return 'bg-gray-100 text-gray-800 border-gray-300'
+    if (!resultado || resultado === 'PENDIENTE') {
+      return 'bg-blue-100 text-blue-800 border-blue-300'
+    }
     
     const resultadoUpper = resultado.toUpperCase()
     
@@ -58,7 +60,7 @@ export default function InspeccionesPage() {
       return 'bg-yellow-100 text-yellow-800 border-yellow-300'
     }
     
-    return 'bg-blue-100 text-blue-800 border-blue-300'
+    return 'bg-gray-100 text-gray-800 border-gray-300'
   }
 
   const getResultadoIcon = (resultado: string) => {
@@ -130,7 +132,19 @@ export default function InspeccionesPage() {
       </div>
 
       {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-blue-700 font-medium">Pendientes</p>
+              <p className="text-2xl font-bold text-blue-900">
+                {inspecciones.filter(i => i.resultado === 'PENDIENTE' || !i.resultado).length}
+              </p>
+            </div>
+            <AlertCircle className="h-8 w-8 text-blue-600" />
+          </div>
+        </div>
+
         <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <div className="flex items-center justify-between">
             <div>
@@ -221,7 +235,12 @@ export default function InspeccionesPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {inspecciones.map((inspeccion) => (
-                  <tr key={inspeccion.id} className="hover:bg-gray-50">
+                  <tr 
+                    key={inspeccion.id} 
+                    className="hover:bg-blue-50 cursor-pointer transition-colors"
+                    onClick={() => window.location.href = `/inspecciones/${inspeccion.id}`}
+                    title="Click para ver/editar"
+                  >
                     <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
                       {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
                     </td>
@@ -257,7 +276,7 @@ export default function InspeccionesPage() {
                         {inspeccion.email_contribuyente || '-'}
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                    <td className="px-4 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
                       <div className="flex items-center gap-2">
                         <a
                           href={`/api/inspecciones/${inspeccion.id}/pdf`}
@@ -271,7 +290,10 @@ export default function InspeccionesPage() {
                         </a>
                         {inspeccion.email_contribuyente && (
                           <button
-                            onClick={() => enviarEmail(inspeccion.id, inspeccion.email_contribuyente!)}
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              enviarEmail(inspeccion.id, inspeccion.email_contribuyente!)
+                            }}
                             className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 font-medium"
                             title="Enviar por email"
                           >
