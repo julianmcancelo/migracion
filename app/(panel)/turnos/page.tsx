@@ -43,6 +43,10 @@ export default function TurnosPage() {
   const [modalAbierto, setModalAbierto] = useState(false)
   const [turnoEditar, setTurnoEditar] = useState<Turno | null>(null)
   const [precargarLicencia, setPrecargarLicencia] = useState('')
+  
+  // Estados para selección múltiple
+  const [seleccionados, setSeleccionados] = useState<number[]>([])
+  const [ordenamiento, setOrdenamiento] = useState<'fecha-asc' | 'fecha-desc' | 'licencia' | 'estado'>('fecha-asc')
 
   useEffect(() => {
     cargarTurnos()
@@ -51,7 +55,7 @@ export default function TurnosPage() {
 
   useEffect(() => {
     aplicarFiltros()
-  }, [turnos, buscarDNI, buscarDominio])
+  }, [turnos, buscarDNI, buscarDominio, ordenamiento])
 
   const cargarTurnos = async () => {
     try {
@@ -102,6 +106,22 @@ export default function TurnosPage() {
       resultado = resultado.filter(t => 
         t.vehiculo_patente?.toLowerCase().includes(buscarDominio.toLowerCase())
       )
+    }
+
+    // Aplicar ordenamiento
+    switch (ordenamiento) {
+      case 'fecha-asc':
+        resultado.sort((a, b) => new Date(a.fecha + ' ' + a.hora).getTime() - new Date(b.fecha + ' ' + b.hora).getTime())
+        break
+      case 'fecha-desc':
+        resultado.sort((a, b) => new Date(b.fecha + ' ' + b.hora).getTime() - new Date(a.fecha + ' ' + a.hora).getTime())
+        break
+      case 'licencia':
+        resultado.sort((a, b) => (a.habilitacion?.nro_licencia || '').localeCompare(b.habilitacion?.nro_licencia || ''))
+        break
+      case 'estado':
+        resultado.sort((a, b) => a.estado.localeCompare(b.estado))
+        break
     }
 
     setTurnosFiltrados(resultado)
@@ -155,12 +175,65 @@ export default function TurnosPage() {
         method: 'DELETE'
       })
 
-      if (response.ok) {
-        cargarTurnos()
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        alert('✅ Turno cancelado exitosamente')
+        cargarTurnos() // Recargar la lista
+      } else {
+        alert('❌ Error al cancelar el turno: ' + (data.error || 'Error desconocido'))
       }
     } catch (error) {
       console.error('Error al cancelar turno:', error)
+      alert('❌ Error de conexión al cancelar el turno')
     }
+  }
+
+  // Funciones de selección múltiple
+  const toggleSeleccion = (id: number) => {
+    setSeleccionados(prev => 
+      prev.includes(id) 
+        ? prev.filter(i => i !== id)
+        : [...prev, id]
+    )
+  }
+
+  const toggleSeleccionTodos = () => {
+    if (seleccionados.length === turnosFiltrados.length) {
+      setSeleccionados([])
+    } else {
+      setSeleccionados(turnosFiltrados.map(t => t.id))
+    }
+  }
+
+  const cancelarSeleccionados = async () => {
+    if (seleccionados.length === 0) {
+      alert('Seleccione al menos un turno')
+      return
+    }
+
+    if (!confirm(`¿Cancelar ${seleccionados.length} turno(s) seleccionado(s)?`)) return
+
+    let exitosos = 0
+    let fallidos = 0
+
+    for (const id of seleccionados) {
+      try {
+        const response = await fetch(`/api/turnos/${id}`, { method: 'DELETE' })
+        const data = await response.json()
+        if (response.ok && data.success) {
+          exitosos++
+        } else {
+          fallidos++
+        }
+      } catch (error) {
+        fallidos++
+      }
+    }
+
+    alert(`✅ ${exitosos} turno(s) cancelado(s)\n${fallidos > 0 ? `❌ ${fallidos} turno(s) con error` : ''}`)
+    setSeleccionados([])
+    cargarTurnos()
   }
 
   const getEstadoBadge = (estado: string) => {
@@ -317,7 +390,7 @@ export default function TurnosPage() {
         </div>
 
         {/* Estado */}
-        <div className="flex items-center gap-2 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap mb-4">
           <span className="text-sm font-medium text-gray-700">Por estado:</span>
           {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
             <button
@@ -332,6 +405,21 @@ export default function TurnosPage() {
               {estado}
             </button>
           ))}
+        </div>
+
+        {/* Ordenamiento */}
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-medium text-gray-700">Ordenar por:</span>
+          <select
+            value={ordenamiento}
+            onChange={(e) => setOrdenamiento(e.target.value as any)}
+            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          >
+            <option value="fecha-asc">Fecha (Más próximo)</option>
+            <option value="fecha-desc">Fecha (Más lejano)</option>
+            <option value="licencia">N° Licencia</option>
+            <option value="estado">Estado</option>
+          </select>
         </div>
 
         {/* Resumen de búsqueda */}
@@ -403,6 +491,36 @@ export default function TurnosPage() {
         </div>
       </div>
 
+      {/* Barra de acciones en lote */}
+      {seleccionados.length > 0 && (
+        <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <CheckCircle className="h-5 w-5 text-blue-600" />
+            <span className="font-semibold text-blue-900">
+              {seleccionados.length} turno(s) seleccionado(s)
+            </span>
+          </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSeleccionados([])}
+            >
+              Deseleccionar
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={cancelarSeleccionados}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Cancelar Seleccionados
+            </Button>
+          </div>
+        </div>
+      )}
+
       {/* Lista de Turnos */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200">
         {loading ? (
@@ -418,6 +536,14 @@ export default function TurnosPage() {
             <table className="w-full">
               <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
+                  <th className="px-4 py-4 text-center w-12">
+                    <input
+                      type="checkbox"
+                      checked={seleccionados.length === turnosFiltrados.length && turnosFiltrados.length > 0}
+                      onChange={toggleSeleccionTodos}
+                      className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                    />
+                  </th>
                   <th className="px-6 py-4 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Fecha / Hora
                   </th>
@@ -438,6 +564,14 @@ export default function TurnosPage() {
               <tbody className="divide-y divide-gray-200">
                 {turnosFiltrados.map((turno) => (
                   <tr key={turno.id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-4 text-center">
+                      <input
+                        type="checkbox"
+                        checked={seleccionados.includes(turno.id)}
+                        onChange={() => toggleSeleccion(turno.id)}
+                        className="w-4 h-4 text-blue-600 rounded cursor-pointer"
+                      />
+                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-2 text-gray-900 font-semibold">
