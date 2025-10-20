@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, Calendar, CheckCircle, AlertCircle, Image, UserCheck } from 'lucide-react'
+import { X, FileText, Calendar, CheckCircle, AlertCircle, Image, UserCheck, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CertificadoOblea } from './certificado-oblea'
 
@@ -79,6 +79,25 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
 
   const handleObleaGenerada = () => {
     cargarObleas() // Recargar la lista
+  }
+
+  const handleRegenerarPDF = async (obleaId: number) => {
+    try {
+      const response = await fetch(`/api/obleas/${obleaId}/regenerar-pdf`, {
+        method: 'POST'
+      })
+      const result = await response.json()
+      
+      if (result.success && result.pdfUrl) {
+        // Abrir el PDF en una nueva pestaña
+        window.open(result.pdfUrl, '_blank')
+      } else {
+        alert('❌ Error al regenerar PDF: ' + (result.error || 'Error desconocido'))
+      }
+    } catch (error) {
+      console.error('Error al regenerar PDF:', error)
+      alert('❌ Error al regenerar PDF')
+    }
   }
 
   const getEstadoBadge = (estado: string) => {
@@ -216,6 +235,18 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
                           </p>
                         </div>
                       )}
+
+                      <div className="mt-3 pt-3 border-t border-gray-200">
+                        <Button
+                          onClick={() => handleRegenerarPDF(oblea.id)}
+                          variant="outline"
+                          size="sm"
+                          className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-300"
+                        >
+                          <Download className="h-4 w-4 mr-2" />
+                          Descargar Certificado PDF
+                        </Button>
+                      </div>
                     </div>
                   ))}
                 </div>
