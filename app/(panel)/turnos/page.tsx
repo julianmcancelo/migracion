@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2, User, Car } from 'lucide-react'
+import { Calendar, Clock, Plus, Filter, CheckCircle, XCircle, AlertCircle, Edit, Trash2, User, Car, Search, SortAsc, ListChecks } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ModalTurno } from '@/components/turnos/modal-turno'
 
@@ -355,89 +355,134 @@ export default function TurnosPage() {
       )}
 
       {/* Filtros */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Filter className="h-5 w-5 text-gray-500" />
-          <span className="text-sm font-medium text-gray-700">Filtros:</span>
-        </div>
-        
-        {/* Búsqueda por DNI y Dominio */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              🔍 Buscar por DNI:
-            </label>
-            <input
-              type="text"
-              placeholder="Ingrese DNI del titular..."
-              value={buscarDNI}
-              onChange={(e) => setBuscarDNI(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              🚗 Buscar por Dominio:
-            </label>
-            <input
-              type="text"
-              placeholder="Ingrese patente del vehículo..."
-              value={buscarDominio}
-              onChange={(e) => setBuscarDominio(e.target.value.toUpperCase())}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase"
-            />
-          </div>
-        </div>
-
-        {/* Estado */}
-        <div className="flex items-center gap-2 flex-wrap mb-4">
-          <span className="text-sm font-medium text-gray-700">Por estado:</span>
-          {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
-            <button
-              key={estado}
-              onClick={() => setFiltroEstado(estado)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                filtroEstado === estado
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              {estado}
-            </button>
-          ))}
-        </div>
-
-        {/* Ordenamiento */}
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-medium text-gray-700">Ordenar por:</span>
-          <select
-            value={ordenamiento}
-            onChange={(e) => setOrdenamiento(e.target.value as any)}
-            className="px-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-          >
-            <option value="fecha-asc">Fecha (Más próximo)</option>
-            <option value="fecha-desc">Fecha (Más lejano)</option>
-            <option value="licencia">N° Licencia</option>
-            <option value="estado">Estado</option>
-          </select>
-        </div>
-
-        {/* Resumen de búsqueda */}
-        {(buscarDNI || buscarDominio) && (
-          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
-            <p className="text-sm text-blue-800">
-              <strong>Filtrando:</strong>
-              {buscarDNI && <span className="ml-2">DNI: "{buscarDNI}"</span>}
-              {buscarDominio && <span className="ml-2">Dominio: "{buscarDominio}"</span>}
-              <button
+      {/* Panel de Filtros y Búsqueda */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden mb-6">
+        {/* Header del panel */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-b border-gray-200 px-6 py-4">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <Filter className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-gray-900">Filtros de Búsqueda</h3>
+                <p className="text-xs text-gray-600">Encuentra turnos específicos fácilmente</p>
+              </div>
+            </div>
+            {(buscarDNI || buscarDominio) && (
+              <Button
+                variant="outline"
+                size="sm"
                 onClick={() => { setBuscarDNI(''); setBuscarDominio(''); }}
-                className="ml-4 text-blue-600 hover:text-blue-800 font-semibold"
+                className="border-blue-300 text-blue-600 hover:bg-blue-50"
               >
-                ❌ Limpiar
-              </button>
-            </p>
+                <XCircle className="h-4 w-4 mr-2" />
+                Limpiar Búsqueda
+              </Button>
+            )}
           </div>
-        )}
+        </div>
+
+        <div className="p-6 space-y-6">
+          {/* Búsqueda por DNI y Dominio */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <Search className="h-4 w-4 text-gray-500" />
+              <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                Búsqueda Rápida
+              </h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <User className="h-4 w-4 text-blue-600" />
+                  Buscar por DNI del Titular
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Ej: 12345678"
+                    value={buscarDNI}
+                    onChange={(e) => setBuscarDNI(e.target.value)}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                  <Car className="h-4 w-4 text-blue-600" />
+                  Buscar por Dominio del Vehículo
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    placeholder="Ej: ABC123"
+                    value={buscarDominio}
+                    onChange={(e) => setBuscarDominio(e.target.value.toUpperCase())}
+                    className="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent uppercase transition-all"
+                  />
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Filtros por Estado */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <ListChecks className="h-4 w-4 text-gray-500" />
+              <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                Filtrar por Estado
+              </h4>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {['TODOS', 'PENDIENTE', 'CONFIRMADO', 'FINALIZADO', 'CANCELADO'].map((estado) => (
+                <button
+                  key={estado}
+                  onClick={() => setFiltroEstado(estado)}
+                  className={`px-5 py-2.5 rounded-lg text-sm font-semibold transition-all transform hover:scale-105 ${
+                    filtroEstado === estado
+                      ? 'bg-blue-600 text-white shadow-md ring-2 ring-blue-300'
+                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  }`}
+                >
+                  {estado === 'TODOS' && '📋 '}
+                  {estado === 'PENDIENTE' && '⏳ '}
+                  {estado === 'CONFIRMADO' && '✅ '}
+                  {estado === 'FINALIZADO' && '🎉 '}
+                  {estado === 'CANCELADO' && '❌ '}
+                  {estado}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Ordenamiento */}
+          <div>
+            <div className="flex items-center gap-2 mb-3">
+              <SortAsc className="h-4 w-4 text-gray-500" />
+              <h4 className="text-sm font-semibold text-gray-700 uppercase tracking-wide">
+                Ordenar Resultados
+              </h4>
+            </div>
+            <div className="flex items-center gap-3">
+              <select
+                value={ordenamiento}
+                onChange={(e) => setOrdenamiento(e.target.value as any)}
+                className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+              >
+                <option value="fecha-asc">📅 Fecha - Más Próximos Primero</option>
+                <option value="fecha-desc">📅 Fecha - Más Lejanos Primero</option>
+                <option value="licencia">🔢 N° Licencia - A a Z</option>
+                <option value="estado">📊 Estado - Alfabético</option>
+              </select>
+              <span className="text-xs text-gray-500 hidden md:block">
+                {turnosFiltrados.length} resultado{turnosFiltrados.length !== 1 ? 's' : ''}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Estadísticas */}
@@ -493,30 +538,39 @@ export default function TurnosPage() {
 
       {/* Barra de acciones en lote */}
       {seleccionados.length > 0 && (
-        <div className="bg-blue-50 border-2 border-blue-300 rounded-xl p-4 mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <CheckCircle className="h-5 w-5 text-blue-600" />
-            <span className="font-semibold text-blue-900">
-              {seleccionados.length} turno(s) seleccionado(s)
-            </span>
-          </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setSeleccionados([])}
-            >
-              Deseleccionar
-            </Button>
-            <Button
-              variant="destructive"
-              size="sm"
-              onClick={cancelarSeleccionados}
-              className="bg-red-600 hover:bg-red-700"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Cancelar Seleccionados
-            </Button>
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-300 rounded-xl shadow-md mb-4 overflow-hidden">
+          <div className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-4">
+              <div className="p-2 bg-blue-100 rounded-lg">
+                <ListChecks className="h-5 w-5 text-blue-600" />
+              </div>
+              <div>
+                <p className="text-sm font-medium text-gray-600">Selección Múltiple Activa</p>
+                <p className="text-lg font-bold text-blue-900">
+                  {seleccionados.length} turno{seleccionados.length !== 1 ? 's' : ''} seleccionado{seleccionados.length !== 1 ? 's' : ''}
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setSeleccionados([])}
+                className="border-gray-300 hover:bg-white"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Deseleccionar Todo
+              </Button>
+              <Button
+                variant="destructive"
+                size="sm"
+                onClick={cancelarSeleccionados}
+                className="bg-red-600 hover:bg-red-700 shadow-sm"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Cancelar {seleccionados.length} Turno{seleccionados.length !== 1 ? 's' : ''}
+              </Button>
+            </div>
           </div>
         </div>
       )}
