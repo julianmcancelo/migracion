@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { X, FileText, Calendar, CheckCircle, AlertCircle, Image, UserCheck, Download } from 'lucide-react'
+import { X, FileText, Calendar, CheckCircle, AlertCircle, Image, UserCheck, Download, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { CertificadoOblea } from './certificado-oblea'
 
@@ -97,6 +97,29 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
     } catch (error) {
       console.error('Error al regenerar PDF:', error)
       alert('❌ Error al regenerar PDF')
+    }
+  }
+
+  const handleEliminarOblea = async (obleaId: number) => {
+    if (!confirm('¿Estás seguro de que deseas eliminar esta oblea del historial? Esta acción no se puede deshacer.')) {
+      return
+    }
+
+    try {
+      const response = await fetch(`/api/obleas/${obleaId}`, {
+        method: 'DELETE'
+      })
+      const result = await response.json()
+      
+      if (result.success) {
+        alert('✅ Oblea eliminada exitosamente')
+        cargarObleas() // Recargar la lista
+      } else {
+        alert('❌ Error al eliminar: ' + (result.error || 'Error desconocido'))
+      }
+    } catch (error) {
+      console.error('Error al eliminar oblea:', error)
+      alert('❌ Error al eliminar oblea')
     }
   }
 
@@ -236,15 +259,23 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
                         </div>
                       )}
 
-                      <div className="mt-3 pt-3 border-t border-gray-200">
+                      <div className="mt-3 pt-3 border-t border-gray-200 flex gap-2">
                         <Button
                           onClick={() => handleRegenerarPDF(oblea.id)}
                           variant="outline"
                           size="sm"
-                          className="w-full bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-300"
+                          className="flex-1 bg-orange-50 hover:bg-orange-100 text-orange-700 border-orange-300"
                         >
                           <Download className="h-4 w-4 mr-2" />
-                          Descargar Certificado PDF
+                          Descargar PDF
+                        </Button>
+                        <Button
+                          onClick={() => handleEliminarOblea(oblea.id)}
+                          variant="outline"
+                          size="sm"
+                          className="bg-red-50 hover:bg-red-100 text-red-700 border-red-300"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                     </div>
