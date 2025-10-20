@@ -168,7 +168,7 @@ export default function TurnosPage() {
   }
 
   const eliminarTurno = async (id: number) => {
-    if (!confirm('¿Está seguro de cancelar este turno?')) return
+    if (!confirm('⚠️ ¿Está seguro de ELIMINAR este turno?\n\nEsta acción no se puede deshacer.')) return
 
     try {
       const response = await fetch(`/api/turnos/${id}`, {
@@ -178,17 +178,17 @@ export default function TurnosPage() {
       if (response.ok) {
         const data = await response.json()
         if (data.success) {
-          alert('✅ Turno cancelado exitosamente')
+          alert('✅ Turno eliminado exitosamente')
           cargarTurnos() // Recargar la lista
         } else {
           alert('❌ Error: ' + (data.error || 'Error desconocido'))
         }
       } else {
-        alert('❌ Error al cancelar el turno')
+        alert('❌ Error al eliminar el turno')
       }
     } catch (error) {
-      console.error('Error al cancelar turno:', error)
-      alert('❌ Error de conexión al cancelar el turno')
+      console.error('Error al eliminar turno:', error)
+      alert('❌ Error de conexión al eliminar el turno')
     }
   }
 
@@ -215,7 +215,7 @@ export default function TurnosPage() {
       return
     }
 
-    if (!confirm(`¿Cancelar ${seleccionados.length} turno(s) seleccionado(s)?`)) return
+    if (!confirm(`⚠️ ¿Está seguro de ELIMINAR ${seleccionados.length} turno(s) seleccionado(s)?\n\nEsta acción no se puede deshacer.`)) return
 
     let exitosos = 0
     let fallidos = 0
@@ -234,7 +234,7 @@ export default function TurnosPage() {
       }
     }
 
-    alert(`✅ ${exitosos} turno(s) cancelado(s)\n${fallidos > 0 ? `❌ ${fallidos} turno(s) con error` : ''}`)
+    alert(`✅ ${exitosos} turno(s) eliminado(s)\n${fallidos > 0 ? `❌ ${fallidos} turno(s) con error` : ''}`)
     setSeleccionados([])
     cargarTurnos()
   }
@@ -571,7 +571,7 @@ export default function TurnosPage() {
                 className="bg-red-600 hover:bg-red-700 shadow-sm"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
-                Cancelar {seleccionados.length} Turno{seleccionados.length !== 1 ? 's' : ''}
+                Eliminar {seleccionados.length} Turno{seleccionados.length !== 1 ? 's' : ''}
               </Button>
             </div>
           </div>
@@ -721,14 +721,15 @@ export default function TurnosPage() {
                           </a>
                         )}
 
-                        {/* Cancelar */}
+                        {/* Eliminar */}
                         {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
                           <button
                             onClick={() => eliminarTurno(turno.id)}
                             className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                            title="Eliminar turno permanentemente"
                           >
                             <Trash2 className="h-4 w-4" />
-                            Cancelar
+                            Eliminar
                           </button>
                         )}
                       </div>

@@ -136,7 +136,7 @@ export async function PATCH(
 }
 
 /**
- * DELETE /api/turnos/[id] - Cancelar/eliminar turno
+ * DELETE /api/turnos/[id] - Eliminar turno permanentemente
  */
 export async function DELETE(
   request: Request,
@@ -160,22 +160,21 @@ export async function DELETE(
       )
     }
 
-    // Marcar como cancelado usando raw SQL
+    // Eliminar turno físicamente usando raw SQL
     await prisma.$executeRaw`
-      UPDATE turnos 
-      SET estado = 'CANCELADO'
+      DELETE FROM turnos 
       WHERE id = ${Number(id)}
     `
 
     return NextResponse.json({
       success: true,
-      message: 'Turno cancelado exitosamente'
+      message: 'Turno eliminado exitosamente'
     })
 
   } catch (error) {
-    console.error('Error al cancelar turno:', error)
+    console.error('Error al eliminar turno:', error)
     return NextResponse.json(
-      { success: false, error: 'Error al cancelar turno' },
+      { success: false, error: 'Error al eliminar turno' },
       { status: 500 }
     )
   }
