@@ -15,6 +15,12 @@ interface DatosExtraidos {
   fechaVencimiento: string | null
 }
 
+interface ResultadoOCR {
+  textoCompleto: string
+  datosExtraidos: DatosExtraidos
+  confianza: number
+}
+
 interface DNIUploaderProps {
   onDatosExtraidos: (datos: DatosExtraidos) => void
   onError?: (error: string) => void
@@ -24,7 +30,7 @@ interface DNIUploaderProps {
 export function DNIUploader({ onDatosExtraidos, onError, disabled = false }: DNIUploaderProps) {
   const [procesando, setProcesando] = useState(false)
   const [imagenPreview, setImagenPreview] = useState<string | null>(null)
-  const [resultado, setResultado] = useState<any>(null)
+  const [resultado, setResultado] = useState<ResultadoOCR | null>(null)
   const [error, setError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -227,18 +233,18 @@ export function DNIUploader({ onDatosExtraidos, onError, disabled = false }: DNI
           </div>
           
           <div className="grid grid-cols-2 gap-3 text-sm">
-            {Object.entries(resultado.datosExtraidos).map(([key, value]) => 
-              value ? (
+            {Object.entries(resultado.datosExtraidos)
+              .filter(([, value]) => value)
+              .map(([key, value]) => (
                 <div key={key} className="flex justify-between">
                   <span className="text-gray-600 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').toLowerCase()}:
                   </span>
                   <span className="font-medium text-gray-800">
-                    {value as string}
+                    {String(value)}
                   </span>
                 </div>
-              ) : null
-            )}
+              ))}
           </div>
 
           {resultado.confianza < 70 && (
