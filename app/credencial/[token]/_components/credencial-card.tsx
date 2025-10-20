@@ -102,142 +102,125 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
           </div>
         </div>
         
-        <div className="bg-white shadow-xl border-2 border-gray-300 overflow-hidden relative" style={{ userSelect: 'none' }}>
-          {/* Header */}
-          <div className="bg-gray-800 text-white p-5 text-center border-b-4 border-gray-900">
-            <div className="flex justify-center mb-3">
-              <Image 
-                src="https://www.lanus.gob.ar/logo-200.png" 
-                alt="Municipalidad de Lanús" 
-                width={80} 
-                height={80}
-                className="h-16 w-auto"
-              />
+        <div className="bg-white shadow-2xl overflow-hidden relative" style={{ userSelect: 'none', borderRadius: '12px' }}>
+          {/* Header Azul */}
+          <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
+            <div className="flex justify-between items-start">
+              <div>
+                <h1 className="text-2xl font-bold">Credencial de Habilitación</h1>
+                <p className="text-sm mt-1 text-blue-100">
+                  {data.habilitacion.tipo_transporte} - Ciclo Lectivo 2025
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Image 
+                  src="https://www.lanus.gob.ar/logo-200.png" 
+                  alt="Lanús" 
+                  width={60} 
+                  height={60}
+                  className="h-12 w-auto"
+                />
+                <div className="text-right">
+                  <div className="text-xs font-bold">Lanús</div>
+                  <div className="text-[10px] text-blue-100">GOBIERNO</div>
+                </div>
+              </div>
             </div>
-            <h1 className="text-base font-bold uppercase tracking-wide">Municipalidad de Lanús</h1>
-            <p className="text-xs mt-1 font-medium">Dirección General de Movilidad y Transporte</p>
           </div>
 
-          {/* Badge de estado */}
-          {getEstadoBadge()}
+          {/* Dirección */}
+          <div className="bg-gray-50 px-6 py-2 border-b">
+            <p className="text-xs text-gray-600 font-medium">Dirección General de Movilidad y Transporte</p>
+          </div>
 
-          {/* Body */}
+          {/* Info Principal con QR */}
           <div className="p-6 relative z-10">
-            {/* Tipo y número de licencia */}
-            <div className="border-b border-gray-200 pb-4 mb-4">
-              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wider mb-1">
-                {data.habilitacion.tipo_transporte}
-              </p>
-              <p className="text-2xl font-bold text-gray-900 tracking-wide">
-                LICENCIA N° {data.habilitacion.nro_licencia}
-              </p>
+            <div className="flex justify-between items-start mb-6">
+              <div className="flex-1">
+                <div className="text-xs text-gray-500 uppercase mb-1">N° DE LICENCIA</div>
+                <div className="text-3xl font-bold text-blue-600">{data.habilitacion.nro_licencia}</div>
+              </div>
+              <div className="text-center">
+                <div className="inline-block px-4 py-1 bg-green-100 text-green-700 font-semibold text-sm rounded mb-2">
+                  ESTADO: {data.habilitacion.estado}
+                </div>
+                <div className="bg-white p-2 border-2 border-gray-300 rounded inline-block">
+                  <QRCodeSVG value={credencialUrl} size={100} />
+                </div>
+                <div className="text-xs text-gray-500 mt-1">Verificar validez</div>
+              </div>
             </div>
 
             {/* Vigencias */}
-            <div className="grid grid-cols-2 gap-3 mb-4 text-xs bg-gray-50 p-3 border border-gray-200">
+            <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
               <div>
-                <span className="text-gray-500 block font-medium uppercase">Vigencia Desde</span>
-                <span className="text-sm font-semibold text-gray-900">{formatDate(data.habilitacion.vigencia_inicio)}</span>
+                <div className="text-xs text-gray-500 uppercase font-medium">VIGENCIA</div>
+                <div className="font-semibold text-gray-900">{formatDate(data.habilitacion.vigencia_inicio)} al {formatDate(data.habilitacion.vigencia_fin)}</div>
               </div>
               <div>
-                <span className="text-gray-500 block font-medium uppercase">Vigencia Hasta</span>
-                <span className="text-sm font-semibold text-gray-900">{formatDate(data.habilitacion.vigencia_fin)}</span>
-              </div>
-              <div>
-                <span className="text-gray-500 block font-medium uppercase">Tipo Trámite</span>
-                <span className="text-sm font-semibold text-gray-900">{data.habilitacion.tipo || 'N/A'}</span>
-              </div>
-              <div>
-                <span className="text-gray-500 block font-medium uppercase">Fecha Emisión</span>
-                <span className="text-sm font-semibold text-gray-900">{new Date().toLocaleDateString('es-AR')}</span>
+                <div className="text-xs text-gray-500 uppercase font-medium">RESOLUCIÓN</div>
+                <div className="font-semibold text-gray-900">{data.habilitacion.resolucion || '0165/25'}</div>
               </div>
             </div>
 
-            <hr className="my-6 border-gray-200" />
+            <div className="border-t border-gray-300 mb-6"></div>
 
             {/* Titular */}
             {data.titular && (
-              <div className="mb-5">
-                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
-                  Titular de la Habilitación
-                </h3>
-                <div className="flex items-center gap-3 bg-white p-3 border border-gray-300">
-                  <div className="w-14 h-14 bg-gray-300 flex-shrink-0 flex items-center justify-center">
-                    <div className="text-2xl font-bold text-gray-600">
-                      {data.titular.nombre?.charAt(0) || '?'}
-                    </div>
+              <div className="mb-6">
+                <div className="flex items-center gap-3">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0 flex items-center justify-center border-2 border-gray-400">
+                    <svg className="w-10 h-10 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                    </svg>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-bold text-base text-gray-900 truncate">{data.titular.nombre}</p>
-                    <p className="text-xs text-gray-600 mt-1">
-                      DNI: <span className="font-semibold">{data.titular.dni || 'N/A'}</span>
-                    </p>
-                    {esRemis && data.titular.cuit && (
-                      <p className="text-xs text-gray-600">
-                        CUIT: <span className="font-semibold">{data.titular.cuit}</span>
-                      </p>
-                    )}
+                  <div className="flex-1">
+                    <div className="text-sm font-semibold text-gray-600 mb-1">Titular del Permiso</div>
+                    <div className="font-bold text-base text-gray-900">{data.titular.nombre}</div>
+                    <div className="text-xs text-gray-600 mt-0.5">
+                      DNI: {data.titular.dni || 'N/A'}
+                    </div>
                   </div>
                 </div>
               </div>
             )}
 
-            {/* Vehículo */}
+            {/* Vehículo Habilitado */}
             {data.vehiculo && (
-              <div className="mb-5">
-                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
-                  Vehículo Afectado
-                </h3>
-                <div className="bg-white p-3 border border-gray-300">
-                  <div className="mb-3 pb-2 border-b border-gray-200">
-                    <span className="text-xs text-gray-500 font-medium uppercase">Dominio:</span>
-                    <div className="inline-block ml-2 bg-gray-100 border border-gray-400 px-3 py-1 font-mono text-base font-bold text-gray-900">
-                      {data.vehiculo.dominio}
+              <div className="mb-6">
+                <div className="flex items-start justify-between mb-3">
+                  <div className="text-sm font-semibold text-gray-600">Vehículo Habilitado</div>
+                  <div className="bg-gray-900 text-white px-4 py-1 rounded font-mono text-sm font-bold">
+                    {data.vehiculo.dominio}
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-x-6 gap-y-2 text-xs">
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">VEHÍCULO</div>
+                    <div className="font-semibold text-gray-900">{data.vehiculo.marca} {data.vehiculo.modelo}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">ASIENTOS</div>
+                    <div className="font-semibold text-gray-900">{data.vehiculo.asientos || '20'}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">AÑO</div>
+                    <div className="font-semibold text-gray-900">{data.vehiculo.ano}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">CHASIS</div>
+                    <div className="font-mono text-[10px] font-semibold text-gray-900">{data.vehiculo.chasis}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">VENCIMIENTO VTV</div>
+                    <div className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_VTV)}`}>
+                      {formatDate(data.vehiculo.Vencimiento_VTV) || 'N/A'}
                     </div>
                   </div>
-                  
-                  <div className="grid grid-cols-2 gap-2 text-xs mb-2">
-                    <div className="border-r border-gray-200 pr-2">
-                      <span className="text-gray-500 font-medium uppercase">Marca:</span>
-                      <p className="font-semibold text-gray-900">{data.vehiculo.marca}</p>
-                    </div>
-                    <div className="pl-2">
-                      <span className="text-gray-500 font-medium uppercase">Año:</span>
-                      <p className="font-semibold text-gray-900">{data.vehiculo.ano}</p>
-                    </div>
-                    <div className="col-span-2 pt-2 border-t border-gray-200">
-                      <span className="text-gray-500 font-medium uppercase">Modelo:</span>
-                      <p className="font-semibold text-gray-900">{data.vehiculo.modelo}</p>
-                    </div>
-                    <div className="col-span-2 pt-2 border-t border-gray-200">
-                      <span className="text-gray-500 font-medium uppercase">Chasis:</span>
-                      <p className="font-mono text-xs font-semibold text-gray-900">{data.vehiculo.chasis}</p>
-                    </div>
-                  </div>
-
-                  <div className="pt-2 border-t-2 border-gray-300 space-y-2 text-xs">
-                    <div className="border-b border-gray-200 pb-1">
-                      <span className="text-gray-500 font-medium uppercase">Aseguradora:</span>
-                      <p className="font-semibold text-gray-900">{data.vehiculo.Aseguradora || 'N/A'}</p>
-                    </div>
-                    <div className="border-b border-gray-200 pb-1">
-                      <span className="text-gray-500 font-medium uppercase">Póliza N°:</span>
-                      <p className="font-semibold text-gray-900">{data.vehiculo.poliza || 'N/A'}</p>
-                    </div>
-                    
-                    <div className="grid grid-cols-2 gap-2 pt-1">
-                      <div>
-                        <span className="text-gray-500 font-medium uppercase block">Venc. VTV:</span>
-                        <p className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_VTV)}`}>
-                          {formatDate(data.vehiculo.Vencimiento_VTV)}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="text-gray-500 font-medium uppercase block">Venc. Póliza:</span>
-                        <p className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_Poliza)}`}>
-                          {formatDate(data.vehiculo.Vencimiento_Poliza)}
-                        </p>
-                      </div>
+                  <div>
+                    <div className="text-gray-500 uppercase font-medium">VENCIMIENTO PÓLIZA</div>
+                    <div className={`font-semibold ${getVencimientoClass(data.vehiculo.Vencimiento_Poliza)}`}>
+                      {formatDate(data.vehiculo.Vencimiento_Poliza) || 'N/A'}
                     </div>
                   </div>
                 </div>
@@ -246,84 +229,72 @@ export function CredencialCard({ data, token }: CredencialCardProps) {
 
             {/* Conductores */}
             {data.conductores && data.conductores.length > 0 && (
-              <div className="mb-5">
-                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
-                  {data.conductores.length > 1 ? 'Conductores' : 'Conductor'}
-                </h3>
-                <div className="space-y-2">
-                  {data.conductores.map((conductor: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
-                      <div className="w-10 h-10 bg-gray-300 flex-shrink-0 flex items-center justify-center">
-                        <div className="text-lg font-bold text-gray-600">
-                          {conductor.nombre?.charAt(0) || '?'}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-sm text-gray-900">{conductor.nombre}</p>
-                        <p className="text-xs text-gray-600 mt-0.5">
-                          DNI: <span className="font-medium">{conductor.dni}</span> | 
-                          Cat.: <span className="font-medium">{conductor.licencia_categoria || 'N/A'}</span>
-                        </p>
-                      </div>
+              <div className="mb-6">
+                {data.conductores.map((conductor: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-3 mb-3">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0 flex items-center justify-center border-2 border-gray-400">
+                      <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  ))}
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-gray-600 mb-0.5">Conductor/a Autorizado/a</div>
+                      <div className="font-semibold text-sm text-gray-900">{conductor.nombre}</div>
+                      <div className="text-xs text-gray-600">Lic. Cat.: {conductor.licencia_categoria || 'N/A'}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Establecimiento Educativo */}
+            {data.destino && !esRemis && (
+              <div className="flex items-start gap-3 mb-6">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0 flex items-center justify-center border-2 border-gray-400">
+                  <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                  </svg>
+                </div>
+                <div className="flex-1">
+                  <div className="text-sm font-semibold text-gray-600 mb-0.5">Establecimiento Educativo</div>
+                  <div className="font-semibold text-sm text-gray-900 uppercase">{data.destino.nombre}</div>
+                  <div className="text-xs text-gray-600">{data.destino.direccion}</div>
                 </div>
               </div>
             )}
 
-            {/* Celadores (solo para Escolar) */}
+            {/* Celadores */}
             {!esRemis && data.celadores && data.celadores.length > 0 && (
-              <div className="mb-5">
-                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
-                  {data.celadores.length > 1 ? 'Celadores' : 'Celador'}
-                </h3>
-                <div className="space-y-2">
-                  {data.celadores.map((celador: any, idx: number) => (
-                    <div key={idx} className="flex items-center gap-3 bg-white p-2 border border-gray-300">
-                      <div className="w-10 h-10 bg-gray-300 flex-shrink-0 flex items-center justify-center">
-                        <div className="text-lg font-bold text-gray-600">
-                          {celador.nombre?.charAt(0) || '?'}
-                        </div>
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-bold text-base text-gray-900">{celador.nombre}</p>
-                        <p className="text-xs text-gray-600 mt-1">
-                          DNI: <span className="font-semibold">{celador.dni}</span>
-                        </p>
-                      </div>
+              <div className="mb-6">
+                {data.celadores.map((celador: any, idx: number) => (
+                  <div key={idx} className="flex items-center gap-3 mb-3">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-gray-200 to-gray-300 flex-shrink-0 flex items-center justify-center border-2 border-gray-400">
+                      <svg className="w-8 h-8 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                        <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
+                      </svg>
                     </div>
-                  ))}
-                </div>
+                    <div className="flex-1">
+                      <div className="text-sm font-semibold text-gray-600 mb-0.5">Celador/a</div>
+                      <div className="font-semibold text-sm text-gray-900">{celador.nombre}</div>
+                      <div className="text-xs text-gray-600">DNI: {celador.dni}</div>
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
-            {/* Destino */}
-            {data.destino && (
-              <div className="mb-5">
-                <h3 className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2 pb-1 border-b border-gray-300">
-                  {esRemis ? 'Remisería' : 'Establecimiento'}
-                </h3>
-                <div className="bg-white p-3 border border-gray-300">
-                  <p className="font-semibold text-sm text-gray-900">{data.destino.nombre}</p>
-                  <p className="text-xs text-gray-600 mt-1">
-                    {data.destino.direccion} - {data.destino.localidad}
-                  </p>
-                </div>
-              </div>
-            )}
+            {/* Footer */}
+            <div className="text-xs text-gray-500 text-center italic mt-8 pt-4 border-t">
+              El presente certificado es válido únicamente si se presenta junto a la VTV y el seguro obligatorio vigentes.
+            </div>
           </div>
 
-          {/* QR Code */}
-          <div className="bg-gray-100 p-5 text-center border-t-2 border-gray-400">
-            <div className="inline-block p-2 bg-white border-2 border-gray-400">
-              <QRCodeSVG
-                value={credencialUrl}
-                size={120}
-                level="H"
-                includeMargin={false}
-              />
-            </div>
-            <p className="text-xs text-gray-600 mt-2 font-medium">Escanee para verificar autenticidad</p>
+          {/* Botón Imprimir */}
+          <div className="bg-gray-50 p-4 text-center border-t">
+            <Button onClick={handlePrint} className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Printer className="h-4 w-4 mr-2" />
+              Imprimir o Guardar como PDF
+            </Button>
             
             {/* Timestamp de visualización */}
             <div className="mt-3 pt-3 border-t border-gray-300">
