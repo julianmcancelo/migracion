@@ -251,7 +251,7 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
                     
                     <div className="space-y-2">
                       <a 
-                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_foto}`}
+                        href={`https://api.transportelanus.com.ar/${oblea.path_foto}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
@@ -260,7 +260,7 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
                         Ver foto de evidencia
                       </a>
                       <a 
-                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_firma_receptor}`}
+                        href={`https://api.transportelanus.com.ar/${oblea.path_firma_receptor}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
@@ -269,7 +269,7 @@ export function ModalObleas({ habilitacionId, nroLicencia, open, onClose }: Moda
                         Ver firma del receptor
                       </a>
                       <a 
-                        href={`https://credenciales.transportelanus.com.ar/${oblea.path_firma_inspector}`}
+                        href={`https://api.transportelanus.com.ar/${oblea.path_firma_inspector}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-center gap-2 text-sm text-purple-600 hover:text-purple-800 hover:underline"
