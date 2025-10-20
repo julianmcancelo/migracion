@@ -16,40 +16,7 @@ export async function GET(
     const inspeccionId = parseInt(params.id)
 
     const inspeccion = await prisma.inspecciones.findUnique({
-      where: { id: inspeccionId },
-      include: {
-        habilitaciones_generales: {
-          select: {
-            nro_licencia: true,
-            tipo_transporte: true,
-            habilitaciones_personas: {
-              where: { rol: 'TITULAR' },
-              include: {
-                persona: {
-                  select: {
-                    nombre: true,
-                    dni: true,
-                    email: true
-                  }
-                }
-              },
-              take: 1
-            },
-            habilitaciones_vehiculos: {
-              include: {
-                vehiculo: {
-                  select: {
-                    dominio: true,
-                    marca: true,
-                    modelo: true
-                  }
-                }
-              },
-              take: 1
-            }
-          }
-        }
-      }
+      where: { id: inspeccionId }
     })
 
     if (!inspeccion) {
@@ -59,11 +26,61 @@ export async function GET(
       )
     }
 
+    // Obtener datos de la habilitación por separado
+    const habilitacion = await prisma.habilitaciones_generales.findUnique({
+      where: { id: inspeccion.habilitacion_id },
+      select: {
+        nro_licencia: true,
+        tipo_transporte: true
+      }
+    })
+
+    // Obtener titular
+    // @ts-ignore
+    const habPersona = await prisma.habilitaciones_personas.findFirst({
+      where: {
+        habilitacion_id: inspeccion.habilitacion_id,
+        rol: 'TITULAR'
+      },
+      // @ts-ignore
+      include: {
+        persona: {
+          select: {
+            nombre: true,
+            dni: true,
+            email: true
+          }
+        }
+      }
+    })
+
+    // Obtener vehículo
+    // @ts-ignore
+    const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
+      where: {
+        habilitacion_id: inspeccion.habilitacion_id
+      },
+      // @ts-ignore
+      include: {
+        vehiculo: {
+          select: {
+            dominio: true,
+            marca: true,
+            modelo: true
+          }
+        }
+      }
+    })
+
     return NextResponse.json({
       success: true,
       data: {
         ...inspeccion,
-        habilitacion: inspeccion.habilitaciones_generales
+        habilitacion: {
+          ...habilitacion,
+          habilitaciones_personas: habPersona ? [habPersona] : [],
+          habilitaciones_vehiculos: habVehiculo ? [habVehiculo] : []
+        }
       }
     })
 
@@ -118,8 +135,10 @@ export async function PATCH(
       await prisma.inspeccion_detalles.create({
         data: {
           inspeccion_id: inspeccionId,
-          categoria: 'OBSERVACIONES_GENERALES',
-          observaciones: observaciones.trim()
+          item_id: 'observaciones_generales',
+          nombre_item: 'Observaciones Generales',
+          estado: 'INFO',
+          observacion: observaciones.trim()
         }
       })
     }
