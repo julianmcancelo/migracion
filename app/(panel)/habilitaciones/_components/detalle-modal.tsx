@@ -47,6 +47,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   const [loading, setLoading] = useState(false)
   const [detalleCompleto, setDetalleCompleto] = useState<any>(null)
   const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
+  const [verificacionSeleccionada, setVerificacionSeleccionada] = useState<any>(null)
 
   // Helper para formatear hora TIME de MySQL (formato HH:MM:SS o timestamp)
   const formatearHora = (hora: any): string => {
@@ -181,6 +182,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   }
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-w-5xl max-h-[95vh] overflow-hidden p-0">
         {/* Header con botones de acción */}
@@ -469,7 +471,11 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                             <p className="text-xs text-gray-500 mt-1">Vehículo: {verif.dominio}</p>
                           )}
                         </div>
-                        <Button variant="ghost" size="sm">
+                        <Button 
+                          variant="ghost" 
+                          size="sm"
+                          onClick={() => setVerificacionSeleccionada(verif)}
+                        >
                           Ver Detalle
                         </Button>
                       </div>
@@ -554,5 +560,113 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
         </div>
       </DialogContent>
     </Dialog>
+
+    {/* Dialog para detalle de verificación */}
+    <Dialog open={!!verificacionSeleccionada} onOpenChange={() => setVerificacionSeleccionada(null)}>
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold flex items-center gap-2">
+            <CheckCircle className="h-6 w-6 text-blue-600" />
+            Detalle de Verificación Técnica
+          </DialogTitle>
+        </DialogHeader>
+
+        {verificacionSeleccionada && (
+          <div className="space-y-4">
+            {/* Información general */}
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <h3 className="font-semibold text-blue-900 mb-3">Información General</h3>
+              <div className="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                  <span className="text-blue-700 font-medium">Fecha:</span>
+                  <span className="ml-2 text-blue-900">
+                    {new Date(verificacionSeleccionada.fecha).toLocaleDateString('es-AR')}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-blue-700 font-medium">Hora:</span>
+                  <span className="ml-2 text-blue-900">{formatearHora(verificacionSeleccionada.hora)}</span>
+                </div>
+                <div>
+                  <span className="text-blue-700 font-medium">Planta:</span>
+                  <span className="ml-2 text-blue-900">{verificacionSeleccionada.planta || 'N/A'}</span>
+                </div>
+                <div>
+                  <span className="text-blue-700 font-medium">Turno:</span>
+                  <span className="ml-2 text-blue-900">{verificacionSeleccionada.turno || 'N/A'}</span>
+                </div>
+                {verificacionSeleccionada.dominio && (
+                  <div className="col-span-2">
+                    <span className="text-blue-700 font-medium">Vehículo:</span>
+                    <span className="ml-2 text-blue-900 font-mono font-bold">
+                      {verificacionSeleccionada.dominio}
+                    </span>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Resultado */}
+            <div className="bg-white border rounded-lg p-4">
+              <h3 className="font-semibold text-gray-900 mb-3">Resultado de la Verificación</h3>
+              <div className="flex items-center gap-3">
+                <Badge 
+                  variant={verificacionSeleccionada.resultado === 'APROBADO' ? 'default' : 'destructive'}
+                  className="text-base py-2 px-4"
+                >
+                  {verificacionSeleccionada.resultado || 'SIN RESULTADO'}
+                </Badge>
+              </div>
+            </div>
+
+            {/* Datos técnicos */}
+            {(verificacionSeleccionada.nro_certificado || verificacionSeleccionada.nro_oblea) && (
+              <div className="bg-white border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">Datos Técnicos</h3>
+                <div className="grid grid-cols-2 gap-3 text-sm">
+                  {verificacionSeleccionada.nro_certificado && (
+                    <div>
+                      <span className="text-gray-700 font-medium">N° Certificado:</span>
+                      <span className="ml-2 text-gray-900 font-mono">
+                        {verificacionSeleccionada.nro_certificado}
+                      </span>
+                    </div>
+                  )}
+                  {verificacionSeleccionada.nro_oblea && (
+                    <div>
+                      <span className="text-gray-700 font-medium">N° Oblea:</span>
+                      <span className="ml-2 text-gray-900 font-mono">
+                        {verificacionSeleccionada.nro_oblea}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Observaciones */}
+            {verificacionSeleccionada.observaciones && (
+              <div className="bg-white border rounded-lg p-4">
+                <h3 className="font-semibold text-gray-900 mb-3">Observaciones</h3>
+                <p className="text-sm text-gray-700 whitespace-pre-wrap">
+                  {verificacionSeleccionada.observaciones}
+                </p>
+              </div>
+            )}
+
+            {/* Botón cerrar */}
+            <div className="flex justify-end pt-2">
+              <Button 
+                onClick={() => setVerificacionSeleccionada(null)}
+                variant="outline"
+              >
+                Cerrar
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+    </>
   )
 }
