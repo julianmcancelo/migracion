@@ -155,12 +155,12 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   // Primera fila: Expediente y Licencia
   doc.text('Expediente N°:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.inspeccion.nro_expediente || 'S/N', 45, yPos)
+  doc.text(String(datos.inspeccion.nro_expediente || 'S/N'), 45, yPos)
   
   doc.setFont('helvetica', 'bold')
   doc.text('Licencia N°:', 110, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.inspeccion.nro_licencia, 140, yPos)
+  doc.text(String(datos.inspeccion.nro_licencia), 140, yPos)
   
   yPos += 6
   
@@ -168,12 +168,12 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFont('helvetica', 'bold')
   doc.text('Tipo de Habilitacion:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.inspeccion.tipo_habilitacion || 'Inicial', 50, yPos)
+  doc.text(String(datos.inspeccion.tipo_habilitacion || 'Inicial'), 50, yPos)
   
   doc.setFont('helvetica', 'bold')
   doc.text('Transporte:', 110, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.inspeccion.tipo_transporte || 'Escolar', 135, yPos)
+  doc.text(String(datos.inspeccion.tipo_transporte || 'Escolar'), 135, yPos)
   
   yPos += 8
 
@@ -188,18 +188,18 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   doc.text('Nombre:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.titular.nombre, 35, yPos)
+  doc.text(String(datos.titular.nombre), 35, yPos)
   yPos += 5
   
   doc.setFont('helvetica', 'bold')
   doc.text('DNI:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.titular.dni || '---', 27, yPos)
+  doc.text(String(datos.titular.dni || '---'), 27, yPos)
   
   doc.setFont('helvetica', 'bold')
   doc.text('Domicilio:', 70, yPos)
   doc.setFont('helvetica', 'normal')
-  const domicilio = datos.titular.domicilio || 'No especificado'
+  const domicilio = String(datos.titular.domicilio || 'No especificado')
   doc.text(domicilio.substring(0, 40), 93, yPos)
   yPos += 8
 
@@ -213,13 +213,13 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   doc.text('Nombre:', 110, yPos - 8)
   doc.setFont('helvetica', 'normal')
-  const nombreConductor = datos.conductor?.nombre || 'No especificado'
+  const nombreConductor = String(datos.conductor?.nombre || 'No especificado')
   doc.text(nombreConductor.substring(0, 30), 130, yPos - 8)
   
   doc.setFont('helvetica', 'bold')
   doc.text('DNI:', 110, yPos - 3)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.conductor?.dni || 'S/D', 122, yPos - 3)
+  doc.text(String(datos.conductor?.dni || 'S/D'), 122, yPos - 3)
   
   // ==================== VEHÍCULO ====================
   doc.setFont('helvetica', 'bold')
@@ -232,24 +232,24 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
   doc.text('Dominio:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.vehiculo.dominio, 36, yPos)
+  doc.text(String(datos.vehiculo.dominio), 36, yPos)
   yPos += 5
   
   doc.setFont('helvetica', 'bold')
   doc.text('Marca:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.vehiculo.marca, 31, yPos)
+  doc.text(String(datos.vehiculo.marca), 31, yPos)
   
   doc.setFont('helvetica', 'bold')
   doc.text('Modelo:', 90, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.vehiculo.modelo, 110, yPos)
+  doc.text(String(datos.vehiculo.modelo), 110, yPos)
   yPos += 5
   
   doc.setFont('helvetica', 'bold')
   doc.text('Inscripcion Inicial:', 15, yPos)
   doc.setFont('helvetica', 'normal')
-  doc.text(datos.vehiculo.inscripcion_inicial || 'No registrada', 50, yPos)
+  doc.text(String(datos.vehiculo.inscripcion_inicial || 'No registrada'), 50, yPos)
   yPos += 10
 
   // ==================== TITULO DE TABLA ====================
@@ -264,13 +264,16 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   const tableData: any[] = []
   
   datos.items.forEach(item => {
-    const estado = item.estado.toUpperCase()
+    const estado = String(item.estado || '').toUpperCase()
+    const nombre = String(item.nombre || 'Sin nombre')
+    const observacion = String(item.observacion || '')
+    
     tableData.push([
-      item.nombre.replace(/_/g, ' '),
+      nombre.replace(/_/g, ' '),
       estado === 'BIEN' ? 'X' : '',
       estado === 'REGULAR' ? 'X' : '',
       estado === 'MAL' ? 'X' : '',
-      item.observacion || ''
+      observacion
     ])
   })
 
@@ -367,7 +370,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFontSize(7.5)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  doc.text(datos.inspeccion.inspector, 57.5, yPos + 29, { align: 'center' })
+  doc.text(String(datos.inspeccion.inspector), 57.5, yPos + 29, { align: 'center' })
   doc.setFontSize(6.5)
   doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
   doc.text('Inspector Municipal', 57.5, yPos + 33, { align: 'center' })
@@ -398,7 +401,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   doc.setFontSize(7.5)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-  doc.text(datos.titular.nombre, 152.5, yPos + 29, { align: 'center' })
+  doc.text(String(datos.titular.nombre), 152.5, yPos + 29, { align: 'center' })
   doc.setFontSize(6.5)
   doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
   doc.text('Titular del Vehiculo', 152.5, yPos + 33, { align: 'center' })
