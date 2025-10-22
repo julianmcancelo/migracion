@@ -182,12 +182,12 @@ export async function GET(
       },
       titular: {
         nombre: habPersona?.persona?.nombre || 'N/A',
-        dni: habPersona?.persona?.dni || 'N/A',
+        dni: habPersona?.persona?.dni?.toString() || 'N/A',
         domicilio: habPersona?.persona?.domicilio || null
       },
       conductor: habConductor ? {
         nombre: habConductor.persona?.nombre || 'N/A',
-        dni: habConductor.persona?.dni || null
+        dni: habConductor.persona?.dni?.toString() || null
       } : undefined,
       vehiculo: {
         dominio: habVehiculo?.vehiculo?.dominio || 'N/A',
@@ -195,7 +195,9 @@ export async function GET(
         modelo: habVehiculo?.vehiculo?.modelo || 'N/A',
         ano: habVehiculo?.vehiculo?.ano?.toString() || 'N/A',
         chasis: habVehiculo?.vehiculo?.chasis || 'N/A',
-        inscripcion_inicial: habVehiculo?.vehiculo?.inscripcion_inicial || null
+        inscripcion_inicial: habVehiculo?.vehiculo?.inscripcion_inicial 
+          ? new Date(habVehiculo.vehiculo.inscripcion_inicial).toLocaleDateString('es-AR')
+          : undefined
       },
       items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0 
         ? inspeccion.inspeccion_detalles 
