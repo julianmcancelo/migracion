@@ -79,6 +79,27 @@ export default function VerificacionesPage() {
     }
   }
 
+  const formatearHora = (hora: any) => {
+    if (!hora) return 'N/A'
+    
+    // Si es un string en formato TIME (HH:MM:SS) o solo hora
+    if (typeof hora === 'string') {
+      // Extraer solo HH:MM de formatos como "1970-01-01T10:03:00" o "10:03:00"
+      const match = hora.match(/(\d{2}):(\d{2})/)
+      if (match) {
+        return `${match[1]}:${match[2]}`
+      }
+      return hora
+    }
+    
+    // Si es un objeto Date
+    if (hora instanceof Date) {
+      return hora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+    }
+    
+    return String(hora)
+  }
+
   const statsAprobadas = verificaciones.filter(v => v.resultado.toLowerCase().includes('aprobad')).length
   const statsRechazadas = verificaciones.filter(v => v.resultado.toLowerCase().includes('rechazad') || v.resultado.toLowerCase().includes('desaprob')).length
   const statsOtras = verificaciones.length - statsAprobadas - statsRechazadas
@@ -282,7 +303,7 @@ export default function VerificacionesPage() {
                               year: 'numeric' 
                             })}
                           </div>
-                          <div className="text-gray-500 text-xs mt-0.5 ml-5">{verif.hora}</div>
+                          <div className="text-gray-500 text-xs mt-0.5 ml-5">{formatearHora(verif.hora)}</div>
                         </div>
                       </td>
                       <td className="px-4 py-4 text-sm">
