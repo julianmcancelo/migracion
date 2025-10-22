@@ -5,85 +5,71 @@ export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/obleas/stats
- * Obtiene estadísticas de obleas
+ * Obtiene estadísticas de obleas desde tabla obleas (histórica)
  */
 export async function GET() {
   try {
-    // Total de obleas
-    const totalObleas = await prisma.oblea_historial.count()
+    console.log('📊 GET /api/obleas/stats - Iniciando...')
+    
+    // Total de obleas colocadas
+    const totalObleas = await prisma.obleas.count()
+    console.log('🔢 Total obleas colocadas:', totalObleas)
 
-    // Obleas por estado de notificación
-    const notificadas = await prisma.oblea_historial.count({
-      where: { notificado: 'si' }
-    })
-
-    const noNotificadas = await prisma.oblea_historial.count({
-      where: { notificado: 'no' }
-    })
+    // Todas las obleas colocadas se consideran notificadas
+    const notificadas = totalObleas
+    const noNotificadas = 0
 
     // Obleas por mes (últimos 12 meses)
     const fechaInicio = new Date()
     fechaInicio.setMonth(fechaInicio.getMonth() - 12)
 
-    const obleasPorMes = await prisma.$queryRaw`
+    const obleasPorMes: any[] = await prisma.$queryRaw`
       SELECT 
-        DATE_FORMAT(fecha_solicitud, '%Y-%m') as mes,
+        DATE_FORMAT(fecha_colocacion, '%Y-%m') as mes,
         COUNT(*) as cantidad
-      FROM oblea_historial 
-      WHERE fecha_solicitud >= ${fechaInicio}
-      GROUP BY DATE_FORMAT(fecha_solicitud, '%Y-%m')
+      FROM obleas 
+      WHERE fecha_colocacion >= ${fechaInicio}
+      GROUP BY DATE_FORMAT(fecha_colocacion, '%Y-%m')
       ORDER BY mes DESC
       LIMIT 12
     `
 
     // Obleas por tipo de transporte
-    const obleasPorTipo = await prisma.$queryRaw`
+    const obleasPorTipo: any[] = await prisma.$queryRaw`
       SELECT 
         hg.tipo_transporte,
-        COUNT(oh.id) as cantidad
-      FROM oblea_historial oh
-      JOIN habilitaciones_generales hg ON oh.habilitacion_id = hg.id
+        COUNT(o.id) as cantidad
+      FROM obleas o
+      JOIN habilitaciones_generales hg ON o.habilitacion_id = hg.id
       GROUP BY hg.tipo_transporte
     `
 
-    // Obleas recientes (últimas 10)
-    const obleasRecientes = await prisma.oblea_historial.findMany({
+    // Obleas recientes (últimas 10) - solo datos básicos de tabla obleas
+    const obleasRecientes = await prisma.obleas.findMany({
       take: 10,
       orderBy: {
-        fecha_solicitud: 'desc'
+        fecha_colocacion: 'desc'
       },
-      include: {
-        habilitaciones_generales: {
-          select: {
-            nro_licencia: true,
-            tipo_transporte: true,
-            habilitaciones_personas: {
-              where: { rol: 'TITULAR' },
-              include: {
-                persona: {
-                  select: {
-                    nombre: true
-                  }
-                }
-              },
-              take: 1
-            }
-          }
-        }
+      select: {
+        id: true,
+        nro_licencia: true,
+        titular: true,
+        fecha_colocacion: true
       }
     })
 
-    // Habilitaciones sin oblea
-    const habilitacionesSinOblea = await prisma.habilitaciones_generales.count({
-      where: {
-        estado: 'HABILITADO',
-        NOT: {
-          oblea_historial: {
-            some: {}
-          }
-        }
-      }
-    })
+    // Habilitaciones sin oblea - usando query SQL
+    const habilitacionesSinObleaResult: any[] = await prisma.$queryRaw`
+      SELECT COUNT(*) as cantidad
+      FROM habilitaciones_generales hg
+      WHERE hg.estado = 'HABILITADO'
+      AND NOT EXISTS (
+        SELECT 1 FROM obleas o WHERE o.habilitacion_id = hg.id
+      )
+    `
+    const habilitacionesSinOblea = Number(habilitacionesSinObleaResult[0]?.cantidad || 0)
+
+    console.log('✅ Estadísticas calculadas correctamente')
 
     return NextResponse.json({
       success: true,
@@ -98,17 +84,17 @@ export async function GET() {
         por_tipo: obleasPorTipo,
         recientes: obleasRecientes.map(oblea => ({
           id: oblea.id,
-          fecha: oblea.fecha_solicitud,
-          nro_licencia: oblea.habilitaciones_generales?.nro_licencia,
-          tipo_transporte: oblea.habilitaciones_generales?.tipo_transporte,
-          titular: oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.nombre,
-          notificado: oblea.notificado
+          fecha: oblea.fecha_colocacion,
+          nro_licencia: oblea.nro_licencia,
+          tipo_transporte: 'Verificar habilitación',
+          titular: oblea.titular,
+          notificado: 'si'
         }))
       }
     })
 
   } catch (error: any) {
-    console.error('Error al obtener estadísticas de obleas:', error)
+    console.error('❌ Error al obtener estadísticas de obleas:', error)
     return NextResponse.json(
       { 
         success: false, 

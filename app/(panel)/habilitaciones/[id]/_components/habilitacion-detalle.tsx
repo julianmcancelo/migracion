@@ -456,11 +456,11 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                           </td>
                           <td className="px-4 py-3">
                             <a
-                              href={`/api/obleas/${oblea.id}/pdf`}
+                              href={`/api/obleas/${oblea.id}/pdf-historico`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
-                              title="Descargar certificado con evidencia"
+                              title="Descargar certificado con evidencia disponible"
                             >
                               <FileText className="h-4 w-4" />
                               PDF

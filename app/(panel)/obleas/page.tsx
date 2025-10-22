@@ -704,10 +704,10 @@ export default function ObleasPage() {
                       
                       <div className="flex items-center gap-2">
                         <a
-                          href={`/api/obleas/${oblea.id}/pdf`}
+                          href={`/api/obleas/${oblea.id}/pdf-historico`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          title="Descargar certificado completo con firmas y evidencia"
+                          title="Descargar certificado con evidencia disponible"
                         >
                           <Button
                             variant="outline"

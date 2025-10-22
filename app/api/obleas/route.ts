@@ -92,48 +92,29 @@ export async function GET(request: NextRequest) {
       whereConditions.notificado = notificado
     }
 
-    // Obtener obleas básicas primero (sin include por problemas de tipos)
-    console.log('🔎 Consultando obleas con whereConditions:', JSON.stringify(whereConditions))
-    const obleas = await prisma.oblea_historial.findMany({
-      where: whereConditions,
+    // Obtener obleas de la tabla correcta
+    console.log('🔎 Consultando obleas...')
+    const obleas = await prisma.obleas.findMany({
       skip: offset,
       take: limite,
       orderBy: {
-        fecha_solicitud: 'desc'
+        fecha_colocacion: 'desc'
       }
     })
 
     console.log('📦 Obleas encontradas:', obleas.length)
 
     // Contar total para paginación
-    const total = await prisma.oblea_historial.count({
-      where: whereConditions
-    })
+    const total = await prisma.obleas.count()
     
     console.log('🔢 Total de obleas:', total)
 
-    // Para cada oblea, cargar datos relacionados manualmente
+    // Formatear obleas con datos relacionados
     const obleasFormateadas = await Promise.all(
       obleas.map(async (oblea) => {
         // Obtener habilitación
         const habilitacion = await prisma.habilitaciones_generales.findUnique({
           where: { id: oblea.habilitacion_id }
-        })
-
-        // Obtener titular
-        const titular = await prisma.habilitaciones_personas.findFirst({
-          where: {
-            habilitacion_id: oblea.habilitacion_id,
-            rol: 'TITULAR'
-          },
-          include: {
-            persona: {
-              select: {
-                nombre: true,
-                dni: true
-              }
-            }
-          }
         })
 
         // Obtener vehículo
@@ -155,15 +136,15 @@ export async function GET(request: NextRequest) {
         return {
           id: oblea.id,
           habilitacion_id: oblea.habilitacion_id,
-          fecha_solicitud: oblea.fecha_solicitud,
-          hora_solicitud: oblea.hora_solicitud,
-          creado_en: oblea.creado_en,
-          notificado: oblea.notificado,
-          nro_licencia: habilitacion?.nro_licencia || 'N/A',
+          fecha_solicitud: oblea.fecha_colocacion,
+          hora_solicitud: new Date(oblea.fecha_colocacion).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+          creado_en: oblea.fecha_colocacion,
+          notificado: 'si', // Asumimos que las obleas colocadas están notificadas
+          nro_licencia: oblea.nro_licencia,
           tipo_transporte: habilitacion?.tipo_transporte || 'N/A',
           estado_habilitacion: habilitacion?.estado || 'N/A',
-          titular: titular?.persona?.nombre || 'N/A',
-          titular_dni: titular?.persona?.dni || 'N/A',
+          titular: oblea.titular,
+          titular_dni: 'N/A', // No está en la tabla
           vehiculo_dominio: vehiculoRel?.vehiculo?.dominio || 'N/A',
           vehiculo_marca: vehiculoRel?.vehiculo?.marca || 'N/A',
           vehiculo_modelo: vehiculoRel?.vehiculo?.modelo || 'N/A'
