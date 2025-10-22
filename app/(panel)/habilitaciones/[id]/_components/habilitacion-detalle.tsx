@@ -473,27 +473,51 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
-                      {verificaciones.map((verif: any) => (
-                        <tr key={verif.id} className="hover:bg-gray-50">
-                          <td className="px-4 py-3">
-                            {new Date(verif.fecha).toLocaleDateString('es-AR')}
-                          </td>
-                          <td className="px-4 py-3">{verif.hora}</td>
-                          <td className="px-4 py-3">{verif.nombre_titular}</td>
-                          <td className="px-4 py-3 font-mono font-medium">{verif.dominio}</td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              verif.resultado?.toLowerCase().includes('aprobad') 
-                                ? 'bg-green-100 text-green-800'
-                                : verif.resultado?.toLowerCase().includes('rechazad') || verif.resultado?.toLowerCase().includes('desaprob')
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-blue-100 text-blue-800'
-                            }`}>
-                              {verif.resultado || 'Verificada'}
-                            </span>
-                          </td>
-                        </tr>
-                      ))}
+                      {verificaciones.map((verif: any) => {
+                        // Formatear hora correctamente desde TIME o DATETIME
+                        const formatearHora = (hora: any) => {
+                          if (!hora) return 'N/A'
+                          
+                          // Si es un string en formato TIME (HH:MM:SS) o solo hora
+                          if (typeof hora === 'string') {
+                            // Extraer solo HH:MM de formatos como "1970-01-01T10:03:00" o "10:03:00"
+                            const match = hora.match(/(\d{2}):(\d{2})/)
+                            if (match) {
+                              return `${match[1]}:${match[2]}`
+                            }
+                            return hora
+                          }
+                          
+                          // Si es un objeto Date
+                          if (hora instanceof Date) {
+                            return hora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+                          }
+                          
+                          return String(hora)
+                        }
+
+                        return (
+                          <tr key={verif.id} className="hover:bg-gray-50">
+                            <td className="px-4 py-3">
+                              {new Date(verif.fecha).toLocaleDateString('es-AR')}
+                            </td>
+                            <td className="px-4 py-3">{formatearHora(verif.hora)}</td>
+                            <td className="px-4 py-3">{verif.nombre_titular}</td>
+                            <td className="px-4 py-3 font-mono font-medium">{verif.dominio}</td>
+                            <td className="px-4 py-3">
+                              <span className={`px-2 py-1 rounded text-xs font-medium ${
+                                verif.resultado?.toLowerCase().includes('aprobad') 
+                                  ? 'bg-green-100 text-green-800'
+                                  : verif.resultado?.toLowerCase().includes('rechazad') || verif.resultado?.toLowerCase().includes('desaprob')
+                                  ? 'bg-red-100 text-red-800'
+                                  : 'bg-blue-100 text-blue-800'
+                              }`}>
+                                {verif.resultado || 'Verificada'}
+                              </span>
+                            </td>
+                          </tr>
+                        )
+                      })}
                     </tbody>
                   </table>
                 </div>

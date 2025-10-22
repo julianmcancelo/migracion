@@ -137,6 +137,35 @@ export async function GET(
       }
     })
 
+    // Validar datos críticos
+    if (!inspeccion.fecha_inspeccion) {
+      return NextResponse.json(
+        { success: false, error: 'Falta fecha de inspección' },
+        { status: 400 }
+      )
+    }
+    
+    if (!inspeccion.nombre_inspector) {
+      return NextResponse.json(
+        { success: false, error: 'Falta nombre del inspector' },
+        { status: 400 }
+      )
+    }
+    
+    if (!inspeccion.nro_licencia) {
+      return NextResponse.json(
+        { success: false, error: 'Falta número de licencia' },
+        { status: 400 }
+      )
+    }
+    
+    if (!inspeccion.firma_inspector) {
+      return NextResponse.json(
+        { success: false, error: 'Falta firma del inspector' },
+        { status: 400 }
+      )
+    }
+
     // Preparar datos para el PDF
     const datosCompletos = {
       inspeccion: {
@@ -219,8 +248,16 @@ export async function GET(
 
   } catch (error) {
     console.error('Error al generar PDF:', error)
+    const errorMessage = error instanceof Error ? error.message : 'Error desconocido'
+    const errorStack = error instanceof Error ? error.stack : ''
+    console.error('Stack:', errorStack)
     return NextResponse.json(
-      { success: false, error: 'Error al generar PDF' },
+      { 
+        success: false, 
+        error: 'Error al generar PDF',
+        details: errorMessage,
+        stack: process.env.NODE_ENV === 'development' ? errorStack : undefined
+      },
       { status: 500 }
     )
   }

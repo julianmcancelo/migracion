@@ -48,7 +48,15 @@ interface DatosInspeccion {
  * Genera un PDF de inspección vehicular
  */
 export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buffer> {
-  const doc = new jsPDF('p', 'mm', 'a4')
+  try {
+    console.log('Iniciando generación de PDF...')
+    console.log('Datos recibidos:', JSON.stringify({
+      inspeccionId: datos.inspeccion.id,
+      itemsCount: datos.items.length,
+      fotosCount: datos.fotos.length
+    }))
+    
+    const doc = new jsPDF('p', 'mm', 'a4')
   
   // Colores del diseño - Estilo certificado oficial
   const colorPrimario: [number, number, number] = [139, 35, 50] // Rojo bordó institucional
@@ -86,7 +94,18 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.text('CERTIFICADO DE VERIFICACION VEHICULAR', 105, 22, { align: 'center' })
     
     // Fecha y hora en la esquina derecha
-    const fecha = new Date(datos.inspeccion.fecha)
+    let fecha: Date
+    try {
+      fecha = new Date(datos.inspeccion.fecha)
+      // Verificar si es una fecha válida
+      if (isNaN(fecha.getTime())) {
+        throw new Error('Fecha inválida')
+      }
+    } catch (e) {
+      console.error('Error procesando fecha:', e)
+      fecha = new Date() // Usar fecha actual como fallback
+    }
+    
     doc.setFontSize(8)
     doc.setFont('helvetica', 'normal')
     doc.text(`Fecha: ${fecha.toLocaleDateString('es-AR')}`, 195, 20, { align: 'right' })
@@ -328,8 +347,10 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   
   if (datos.inspeccion.firma_inspector) {
     try {
+      console.log('Agregando firma del inspector...')
       doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 30, yPos + 5, 55, 18)
     } catch (e) {
+      console.error('Error agregando firma del inspector:', e)
       doc.setFontSize(7)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
       doc.text('Firma no disponible', 57.5, yPos + 15, { align: 'center' })
@@ -536,6 +557,20 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
   }
 
   // Convertir a Buffer
+  console.log('Convirtiendo PDF a buffer...')
   const pdfOutput = doc.output('arraybuffer')
-  return Buffer.from(pdfOutput)
+  const buffer = Buffer.from(pdfOutput)
+  console.log('PDF generado exitosamente, tamaño:', buffer.length, 'bytes')
+  return buffer
+  } catch (error) {
+    console.error('Error en generarPDFInspeccion:', error)
+    if (error instanceof Error) {
+      console.error('Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      })
+    }
+    throw error
+  }
 }
