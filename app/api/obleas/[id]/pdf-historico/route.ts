@@ -56,55 +56,7 @@ export async function GET(
 
     const vehiculo = habVehiculo?.vehiculo
 
-    // Buscar inspección más reciente relacionada con esta habilitación
-    const inspeccion = await prisma.inspecciones.findFirst({
-      where: { habilitacion_id: habilitacion.id },
-      orderBy: { fecha_inspeccion: 'desc' },
-      include: {
-        inspeccion_fotos: {
-          orderBy: { id: 'asc' }
-        },
-        inspeccion_items: {
-          orderBy: { id: 'asc' }
-        }
-      }
-    })
-
-    console.log('📸 Inspección encontrada:', inspeccion ? 'SÍ' : 'NO')
-    console.log('📷 Fotos de inspección:', inspeccion?.inspeccion_fotos?.length || 0)
-
-    // Convertir fotos de inspección a base64 si son URLs
-    const fotosInspeccion: Array<{ tipo: string; data: string }> = []
-    
-    if (inspeccion?.inspeccion_fotos) {
-      for (const foto of inspeccion.inspeccion_fotos) {
-        if (foto.foto_path) {
-          try {
-            let fotoData = foto.foto_path
-            
-            // Si es URL, convertir a base64
-            if (fotoData.startsWith('http://') || fotoData.startsWith('https://')) {
-              const response = await fetch(fotoData)
-              if (response.ok) {
-                const arrayBuffer = await response.arrayBuffer()
-                const buffer = Buffer.from(arrayBuffer)
-                const mimeType = fotoData.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
-                fotoData = `data:${mimeType};base64,${buffer.toString('base64')}`
-              }
-            }
-            
-            fotosInspeccion.push({
-              tipo: foto.tipo_foto || 'Foto del vehículo',
-              data: fotoData
-            })
-          } catch (error) {
-            console.error('Error procesando foto:', error)
-          }
-        }
-      }
-    }
-
-    console.log('✅ Fotos procesadas:', fotosInspeccion.length)
+    console.log('📄 Generando PDF solo con datos de la OBLEA (no inspección)')
 
     // Generar PDF
     const doc = new jsPDF('p', 'mm', 'a4')
@@ -311,75 +263,9 @@ export async function GET(
 
     yPos += firmaHeight + 10
 
-    // ==================== DATOS DE INSPECCIÓN (si existe) ====================
-    if (inspeccion) {
-      if (yPos + 25 > 270) {
-        doc.addPage()
-        yPos = 20
-      }
-
-      doc.setFillColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
-      doc.roundedRect(15, yPos, 180, 8, 2, 2, 'F')
-      
-      yPos += 6
-      doc.setTextColor(255, 255, 255)
-      doc.setFontSize(10)
-      doc.setFont('helvetica', 'bold')
-      doc.text('RESULTADO DE INSPECCIÓN TÉCNICA', 105, yPos, { align: 'center' })
-      
-      yPos += 10
-
-      doc.setFillColor(245, 245, 245)
-      doc.rect(15, yPos, 180, 20, 'F')
-      doc.setDrawColor(200, 200, 200)
-      doc.rect(15, yPos, 180, 20)
-      
-      yPos += 7
-      doc.setTextColor(grisTexto[0], grisTexto[1], grisTexto[2])
-      doc.setFontSize(9)
-      doc.setFont('helvetica', 'bold')
-      doc.text('Fecha de Inspección:', 20, yPos)
-      doc.setFont('helvetica', 'normal')
-      doc.text(new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR'), 70, yPos)
-      
-      yPos += 6
-      doc.setFont('helvetica', 'bold')
-      doc.text('Inspector:', 20, yPos)
-      doc.setFont('helvetica', 'normal')
-      doc.text(String(inspeccion.nombre_inspector || 'N/A'), 70, yPos)
-      
-      yPos += 6
-      doc.setFont('helvetica', 'bold')
-      doc.text('Resultado:', 120, yPos - 6)
-      doc.setFont('helvetica', 'normal')
-      
-      const resultado = String(inspeccion.resultado || 'PENDIENTE')
-      if (resultado === 'APROBADO') {
-        doc.setTextColor(0, 150, 0)
-      } else if (resultado === 'RECHAZADO') {
-        doc.setTextColor(200, 0, 0)
-      }
-      doc.text(resultado, 160, yPos - 6)
-      
-      yPos += 15
-    }
-
-    // ==================== EVIDENCIA FOTOGRÁFICA ====================
-    const todasLasFotos: Array<{ tipo: string; data: string }> = []
-    
-    // Agregar foto de oblea si existe
+    // ==================== FOTO DE LA OBLEA COLOCADA ====================
     if (oblea.path_foto && oblea.path_foto !== '') {
-      todasLasFotos.push({
-        tipo: 'Oblea Colocada',
-        data: oblea.path_foto
-      })
-    }
-    
-    // Agregar fotos de inspección
-    todasLasFotos.push(...fotosInspeccion)
-
-    if (todasLasFotos.length > 0) {
-      // Nueva página para fotos
+      // Nueva página para la foto
       doc.addPage()
       yPos = 20
 
@@ -390,58 +276,24 @@ export async function GET(
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(11)
       doc.setFont('helvetica', 'bold')
-      doc.text(`EVIDENCIA FOTOGRÁFICA (${todasLasFotos.length} fotos)`, 105, yPos, { align: 'center' })
+      doc.text('EVIDENCIA FOTOGRÁFICA - OBLEA COLOCADA', 105, yPos, { align: 'center' })
       
       yPos += 12
 
-      // Configuración de grid 2x2
-      const fotoWidth = 85
-      const fotoHeight = 64
-      const margenX = 15
-      const espacioEntreX = 5
-      const espacioEntreY = 8
-      
-      let fotoIndex = 0
-      
-      for (const foto of todasLasFotos) {
-        const col = fotoIndex % 2
-        const row = Math.floor((fotoIndex % 4) / 2)
-        
-        // Nueva página cada 4 fotos
-        if (fotoIndex > 0 && fotoIndex % 4 === 0) {
-          doc.addPage()
-          yPos = 20
-        }
-        
-        const xPos = margenX + (col * (fotoWidth + espacioEntreX))
-        const currentYPos = yPos + (row * (fotoHeight + espacioEntreY + 10))
-        
-        // Marco de la foto
+      // Foto centrada de la oblea
+      try {
+        doc.addImage(oblea.path_foto, 'JPEG', 40, yPos, 130, 98)
+        yPos += 100
+      } catch (e) {
+        console.error('Error agregando foto de oblea:', e)
         doc.setFillColor(245, 245, 245)
-        doc.roundedRect(xPos, currentYPos, fotoWidth, fotoHeight + 8, 2, 2, 'F')
+        doc.rect(40, yPos, 130, 98, 'F')
         doc.setDrawColor(200, 200, 200)
-        doc.setLineWidth(0.3)
-        doc.roundedRect(xPos, currentYPos, fotoWidth, fotoHeight + 8, 2, 2)
-        
-        // Título de la foto
-        doc.setFontSize(7)
-        doc.setFont('helvetica', 'bold')
-        doc.setTextColor(grisTexto[0], grisTexto[1], grisTexto[2])
-        doc.text(foto.tipo, xPos + fotoWidth / 2, currentYPos + 4, { align: 'center' })
-        
-        // Imagen
-        try {
-          doc.addImage(foto.data, 'JPEG', xPos + 2, currentYPos + 6, fotoWidth - 4, fotoHeight)
-        } catch (e) {
-          console.error('Error agregando foto:', e)
-          doc.setFillColor(230, 230, 230)
-          doc.rect(xPos + 2, currentYPos + 6, fotoWidth - 4, fotoHeight, 'F')
-          doc.setFontSize(8)
-          doc.setTextColor(150, 150, 150)
-          doc.text('Foto no disponible', xPos + fotoWidth / 2, currentYPos + fotoHeight / 2 + 6, { align: 'center' })
-        }
-        
-        fotoIndex++
+        doc.rect(40, yPos, 130, 98)
+        doc.setFontSize(10)
+        doc.setTextColor(150, 150, 150)
+        doc.text('Foto no disponible', 105, yPos + 50, { align: 'center' })
+        yPos += 100
       }
     }
 
