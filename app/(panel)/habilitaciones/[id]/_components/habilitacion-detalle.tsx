@@ -433,6 +433,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha Solicitud</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Hora</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Estado</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Acciones</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -452,6 +453,18 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                             }`}>
                               {oblea.notificado === 'si' ? 'Notificado' : 'Pendiente'}
                             </span>
+                          </td>
+                          <td className="px-4 py-3">
+                            <a
+                              href={`/api/obleas/${oblea.id}/pdf`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                              title="Descargar certificado con evidencia"
+                            >
+                              <FileText className="h-4 w-4" />
+                              PDF
+                            </a>
                           </td>
                         </tr>
                       ))}
