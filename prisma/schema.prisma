@@ -98,6 +98,8 @@ model habilitaciones_generales {
   habilitaciones_establecimientos habilitaciones_establecimientos[]
   turnos                          turnos[]
   tokens_acceso                   tokens_acceso[]
+  oblea_historial                 oblea_historial[]
+  obleas                          obleas[]
 }
 
 model habilitaciones_personas {
@@ -201,25 +203,31 @@ model notificaciones {
 }
 
 model oblea_historial {
-  id              Int                         @id @default(autoincrement()) @db.UnsignedInt
-  habilitacion_id Int                         @db.UnsignedInt
-  fecha_solicitud DateTime                    @db.Date
-  hora_solicitud  DateTime                    @db.Time(0)
-  creado_en       DateTime                    @default(now()) @db.DateTime(0)
-  notificado      oblea_historial_notificado? @default(no)
+  id                       Int                         @id @default(autoincrement()) @db.UnsignedInt
+  habilitacion_id          Int                         @db.UnsignedInt
+  fecha_solicitud          DateTime                    @db.Date
+  hora_solicitud           DateTime                    @db.Time(0)
+  creado_en                DateTime                    @default(now()) @db.DateTime(0)
+  notificado               oblea_historial_notificado? @default(no)
+  
+  // Relación
+  habilitaciones_generales habilitaciones_generales    @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade, map: "oblea_historial_habilitacion_fk")
 
   @@index([habilitacion_id], map: "idx_habilitacion")
 }
 
 model obleas {
-  id                   Int      @id @default(autoincrement())
-  habilitacion_id      Int
-  nro_licencia         String   @db.VarChar(50)
-  titular              String   @db.VarChar(255)
-  fecha_colocacion     DateTime @db.DateTime(0)
-  path_foto            String   @db.VarChar(255)
-  path_firma_receptor  String   @db.VarChar(255)
-  path_firma_inspector String   @db.VarChar(255)
+  id                       Int                      @id @default(autoincrement())
+  habilitacion_id          Int
+  nro_licencia             String                   @db.VarChar(50)
+  titular                  String                   @db.VarChar(255)
+  fecha_colocacion         DateTime                 @db.DateTime(0)
+  path_foto                String                   @db.VarChar(255)
+  path_firma_receptor      String                   @db.VarChar(255)
+  path_firma_inspector     String                   @db.VarChar(255)
+  
+  // Relación con habilitación
+  habilitaciones_generales habilitaciones_generales @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade, map: "obleas_habilitacion_fk")
 
   @@index([habilitacion_id], map: "idx_habilitacion_id")
   @@index([nro_licencia], map: "idx_nro_licencia")

@@ -162,8 +162,8 @@ export async function POST(
       </div>
 
       <div style="text-align: center; margin: 30px 0;">
-        <a href="${process.env.NEXT_PUBLIC_URL}/turnos/confirmar/${turno.id}" class="btn">✅ Confirmar Asistencia</a>
-        <a href="${process.env.NEXT_PUBLIC_URL}/turnos/cancelar/${turno.id}" class="btn btn-secondary">❌ Cancelar Turno</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/confirmar/${turno.id}" class="btn">✅ Confirmar Asistencia</a>
+        <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/cancelar/${turno.id}" class="btn btn-secondary">❌ Cancelar Turno</a>
       </div>
 
       <div style="background: #F3F4F6; padding: 20px; border-radius: 10px; margin-top: 20px;">
