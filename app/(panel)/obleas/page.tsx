@@ -690,6 +690,21 @@ export default function ObleasPage() {
                       </div>
                       
                       <div className="flex items-center gap-2">
+                        <a
+                          href={`/api/obleas/${oblea.id}/pdf`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          title="Descargar certificado completo con firmas y evidencia"
+                        >
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="bg-red-50 hover:bg-red-100 text-red-600"
+                          >
+                            <FileText className="h-4 w-4 mr-1" />
+                            PDF
+                          </Button>
+                        </a>
                         <Button
                           onClick={() => handleAbrirGestionOblea(oblea)}
                           variant="outline"
