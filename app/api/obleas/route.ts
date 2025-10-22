@@ -9,15 +9,18 @@ export const dynamic = 'force-dynamic'
  */
 export async function GET(request: NextRequest) {
   try {
+    console.log('📊 GET /api/obleas - Iniciando...')
     const { searchParams } = new URL(request.url)
     const pagina = parseInt(searchParams.get('pagina') || '1')
     const limite = parseInt(searchParams.get('limite') || '20')
     const busqueda = searchParams.get('busqueda') || ''
     const estado = searchParams.get('estado') || ''
-    const fechaDesde = searchParams.get('fecha_desde') || ''
-    const fechaHasta = searchParams.get('fecha_hasta') || ''
-    const tipoTransporte = searchParams.get('tipo_transporte') || ''
+    const fechaDesde = searchParams.get('fechaDesde') || searchParams.get('fecha_desde') || ''
+    const fechaHasta = searchParams.get('fechaHasta') || searchParams.get('fecha_hasta') || ''
+    const tipoTransporte = searchParams.get('tipoTransporte') || searchParams.get('tipo_transporte') || ''
     const notificado = searchParams.get('notificado') || ''
+    
+    console.log('🔍 Parámetros:', { pagina, limite, busqueda, fechaDesde, fechaHasta, tipoTransporte, notificado })
     
     const offset = (pagina - 1) * limite
 
@@ -89,27 +92,34 @@ export async function GET(request: NextRequest) {
       whereConditions.notificado = notificado
     }
 
-    // Obtener obleas básicas primero
+    // Obtener obleas básicas primero (sin include por problemas de tipos)
+    console.log('🔎 Consultando obleas con whereConditions:', JSON.stringify(whereConditions))
     const obleas = await prisma.oblea_historial.findMany({
       where: whereConditions,
       skip: offset,
       take: limite,
       orderBy: {
         fecha_solicitud: 'desc'
-      },
-      include: {
-        habilitaciones_generales: true
       }
     })
+
+    console.log('📦 Obleas encontradas:', obleas.length)
 
     // Contar total para paginación
     const total = await prisma.oblea_historial.count({
       where: whereConditions
     })
+    
+    console.log('🔢 Total de obleas:', total)
 
     // Para cada oblea, cargar datos relacionados manualmente
     const obleasFormateadas = await Promise.all(
       obleas.map(async (oblea) => {
+        // Obtener habilitación
+        const habilitacion = await prisma.habilitaciones_generales.findUnique({
+          where: { id: oblea.habilitacion_id }
+        })
+
         // Obtener titular
         const titular = await prisma.habilitaciones_personas.findFirst({
           where: {
@@ -149,9 +159,9 @@ export async function GET(request: NextRequest) {
           hora_solicitud: oblea.hora_solicitud,
           creado_en: oblea.creado_en,
           notificado: oblea.notificado,
-          nro_licencia: oblea.habilitaciones_generales?.nro_licencia || 'N/A',
-          tipo_transporte: oblea.habilitaciones_generales?.tipo_transporte || 'N/A',
-          estado_habilitacion: oblea.habilitaciones_generales?.estado || 'N/A',
+          nro_licencia: habilitacion?.nro_licencia || 'N/A',
+          tipo_transporte: habilitacion?.tipo_transporte || 'N/A',
+          estado_habilitacion: habilitacion?.estado || 'N/A',
           titular: titular?.persona?.nombre || 'N/A',
           titular_dni: titular?.persona?.dni || 'N/A',
           vehiculo_dominio: vehiculoRel?.vehiculo?.dominio || 'N/A',

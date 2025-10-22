@@ -91,6 +91,13 @@ export default function ObleasPage() {
     cargarDatos()
   }, [])
 
+  // Recargar obleas cuando cambien filtros o búsqueda
+  useEffect(() => {
+    if (!loading) {
+      cargarObleas()
+    }
+  }, [filtros, busqueda])
+
   const cargarDatos = async () => {
     setLoading(true)
     try {
@@ -108,6 +115,7 @@ export default function ObleasPage() {
 
   const cargarObleas = async () => {
     try {
+      console.log('🔄 Cargando obleas...')
       // Construir parámetros con filtros
       const params = new URLSearchParams({
         limite: '50',
@@ -118,11 +126,16 @@ export default function ObleasPage() {
       const response = await fetch(`/api/obleas?${params}`)
       const data = await response.json()
       
+      console.log('📊 Respuesta API obleas:', data)
+      
       if (data.success) {
         setObleas(data.data || [])
+        console.log('✅ Obleas cargadas:', data.data?.length || 0)
+      } else {
+        console.error('❌ Error en respuesta:', data.error)
       }
     } catch (error) {
-      console.error('Error al cargar obleas:', error)
+      console.error('❌ Error al cargar obleas:', error)
     }
   }
 
