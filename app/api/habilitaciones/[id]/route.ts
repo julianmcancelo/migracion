@@ -14,7 +14,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Buscar habilitación con todas las relaciones
-    // @ts-expect-error
     const habilitacion: any = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
       include: {
