@@ -14,6 +14,7 @@ import {
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
 import ModalRegistrarPersona from './_components/modal-registrar-persona'
+import ModalEditarPersona from './_components/modal-editar-persona'
 
 interface Persona {
   id: number
@@ -38,6 +39,8 @@ export default function PersonasPage() {
   const [busqueda, setBusqueda] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [modalRegistroOpen, setModalRegistroOpen] = useState(false)
+  const [modalEdicionOpen, setModalEdicionOpen] = useState(false)
+  const [personaSeleccionada, setPersonaSeleccionada] = useState<Persona | null>(null)
 
   useEffect(() => {
     cargarPersonas()
@@ -213,7 +216,10 @@ export default function PersonasPage() {
                       <Button
                         size="sm"
                         variant="ghost"
-                        onClick={() => alert('Editar persona próximamente')}
+                        onClick={() => {
+                          setPersonaSeleccionada(persona)
+                          setModalEdicionOpen(true)
+                        }}
                       >
                         <Edit className="h-4 w-4" />
                       </Button>
@@ -248,6 +254,18 @@ export default function PersonasPage() {
           cargarPersonas()
         }}
       />
+
+      {/* Modal de Edición */}
+      {personaSeleccionada && (
+        <ModalEditarPersona
+          open={modalEdicionOpen}
+          onOpenChange={setModalEdicionOpen}
+          persona={personaSeleccionada}
+          onEdicionExitosa={() => {
+            cargarPersonas()
+          }}
+        />
+      )}
     </div>
   )
 }

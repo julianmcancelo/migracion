@@ -18,10 +18,12 @@ import {
   ClipboardList,
   Shield,
   Trash2,
+  History,
 } from 'lucide-react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
+import TimelineNovedades from '@/components/habilitaciones/timeline-novedades'
 
 interface DetalleModalProps {
   habilitacion: any | null
@@ -578,6 +580,19 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                         </p>
                       </div>
                     )}
+                  </div>
+                </div>
+
+                {/* Historial de Novedades */}
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b bg-gray-50 px-4 py-3">
+                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
+                      <History className="h-5 w-5 text-blue-600" />
+                      Historial de Novedades
+                    </h3>
+                  </div>
+                  <div className="p-4">
+                    <TimelineNovedades habilitacionId={hab.id} />
                   </div>
                 </div>
 
