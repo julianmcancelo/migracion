@@ -19,6 +19,7 @@ interface TimelineNovedadesProps {
 
 const ICONOS_NOVEDAD: Record<string, string> = {
   CAMBIO_VEHICULO: '🔄',
+  CAMBIO_TIPO: '📋',
   ALTA: '✅',
   BAJA: '❌',
   MODIFICACION: '📝',
@@ -30,10 +31,11 @@ const ICONOS_NOVEDAD: Record<string, string> = {
 
 const COLORES_NOVEDAD: Record<string, string> = {
   CAMBIO_VEHICULO: 'bg-blue-50 border-blue-200',
+  CAMBIO_TIPO: 'bg-purple-50 border-purple-200',
   ALTA: 'bg-green-50 border-green-200',
   BAJA: 'bg-red-50 border-red-200',
   MODIFICACION: 'bg-yellow-50 border-yellow-200',
-  CAMBIO_ESTADO: 'bg-purple-50 border-purple-200',
+  CAMBIO_ESTADO: 'bg-orange-50 border-orange-200',
   RENOVACION: 'bg-indigo-50 border-indigo-200',
 }
 

@@ -24,6 +24,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import TimelineNovedades from '@/components/habilitaciones/timeline-novedades'
+import ModalCambiarTipo from './modal-cambiar-tipo'
 
 interface DetalleModalProps {
   habilitacion: any | null
@@ -45,6 +46,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   const [detalleCompleto, setDetalleCompleto] = useState<any>(null)
   const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
   const [verificacionSeleccionada, setVerificacionSeleccionada] = useState<any>(null)
+  const [modalCambiarTipoOpen, setModalCambiarTipoOpen] = useState(false)
 
   // Helper para formatear hora TIME de MySQL (formato HH:MM:SS o timestamp)
   const formatearHora = (hora: any): string => {
@@ -245,43 +247,61 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                       Datos de la Habilitación
                     </h3>
                   </div>
-                  <div className="grid grid-cols-2 gap-4 p-4">
-                    <div>
-                      <p className="mb-1 text-xs text-gray-500">Estado</p>
-                      <Badge
-                        variant={hab.estado === 'HABILITADO' ? 'default' : 'secondary'}
-                        className="font-semibold"
-                      >
-                        {hab.estado || 'EN TRÁMITE'}
-                      </Badge>
+                  <div className="space-y-4 p-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="mb-1 text-xs text-gray-500">Estado</p>
+                        <Badge
+                          variant={hab.estado === 'HABILITADO' ? 'default' : 'secondary'}
+                          className="font-semibold"
+                        >
+                          {hab.estado || 'EN TRÁMITE'}
+                        </Badge>
+                      </div>
+                      <div>
+                        <p className="mb-1 text-xs text-gray-500">Tipo Transporte</p>
+                        <p className="font-semibold text-gray-900">
+                          {hab.tipo_transporte || 'Transporte'}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="mb-1 text-xs text-gray-500">Tipo Trámite</p>
-                      <p className="font-semibold text-gray-900">
-                        {hab.tipo_transporte || 'Transporte'}
+
+                    {/* Tipo de Habilitación con botón de editar */}
+                    <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <p className="text-xs font-medium text-blue-700">Tipo de Habilitación</p>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setModalCambiarTipoOpen(true)}
+                          className="h-7 text-xs"
+                        >
+                          <Edit className="h-3 w-3 mr-1" />
+                          Cambiar
+                        </Button>
+                      </div>
+                      <p className="text-lg font-bold text-blue-900">
+                        {hab.tipo || 'Sin especificar'}
                       </p>
                     </div>
-                    <div>
-                      <p className="mb-1 text-xs text-gray-500">Renovación</p>
-                      <p className="font-semibold text-gray-900">
-                        {hab.tipo || hab.tipo_transporte || '-'}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="mb-1 text-xs text-gray-500">Vigencia Inicio</p>
-                      <p className="font-semibold text-gray-900">
-                        {hab.vigencia_inicio
-                          ? new Date(hab.vigencia_inicio).toLocaleDateString('es-AR')
-                          : '-'}
-                      </p>
-                    </div>
-                    <div className="col-span-2">
-                      <p className="mb-1 text-xs text-gray-500">Vigencia Fin</p>
-                      <p className="font-semibold text-gray-900">
-                        {hab.vigencia_fin
-                          ? new Date(hab.vigencia_fin).toLocaleDateString('es-AR')
-                          : '-'}
-                      </p>
+
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="mb-1 text-xs text-gray-500">Vigencia Inicio</p>
+                        <p className="font-semibold text-gray-900">
+                          {hab.vigencia_inicio
+                            ? new Date(hab.vigencia_inicio).toLocaleDateString('es-AR')
+                            : '-'}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="mb-1 text-xs text-gray-500">Vigencia Fin</p>
+                        <p className="font-semibold text-gray-900">
+                          {hab.vigencia_fin
+                            ? new Date(hab.vigencia_fin).toLocaleDateString('es-AR')
+                            : '-'}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -732,6 +752,18 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
           )}
         </DialogContent>
       </Dialog>
+
+      {/* Modal para cambiar tipo de habilitación */}
+      {hab && (
+        <ModalCambiarTipo
+          open={modalCambiarTipoOpen}
+          onOpenChange={setModalCambiarTipoOpen}
+          habilitacion={hab}
+          onCambioExitoso={() => {
+            cargarDetalleCompleto()
+          }}
+        />
+      )}
     </>
   )
 }
