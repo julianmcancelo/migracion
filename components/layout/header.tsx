@@ -47,9 +47,9 @@ export function Header({ user, onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-sm">
-      <div className="px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
+    <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/95 shadow-sm backdrop-blur-sm">
+      <div className="px-3 sm:px-4 lg:px-6">
+        <div className="flex h-14 items-center justify-between gap-2 sm:h-16 sm:gap-4">
           {/* Botón hamburguesa (móvil) */}
           <button
             onClick={onMenuClick}
@@ -60,36 +60,36 @@ export function Header({ user, onMenuClick }: HeaderProps) {
           </button>
 
           {/* Logo y título */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
+            <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
               <img
                 src="https://www.lanus.gob.ar/logo-200.png"
                 alt="Municipio de Lanús"
-                className="h-10 w-auto"
+                className="h-8 w-auto sm:h-10"
               />
-              <div className="hidden md:block">
-                <h1 className="text-xl font-bold text-gray-900">Sistema de Gestión</h1>
-                <p className="text-xs text-gray-500">Municipio de Lanús</p>
+              <div className="hidden min-w-0 md:block">
+                <h1 className="truncate text-base font-bold text-gray-900 lg:text-xl">Sistema de Gestión</h1>
+                <p className="truncate text-xs text-gray-500">Municipio de Lanús</p>
               </div>
             </div>
 
             {/* Navegación */}
-            <nav className="hidden items-center gap-1 lg:flex">
+            <nav className="hidden items-center gap-1 xl:flex">
               <a
                 href="/habilitaciones"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
               >
                 Habilitaciones
               </a>
               <a
                 href="/inspecciones"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
               >
                 Inspecciones
               </a>
               <a
                 href="/turnos"
-                className="rounded-lg px-4 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
+                className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50 hover:text-blue-600"
               >
                 Turnos
               </a>
@@ -97,10 +97,10 @@ export function Header({ user, onMenuClick }: HeaderProps) {
           </div>
 
           {/* Búsqueda global inteligente - Desktop */}
-          <div className="mx-8 hidden max-w-2xl flex-1 lg:block">
+          <div className="mx-4 hidden max-w-md flex-1 lg:mx-6 lg:block xl:max-w-2xl">
             <form onSubmit={handleSearch} className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="h-4 w-4 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z"
@@ -112,8 +112,8 @@ export function Header({ user, onMenuClick }: HeaderProps) {
                 type="search"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="🔍 Buscar: licencia, DNI, nombre, dominio, expediente..."
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                placeholder="🔍 Buscar licencia, DNI, dominio..."
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2 pl-9 pr-3 text-sm placeholder-gray-500 transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
                 onKeyDown={(e) => {
                   if (e.key === 'Enter') {
                     handleSearch(e)
@@ -124,15 +124,15 @@ export function Header({ user, onMenuClick }: HeaderProps) {
           </div>
 
           {/* Acciones de usuario */}
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
             {/* Botón de notificaciones */}
             <button
               type="button"
-              className="relative rounded-full bg-white p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900"
+              className="relative hidden rounded-full bg-white p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 sm:block"
             >
               <span className="sr-only">Ver notificaciones</span>
               <svg
-                className="h-6 w-6"
+                className="h-5 w-5 sm:h-6 sm:w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 strokeWidth="1.5"
@@ -153,16 +153,16 @@ export function Header({ user, onMenuClick }: HeaderProps) {
               <button
                 type="button"
                 onClick={() => setUserMenuOpen(!userMenuOpen)}
-                className="flex items-center gap-3 rounded-lg bg-white px-3 py-2 text-sm transition-colors hover:bg-gray-50"
+                className="flex items-center gap-2 rounded-lg bg-white px-2 py-1.5 text-sm transition-colors hover:bg-gray-50 sm:px-3 sm:py-2 lg:gap-3"
               >
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-sm font-semibold text-white">
+                <div className="flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br from-sky-500 to-blue-600 text-xs font-semibold text-white sm:h-8 sm:w-8 sm:text-sm">
                   {user?.nombre?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <div className="hidden text-left md:block">
-                  <p className="font-medium text-gray-900">{user?.nombre || 'Usuario'}</p>
-                  <p className="text-xs capitalize text-gray-500">{user?.rol || 'rol'}</p>
+                <div className="hidden min-w-0 text-left lg:block">
+                  <p className="truncate font-medium text-gray-900">{user?.nombre || 'Usuario'}</p>
+                  <p className="truncate text-xs capitalize text-gray-500">{user?.rol || 'rol'}</p>
                 </div>
-                <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
+                <svg className="hidden h-4 w-4 text-gray-400 sm:block" viewBox="0 0 20 20" fill="currentColor">
                   <path
                     fillRule="evenodd"
                     d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"

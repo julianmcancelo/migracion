@@ -61,8 +61,10 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header user={user} onMenuClick={handleMobileOpen} />
 
-        <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
+        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+          <div className="container mx-auto max-w-[1600px] px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-8">
+            {children}
+          </div>
         </main>
       </div>
 
