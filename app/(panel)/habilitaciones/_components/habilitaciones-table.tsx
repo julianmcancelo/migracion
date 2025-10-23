@@ -111,10 +111,29 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDescargarPDF = async (hab: any) => {
     try {
-      // TODO: Implementar generación de PDF
-      alert(`Descargando PDF de habilitación #${hab.id}`)
+      // Descargar PDF de verificación vacío
+      const response = await fetch(`/api/habilitaciones/${hab.id}/descargar-verificacion`)
+
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Error al generar PDF')
+      }
+
+      // Obtener el blob y descargarlo
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `verificacion-${hab.nro_licencia || hab.id}-${Date.now()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+
+      alert('✅ PDF descargado correctamente')
     } catch (error) {
       console.error('Error al descargar PDF:', error)
+      alert(`❌ Error al descargar PDF: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     }
   }
 

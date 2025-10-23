@@ -54,9 +54,39 @@ export async function GET(request: NextRequest) {
       is_deleted: false,
     }
 
-    // Agregar búsqueda si existe
+    // Agregar búsqueda inteligente multi-campo
     if (buscar) {
-      where.OR = [{ nro_licencia: { contains: buscar } }, { expte: { contains: buscar } }]
+      where.OR = [
+        // Buscar en licencia y expediente
+        { nro_licencia: { contains: buscar } },
+        { expte: { contains: buscar } },
+        // Buscar en personas (titular, conductor)
+        {
+          habilitaciones_personas: {
+            some: {
+              OR: [
+                { persona: { nombre: { contains: buscar } } },
+                { persona: { dni: { contains: buscar } } },
+                { persona: { cuit: { contains: buscar } } },
+              ],
+            },
+          },
+        },
+        // Buscar en vehículos (dominio)
+        {
+          habilitaciones_vehiculos: {
+            some: {
+              vehiculo: {
+                OR: [
+                  { dominio: { contains: buscar } },
+                  { marca: { contains: buscar } },
+                  { modelo: { contains: buscar } },
+                ],
+              },
+            },
+          },
+        },
+      ]
     }
 
     // Calcular offset

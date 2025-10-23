@@ -24,6 +24,15 @@ export function Header({ user, onMenuClick }: HeaderProps) {
   const router = useRouter()
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (searchTerm.trim()) {
+      // Redirigir a habilitaciones con el término de búsqueda
+      router.push(`/habilitaciones?buscar=${encodeURIComponent(searchTerm.trim())}`)
+    }
+  }
 
   const handleLogout = async () => {
     setLoading(true)
@@ -87,9 +96,9 @@ export function Header({ user, onMenuClick }: HeaderProps) {
             </nav>
           </div>
 
-          {/* Búsqueda global - Desktop */}
+          {/* Búsqueda global inteligente - Desktop */}
           <div className="mx-8 hidden max-w-2xl flex-1 lg:block">
-            <div className="relative">
+            <form onSubmit={handleSearch} className="relative">
               <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                 <svg className="h-5 w-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor">
                   <path
@@ -101,10 +110,17 @@ export function Header({ user, onMenuClick }: HeaderProps) {
               </div>
               <input
                 type="search"
-                placeholder="Buscar habilitación, DNI, vehículo..."
-                className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2 pl-10 pr-3 text-sm placeholder-gray-500 focus:border-sky-500 focus:bg-white focus:outline-none focus:ring-1 focus:ring-sky-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="🔍 Buscar: licencia, DNI, nombre, dominio, expediente..."
+                className="block w-full rounded-lg border border-gray-300 bg-gray-50 py-2.5 pl-10 pr-3 text-sm placeholder-gray-500 transition-all focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-2 focus:ring-blue-500/20"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleSearch(e)
+                  }
+                }}
               />
-            </div>
+            </form>
           </div>
 
           {/* Acciones de usuario */}

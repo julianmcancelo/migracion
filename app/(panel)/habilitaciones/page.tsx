@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import { useSearchParams } from 'next/navigation'
 import { Plus, Bus, Car, FileCheck, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
@@ -23,11 +24,12 @@ interface PaginationData {
 /**
  * Página de gestión de habilitaciones
  * - Tabs por tipo de transporte (Escolar/Remis)
- * - Búsqueda en tiempo real
+ * - Búsqueda inteligente en tiempo real
  * - Paginación
  * - Tabla expandible
  */
 export default function HabilitacionesPage() {
+  const searchParams = useSearchParams()
   const [tipoActivo, setTipoActivo] = useState<TipoTransporte>('Escolar')
   const [busqueda, setBusqueda] = useState('')
   const [paginaActual, setPaginaActual] = useState(1)
@@ -41,6 +43,14 @@ export default function HabilitacionesPage() {
     enTramite: 0,
     porVencer: 0,
   })
+
+  // Leer búsqueda de URL al cargar
+  useEffect(() => {
+    const buscarParam = searchParams.get('buscar')
+    if (buscarParam) {
+      setBusqueda(buscarParam)
+    }
+  }, [searchParams])
 
   // Cargar habilitaciones
   const cargarHabilitaciones = useCallback(async () => {
@@ -232,9 +242,12 @@ export default function HabilitacionesPage() {
               </TabsTrigger>
             </TabsList>
 
-            {/* Búsqueda */}
-            <div className="w-full sm:w-auto sm:min-w-[350px]">
-              <SearchBar onSearch={handleSearch} />
+            {/* Búsqueda Inteligente */}
+            <div className="w-full sm:w-auto sm:min-w-[400px]">
+              <SearchBar 
+                onSearch={handleSearch}
+                placeholder="🔍 Buscar por licencia, DNI, nombre, dominio, expediente..."
+              />
             </div>
           </div>
 
