@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { generarPDFOblea } from '@/lib/oblea-pdf-generator'
+import { generarPDFOblea } from '@/lib/oblea-pdf-generator-mejorado'
 import { readFile } from 'fs/promises'
 import { join } from 'path'
 
