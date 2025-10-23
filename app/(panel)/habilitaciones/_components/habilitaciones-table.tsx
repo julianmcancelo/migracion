@@ -148,6 +148,16 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
     setShowObleasModal(true)
   }
 
+  const handleCambioMaterial = (hab: any) => {
+    setSelectedHabilitacion(hab)
+    setShowCambioVehiculoModal(true)
+  }
+
+  const handleChatIA = (hab: any) => {
+    setSelectedHabilitacion(hab)
+    setShowChatIAModal(true)
+  }
+
   const getEstadoBadge = (estado: string | null) => {
     const estados: Record<string, { className: string; label: string }> = {
       HABILITADO: {
@@ -315,6 +325,22 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                         Gestionar Obleas
                       </DropdownMenuItem>
                     )}
+                    {hab.vehiculos && hab.vehiculos.length > 0 && (
+                      <DropdownMenuItem
+                        onClick={() => handleCambioMaterial(hab)}
+                        className="cursor-pointer"
+                      >
+                        <RefreshCcw className="mr-2 h-4 w-4" />
+                        Cambio de Material
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuItem
+                      onClick={() => handleChatIA(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Bot className="mr-2 h-4 w-4" />
+                      Consultar con IA
+                    </DropdownMenuItem>
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
                         <FileText className="mr-2 h-4 w-4" />
@@ -470,6 +496,43 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
           open={showObleasModal}
           onClose={() => setShowObleasModal(false)}
         />
+      )}
+
+      {/* Modal de Cambio de Material */}
+      {selectedHabilitacion && selectedHabilitacion.vehiculos?.[0] && (
+        <ModalCambioVehiculo
+          open={showCambioVehiculoModal}
+          onOpenChange={setShowCambioVehiculoModal}
+          habilitacionId={selectedHabilitacion.id}
+          vehiculoActual={{
+            id: selectedHabilitacion.vehiculos[0].id,
+            dominio: selectedHabilitacion.vehiculos[0].dominio,
+            marca: selectedHabilitacion.vehiculos[0].marca,
+            modelo: selectedHabilitacion.vehiculos[0].modelo,
+          }}
+          onCambioExitoso={() => {
+            setShowCambioVehiculoModal(false)
+            window.location.reload() // Recargar para ver cambios
+          }}
+        />
+      )}
+
+      {/* Modal de Chat IA */}
+      {selectedHabilitacion && showChatIAModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-lg shadow-xl p-6">
+            <button
+              onClick={() => setShowChatIAModal(false)}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              ✕
+            </button>
+            <ChatIAHabilitacion
+              habilitacionId={selectedHabilitacion.id}
+              nroLicencia={selectedHabilitacion.nro_licencia}
+            />
+          </div>
+        </div>
       )}
     </div>
   )
