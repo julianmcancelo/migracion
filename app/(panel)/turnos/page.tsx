@@ -321,44 +321,44 @@ export default function TurnosPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900">
-            <Calendar className="h-8 w-8 text-blue-600" />
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900 sm:gap-3 sm:text-3xl lg:text-4xl">
+            <Calendar className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
             Gestión de Turnos
           </h1>
-          <p className="mt-2 text-gray-600">Agenda de turnos para inspecciones vehiculares</p>
+          <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Agenda de turnos para inspecciones vehiculares</p>
         </div>
 
-        <Button onClick={abrirModalNuevo} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="mr-2 h-5 w-5" />
+        <Button onClick={abrirModalNuevo} className="w-full bg-blue-600 text-sm hover:bg-blue-700 sm:w-auto sm:text-base">
+          <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Nuevo Turno
         </Button>
       </div>
 
       {/* Habilitaciones sin turno */}
       {habilitacionesSinTurno.length > 0 && (
-        <div className="mb-6 rounded-xl border-2 border-orange-300 bg-gradient-to-r from-orange-50 to-red-50 p-6">
-          <div className="mb-4 flex items-center gap-3">
-            <AlertCircle className="h-6 w-6 text-orange-600" />
+        <div className="rounded-xl border-2 border-orange-300 bg-gradient-to-r from-orange-50 to-red-50 p-4 sm:p-6">
+          <div className="mb-3 flex items-start gap-2 sm:mb-4 sm:items-center sm:gap-3">
+            <AlertCircle className="h-5 w-5 flex-shrink-0 text-orange-600 sm:h-6 sm:w-6" />
             <div>
-              <h2 className="text-lg font-bold text-orange-900">
+              <h2 className="text-base font-bold text-orange-900 sm:text-lg">
                 Habilitaciones en Trámite sin Turno Asignado
               </h2>
-              <p className="text-sm text-orange-700">
+              <p className="text-xs text-orange-700 sm:text-sm">
                 Hay {habilitacionesSinTurno.length} habilitación
                 {habilitacionesSinTurno.length !== 1 ? 'es' : ''} esperando asignación de turno
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
             {habilitacionesSinTurno.map((hab: any) => (
               <div
                 key={hab.id}
-                className="rounded-lg border border-orange-200 bg-white p-4 shadow-sm transition-shadow hover:shadow-md"
+                className="rounded-lg border border-orange-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4"
               >
                 <div className="mb-3 flex items-start justify-between">
                   <div>
@@ -537,52 +537,52 @@ export default function TurnosPage() {
       </div>
 
       {/* Estadísticas */}
-      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-3 transition-shadow hover:shadow-md sm:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-yellow-700">Pendientes</p>
-              <p className="text-2xl font-bold text-yellow-900">
+              <p className="text-xs font-medium text-yellow-700 sm:text-sm">Pendientes</p>
+              <p className="text-xl font-bold text-yellow-900 sm:text-2xl">
                 {turnosFiltrados.filter(t => t.estado === 'PENDIENTE').length}
               </p>
             </div>
-            <Clock className="h-8 w-8 text-yellow-600" />
+            <Clock className="h-6 w-6 text-yellow-600 sm:h-8 sm:w-8" />
           </div>
         </div>
 
-        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 transition-shadow hover:shadow-md sm:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-blue-700">Confirmados</p>
-              <p className="text-2xl font-bold text-blue-900">
+              <p className="text-xs font-medium text-blue-700 sm:text-sm">Confirmados</p>
+              <p className="text-xl font-bold text-blue-900 sm:text-2xl">
                 {turnosFiltrados.filter(t => t.estado === 'CONFIRMADO').length}
               </p>
             </div>
-            <AlertCircle className="h-8 w-8 text-blue-600" />
+            <AlertCircle className="h-6 w-6 text-blue-600 sm:h-8 sm:w-8" />
           </div>
         </div>
 
-        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-3 transition-shadow hover:shadow-md sm:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-green-700">Finalizados</p>
-              <p className="text-2xl font-bold text-green-900">
+              <p className="text-xs font-medium text-green-700 sm:text-sm">Finalizados</p>
+              <p className="text-xl font-bold text-green-900 sm:text-2xl">
                 {turnosFiltrados.filter(t => t.estado === 'FINALIZADO').length}
               </p>
             </div>
-            <CheckCircle className="h-8 w-8 text-green-600" />
+            <CheckCircle className="h-6 w-6 text-green-600 sm:h-8 sm:w-8" />
           </div>
         </div>
 
-        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-3 transition-shadow hover:shadow-md sm:p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm font-medium text-red-700">Cancelados</p>
-              <p className="text-2xl font-bold text-red-900">
+              <p className="text-xs font-medium text-red-700 sm:text-sm">Cancelados</p>
+              <p className="text-xl font-bold text-red-900 sm:text-2xl">
                 {turnosFiltrados.filter(t => t.estado === 'CANCELADO').length}
               </p>
             </div>
-            <XCircle className="h-8 w-8 text-red-600" />
+            <XCircle className="h-6 w-6 text-red-600 sm:h-8 sm:w-8" />
           </div>
         </div>
       </div>
@@ -628,17 +628,17 @@ export default function TurnosPage() {
       )}
 
       {/* Lista de Turnos */}
-      <div className="rounded-xl border border-gray-200 bg-white shadow-lg">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">Cargando turnos...</div>
+          <div className="p-8 text-center text-sm text-gray-500 sm:p-12 sm:text-base">Cargando turnos...</div>
         ) : turnosFiltrados.length === 0 ? (
-          <div className="p-12 text-center text-gray-500">No hay turnos para mostrar</div>
+          <div className="p-8 text-center text-sm text-gray-500 sm:p-12 sm:text-base">No hay turnos para mostrar</div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full">
+            <table className="w-full min-w-[800px]">
               <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="w-12 px-4 py-4 text-center">
+                  <th className="w-10 px-3 py-3 text-center sm:w-12 sm:px-4 sm:py-4">
                     <input
                       type="checkbox"
                       checked={
@@ -646,22 +646,22 @@ export default function TurnosPage() {
                         turnosFiltrados.length > 0
                       }
                       onChange={toggleSeleccionTodos}
-                      className="h-4 w-4 cursor-pointer rounded text-blue-600"
+                      className="h-3.5 w-3.5 cursor-pointer rounded text-blue-600 sm:h-4 sm:w-4"
                     />
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:px-6 sm:py-4 sm:text-xs">
                     Fecha / Hora
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:px-6 sm:py-4 sm:text-xs">
                     Licencia
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:px-6 sm:py-4 sm:text-xs">
                     Titular / Vehículo
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:px-6 sm:py-4 sm:text-xs">
                     Estado
                   </th>
-                  <th className="px-6 py-4 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
+                  <th className="px-4 py-3 text-left text-[10px] font-medium uppercase tracking-wider text-gray-500 sm:px-6 sm:py-4 sm:text-xs">
                     Acciones
                   </th>
                 </tr>
@@ -669,92 +669,92 @@ export default function TurnosPage() {
               <tbody className="divide-y divide-gray-200">
                 {turnosFiltrados.map(turno => (
                   <tr key={turno.id} className="transition-colors hover:bg-gray-50">
-                    <td className="px-4 py-4 text-center">
+                    <td className="px-3 py-3 text-center sm:px-4 sm:py-4">
                       <input
                         type="checkbox"
                         checked={seleccionados.includes(turno.id)}
                         onChange={() => toggleSeleccion(turno.id)}
-                        className="h-4 w-4 cursor-pointer rounded text-blue-600"
+                        className="h-3.5 w-3.5 cursor-pointer rounded text-blue-600 sm:h-4 sm:w-4"
                       />
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 font-semibold text-gray-900">
-                          <Calendar className="h-4 w-4 text-gray-400" />
+                    <td className="whitespace-nowrap px-4 py-3 text-xs sm:px-6 sm:py-4 sm:text-sm">
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 sm:gap-2 sm:text-sm">
+                          <Calendar className="h-3 w-3 text-gray-400 sm:h-4 sm:w-4" />
                           {formatearFecha(turno.fecha)}
                         </div>
-                        <div className="ml-6 flex items-center gap-2 font-medium text-blue-600">
-                          <Clock className="h-4 w-4" />
+                        <div className="ml-4 flex items-center gap-1.5 text-xs font-medium text-blue-600 sm:ml-6 sm:gap-2">
+                          <Clock className="h-3 w-3 sm:h-4 sm:w-4" />
                           {formatearHora(turno.hora)}
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">
+                    <td className="whitespace-nowrap px-4 py-3 text-xs sm:px-6 sm:py-4 sm:text-sm">
                       <div className="flex flex-col">
-                        <span className="font-mono text-base font-bold text-blue-600">
+                        <span className="font-mono text-sm font-bold text-blue-600 sm:text-base">
                           {turno.habilitacion?.nro_licencia || 'N/A'}
                         </span>
-                        <span className="text-xs text-gray-500">
+                        <span className="text-[10px] text-gray-500 sm:text-xs">
                           {turno.habilitacion?.tipo_transporte || 'N/A'}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 text-sm">
-                      <div className="flex flex-col gap-1">
-                        <div className="flex items-center gap-2 font-semibold text-gray-900">
-                          <User className="h-4 w-4 text-gray-400" />
+                    <td className="px-4 py-3 text-xs sm:px-6 sm:py-4 sm:text-sm">
+                      <div className="flex flex-col gap-0.5 sm:gap-1">
+                        <div className="flex items-center gap-1.5 text-xs font-semibold text-gray-900 sm:gap-2 sm:text-sm">
+                          <User className="h-3 w-3 text-gray-400 sm:h-4 sm:w-4" />
                           {turno.titular_nombre || 'Sin datos'}
                         </div>
                         {turno.titular_dni && (
-                          <span className="ml-6 text-xs text-gray-500">
+                          <span className="ml-4 text-[10px] text-gray-500 sm:ml-6 sm:text-xs">
                             DNI: {turno.titular_dni}
                           </span>
                         )}
                         {turno.titular_telefono && (
-                          <span className="ml-6 text-xs text-gray-500">
+                          <span className="ml-4 text-[10px] text-gray-500 sm:ml-6 sm:text-xs">
                             📞 {turno.titular_telefono}
                           </span>
                         )}
-                        <div className="mt-1 flex items-center gap-2 text-gray-700">
-                          <Car className="h-4 w-4 text-gray-400" />
-                          <span className="font-mono font-semibold">
+                        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-gray-700 sm:mt-1 sm:gap-2">
+                          <Car className="h-3 w-3 text-gray-400 sm:h-4 sm:w-4" />
+                          <span className="font-mono text-xs font-semibold sm:text-sm">
                             {turno.vehiculo_patente || 'N/A'}
                           </span>
                           {(turno.vehiculo_marca || turno.vehiculo_modelo) && (
-                            <span className="text-xs text-gray-500">
+                            <span className="text-[10px] text-gray-500 sm:text-xs">
                               {turno.vehiculo_marca} {turno.vehiculo_modelo}
                             </span>
                           )}
                         </div>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4">
+                    <td className="whitespace-nowrap px-4 py-3 sm:px-6 sm:py-4">
                       <span
-                        className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold ${getEstadoBadge(turno.estado)}`}
+                        className={`inline-flex items-center gap-0.5 rounded-full border px-2 py-0.5 text-[10px] font-semibold sm:gap-1 sm:px-3 sm:py-1 sm:text-xs ${getEstadoBadge(turno.estado)}`}
                       >
                         {getEstadoIcon(turno.estado)}
-                        {turno.estado}
+                        <span className="hidden sm:inline">{turno.estado}</span>
                       </span>
                       {turno.observaciones && (
                         <p
-                          className="mt-2 max-w-xs truncate text-xs text-gray-500"
+                          className="mt-1 max-w-xs truncate text-[10px] text-gray-500 sm:mt-2 sm:text-xs"
                           title={turno.observaciones}
                         >
                           {turno.observaciones}
                         </p>
                       )}
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                      <div className="flex flex-wrap gap-2">
+                    <td className="whitespace-nowrap px-4 py-3 text-xs sm:px-6 sm:py-4 sm:text-sm">
+                      <div className="flex flex-col gap-1.5 sm:flex-row sm:flex-wrap sm:gap-2">
                         {/* Editar */}
                         {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
                           <button
                             onClick={() => abrirModalEditar(turno)}
-                            className="inline-flex items-center gap-1 font-medium text-gray-600 hover:text-gray-900"
+                            className="inline-flex items-center gap-0.5 text-xs font-medium text-gray-600 hover:text-gray-900 sm:gap-1"
                             title="Editar observaciones"
                           >
-                            <Edit className="h-4 w-4" />
-                            Editar
+                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline">Editar</span>
                           </button>
                         )}
 
@@ -762,10 +762,10 @@ export default function TurnosPage() {
                         {turno.estado === 'PENDIENTE' && (
                           <button
                             onClick={() => cambiarEstado(turno.id, 'CONFIRMADO')}
-                            className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-900"
+                            className="inline-flex items-center gap-0.5 text-xs font-medium text-blue-600 hover:text-blue-900 sm:gap-1"
                           >
-                            <CheckCircle className="h-4 w-4" />
-                            Confirmar
+                            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline">Confirmar</span>
                           </button>
                         )}
 
@@ -773,10 +773,10 @@ export default function TurnosPage() {
                         {turno.estado === 'CONFIRMADO' && (
                           <a
                             href={`/inspecciones/nueva?turno_id=${turno.id}&habilitacion_id=${turno.habilitacion_id}`}
-                            className="inline-flex items-center gap-1 font-medium text-green-600 hover:text-green-900"
+                            className="inline-flex items-center gap-0.5 text-xs font-medium text-green-600 hover:text-green-900 sm:gap-1"
                           >
-                            <CheckCircle className="h-4 w-4" />
-                            Inspeccionar
+                            <CheckCircle className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline">Inspeccionar</span>
                           </a>
                         )}
 
@@ -784,11 +784,11 @@ export default function TurnosPage() {
                         {turno.estado !== 'FINALIZADO' && turno.estado !== 'CANCELADO' && (
                           <button
                             onClick={() => eliminarTurno(turno.id)}
-                            className="inline-flex items-center gap-1 font-medium text-red-600 hover:text-red-900"
+                            className="inline-flex items-center gap-0.5 text-xs font-medium text-red-600 hover:text-red-900 sm:gap-1"
                             title="Eliminar turno permanentemente"
                           >
-                            <Trash2 className="h-4 w-4" />
-                            Eliminar
+                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline">Eliminar</span>
                           </button>
                         )}
                       </div>

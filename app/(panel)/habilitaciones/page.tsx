@@ -115,127 +115,127 @@ export default function HabilitacionesPage() {
   }
 
   return (
-    <div className="space-y-8 p-6">
+    <div className="space-y-4 sm:space-y-6 lg:space-y-8">
       {/* Header moderno sin gradiente */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Habilitaciones</h1>
-          <p className="mt-2 text-gray-600">
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">Habilitaciones</h1>
+          <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">
             Gestione habilitaciones de transporte escolar y remis de forma eficiente
           </p>
         </div>
         <Button
           onClick={() => setModalOpen(true)}
           size="lg"
-          className="bg-blue-600 text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl"
+          className="w-full bg-blue-600 text-sm text-white shadow-lg transition-all hover:bg-blue-700 hover:shadow-xl sm:w-auto sm:text-base"
         >
-          <Plus className="mr-2 h-5 w-5" />
+          <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
           Nueva Habilitación
         </Button>
       </div>
 
       {/* Stats Cards con diseño moderno */}
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4 lg:gap-6">
         {/* Total */}
         <Card className="group relative cursor-pointer overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-gradient-to-br from-blue-500/10 to-blue-600/5"></div>
-          <div className="relative p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-transform group-hover:scale-110">
-                <FileCheck className="h-7 w-7 text-white" />
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-br from-blue-500/10 to-blue-600/5 sm:h-28 sm:w-28 lg:h-32 lg:w-32"></div>
+          <div className="relative p-4 sm:p-5 lg:p-6">
+            <div className="mb-2 flex items-center justify-between sm:mb-3 lg:mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 shadow-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 lg:h-14 lg:w-14 lg:rounded-2xl">
+                <FileCheck className="h-5 w-5 text-white sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium uppercase tracking-wide text-gray-500">Total</p>
-                <p className="mt-1 text-4xl font-bold text-gray-900">{stats.total}</p>
+                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-xs lg:text-sm">Total</p>
+                <p className="mt-0.5 text-2xl font-bold text-gray-900 sm:text-3xl lg:mt-1 lg:text-4xl">{stats.total}</p>
               </div>
             </div>
-            <div className="h-1 rounded-full bg-gradient-to-r from-blue-500 to-blue-600"></div>
+            <div className="h-0.5 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 sm:h-1"></div>
           </div>
         </Card>
 
         {/* Habilitadas */}
         <Card className="group relative cursor-pointer overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-gradient-to-br from-green-500/10 to-green-600/5"></div>
-          <div className="relative p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-transform group-hover:scale-110">
-                <CheckCircle2 className="h-7 w-7 text-white" />
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-br from-green-500/10 to-green-600/5 sm:h-28 sm:w-28 lg:h-32 lg:w-32"></div>
+          <div className="relative p-4 sm:p-5 lg:p-6">
+            <div className="mb-2 flex items-center justify-between sm:mb-3 lg:mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-green-500 to-green-600 shadow-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 lg:h-14 lg:w-14 lg:rounded-2xl">
+                <CheckCircle2 className="h-5 w-5 text-white sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-xs lg:text-sm">
                   Habilitadas
                 </p>
-                <p className="mt-1 text-4xl font-bold text-gray-900">{stats.habilitadas}</p>
+                <p className="mt-0.5 text-2xl font-bold text-gray-900 sm:text-3xl lg:mt-1 lg:text-4xl">{stats.habilitadas}</p>
               </div>
             </div>
-            <div className="h-1 rounded-full bg-gradient-to-r from-green-500 to-green-600"></div>
+            <div className="h-0.5 rounded-full bg-gradient-to-r from-green-500 to-green-600 sm:h-1"></div>
           </div>
         </Card>
 
         {/* En Trámite */}
         <Card className="group relative cursor-pointer overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-gradient-to-br from-amber-500/10 to-amber-600/5"></div>
-          <div className="relative p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg transition-transform group-hover:scale-110">
-                <Clock className="h-7 w-7 text-white" />
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-br from-amber-500/10 to-amber-600/5 sm:h-28 sm:w-28 lg:h-32 lg:w-32"></div>
+          <div className="relative p-4 sm:p-5 lg:p-6">
+            <div className="mb-2 flex items-center justify-between sm:mb-3 lg:mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-amber-500 to-amber-600 shadow-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 lg:h-14 lg:w-14 lg:rounded-2xl">
+                <Clock className="h-5 w-5 text-white sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-xs lg:text-sm">
                   En Trámite
                 </p>
-                <p className="mt-1 text-4xl font-bold text-gray-900">{stats.enTramite}</p>
+                <p className="mt-0.5 text-2xl font-bold text-gray-900 sm:text-3xl lg:mt-1 lg:text-4xl">{stats.enTramite}</p>
               </div>
             </div>
-            <div className="h-1 rounded-full bg-gradient-to-r from-amber-500 to-amber-600"></div>
+            <div className="h-0.5 rounded-full bg-gradient-to-r from-amber-500 to-amber-600 sm:h-1"></div>
           </div>
         </Card>
 
         {/* Por Vencer */}
         <Card className="group relative cursor-pointer overflow-hidden border-0 shadow-md transition-all duration-300 hover:shadow-xl">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-gradient-to-br from-orange-500/10 to-orange-600/5"></div>
-          <div className="relative p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg transition-transform group-hover:scale-110">
-                <AlertCircle className="h-7 w-7 text-white" />
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-gradient-to-br from-orange-500/10 to-orange-600/5 sm:h-28 sm:w-28 lg:h-32 lg:w-32"></div>
+          <div className="relative p-4 sm:p-5 lg:p-6">
+            <div className="mb-2 flex items-center justify-between sm:mb-3 lg:mb-4">
+              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-orange-500 to-orange-600 shadow-lg transition-transform group-hover:scale-110 sm:h-12 sm:w-12 lg:h-14 lg:w-14 lg:rounded-2xl">
+                <AlertCircle className="h-5 w-5 text-white sm:h-6 sm:w-6 lg:h-7 lg:w-7" />
               </div>
               <div className="text-right">
-                <p className="text-sm font-medium uppercase tracking-wide text-gray-500">
+                <p className="text-[10px] font-medium uppercase tracking-wide text-gray-500 sm:text-xs lg:text-sm">
                   Por Vencer
                 </p>
-                <p className="mt-1 text-4xl font-bold text-gray-900">{stats.porVencer}</p>
+                <p className="mt-0.5 text-2xl font-bold text-gray-900 sm:text-3xl lg:mt-1 lg:text-4xl">{stats.porVencer}</p>
               </div>
             </div>
-            <div className="h-1 rounded-full bg-gradient-to-r from-orange-500 to-orange-600"></div>
+            <div className="h-0.5 rounded-full bg-gradient-to-r from-orange-500 to-orange-600 sm:h-1"></div>
           </div>
         </Card>
       </div>
 
       {/* Tabs modernos */}
       <Tabs value={tipoActivo} onValueChange={v => setTipoActivo(v as TipoTransporte)}>
-        <div className="rounded-xl border bg-white p-6 shadow-sm">
-          <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
-            <TabsList className="h-12 bg-gray-100 p-1">
+        <div className="rounded-xl border bg-white p-4 shadow-sm sm:p-6">
+          <div className="mb-4 flex flex-col gap-3 sm:mb-6 sm:flex-row sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
+            <TabsList className="h-10 w-full bg-gray-100 p-1 sm:h-12 sm:w-auto">
               <TabsTrigger
                 value="Escolar"
-                className="gap-2 px-6 data-[state=active]:bg-white data-[state=active]:shadow-md"
+                className="flex-1 gap-1.5 px-3 text-xs data-[state=active]:bg-white data-[state=active]:shadow-md sm:flex-none sm:gap-2 sm:px-6 sm:text-sm"
               >
-                <Bus className="h-4 w-4" />
-                Escolar
+                <Bus className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span>Escolar</span>
                 {pagination && tipoActivo === 'Escolar' && (
-                  <Badge className="ml-2 bg-blue-100 text-blue-700 hover:bg-blue-100">
+                  <Badge className="ml-1 bg-blue-100 text-xs text-blue-700 hover:bg-blue-100 sm:ml-2">
                     {pagination.total}
                   </Badge>
                 )}
               </TabsTrigger>
               <TabsTrigger
                 value="Remis"
-                className="gap-2 px-6 data-[state=active]:bg-white data-[state=active]:shadow-md"
+                className="flex-1 gap-1.5 px-3 text-xs data-[state=active]:bg-white data-[state=active]:shadow-md sm:flex-none sm:gap-2 sm:px-6 sm:text-sm"
               >
-                <Car className="h-4 w-4" />
-                Remis
+                <Car className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+                <span>Remis</span>
                 {pagination && tipoActivo === 'Remis' && (
-                  <Badge className="ml-2 bg-blue-100 text-blue-700 hover:bg-blue-100">
+                  <Badge className="ml-1 bg-blue-100 text-xs text-blue-700 hover:bg-blue-100 sm:ml-2">
                     {pagination.total}
                   </Badge>
                 )}
@@ -243,7 +243,7 @@ export default function HabilitacionesPage() {
             </TabsList>
 
             {/* Búsqueda Inteligente */}
-            <div className="w-full sm:w-auto sm:min-w-[400px]">
+            <div className="w-full sm:min-w-[300px] lg:min-w-[400px]">
               <SearchBar 
                 onSearch={handleSearch}
                 placeholder="🔍 Buscar por licencia, DNI, nombre, dominio, expediente..."

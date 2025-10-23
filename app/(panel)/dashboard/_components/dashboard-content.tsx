@@ -206,42 +206,42 @@ export function DashboardContent() {
   }
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-start justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Panel de Control</h1>
-          <p className="mt-2 text-gray-600">Información crítica y alertas del sistema</p>
+          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">Panel de Control</h1>
+          <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Información crítica y alertas del sistema</p>
         </div>
-        <Badge className="bg-blue-100 px-4 py-2 text-sm text-blue-700">
-          <Clock className="mr-2 inline h-4 w-4" />
+        <Badge className="w-fit bg-blue-100 px-3 py-1.5 text-xs text-blue-700 sm:px-4 sm:py-2 sm:text-sm">
+          <Clock className="mr-1.5 inline h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
           Actualizado ahora
         </Badge>
       </div>
 
       {/* ALERTAS CRÍTICAS - Primera sección */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {/* Alerta: Habilitaciones Vencidas */}
-        <Card className="relative overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 to-white">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-red-500/5"></div>
-          <div className="relative p-6">
-            <div className="mb-3 flex items-start justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-red-500">
-                <FileX className="h-6 w-6 text-white" />
+        <Card className="relative overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 to-white transition-shadow hover:shadow-lg">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-red-500/5 sm:h-32 sm:w-32"></div>
+          <div className="relative p-4 sm:p-6">
+            <div className="mb-2 flex items-start justify-between sm:mb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500 sm:h-12 sm:w-12 sm:rounded-xl">
+                <FileX className="h-5 w-5 text-white sm:h-6 sm:w-6" />
               </div>
               {totales.vencidas > 0 && (
                 <Badge className="animate-pulse bg-red-500 text-white">URGENTE</Badge>
               )}
             </div>
-            <h3 className="mb-1 text-sm font-medium text-gray-600">Habilitaciones Vencidas</h3>
-            <div className="flex items-baseline gap-2">
-              <p className="text-4xl font-bold text-red-600">{totales.vencidas}</p>
-              <span className="text-sm font-medium text-red-500">
+            <h3 className="mb-1 text-xs font-medium text-gray-600 sm:text-sm">Habilitaciones Vencidas</h3>
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <p className="text-3xl font-bold text-red-600 sm:text-4xl">{totales.vencidas}</p>
+              <span className="text-xs font-medium text-red-500 sm:text-sm">
                 {totales.vencidas > 0 ? 'Requieren acción' : 'Todo al día'}
               </span>
             </div>
-            <Link href="/habilitaciones" className="mt-4 block">
-              <Button size="sm" variant="destructive" className="w-full">
+            <Link href="/habilitaciones" className="mt-3 block sm:mt-4">
+              <Button size="sm" variant="destructive" className="w-full text-xs sm:text-sm">
                 Ver habilitaciones
               </Button>
             </Link>
@@ -249,22 +249,22 @@ export function DashboardContent() {
         </Card>
 
         {/* Alerta: Por Vencer (30 días) */}
-        <Card className="relative overflow-hidden border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-orange-500/5"></div>
-          <div className="relative p-6">
-            <div className="mb-3 flex items-start justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-orange-500">
-                <AlertTriangle className="h-6 w-6 text-white" />
+        <Card className="relative overflow-hidden border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white transition-shadow hover:shadow-lg">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-orange-500/5 sm:h-32 sm:w-32"></div>
+          <div className="relative p-4 sm:p-6">
+            <div className="mb-2 flex items-start justify-between sm:mb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-orange-500 sm:h-12 sm:w-12 sm:rounded-xl">
+                <AlertTriangle className="h-5 w-5 text-white sm:h-6 sm:w-6" />
               </div>
               {kpis.por_vencer > 0 && <Badge className="bg-orange-500 text-white">ATENCIÓN</Badge>}
             </div>
-            <h3 className="mb-1 text-sm font-medium text-gray-600">Por Vencer (30 días)</h3>
-            <div className="flex items-baseline gap-2">
-              <p className="text-4xl font-bold text-orange-600">{kpis.por_vencer}</p>
-              <span className="text-sm font-medium text-orange-500">Renovar pronto</span>
+            <h3 className="mb-1 text-xs font-medium text-gray-600 sm:text-sm">Por Vencer (30 días)</h3>
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <p className="text-3xl font-bold text-orange-600 sm:text-4xl">{kpis.por_vencer}</p>
+              <span className="text-xs font-medium text-orange-500 sm:text-sm">Renovar pronto</span>
             </div>
-            <Link href="/habilitaciones" className="mt-4 block">
-              <Button size="sm" className="w-full bg-orange-500 hover:bg-orange-600">
+            <Link href="/habilitaciones" className="mt-3 block sm:mt-4">
+              <Button size="sm" className="w-full bg-orange-500 text-xs hover:bg-orange-600 sm:text-sm">
                 Ver habilitaciones
               </Button>
             </Link>
@@ -272,21 +272,21 @@ export function DashboardContent() {
         </Card>
 
         {/* Inspecciones Confirmadas - Placeholder por ahora */}
-        <Card className="relative overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50 to-white">
-          <div className="absolute right-0 top-0 h-32 w-32 rounded-bl-full bg-green-500/5"></div>
-          <div className="relative p-6">
-            <div className="mb-3 flex items-start justify-between">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-green-500">
-                <CheckCircle2 className="h-6 w-6 text-white" />
+        <Card className="relative overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50 to-white transition-shadow hover:shadow-lg">
+          <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-green-500/5 sm:h-32 sm:w-32"></div>
+          <div className="relative p-4 sm:p-6">
+            <div className="mb-2 flex items-start justify-between sm:mb-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-500 sm:h-12 sm:w-12 sm:rounded-xl">
+                <CheckCircle2 className="h-5 w-5 text-white sm:h-6 sm:w-6" />
               </div>
               <Badge className="bg-green-500 text-white">HOY</Badge>
             </div>
-            <h3 className="mb-1 text-sm font-medium text-gray-600">Inspecciones Confirmadas</h3>
-            <div className="flex items-baseline gap-2">
-              <p className="text-4xl font-bold text-green-600">-</p>
-              <span className="text-sm font-medium text-green-500">Próximamente</span>
+            <h3 className="mb-1 text-xs font-medium text-gray-600 sm:text-sm">Inspecciones Confirmadas</h3>
+            <div className="flex items-baseline gap-1.5 sm:gap-2">
+              <p className="text-3xl font-bold text-green-600 sm:text-4xl">-</p>
+              <span className="text-xs font-medium text-green-500 sm:text-sm">Próximamente</span>
             </div>
-            <Button size="sm" className="w-full bg-green-500 hover:bg-green-600" disabled>
+            <Button size="sm" className="w-full bg-green-500 text-xs hover:bg-green-600 sm:text-sm" disabled>
               Próximamente
             </Button>
           </div>
@@ -294,69 +294,69 @@ export function DashboardContent() {
       </div>
 
       {/* RESUMEN RÁPIDO - Segunda fila */}
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
         {/* Obleas Pendientes */}
-        <Card className="cursor-pointer p-5 transition-shadow hover:shadow-lg">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100">
-              <Bell className="h-5 w-5 text-blue-600" />
+        <Card className="cursor-pointer p-3 transition-shadow hover:shadow-lg sm:p-4 lg:p-5">
+          <div className="mb-2 flex items-center justify-between sm:mb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 sm:h-10 sm:w-10">
+              <Bell className="h-4 w-4 text-blue-600 sm:h-5 sm:w-5" />
             </div>
-            <TrendingUp className="h-4 w-4 text-blue-500" />
+            <TrendingUp className="h-3 w-3 text-blue-500 sm:h-4 sm:w-4" />
           </div>
-          <p className="mb-1 text-sm text-gray-600">Obleas Pendientes</p>
-          <p className="text-3xl font-bold text-gray-900">{kpis.obleas_pendientes}</p>
-          <p className="mt-1 text-xs text-gray-500">Colocar en vehículos</p>
+          <p className="mb-0.5 text-xs text-gray-600 sm:mb-1 sm:text-sm">Obleas Pendientes</p>
+          <p className="text-2xl font-bold text-gray-900 sm:text-3xl">{kpis.obleas_pendientes}</p>
+          <p className="mt-0.5 text-[10px] text-gray-500 sm:mt-1 sm:text-xs">Colocar en vehículos</p>
         </Card>
 
         {/* En Trámite */}
-        <Card className="cursor-pointer p-5 transition-shadow hover:shadow-lg">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-amber-100">
-              <Clock className="h-5 w-5 text-amber-600" />
+        <Card className="cursor-pointer p-3 transition-shadow hover:shadow-lg sm:p-4 lg:p-5">
+          <div className="mb-2 flex items-center justify-between sm:mb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-amber-100 sm:h-10 sm:w-10">
+              <Clock className="h-4 w-4 text-amber-600 sm:h-5 sm:w-5" />
             </div>
-            <TrendingUp className="h-4 w-4 text-amber-500" />
+            <TrendingUp className="h-3 w-3 text-amber-500 sm:h-4 sm:w-4" />
           </div>
-          <p className="mb-1 text-sm text-gray-600">En Trámite</p>
-          <p className="text-3xl font-bold text-gray-900">{kpis.en_tramite}</p>
-          <p className="mt-1 text-xs text-gray-500">Esperando documentación</p>
+          <p className="mb-0.5 text-xs text-gray-600 sm:mb-1 sm:text-sm">En Trámite</p>
+          <p className="text-2xl font-bold text-gray-900 sm:text-3xl">{kpis.en_tramite}</p>
+          <p className="mt-0.5 text-[10px] text-gray-500 sm:mt-1 sm:text-xs">Esperando documentación</p>
         </Card>
 
         {/* Habilitadas */}
-        <Card className="cursor-pointer p-5 transition-shadow hover:shadow-lg">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-green-100">
-              <CheckCircle2 className="h-5 w-5 text-green-600" />
+        <Card className="cursor-pointer p-3 transition-shadow hover:shadow-lg sm:p-4 lg:p-5">
+          <div className="mb-2 flex items-center justify-between sm:mb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-green-100 sm:h-10 sm:w-10">
+              <CheckCircle2 className="h-4 w-4 text-green-600 sm:h-5 sm:w-5" />
             </div>
-            <TrendingUp className="h-4 w-4 text-green-500" />
+            <TrendingUp className="h-3 w-3 text-green-500 sm:h-4 sm:w-4" />
           </div>
-          <p className="mb-1 text-sm text-gray-600">Habilitadas</p>
-          <p className="text-3xl font-bold text-gray-900">{kpis.activas}</p>
-          <p className="mt-1 text-xs text-gray-500">Activas al día</p>
+          <p className="mb-0.5 text-xs text-gray-600 sm:mb-1 sm:text-sm">Habilitadas</p>
+          <p className="text-2xl font-bold text-gray-900 sm:text-3xl">{kpis.activas}</p>
+          <p className="mt-0.5 text-[10px] text-gray-500 sm:mt-1 sm:text-xs">Activas al día</p>
         </Card>
 
         {/* Próximos 7 días */}
-        <Card className="cursor-pointer p-5 transition-shadow hover:shadow-lg">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100">
-              <Calendar className="h-5 w-5 text-purple-600" />
+        <Card className="cursor-pointer p-3 transition-shadow hover:shadow-lg sm:p-4 lg:p-5">
+          <div className="mb-2 flex items-center justify-between sm:mb-3">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-purple-100 sm:h-10 sm:w-10">
+              <Calendar className="h-4 w-4 text-purple-600 sm:h-5 sm:w-5" />
             </div>
-            <TrendingUp className="h-4 w-4 text-purple-500" />
+            <TrendingUp className="h-3 w-3 text-purple-500 sm:h-4 sm:w-4" />
           </div>
-          <p className="mb-1 text-sm text-gray-600">Próximos 7 días</p>
-          <p className="text-3xl font-bold text-gray-900">{totales.proximos_7_dias}</p>
-          <p className="mt-1 text-xs text-gray-500">A vencer pronto</p>
+          <p className="mb-0.5 text-xs text-gray-600 sm:mb-1 sm:text-sm">Próximos 7 días</p>
+          <p className="text-2xl font-bold text-gray-900 sm:text-3xl">{totales.proximos_7_dias}</p>
+          <p className="mt-0.5 text-[10px] text-gray-500 sm:mt-1 sm:text-xs">A vencer pronto</p>
         </Card>
       </div>
 
       {/* PRÓXIMOS VENCIMIENTOS - Lista detallada */}
-      <Card className="p-6">
-        <div className="mb-6 flex items-center justify-between">
+      <Card className="p-4 sm:p-6">
+        <div className="mb-4 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Próximos Vencimientos</h2>
-            <p className="mt-1 text-sm text-gray-600">Habilitaciones que requieren renovación</p>
+            <h2 className="text-lg font-bold text-gray-900 sm:text-xl">Próximos Vencimientos</h2>
+            <p className="mt-0.5 text-xs text-gray-600 sm:mt-1 sm:text-sm">Habilitaciones que requieren renovación</p>
           </div>
-          <Badge className="bg-orange-100 text-orange-700">
-            <AlertCircle className="mr-1 inline h-4 w-4" />
+          <Badge className="w-fit bg-orange-100 text-xs text-orange-700 sm:text-sm">
+            <AlertCircle className="mr-1 inline h-3 w-3 sm:h-4 sm:w-4" />
             {vencimientos?.por_vencer.length || 0} próximos
           </Badge>
         </div>
@@ -371,25 +371,25 @@ export function DashboardContent() {
               return (
                 <div
                   key={venc.id}
-                  className={`flex items-center justify-between p-4 ${config.bg} border ${config.border} rounded-lg transition-shadow hover:shadow-md`}
+                  className={`flex flex-col gap-3 p-3 ${config.bg} border ${config.border} rounded-lg transition-shadow hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4`}
                 >
-                  <div className="flex flex-1 items-center gap-4">
+                  <div className="flex flex-1 items-center gap-3 sm:gap-4">
                     <div
-                      className={`h-12 w-12 ${config.iconBg} flex items-center justify-center rounded-xl`}
+                      className={`h-10 w-10 flex-shrink-0 ${config.iconBg} flex items-center justify-center rounded-lg sm:h-12 sm:w-12 sm:rounded-xl`}
                     >
-                      <Icon className="h-6 w-6 text-white" />
+                      <Icon className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-gray-900 sm:text-base">
                         Habilitación {venc.tipo_transporte} {venc.nro_licencia}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="truncate text-xs text-gray-600 sm:text-sm">
                         Titular: {venc.titular.nombre} • Vehículo: {venc.vehiculo.dominio}
                       </p>
                     </div>
                   </div>
-                  <div className="text-right">
-                    <Badge className={`${badgeInfo.bg} mb-2 text-white`}>{badgeInfo.text}</Badge>
+                  <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-end sm:justify-start">
+                    <Badge className={`${badgeInfo.bg} text-xs text-white sm:mb-2`}>{badgeInfo.text}</Badge>
                     <p className="text-xs text-gray-500">{formatFecha(venc.vigencia_fin)}</p>
                   </div>
                 </div>
@@ -415,14 +415,14 @@ export function DashboardContent() {
       </Card>
 
       {/* PRÓXIMOS TURNOS DE INSPECCIÓN */}
-      <Card className="p-6">
-        <div className="mb-6 flex items-center justify-between">
+      <Card className="p-4 sm:p-6">
+        <div className="mb-4 flex flex-col gap-2 sm:mb-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
-            <h2 className="text-xl font-bold text-gray-900">Próximos Turnos de Inspección</h2>
-            <p className="mt-1 text-sm text-gray-600">Turnos agendados para los próximos días</p>
+            <h2 className="text-lg font-bold text-gray-900 sm:text-xl">Próximos Turnos de Inspección</h2>
+            <p className="mt-0.5 text-xs text-gray-600 sm:mt-1 sm:text-sm">Turnos agendados para los próximos días</p>
           </div>
-          <Badge className="bg-blue-100 text-blue-700">
-            <Calendar className="mr-1 inline h-4 w-4" />
+          <Badge className="w-fit bg-blue-100 text-xs text-blue-700 sm:text-sm">
+            <Calendar className="mr-1 inline h-3 w-3 sm:h-4 sm:w-4" />
             {turnos.length} turnos
           </Badge>
         </div>
@@ -451,18 +451,18 @@ export function DashboardContent() {
               return (
                 <div
                   key={turno.id}
-                  className="flex items-center justify-between rounded-lg border border-blue-200 bg-blue-50 p-4 transition-shadow hover:shadow-md"
+                  className="flex flex-col gap-3 rounded-lg border border-blue-200 bg-blue-50 p-3 transition-shadow hover:shadow-md sm:flex-row sm:items-center sm:justify-between sm:p-4"
                 >
-                  <div className="flex flex-1 items-center gap-4">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-500">
-                      <Calendar className="h-6 w-6 text-white" />
+                  <div className="flex flex-1 items-center gap-3 sm:gap-4">
+                    <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg bg-blue-500 sm:h-12 sm:w-12 sm:rounded-xl">
+                      <Calendar className="h-5 w-5 text-white sm:h-6 sm:w-6" />
                     </div>
-                    <div className="flex-1">
-                      <p className="font-semibold text-gray-900">
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm font-semibold text-gray-900 sm:text-base">
                         {turno.habilitacion.tipo_transporte} - Lic.{' '}
                         {turno.habilitacion.nro_licencia}
                       </p>
-                      <p className="text-sm text-gray-600">
+                      <p className="truncate text-xs text-gray-600 sm:text-sm">
                         {turno.titular?.nombre || 'Sin titular'} •{' '}
                         {turno.vehiculo?.dominio || 'Sin dominio'}
                       </p>
@@ -483,25 +483,25 @@ export function DashboardContent() {
                       </div>
                     </div>
                   </div>
-                  <div className="flex flex-col items-end gap-2">
-                    <Badge className={`${badgeColor} px-3 py-1 text-white`}>{badgeFecha}</Badge>
-                    <div className="flex gap-2">
+                  <div className="flex items-center justify-between gap-2 sm:flex-col sm:items-end">
+                    <Badge className={`${badgeColor} px-2 py-0.5 text-xs text-white sm:px-3 sm:py-1`}>{badgeFecha}</Badge>
+                    <div className="flex gap-1.5 sm:gap-2">
                       <Link href={`/habilitaciones/${turno.habilitacion.id}`}>
-                        <Button size="sm" variant="outline" className="h-8">
-                          <Eye className="h-4 w-4" />
+                        <Button size="sm" variant="outline" className="h-7 px-2 sm:h-8 sm:px-3">
+                          <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         </Button>
                       </Link>
                       <Button
                         size="sm"
                         variant="outline"
-                        className="h-8"
+                        className="h-7 px-2 sm:h-8 sm:px-3"
                         onClick={() => handleReenviarNotificacion(turno.id)}
                         disabled={reenviando === turno.id}
                       >
                         {reenviando === turno.id ? (
-                          <RefreshCw className="h-4 w-4 animate-spin" />
+                          <RefreshCw className="h-3.5 w-3.5 animate-spin sm:h-4 sm:w-4" />
                         ) : (
-                          <Mail className="h-4 w-4" />
+                          <Mail className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                         )}
                       </Button>
                     </div>
@@ -529,9 +529,9 @@ export function DashboardContent() {
       </Card>
 
       {/* Acciones rápidas */}
-      <Card className="p-6">
-        <h2 className="mb-6 text-xl font-bold text-gray-900">Acciones Rápidas</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <Card className="p-4 sm:p-6">
+        <h2 className="mb-4 text-lg font-bold text-gray-900 sm:mb-6 sm:text-xl">Acciones Rápidas</h2>
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 sm:gap-4">
           <Link href="/habilitaciones">
             <button className="group flex w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-dashed border-blue-300 bg-blue-50 p-8 transition-all hover:border-blue-500 hover:bg-blue-100">
               <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-500 transition-transform group-hover:scale-110">
