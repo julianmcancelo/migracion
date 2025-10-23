@@ -179,13 +179,35 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   }
 
   const handleDescargarConstancia = async () => {
-    // TODO: Implementar descarga
-    console.log('Descargar constancia', hab.id)
+    try {
+      const response = await fetch(`/api/habilitaciones/${hab.id}/descargar-certificado`)
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Error al generar certificado')
+      }
+
+      // Obtener el blob y descargarlo
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `certificado-${hab.nro_licencia || hab.id}-${Date.now()}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+
+      alert('✅ Certificado descargado correctamente')
+    } catch (error) {
+      console.error('Error al descargar certificado:', error)
+      alert(`❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
   }
 
   const handleDescargarResolucion = async () => {
-    // TODO: Implementar descarga
-    console.log('Descargar resolución', hab.id)
+    // TODO: Implementar descarga de resolución
+    alert('⏳ Funcionalidad de resolución en desarrollo')
   }
 
   return (
@@ -208,6 +230,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 <Button 
                   variant="outline" 
                   size="lg"
+                  onClick={handleDescargarConstancia}
                   className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
                 >
                   <Download className="mr-2 h-5 w-5" />
@@ -216,6 +239,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 <Button 
                   variant="outline" 
                   size="lg"
+                  onClick={handleDescargarResolucion}
                   className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
                 >
                   <Download className="mr-2 h-5 w-5" />

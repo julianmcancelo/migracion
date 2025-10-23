@@ -6,11 +6,7 @@ export const dynamic = 'force-dynamic'
 
 /**
  * GET /api/establecimientos
- * Buscar establecimientos o remiserías
- * Query params:
- * - buscar: término de búsqueda (nombre)
- * - tipo: 'establecimiento' | 'remiseria' (opcional)
- * - limite: resultados máximos (default: 20)
+ * Obtiene TODOS los establecimientos y remiserías unificados
  */
 export async function GET(request: NextRequest) {
   try {
@@ -19,70 +15,129 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
-    const searchParams = request.nextUrl.searchParams
-    const buscar = searchParams.get('buscar') || ''
-    const tipo = searchParams.get('tipo') || null
-    const limite = parseInt(searchParams.get('limite') || '20')
+    // Obtener establecimientos educativos
+    const establecimientos = await prisma.establecimientos.findMany({
+      orderBy: { nombre: 'asc' },
+    })
 
-    if (buscar.length < 2) {
-      return NextResponse.json({
-        success: true,
-        data: [],
-        message: 'Ingrese al menos 2 caracteres para buscar',
-      })
-    }
+    // Obtener remiserías
+    const remiserias = await prisma.remiserias.findMany({
+      orderBy: { nombre: 'asc' },
+    })
 
-    let resultados: any[] = []
+    // Unificar formato
+    const establecimientosFormateados = establecimientos.map(e => ({
+      id: `E-${e.id}`,
+      id_real: e.id,
+      nombre: e.nombre || '',
+      tipo: 'ESCUELA' as const,
+      direccion: e.direccion || e.domicilio || '',
+      latitud: e.latitud ? parseFloat(e.latitud.toString()) : null,
+      longitud: e.longitud ? parseFloat(e.longitud.toString()) : null,
+      telefono: null,
+      email: null,
+      responsable: null,
+      activo: true,
+    }))
 
-    // Si es remiseria o no se especifica tipo, buscar en remiserias
-    if (!tipo || tipo === 'remiseria') {
-      const remiserias = await prisma.remiserias.findMany({
-        where: {
-          nombre: { contains: buscar },
-        },
-        take: limite,
-        orderBy: { nombre: 'asc' },
-      })
+    const remiseriasFormateadas = remiserias.map(r => ({
+      id: `R-${r.id}`,
+      id_real: r.id,
+      nombre: r.nombre,
+      tipo: 'REMISERIA' as const,
+      direccion: r.direccion || '',
+      latitud: r.latitud ? parseFloat(r.latitud.toString()) : null,
+      longitud: r.longitud ? parseFloat(r.longitud.toString()) : null,
+      telefono: null,
+      email: null,
+      responsable: null,
+      activo: true,
+    }))
 
-      resultados = [
-        ...resultados,
-        ...remiserias.map(r => ({
-          ...r,
-          tipo_entidad: 'remiseria' as const,
-        })),
-      ]
-    }
-
-    // Si es establecimiento o no se especifica tipo, buscar en establecimientos
-    if (!tipo || tipo === 'establecimiento') {
-      const establecimientos = await prisma.establecimientos.findMany({
-        where: {
-          nombre: { contains: buscar },
-        },
-        take: limite,
-        orderBy: { nombre: 'asc' },
-      })
-
-      resultados = [
-        ...resultados,
-        ...establecimientos.map(e => ({
-          ...e,
-          tipo_entidad: 'establecimiento' as const,
-        })),
-      ]
-    }
-
-    // Limitar resultados totales
-    resultados = resultados.slice(0, limite)
+    const todos = [...establecimientosFormateados, ...remiseriasFormateadas]
 
     return NextResponse.json({
       success: true,
-      data: resultados,
+      data: todos,
     })
   } catch (error: any) {
-    console.error('Error al buscar establecimientos:', error)
+    console.error('Error al obtener establecimientos:', error)
     return NextResponse.json(
-      { error: 'Error al buscar establecimientos', details: error.message },
+      { error: 'Error al obtener establecimientos', details: error.message },
+      { status: 500 }
+    )
+  }
+}
+
+/**
+ * POST /api/establecimientos
+ * Crea un nuevo establecimiento o remisería
+ */
+export async function POST(request: NextRequest) {
+  try {
+    const session = await getSession()
+    if (!session) {
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
+
+    const body = await request.json()
+    const { nombre, tipo, direccion, latitud, longitud, telefono, email, responsable, observaciones, activo } = body
+
+    if (!nombre || !tipo || !direccion) {
+      return NextResponse.json(
+        { error: 'Nombre, tipo y dirección son obligatorios' },
+        { status: 400 }
+      )
+    }
+
+    if (tipo === 'ESCUELA') {
+      // Crear en tabla establecimientos
+      const nuevo = await prisma.establecimientos.create({
+        data: {
+          habilitacion_id: 0, // Temporal
+          nombre,
+          domicilio: direccion,
+          localidad: 'Lanús',
+          latitud: latitud || null,
+          longitud: longitud || null,
+          direccion,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Establecimiento creado exitosamente',
+        data: nuevo,
+      }, { status: 201 })
+    } else if (tipo === 'REMISERIA') {
+      // Crear en tabla remiserias
+      const nuevo = await prisma.remiserias.create({
+        data: {
+          nombre,
+          direccion,
+          latitud: latitud || null,
+          longitud: longitud || null,
+          localidad: 'Lanús',
+          nro_habilitacion: `REM-${Date.now()}`,
+          nro_expediente: `EXP-${Date.now()}`,
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: 'Remisería creada exitosamente',
+        data: nuevo,
+      }, { status: 201 })
+    } else {
+      return NextResponse.json(
+        { error: 'Tipo inválido' },
+        { status: 400 }
+      )
+    }
+  } catch (error: any) {
+    console.error('Error al crear establecimiento:', error)
+    return NextResponse.json(
+      { error: 'Error al crear establecimiento', details: error.message },
       { status: 500 }
     )
   }

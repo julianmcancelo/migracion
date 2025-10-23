@@ -14,6 +14,7 @@ import {
   Shield,
   Car,
   Users,
+  MapPin,
 } from 'lucide-react'
 
 interface NavItem {
@@ -59,6 +60,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       name: 'Personas',
       href: '/personas',
       icon: Users,
+    },
+    {
+      name: 'Establecimientos',
+      href: '/establecimientos',
+      icon: MapPin,
     },
     {
       name: 'Obleas',
