@@ -249,13 +249,13 @@ export default function InspeccionesPage() {
                     <td className="whitespace-nowrap px-3 py-2 text-xs text-gray-900 sm:px-4 sm:py-3 sm:text-sm">
                       {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
                     </td>
-                    <td className="whitespace-nowrap px-4 py-3 text-sm">
+                    <td className="whitespace-nowrap px-3 py-2 text-xs sm:px-4 sm:py-3 sm:text-sm">
                       <span className="font-mono text-sm font-bold text-blue-600 sm:text-base">
                         {inspeccion.nro_licencia}
                       </span>
                     </td>
                     <td className="px-3 py-2 text-xs text-gray-900 sm:px-4 sm:py-3 sm:text-sm">
-                      <div className="max-w-[100px] truncate sm:max-w-[150px]" title={inspeccion.titular || '-'}
+                      <div className="max-w-[100px] truncate sm:max-w-[150px]" title={inspeccion.titular || '-'}>
                         {inspeccion.titular || '-'}
                       </div>
                     </td>

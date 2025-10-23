@@ -88,160 +88,167 @@ export default function PersonasPage() {
   const personasFiltradas = personas
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-2">
-            <User className="h-8 w-8 text-blue-600" />
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900 sm:text-3xl lg:text-4xl">
+            <User className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
             Personas
           </h1>
-          <p className="text-gray-600 mt-1">
+          <p className="mt-1 text-sm text-gray-600 sm:text-base">
             Gestión de personas del sistema (titulares, conductores, celadores)
           </p>
         </div>
-        <Button onClick={() => setModalRegistroOpen(true)}>
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={() => setModalRegistroOpen(true)} className="w-full sm:w-auto">
+          <Plus className="mr-2 h-4 w-4" />
           Nueva Persona
         </Button>
       </div>
 
       {/* Búsqueda */}
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 sm:flex-row">
         <Input
-          placeholder="Buscar por DNI, nombre, CUIT..."
+          placeholder="Buscar por DNI, nombre..."
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && buscarPersonas()}
-          className="max-w-md"
+          className="w-full sm:max-w-md"
         />
-        <Button onClick={buscarPersonas} disabled={loading}>
-          <Search className="h-4 w-4 mr-2" />
-          Buscar
-        </Button>
-        {busqueda && (
-          <Button
-            variant="outline"
-            onClick={() => {
-              setBusqueda('')
-              cargarPersonas()
-            }}
-          >
-            Limpiar
+        <div className="flex gap-2">
+          <Button onClick={buscarPersonas} disabled={loading} className="flex-1 sm:flex-none">
+            <Search className="mr-2 h-4 w-4" />
+            Buscar
           </Button>
-        )}
+          {busqueda && (
+            <Button
+              variant="outline"
+              onClick={() => {
+                setBusqueda('')
+                cargarPersonas()
+              }}
+              className="flex-1 sm:flex-none"
+            >
+              Limpiar
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Error */}
       {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-800">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-800 sm:p-4 sm:text-base">
           {error}
         </div>
       )}
 
       {/* Tabla */}
-      <div className="bg-white rounded-lg shadow border">
+      <div className="overflow-hidden rounded-lg border bg-white shadow">
         {loading ? (
-          <div className="text-center py-12">
-            <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4" />
-            <p className="text-gray-600">Cargando personas...</p>
+          <div className="py-8 text-center sm:py-12">
+            <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent" />
+            <p className="text-sm text-gray-600 sm:text-base">Cargando personas...</p>
           </div>
         ) : personasFiltradas.length === 0 ? (
-          <div className="text-center py-12">
-            <User className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600">No se encontraron personas</p>
+          <div className="py-8 text-center sm:py-12">
+            <User className="mx-auto mb-4 h-12 w-12 text-gray-300 sm:h-16 sm:w-16" />
+            <p className="text-sm text-gray-600 sm:text-base">No se encontraron personas</p>
           </div>
         ) : (
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>DNI</TableHead>
-                <TableHead>Nombre</TableHead>
-                <TableHead>CUIT</TableHead>
-                <TableHead>Contacto</TableHead>
-                <TableHead>Domicilio</TableHead>
-                <TableHead className="text-right">Acciones</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {personasFiltradas.map((persona) => (
-                <TableRow key={persona.id}>
-                  <TableCell className="font-medium">
-                    <Badge variant="outline" className="font-mono">
-                      {persona.dni}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="font-semibold text-gray-900">
-                      {persona.nombre || '-'}
-                    </div>
-                    {persona.genero && (
-                      <div className="text-xs text-gray-500">
-                        {persona.genero}
-                      </div>
-                    )}
-                  </TableCell>
-                  <TableCell className="font-mono text-xs">
-                    {persona.cuit || '-'}
-                  </TableCell>
-                  <TableCell>
-                    <div className="space-y-1 text-sm">
-                      {persona.telefono && (
-                        <div className="flex items-center gap-1 text-gray-600">
-                          <Phone className="h-3 w-3" />
-                          {persona.telefono}
-                        </div>
-                      )}
-                      {persona.email && (
-                        <div className="flex items-center gap-1 text-gray-600">
-                          <Mail className="h-3 w-3" />
-                          {persona.email}
-                        </div>
-                      )}
-                      {!persona.telefono && !persona.email && '-'}
-                    </div>
-                  </TableCell>
-                  <TableCell className="text-sm">
-                    {persona.domicilio_calle && persona.domicilio_nro ? (
-                      <div>
-                        <div>{persona.domicilio_calle} {persona.domicilio_nro}</div>
-                        {persona.domicilio_localidad && (
-                          <div className="text-xs text-gray-500">{persona.domicilio_localidad}</div>
-                        )}
-                      </div>
-                    ) : '-'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex gap-2 justify-end">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => {
-                          setPersonaSeleccionada(persona)
-                          setModalEdicionOpen(true)
-                        }}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => alert('Eliminar persona próximamente')}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-600" />
-                      </Button>
-                    </div>
-                  </TableCell>
+          <div className="overflow-x-auto">
+            <Table className="min-w-[800px]">
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="text-[10px] sm:text-xs">DNI</TableHead>
+                  <TableHead className="text-[10px] sm:text-xs">Nombre</TableHead>
+                  <TableHead className="text-[10px] sm:text-xs">CUIT</TableHead>
+                  <TableHead className="text-[10px] sm:text-xs">Contacto</TableHead>
+                  <TableHead className="text-[10px] sm:text-xs">Domicilio</TableHead>
+                  <TableHead className="text-right text-[10px] sm:text-xs">Acciones</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {personasFiltradas.map((persona) => (
+                  <TableRow key={persona.id}>
+                    <TableCell className="font-medium">
+                      <Badge variant="outline" className="font-mono text-[10px] sm:text-xs">
+                        {persona.dni}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="text-xs font-semibold text-gray-900 sm:text-sm">
+                        {persona.nombre || '-'}
+                      </div>
+                      {persona.genero && (
+                        <div className="text-[10px] text-gray-500 sm:text-xs">
+                          {persona.genero}
+                        </div>
+                      )}
+                    </TableCell>
+                    <TableCell className="font-mono text-[10px] sm:text-xs">
+                      {persona.cuit || '-'}
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-0.5 text-xs sm:space-y-1 sm:text-sm">
+                        {persona.telefono && (
+                          <div className="flex items-center gap-0.5 text-gray-600 sm:gap-1">
+                            <Phone className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <span className="truncate">{persona.telefono}</span>
+                          </div>
+                        )}
+                        {persona.email && (
+                          <div className="flex items-center gap-0.5 text-gray-600 sm:gap-1">
+                            <Mail className="h-2.5 w-2.5 sm:h-3 sm:w-3" />
+                            <span className="max-w-[120px] truncate sm:max-w-none">{persona.email}</span>
+                          </div>
+                        )}
+                        {!persona.telefono && !persona.email && '-'}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-xs sm:text-sm">
+                      {persona.domicilio_calle && persona.domicilio_nro ? (
+                        <div>
+                          <div className="truncate">{persona.domicilio_calle} {persona.domicilio_nro}</div>
+                          {persona.domicilio_localidad && (
+                            <div className="truncate text-[10px] text-gray-500 sm:text-xs">{persona.domicilio_localidad}</div>
+                          )}
+                        </div>
+                      ) : '-'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex justify-end gap-1 sm:gap-2">
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => {
+                            setPersonaSeleccionada(persona)
+                            setModalEdicionOpen(true)
+                          }}
+                          className="h-7 px-2 sm:h-8 sm:px-3"
+                        >
+                          <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={() => alert('Eliminar persona próximamente')}
+                          className="h-7 px-2 sm:h-8 sm:px-3"
+                        >
+                          <Trash2 className="h-3 w-3 text-red-600 sm:h-4 sm:w-4" />
+                        </Button>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
         )}
       </div>
 
       {/* Stats */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-        <p className="text-sm text-gray-700">
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4">
+        <p className="text-xs text-gray-700 sm:text-sm">
           📊 Total de personas: <strong>{personasFiltradas.length}</strong>
         </p>
       </div>
