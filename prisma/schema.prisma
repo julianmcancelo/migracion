@@ -118,16 +118,23 @@ model habilitaciones_personas {
 }
 
 model habilitaciones_vehiculos {
-  id              Int  @id @default(autoincrement())
-  habilitacion_id Int?
-  vehiculo_id     Int?
+  id                   Int       @id @default(autoincrement())
+  habilitacion_id      Int?
+  vehiculo_id          Int?
+  
+  // Control de historial y cambios de vehículo
+  fecha_alta           DateTime  @default(now())
+  fecha_baja           DateTime?
+  activo               Boolean   @default(true)
+  observaciones_cambio String?   @db.Text
   
   // Relaciones
-  habilitacion    habilitaciones_generales? @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
-  vehiculo        vehiculos?                @relation(fields: [vehiculo_id], references: [id])
+  habilitacion         habilitaciones_generales? @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  vehiculo             vehiculos?                @relation(fields: [vehiculo_id], references: [id])
 
   @@index([habilitacion_id], map: "habilitacion_id")
   @@index([vehiculo_id], map: "vehiculo_id")
+  @@index([activo], map: "activo")
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
