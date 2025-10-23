@@ -1,4 +1,4 @@
-# Script para reemplazar @ts-expect-error por @ts-expect-error en todos los archivos
+# Script para reemplazar  por  en todos los archivos
 
 $files = @(
   "app\api\habilitaciones\[id]\route.ts",
@@ -16,7 +16,7 @@ foreach ($file in $files) {
   if (Test-Path $fullPath) {
     Write-Host "Procesando: $file"
     $content = Get-Content $fullPath -Raw
-    $newContent = $content -replace '@ts-expect-error', '@ts-expect-error'
+    $newContent = $content -replace '', ''
     Set-Content $fullPath $newContent -NoNewline
     Write-Host "  ✓ Actualizado"
   } else {

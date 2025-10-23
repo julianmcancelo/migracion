@@ -87,13 +87,13 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
     })
 
     // Obtener email del titular para enviar confirmación
-    // @ts-expect-error
+    // 
     const habPersona: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: turno.habilitacion_id,
         rol: 'TITULAR',
       },
-      // @ts-expect-error
+      // 
       include: {
         persona: true,
       },

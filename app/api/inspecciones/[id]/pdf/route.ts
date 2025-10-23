@@ -94,38 +94,38 @@ export async function GET(request: Request, { params }: { params: { id: string }
     })
 
     // Obtener datos del titular
-    // @ts-expect-error - Relaciones de Prisma
+    //  - Relaciones de Prisma
     const habPersona: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
         rol: 'TITULAR',
       },
-      // @ts-expect-error
+      // 
       include: {
         persona: true,
       },
     })
 
     // Obtener primer conductor
-    // @ts-expect-error - Relaciones de Prisma
+    //  - Relaciones de Prisma
     const habConductor: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
         rol: 'CONDUCTOR',
       },
-      // @ts-expect-error
+      // 
       include: {
         persona: true,
       },
     })
 
     // Obtener datos del vehículo
-    // @ts-expect-error - Relaciones de Prisma
+    //  - Relaciones de Prisma
     const habVehiculo: any = await prisma.habilitaciones_vehiculos.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
       },
-      // @ts-expect-error
+      // 
       include: {
         vehiculo: true,
       },

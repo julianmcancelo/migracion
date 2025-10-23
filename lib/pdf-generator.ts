@@ -321,7 +321,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       margin: { left: 15, right: 15 },
     })
 
-    // @ts-expect-error - autoTable modifica la instancia
+    //  - autoTable modifica la instancia
     yPos = doc.lastAutoTable.finalY + 12
 
     // ==================== FIRMAS ====================

@@ -33,13 +33,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     })
 
     // Obtener titular
-    // @ts-expect-error
+    // 
     const habPersona = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
         rol: 'TITULAR',
       },
-      // @ts-expect-error
+      // 
       include: {
         persona: {
           select: {
@@ -52,12 +52,12 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
     })
 
     // Obtener vehículo
-    // @ts-expect-error
+    // 
     const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
       },
-      // @ts-expect-error
+      // 
       include: {
         vehiculo: {
           select: {
