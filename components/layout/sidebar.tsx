@@ -13,6 +13,7 @@ import {
   FileCheck,
   Shield,
   Car,
+  Users,
 } from 'lucide-react'
 
 interface NavItem {
@@ -53,6 +54,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       name: 'Vehículos',
       href: '/vehiculos',
       icon: Car,
+    },
+    {
+      name: 'Personas',
+      href: '/personas',
+      icon: Users,
     },
     {
       name: 'Obleas',

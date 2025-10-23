@@ -21,21 +21,17 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams
     const buscar = searchParams.get('buscar') || ''
-    const limite = parseInt(searchParams.get('limite') || '20')
+    const limite = parseInt(searchParams.get('limite') || '100')
 
-    if (buscar.length < 2) {
-      return NextResponse.json({
-        success: true,
-        data: [],
-        message: 'Ingrese al menos 2 caracteres para buscar',
-      })
-    }
-
-    // Buscar personas por nombre o DNI
+    // Buscar personas por nombre, DNI o CUIT
     const personas = await prisma.personas.findMany({
-      where: {
-        OR: [{ nombre: { contains: buscar } }, { dni: { contains: buscar } }],
-      },
+      where: buscar.length >= 2 ? {
+        OR: [
+          { nombre: { contains: buscar } },
+          { dni: { contains: buscar } },
+          { cuit: { contains: buscar } },
+        ],
+      } : undefined,
       take: limite,
       orderBy: { nombre: 'asc' },
     })
