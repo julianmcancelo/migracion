@@ -69,7 +69,8 @@ export async function generarResolucion(
     })
     
     // Asignar valores a los placeholders
-    doc.render(datos)
+    doc.setData(datos)
+    doc.render()
     
     // Generar el documento
     const buffer = doc.getZip().generate({
