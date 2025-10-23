@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect, Suspense } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
-import { Camera, CheckCircle, XCircle, AlertCircle, Save } from 'lucide-react'
+import { Camera, CheckCircle, XCircle, AlertCircle, Save, Car } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 // Items de checklist para inspección
@@ -49,6 +49,11 @@ function NuevaInspeccionContent() {
   const [habilitacionId] = useState(searchParams.get('habilitacion_id'))
   const [turnoId] = useState(searchParams.get('turno_id'))
 
+  // Estados de habilitación y vehículo
+  const [habilitacion, setHabilitacion] = useState<any>(null)
+  const [vehiculo, setVehiculo] = useState<any>(null)
+  const [loadingHabilitacion, setLoadingHabilitacion] = useState(false)
+
   // Estados del formulario
   const [nroLicencia, setNroLicencia] = useState('')
   const [nombreInspector, setNombreInspector] = useState('')
@@ -77,6 +82,40 @@ function NuevaInspeccionContent() {
   const [coordenadas, setCoordenadas] = useState<{ lat: number; lng: number } | null>(null)
 
   const [guardando, setGuardando] = useState(false)
+
+  // Cargar datos de la habilitación y vehículo
+  useEffect(() => {
+    if (habilitacionId) {
+      cargarHabilitacion()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [habilitacionId])
+
+  const cargarHabilitacion = async () => {
+    if (!habilitacionId) return
+    
+    setLoadingHabilitacion(true)
+    try {
+      const response = await fetch(`/api/habilitaciones/${habilitacionId}`)
+      const data = await response.json()
+      
+      if (data.success) {
+        setHabilitacion(data.data)
+        setNroLicencia(data.data.nro_licencia || '')
+        setTipoTransporte(data.data.tipo_transporte === 'Remis' ? 'REMIS' : 'ESCOLAR')
+        
+        // Extraer vehículo actual
+        const vehiculoActual = data.data.habilitaciones_vehiculos?.[0]
+        if (vehiculoActual) {
+          setVehiculo(vehiculoActual.vehiculo || vehiculoActual)
+        }
+      }
+    } catch (error) {
+      console.error('Error cargando habilitación:', error)
+    } finally {
+      setLoadingHabilitacion(false)
+    }
+  }
 
   useEffect(() => {
     // Obtener geolocalización
@@ -275,6 +314,71 @@ function NuevaInspeccionContent() {
           Complete todos los campos y evalúe cada ítem del vehículo
         </p>
       </div>
+
+      {/* Datos del Vehículo a Inspeccionar */}
+      {loadingHabilitacion ? (
+        <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+          <div className="flex items-center justify-center py-4">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-blue-600 border-t-transparent"></div>
+            <span className="ml-3 text-gray-600">Cargando datos del vehículo...</span>
+          </div>
+        </div>
+      ) : vehiculo ? (
+        <div className="mb-6 rounded-xl border-2 border-blue-500 bg-gradient-to-r from-blue-50 to-purple-50 p-6 shadow-lg">
+          <h2 className="mb-4 flex items-center gap-2 text-xl font-bold text-gray-900">
+            <Car className="h-6 w-6 text-blue-600" />
+            Vehículo a Inspeccionar
+          </h2>
+          
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">DOMINIO</p>
+              <p className="text-2xl font-bold text-gray-900">{vehiculo.dominio || '-'}</p>
+            </div>
+            
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">MARCA</p>
+              <p className="text-lg font-semibold text-gray-900">{vehiculo.marca || '-'}</p>
+            </div>
+            
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">MODELO</p>
+              <p className="text-lg font-semibold text-gray-900">{vehiculo.modelo || '-'}</p>
+            </div>
+            
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">AÑO</p>
+              <p className="text-lg font-semibold text-gray-900">{vehiculo.anio || vehiculo.ano || '-'}</p>
+            </div>
+            
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">ASIENTOS</p>
+              <p className="text-lg font-semibold text-gray-900">{vehiculo.cantidad_asientos || vehiculo.asientos || '-'}</p>
+            </div>
+            
+            <div className="rounded-lg bg-white p-4 shadow">
+              <p className="mb-1 text-xs font-medium text-gray-500">TIPO</p>
+              <p className="text-lg font-semibold text-gray-900">{vehiculo.tipo || '-'}</p>
+            </div>
+          </div>
+
+          {habilitacion && (
+            <div className="mt-4 rounded-lg bg-white p-4 shadow">
+              <p className="text-sm text-gray-600">
+                <span className="font-medium">Habilitación:</span> {habilitacion.nro_licencia || '-'}
+                {' | '}
+                <span className="font-medium">Titular:</span> {habilitacion.titular_principal || '-'}
+              </p>
+            </div>
+          )}
+        </div>
+      ) : habilitacionId && (
+        <div className="mb-6 rounded-xl border border-yellow-300 bg-yellow-50 p-6 shadow-lg">
+          <p className="text-sm text-yellow-800">
+            ⚠️ No se encontró vehículo asociado a esta habilitación
+          </p>
+        </div>
+      )}
 
       {/* Datos Generales */}
       <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
