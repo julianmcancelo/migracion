@@ -91,9 +91,9 @@ export async function POST(
     // Preparar contexto estructurado para la IA
     const contexto = prepararContextoHabilitacion(habilitacion, inspecciones)
 
-    // Consultar a Gemini
+    // Consultar a Gemini (usando modelo más económico)
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-pro' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 
     const prompt = `
 Eres un asistente experto en habilitaciones de transporte del Municipio de Lanús.

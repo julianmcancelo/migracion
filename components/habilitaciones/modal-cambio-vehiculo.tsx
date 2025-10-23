@@ -300,6 +300,25 @@ export default function ModalCambioVehiculo({
                 </Table>
               </div>
             )}
+
+            {/* No hay resultados */}
+            {!loading && busqueda.trim().length >= 2 && vehiculosBuscados.length === 0 && !error && (
+              <div className="text-center py-6 border border-dashed rounded-lg bg-gray-50">
+                <p className="text-sm text-gray-600 mb-3">
+                  No se encontró el vehículo <strong>{busqueda}</strong>
+                </p>
+                <p className="text-xs text-gray-500 mb-3">
+                  El vehículo debe estar registrado previamente en el sistema
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => window.open('/vehiculos', '_blank')}
+                >
+                  📋 Ir a Registrar Vehículo
+                </Button>
+              </div>
+            )}
           </div>
         )}
 
