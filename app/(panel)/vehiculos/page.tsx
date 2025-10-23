@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Car, Plus, Search, Edit, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import ModalRegistrarVehiculo from './_components/modal-registrar-vehiculo'
 import {
   Table,
   TableBody,
@@ -34,6 +35,7 @@ export default function VehiculosPage() {
   const [loading, setLoading] = useState(true)
   const [busqueda, setBusqueda] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [modalRegistroOpen, setModalRegistroOpen] = useState(false)
 
   useEffect(() => {
     cargarVehiculos()
@@ -95,7 +97,7 @@ export default function VehiculosPage() {
             Gestión de vehículos del sistema
           </p>
         </div>
-        <Button onClick={() => alert('Funcionalidad de crear vehículo próximamente')}>
+        <Button onClick={() => setModalRegistroOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Nuevo Vehículo
         </Button>
@@ -209,6 +211,15 @@ export default function VehiculosPage() {
           📊 Total de vehículos: <strong>{vehiculosFiltrados.length}</strong>
         </p>
       </div>
+
+      {/* Modal de Registro */}
+      <ModalRegistrarVehiculo
+        open={modalRegistroOpen}
+        onOpenChange={setModalRegistroOpen}
+        onRegistroExitoso={() => {
+          cargarVehiculos()
+        }}
+      />
     </div>
   )
 }

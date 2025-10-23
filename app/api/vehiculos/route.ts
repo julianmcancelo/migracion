@@ -20,25 +20,17 @@ export async function GET(request: NextRequest) {
 
     const searchParams = request.nextUrl.searchParams
     const buscar = searchParams.get('buscar') || searchParams.get('q') || ''
-    const limite = parseInt(searchParams.get('limite') || '20')
-
-    if (buscar.length < 2) {
-      return NextResponse.json({
-        success: true,
-        data: [],
-        message: 'Ingrese al menos 2 caracteres para buscar',
-      })
-    }
+    const limite = parseInt(searchParams.get('limite') || '100')
 
     // Buscar vehículos por dominio, marca o modelo
     const vehiculos = await prisma.vehiculos.findMany({
-      where: {
+      where: buscar.length >= 2 ? {
         OR: [
           { dominio: { contains: buscar } },
           { marca: { contains: buscar } },
           { modelo: { contains: buscar } },
         ],
-      },
+      } : undefined,
       take: limite,
       orderBy: { dominio: 'asc' },
     })

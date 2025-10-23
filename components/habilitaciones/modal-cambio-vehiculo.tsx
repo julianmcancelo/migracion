@@ -313,7 +313,7 @@ export default function ModalCambioVehiculo({
                 <Button
                   variant="outline"
                   size="sm"
-                  onClick={() => window.open('/vehiculos', '_blank')}
+                  onClick={() => window.location.href = '/vehiculos'}
                 >
                   📋 Ir a Registrar Vehículo
                 </Button>
