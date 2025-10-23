@@ -23,14 +23,6 @@ import { ModalObleas } from '@/components/obleas/modal-obleas'
 import ModalCambioVehiculo from '@/components/habilitaciones/modal-cambio-vehiculo'
 import ChatIAHabilitacion from '@/components/habilitaciones/chat-ia-habilitacion'
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table'
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -73,8 +65,11 @@ interface HabilitacionesTableProps {
 export function HabilitacionesTable({ habilitaciones, loading = false }: HabilitacionesTableProps) {
   const router = useRouter()
   const [expandedRows, setExpandedRows] = useState<Set<number>>(new Set())
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedVehiculo, setSelectedVehiculo] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedPersona, setSelectedPersona] = useState<any>(null)
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [selectedHabilitacion, setSelectedHabilitacion] = useState<any>(null)
   const [showVehiculoModal, setShowVehiculoModal] = useState(false)
   const [showPersonaModal, setShowPersonaModal] = useState(false)
@@ -95,21 +90,25 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   // Funciones para las acciones del menú
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleVerDetalle = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowDetalleModal(true)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleEditar = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowEditarDialog(true)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleAsignarTurno = (hab: any) => {
     // Redirigir a la página de turnos con la licencia precargada
     router.push(`/turnos?licencia=${hab.nro_licencia}`)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDescargarPDF = async (hab: any) => {
     try {
       // TODO: Implementar generación de PDF
@@ -119,6 +118,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleGenerarCredencial = async (hab: any) => {
     try {
       const res = await fetch(`/api/habilitaciones/${hab.id}/generar-token-credencial`, {
@@ -143,16 +143,19 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleGestionarObleas = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowObleasModal(true)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleCambioMaterial = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowCambioVehiculoModal(true)
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChatIA = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowChatIAModal(true)

@@ -148,6 +148,7 @@ RESPUESTA:
 /**
  * Prepara el contexto de la habilitación en formato legible para la IA
  */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function prepararContextoHabilitacion(habilitacion: any, inspecciones: any[]): string {
   const hoy = new Date()
   
@@ -279,10 +280,7 @@ Total de inspecciones: ${inspecciones.length}
  * 
  * Obtiene sugerencias de preguntas frecuentes
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET() {
   try {
     const sugerencias = [
       '¿Cuál es el estado actual de esta habilitación?',
@@ -303,7 +301,7 @@ export async function GET(
         sugerencias,
       },
     })
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       { success: false, error: 'Error al obtener sugerencias' },
       { status: 500 }

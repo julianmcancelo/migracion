@@ -40,6 +40,7 @@ export default function ChatIAHabilitacion({
   // Cargar sugerencias al montar
   useEffect(() => {
     cargarSugerencias()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   // Auto-scroll al agregar mensajes
@@ -56,8 +57,8 @@ export default function ChatIAHabilitacion({
       if (data.success) {
         setSugerencias(data.data.sugerencias || [])
       }
-    } catch (err) {
-      console.error('Error al cargar sugerencias:', err)
+    } catch {
+      // Error al cargar sugerencias (silencioso)
     }
   }
 

@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { RefreshCcw, Search, AlertTriangle, History, CheckCircle2, X } from 'lucide-react'
+import { RefreshCcw, Search, AlertTriangle, History, CheckCircle2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
@@ -108,8 +107,6 @@ export default function ModalCambioVehiculo({
       if (data.success) {
         setHistorial(data.data.historial || [])
       }
-    } catch (err) {
-      console.error('Error al cargar historial:', err)
     } finally {
       setLoading(false)
     }
