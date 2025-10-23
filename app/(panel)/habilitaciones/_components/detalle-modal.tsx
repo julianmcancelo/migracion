@@ -206,8 +206,37 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   }
 
   const handleDescargarResolucion = async () => {
-    // TODO: Implementar descarga de resolución
-    alert('⏳ Funcionalidad de resolución en desarrollo')
+    try {
+      const response = await fetch(`/api/habilitaciones/${hab.id}/generar-resolucion`)
+      
+      if (!response.ok) {
+        const error = await response.json()
+        
+        // Si faltan campos, mostrar mensaje detallado
+        if (error.camposFaltantes) {
+          alert(`❌ Faltan datos requeridos:\n\n${error.camposFaltantes.join('\n')}\n\nPor favor, completa estos datos en la sección de edición.`)
+          return
+        }
+        
+        throw new Error(error.error || 'Error al generar resolución')
+      }
+
+      // Obtener el blob y descargarlo
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `resolucion-${hab.nro_licencia || hab.id}-${Date.now()}.docx`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+
+      alert('✅ Resolución descargada correctamente')
+    } catch (error) {
+      console.error('Error al descargar resolución:', error)
+      alert(`❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
   }
 
   return (

@@ -91,7 +91,7 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
         ? 'resolucion_escolar_template.docx'
         : 'resolucion_remis_template.docx'
 
-    const templatePath = path.join(process.cwd(), 'public', 'plantillas', templateFileName)
+    const templatePath = path.join(process.cwd(), 'plantillas', templateFileName)
 
     if (!fs.existsSync(templatePath)) {
       return NextResponse.json(

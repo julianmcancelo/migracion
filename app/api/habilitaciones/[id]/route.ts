@@ -26,9 +26,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           },
         },
         habilitaciones_vehiculos: {
-          where: {
-            activo: true, // Solo vehículos activos
-          },
           include: {
             vehiculo: true,
           },
