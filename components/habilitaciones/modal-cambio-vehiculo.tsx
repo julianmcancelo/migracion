@@ -73,10 +73,15 @@ export default function ModalCambioVehiculo({
 
   // Buscar vehículos
   const buscarVehiculos = async () => {
-    if (busqueda.length < 3) {
-      setError('Ingrese al menos 3 caracteres para buscar')
+    const busquedaTrim = busqueda.trim()
+    
+    if (busquedaTrim.length < 2) {
+      setError('Ingrese al menos 2 caracteres para buscar')
       return
     }
+    
+    // Limpiar resultados anteriores
+    setVehiculosBuscados([])
 
     try {
       setLoading(true)
@@ -87,11 +92,14 @@ export default function ModalCambioVehiculo({
 
       if (data.success) {
         setVehiculosBuscados(data.data || [])
+        if (!data.data || data.data.length === 0) {
+          setError('No se encontraron vehículos con ese criterio de búsqueda')
+        }
       } else {
-        setError(data.error || 'Error al buscar vehículos')
+        setError(data.error || data.message || 'Error al buscar vehículos')
       }
     } catch (err) {
-      setError('Error al buscar vehículos')
+      setError('Error de conexión al buscar vehículos')
     } finally {
       setLoading(false)
     }
@@ -218,19 +226,35 @@ export default function ModalCambioVehiculo({
               <Label>Buscar Nuevo Vehículo</Label>
               <div className="flex gap-2">
                 <Input
-                  placeholder="Buscar por dominio, marca o modelo..."
+                  placeholder="Ej: ABC123, Ford, Transit..."
                   value={busqueda}
                   onChange={(e) => setBusqueda(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && buscarVehiculos()}
+                  disabled={loading}
                 />
-                <Button onClick={buscarVehiculos} disabled={loading}>
-                  <Search className="h-4 w-4" />
+                <Button onClick={buscarVehiculos} disabled={loading || busqueda.trim().length < 2}>
+                  {loading ? (
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                  ) : (
+                    <Search className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
+              {busqueda.trim().length > 0 && busqueda.trim().length < 2 && (
+                <p className="text-xs text-orange-600">Ingrese al menos 2 caracteres</p>
+              )}
             </div>
 
+            {/* Loading State */}
+            {loading && (
+              <div className="text-center py-4 text-sm text-gray-500">
+                <div className="animate-spin h-6 w-6 border-2 border-blue-600 border-t-transparent rounded-full mx-auto mb-2" />
+                Buscando vehículos...
+              </div>
+            )}
+
             {/* Resultados de Búsqueda */}
-            {vehiculosBuscados.length > 0 && (
+            {!loading && vehiculosBuscados.length > 0 && (
               <div className="border rounded-lg">
                 <Table>
                   <TableHeader>
