@@ -164,13 +164,13 @@ export async function POST(request: Request) {
     })
 
     // Obtener datos del titular para enviar email
-    // @ts-expect-error
+    // @ts-expect-error -- Prisma types compatibility
     const habPersona: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: Number(habilitacion_id),
         rol: 'TITULAR',
       },
-      // @ts-expect-error
+      // @ts-expect-error -- Prisma types compatibility
       include: {
         persona: true,
       },
@@ -180,10 +180,10 @@ export async function POST(request: Request) {
     if (habPersona?.persona?.email) {
       try {
         // Obtener datos del vehículo
-        // @ts-expect-error
+        // @ts-expect-error -- Prisma types compatibility
         const habVehiculo: any = await prisma.habilitaciones_vehiculos.findFirst({
           where: { habilitacion_id: Number(habilitacion_id) },
-          // @ts-expect-error
+          // @ts-expect-error -- Prisma types compatibility
           include: { vehiculo: true },
         })
 
