@@ -1,8 +1,46 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import { generarPDFOblea } from '@/lib/oblea-pdf-generator'
+import { readFile } from 'fs/promises'
+import { join } from 'path'
 
 export const dynamic = 'force-dynamic'
+
+/**
+ * Helper: Convierte path de imagen a base64
+ */
+async function convertirImagenABase64(path: string): Promise<string | null> {
+  try {
+    // Si ya es base64, retornar tal cual
+    if (path.startsWith('data:image')) {
+      return path
+    }
+
+    // Si es URL externa, fetch
+    if (path.startsWith('http://') || path.startsWith('https://')) {
+      const response = await fetch(path)
+      if (response.ok) {
+        const arrayBuffer = await response.arrayBuffer()
+        const buffer = Buffer.from(arrayBuffer)
+        const mimeType = path.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
+        return `data:${mimeType};base64,${buffer.toString('base64')}`
+      }
+    }
+
+    // Si es path local del servidor
+    if (path.startsWith('/') || path.startsWith('./')) {
+      const fullPath = join(process.cwd(), 'public', path)
+      const fileBuffer = await readFile(fullPath)
+      const mimeType = path.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
+      return `data:${mimeType};base64,${fileBuffer.toString('base64')}`
+    }
+
+    return null
+  } catch (error) {
+    console.error('Error convirtiendo imagen:', error)
+    return null
+  }
+}
 
 /**
  * GET /api/obleas/[id]/pdf
@@ -16,8 +54,10 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ success: false, error: 'ID de oblea inválido' }, { status: 400 })
     }
 
-    // Obtener oblea
-    const oblea = await prisma.oblea_historial.findUnique({
+    console.log('🔍 Buscando oblea con ID:', id)
+
+    // Obtener oblea desde tabla 'obleas' (con firmas y foto)
+    const oblea = await prisma.obleas.findUnique({
       where: { id: Number(id) },
     })
 
@@ -25,10 +65,18 @@ export async function GET(request: Request, { params }: { params: { id: string }
       return NextResponse.json({ success: false, error: 'Oblea no encontrada' }, { status: 404 })
     }
 
+    console.log('✅ Oblea encontrada:', {
+      id: oblea.id,
+      tiene_foto: !!oblea.path_foto,
+      tiene_firma_receptor: !!oblea.path_firma_receptor,
+      tiene_firma_inspector: !!oblea.path_firma_inspector,
+    })
+
     // Obtener habilitación
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
       where: { id: oblea.habilitacion_id },
     })
+
 
     if (!habilitacion) {
       return NextResponse.json(
@@ -64,15 +112,32 @@ export async function GET(request: Request, { params }: { params: { id: string }
       })
     }
 
-    // Obtener última inspección de esta habilitación (para firmas y fotos)
+    console.log('📸 Convirtiendo imágenes a base64...')
+
+    // Convertir firmas a base64
+    let firmaReceptorBase64: string | null = null
+    let firmaInspectorBase64: string | null = null
+    let fotoObleaBase64: string | null = null
+
+    if (oblea.path_firma_receptor) {
+      firmaReceptorBase64 = await convertirImagenABase64(oblea.path_firma_receptor)
+      console.log('✍️ Firma receptor:', firmaReceptorBase64 ? 'Convertida' : 'Error')
+    }
+
+    if (oblea.path_firma_inspector) {
+      firmaInspectorBase64 = await convertirImagenABase64(oblea.path_firma_inspector)
+      console.log('✍️ Firma inspector:', firmaInspectorBase64 ? 'Convertida' : 'Error')
+    }
+
+    if (oblea.path_foto) {
+      fotoObleaBase64 = await convertirImagenABase64(oblea.path_foto)
+      console.log('📷 Foto oblea:', fotoObleaBase64 ? 'Convertida' : 'Error')
+    }
+
+    // Obtener última inspección (opcional, para datos adicionales)
     const inspeccion = await prisma.inspecciones.findFirst({
       where: { habilitacion_id: habilitacion.id },
       orderBy: { fecha_inspeccion: 'desc' },
-      include: {
-        inspeccion_fotos: {
-          orderBy: { id: 'asc' },
-        },
-      },
     })
 
     // Preparar datos para el PDF
@@ -99,60 +164,44 @@ export async function GET(request: Request, { params }: { params: { id: string }
       },
       oblea: {
         id: oblea.id,
-        fecha_solicitud: oblea.fecha_solicitud,
-        hora_solicitud: oblea.hora_solicitud ? String(oblea.hora_solicitud) : undefined,
-        estado: oblea.notificado || undefined,
+        fecha_solicitud: oblea.fecha_colocacion,
+        hora_solicitud: oblea.fecha_colocacion.toLocaleTimeString('es-AR'),
+        estado: 'COLOCADA',
       },
-      inspector: inspeccion
-        ? {
-            nombre: inspeccion.nombre_inspector,
-            firma: inspeccion.firma_inspector || undefined,
-          }
-        : undefined,
-      contribuyente: inspeccion
-        ? {
-            firma: inspeccion.firma_contribuyente || undefined,
-          }
-        : undefined,
-      inspeccion: inspeccion
-        ? {
-            fecha: inspeccion.fecha_inspeccion,
-            resultado: inspeccion.resultado || 'PENDIENTE',
-            fotos: inspeccion.inspeccion_fotos.map(foto => ({
-              tipo: foto.tipo_foto || 'Foto',
-              path: foto.foto_path || '',
-            })),
-          }
-        : undefined,
+      // ✅ Firmas desde tabla obleas
+      inspector: {
+        nombre: inspeccion?.nombre_inspector || 'Inspector Municipal',
+        firma: firmaInspectorBase64 || undefined,
+      },
+      contribuyente: {
+        firma: firmaReceptorBase64 || undefined,
+      },
+      // ✅ Foto de evidencia desde tabla obleas
+      inspeccion: {
+        fecha: oblea.fecha_colocacion,
+        resultado: 'OBLEA COLOCADA',
+        fotos: fotoObleaBase64
+          ? [
+              {
+                tipo: 'Oblea Colocada',
+                path: fotoObleaBase64,
+              },
+            ]
+          : [],
+      },
     }
 
-    // Convertir fotos a base64 si son URLs
-    if (datosOblea.inspeccion?.fotos) {
-      for (const foto of datosOblea.inspeccion.fotos) {
-        if (foto.path && !foto.path.startsWith('data:image')) {
-          // Si la foto está en un servidor externo, intentar convertirla
-          try {
-            if (foto.path.startsWith('http://') || foto.path.startsWith('https://')) {
-              const response = await fetch(foto.path)
-              if (response.ok) {
-                const arrayBuffer = await response.arrayBuffer()
-                const buffer = Buffer.from(arrayBuffer)
-                const extension = foto.path.toLowerCase()
-                const mimeType = extension.includes('.png') ? 'image/png' : 'image/jpeg'
-                foto.path = `data:${mimeType};base64,${buffer.toString('base64')}`
-              }
-            }
-          } catch (error) {
-            console.error('Error convirtiendo foto:', error)
-            // Dejar el path original si falla
-          }
-        }
-      }
-    }
+    console.log('📄 Datos preparados para PDF:', {
+      tiene_firmas: !!(firmaReceptorBase64 || firmaInspectorBase64),
+      tiene_fotos: !!fotoObleaBase64,
+    })
+
+    // Las fotos ya fueron convertidas a base64 arriba
 
     // Generar PDF
-    console.log('Generando PDF de oblea con datos completos...')
+    console.log('📝 Generando PDF de oblea con evidencia completa...')
     const pdfBuffer = await generarPDFOblea(datosOblea)
+    console.log('✅ PDF generado exitosamente')
 
     // Convertir Buffer a Uint8Array para NextResponse
     const pdfArray = new Uint8Array(pdfBuffer)
