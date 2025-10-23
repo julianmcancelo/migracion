@@ -12,12 +12,16 @@ import {
   Download,
   QrCode,
   Shield,
+  RefreshCcw,
+  Bot,
 } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
 import { DetalleModal } from './detalle-modal'
 import { EditarHabilitacionDialog } from './editar-habilitacion-dialog'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
+import ModalCambioVehiculo from '@/components/habilitaciones/modal-cambio-vehiculo'
+import ChatIAHabilitacion from '@/components/habilitaciones/chat-ia-habilitacion'
 import {
   Table,
   TableBody,
@@ -77,6 +81,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showDetalleModal, setShowDetalleModal] = useState(false)
   const [showEditarDialog, setShowEditarDialog] = useState(false)
   const [showObleasModal, setShowObleasModal] = useState(false)
+  const [showCambioVehiculoModal, setShowCambioVehiculoModal] = useState(false)
+  const [showChatIAModal, setShowChatIAModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
