@@ -96,6 +96,7 @@ model habilitaciones_generales {
   habilitaciones_personas         habilitaciones_personas[]
   habilitaciones_vehiculos        habilitaciones_vehiculos[]
   habilitaciones_establecimientos habilitaciones_establecimientos[]
+  habilitaciones_novedades        habilitaciones_novedades[]
   turnos                          turnos[]
   tokens_acceso                   tokens_acceso[]
   oblea_historial                 oblea_historial[]
@@ -348,6 +349,29 @@ model verificaciones_historial {
   resultado      String   @db.VarChar(50)
   expediente     String?  @db.VarChar(50)
   creado_en      DateTime @default(now()) @db.Timestamp(0)
+}
+
+model habilitaciones_novedades {
+  id                 Int                       @id @default(autoincrement())
+  habilitacion_id    Int
+  tipo_novedad       String                    @db.VarChar(50)
+  entidad_afectada   String                    @db.VarChar(50)
+  entidad_id         Int?
+  descripcion        String                    @db.Text
+  datos_anteriores   String?                   @db.JSON
+  datos_nuevos       String?                   @db.JSON
+  usuario_id         Int?
+  usuario_nombre     String?                   @db.VarChar(100)
+  fecha_novedad      DateTime                  @default(now())
+  observaciones      String?                   @db.Text
+  
+  // Relación
+  habilitacion       habilitaciones_generales  @relation(fields: [habilitacion_id], references: [id], onDelete: Cascade)
+  
+  @@index([habilitacion_id], map: "idx_habilitacion")
+  @@index([tipo_novedad], map: "idx_tipo_novedad")
+  @@index([entidad_afectada, entidad_id], map: "idx_entidad")
+  @@index([fecha_novedad], map: "idx_fecha")
 }
 
 enum habilitaciones_establecimientos_tipo {

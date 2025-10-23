@@ -98,6 +98,30 @@ export async function POST(
         },
       })
 
+      // 4. Registrar NOVEDAD del cambio de vehículo
+      await tx.habilitaciones_novedades.create({
+        data: {
+          habilitacion_id: habilitacionId,
+          tipo_novedad: 'CAMBIO_VEHICULO',
+          entidad_afectada: 'VEHICULO',
+          entidad_id: parseInt(nuevo_vehiculo_id),
+          descripcion: `Cambio de material rodante: ${vehiculoActual?.vehiculo?.dominio || 'N/A'} → ${nuevoVehiculo.dominio}`,
+          datos_anteriores: vehiculoActual?.vehiculo ? JSON.stringify({
+            vehiculo_id: vehiculoActual.vehiculo_id,
+            dominio: vehiculoActual.vehiculo.dominio,
+            marca: vehiculoActual.vehiculo.marca,
+            modelo: vehiculoActual.vehiculo.modelo,
+          }) : null,
+          datos_nuevos: JSON.stringify({
+            vehiculo_id: nuevoVinculo.vehiculo_id,
+            dominio: nuevoVinculo.vehiculo.dominio,
+            marca: nuevoVinculo.vehiculo.marca,
+            modelo: nuevoVinculo.vehiculo.modelo,
+          }),
+          observaciones: observaciones || 'Cambio de material rodante',
+        },
+      })
+
       return {
         vehiculo_anterior: vehiculoActual?.vehiculo,
         vehiculo_nuevo: nuevoVinculo.vehiculo,
