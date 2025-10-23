@@ -303,20 +303,26 @@ export default function ModalCambioVehiculo({
 
             {/* No hay resultados */}
             {!loading && busqueda.trim().length >= 2 && vehiculosBuscados.length === 0 && !error && (
-              <div className="text-center py-6 border border-dashed rounded-lg bg-gray-50">
-                <p className="text-sm text-gray-600 mb-3">
+              <div className="text-center py-6 border border-dashed rounded-lg bg-gradient-to-r from-blue-50 to-purple-50">
+                <p className="text-sm text-gray-600 mb-2">
                   No se encontró el vehículo <strong>{busqueda}</strong>
                 </p>
-                <p className="text-xs text-gray-500 mb-3">
+                <p className="text-xs text-gray-500 mb-4">
                   El vehículo debe estar registrado previamente en el sistema
                 </p>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => window.location.href = '/vehiculos'}
-                >
-                  📋 Ir a Registrar Vehículo
-                </Button>
+                <div className="space-y-2">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={() => window.location.href = '/vehiculos'}
+                    className="bg-blue-600 hover:bg-blue-700"
+                  >
+                    🤖 Registrar con OCR Automático
+                  </Button>
+                  <p className="text-xs text-blue-600 font-medium">
+                    ✨ Escanea el título y la IA carga los datos automáticamente
+                  </p>
+                </div>
               </div>
             )}
           </div>

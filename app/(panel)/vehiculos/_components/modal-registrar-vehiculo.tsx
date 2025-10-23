@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { Car, X } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Car, X, Camera, Upload, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -25,7 +25,10 @@ export default function ModalRegistrarVehiculo({
   onRegistroExitoso,
 }: ModalRegistrarVehiculoProps) {
   const [loading, setLoading] = useState(false)
+  const [loadingOCR, setLoadingOCR] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [successMessage, setSuccessMessage] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const [formData, setFormData] = useState({
     dominio: '',
     marca: '',
@@ -40,6 +43,69 @@ export default function ModalRegistrarVehiculo({
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
     setError(null)
+    setSuccessMessage(null)
+  }
+
+  const handleEscanearTitulo = () => {
+    fileInputRef.current?.click()
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Validar tipo de archivo
+    if (!file.type.startsWith('image/')) {
+      setError('Por favor seleccione una imagen válida')
+      return
+    }
+
+    // Validar tamaño (máx 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      setError('La imagen no debe superar los 5MB')
+      return
+    }
+
+    try {
+      setLoadingOCR(true)
+      setError(null)
+      setSuccessMessage(null)
+
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/ocr/titulo-vehiculo', {
+        method: 'POST',
+        body: formData,
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        // Autocompletar formulario con datos extraídos
+        setFormData({
+          dominio: data.data.dominio || '',
+          marca: data.data.marca || '',
+          modelo: data.data.modelo || '',
+          tipo: data.data.tipo || '',
+          ano: data.data.ano ? String(data.data.ano) : '',
+          chasis: data.data.chasis || '',
+          motor: data.data.motor || '',
+          asientos: data.data.asientos ? String(data.data.asientos) : '',
+        })
+        setSuccessMessage('✅ Datos extraídos correctamente. Revise y confirme.')
+      } else {
+        setError(data.error || 'Error al procesar la imagen')
+      }
+    } catch {
+      setError('Error de conexión al procesar la imagen')
+    } finally {
+      setLoadingOCR(false)
+      // Limpiar input
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ''
+      }
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -113,6 +179,52 @@ export default function ModalRegistrarVehiculo({
             <p className="text-sm text-red-800">{error}</p>
           </div>
         )}
+
+        {successMessage && (
+          <div className="bg-green-50 border border-green-200 rounded-lg p-3 flex items-start gap-2">
+            <p className="text-sm text-green-800">{successMessage}</p>
+          </div>
+        )}
+
+        {/* Botones de OCR */}
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
+          <p className="text-sm font-medium text-gray-700 mb-3">
+            🤖 <strong>IA Automática:</strong> Escanea el título del vehículo para llenar automáticamente
+          </p>
+          <div className="flex gap-2">
+            <Button
+              type="button"
+              onClick={handleEscanearTitulo}
+              disabled={loadingOCR}
+              className="flex-1"
+              variant="outline"
+            >
+              {loadingOCR ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                <>
+                  <Upload className="h-4 w-4 mr-2" />
+                  Subir Foto del Título
+                </>
+              )}
+            </Button>
+          </div>
+          <p className="text-xs text-gray-500 mt-2">
+            📸 Formatos: JPG, PNG. Máx 5MB. Asegúrate que la imagen sea clara y legible.
+          </p>
+        </div>
+
+        {/* Input oculto para archivo */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Dominio (obligatorio) */}
