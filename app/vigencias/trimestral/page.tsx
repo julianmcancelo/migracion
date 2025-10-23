@@ -20,8 +20,8 @@ interface VigenciaTrimestral {
   total: number
   escolares: number
   remis: number
-  activas: number
-  vencidas: number
+  habilitadas: number
+  enTramite: number
   habilitaciones: Array<{
     id: number
     nro_licencia: string | null
@@ -199,6 +199,29 @@ export default function VigenciasTrimestralPage() {
               </CardHeader>
 
               <CardContent>
+                {/* Banner destacado de habilitados */}
+                {trimestre.habilitadas > 0 && (
+                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-lg p-4 mb-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="bg-green-600 text-white rounded-full p-3">
+                          <CheckCircle className="h-6 w-6" />
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-green-900">Habilitaciones Activas</p>
+                          <p className="text-3xl font-bold text-green-700">{trimestre.habilitadas}</p>
+                        </div>
+                      </div>
+                      <div className="text-right text-sm text-green-700">
+                        <p className="font-semibold">
+                          {((trimestre.habilitadas / trimestre.total) * 100).toFixed(1)}%
+                        </p>
+                        <p className="text-xs">del total</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 {/* Estadísticas */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-4">
                   <div className="bg-blue-50 rounded-lg p-3">
@@ -228,9 +251,9 @@ export default function VigenciasTrimestralPage() {
                   <div className="bg-green-50 rounded-lg p-3">
                     <div className="flex items-center gap-2 mb-1">
                       <CheckCircle className="h-4 w-4 text-green-600" />
-                      <span className="text-sm font-medium text-green-900">Activas</span>
+                      <span className="text-sm font-medium text-green-900">Habilitadas</span>
                     </div>
-                    <p className="text-2xl font-bold text-green-600">{trimestre.activas}</p>
+                    <p className="text-2xl font-bold text-green-600">{trimestre.habilitadas}</p>
                   </div>
                 </div>
 
@@ -242,7 +265,11 @@ export default function VigenciasTrimestralPage() {
                       {trimestre.habilitaciones.slice(0, 20).map((hab) => (
                         <div
                           key={hab.id}
-                          className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                          className={`flex items-center justify-between p-3 rounded-lg transition-colors ${
+                            hab.estado === 'HABILITADO' 
+                              ? 'bg-green-50 border-2 border-green-200 hover:bg-green-100' 
+                              : 'bg-gray-50 hover:bg-gray-100'
+                          }`}
                         >
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
@@ -251,7 +278,7 @@ export default function VigenciasTrimestralPage() {
                               </Badge>
                               <Badge
                                 variant={
-                                  hab.tipo_transporte === 'escolar' ? 'default' : 'secondary'
+                                  hab.tipo_transporte === 'Escolar' ? 'default' : 'secondary'
                                 }
                                 className="text-xs"
                               >
@@ -277,9 +304,10 @@ export default function VigenciasTrimestralPage() {
                                 : 'N/A'}
                             </p>
                             <Badge
-                              variant={hab.estado === 'activo' ? 'default' : 'destructive'}
-                              className="mt-1"
+                              variant={hab.estado === 'HABILITADO' ? 'default' : 'secondary'}
+                              className={`mt-1 ${hab.estado === 'HABILITADO' ? 'bg-green-600' : ''}`}
                             >
+                              {hab.estado === 'HABILITADO' && '✓ '}
                               {hab.estado || 'N/A'}
                             </Badge>
                           </div>

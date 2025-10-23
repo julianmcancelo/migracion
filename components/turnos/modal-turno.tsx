@@ -371,7 +371,7 @@ export function ModalTurno({
                   <div className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
                     <p className="text-sm text-yellow-800">
                       No se encontraron habilitaciones de tipo <strong>{tipoTransporte}</strong> con
-                      el término "{busqueda}"
+                      el término &quot;{busqueda}&quot;
                     </p>
                     <p className="mt-1 text-xs text-yellow-700">
                       Intenta cambiar el tipo de transporte o buscar con otro término

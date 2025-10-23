@@ -158,7 +158,12 @@ async function consultarVigenciasTrimestral() {
       
       console.log('\n📊 Por estado:')
       Object.entries(porEstado).forEach(([estado, cant]) => {
-        console.log(`   ${estado}: ${cant}`)
+        const emoji = estado === 'HABILITADO' ? '✅' : 
+                     estado === 'EN_TRAMITE' ? '⏳' : 
+                     estado === 'NO_HABILITADO' ? '❌' : '⚪'
+        const destacado = estado === 'HABILITADO' ? `\x1b[32m${emoji} ${estado}: ${cant}\x1b[0m` : 
+                         `${emoji} ${estado}: ${cant}`
+        console.log(`   ${destacado}`)
       })
       
       // Mostrar primeras 5 habilitaciones
@@ -177,8 +182,17 @@ async function consultarVigenciasTrimestral() {
           ? new Date(h.vigencia_fin).toLocaleDateString('es-AR')
           : 'Indefinida'
         
-        console.log(`   ${idx + 1}. Lic: ${h.nro_licencia || 'S/N'} | ${titular} | ${vehiculo}`)
-        console.log(`      Vigencia: ${vigenciaInicio} → ${vigenciaFin}`)
+        // Destacar si está HABILITADO
+        const estadoEmoji = h.estado === 'HABILITADO' ? '✅' : 
+                           h.estado === 'EN_TRAMITE' ? '⏳' : 
+                           h.estado === 'NO_HABILITADO' ? '❌' : '⚪'
+        
+        const linea = h.estado === 'HABILITADO' 
+          ? `\x1b[32m   ${idx + 1}. ${estadoEmoji} Lic: ${h.nro_licencia || 'S/N'} | ${titular} | ${vehiculo}\x1b[0m`
+          : `   ${idx + 1}. ${estadoEmoji} Lic: ${h.nro_licencia || 'S/N'} | ${titular} | ${vehiculo}`
+        
+        console.log(linea)
+        console.log(`      Vigencia: ${vigenciaInicio} → ${vigenciaFin} | Estado: ${h.estado || 'N/A'}`)
       })
       
       if (habs.length > 5) {

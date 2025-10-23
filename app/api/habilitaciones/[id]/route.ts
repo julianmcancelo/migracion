@@ -14,7 +14,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Buscar habilitación con todas las relaciones
-    // @ts-ignore
+    // @ts-expect-error
     const habilitacion: any = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
       include: {
@@ -49,7 +49,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Formatear respuesta similar al listado
-    // @ts-ignore - Las relaciones existen
+    // @ts-expect-error - Las relaciones existen
     const titular = habilitacion.habilitaciones_personas?.find((hp: any) => hp.rol === 'TITULAR')
 
     const habilitacionFormateada = {
@@ -69,7 +69,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       titular_principal: titular?.persona?.nombre || null,
 
       // Relaciones anidadas completas para el modal de detalle
-      // @ts-ignore
+      // @ts-expect-error
       habilitaciones_personas:
         habilitacion.habilitaciones_personas?.map((hp: any) => ({
           id: hp.id,
@@ -90,7 +90,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
           },
         })) || [],
 
-      // @ts-ignore
+      // @ts-expect-error
       habilitaciones_vehiculos:
         habilitacion.habilitaciones_vehiculos?.map((hv: any) => ({
           id: hv.id,
@@ -112,7 +112,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         })) || [],
 
       // Personas (formato plano para compatibilidad)
-      // @ts-ignore
+      // @ts-expect-error
       personas:
         habilitacion.habilitaciones_personas?.map((hp: any) => ({
           id: hp.id,
@@ -122,7 +122,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         })) || [],
 
       // Vehículos (formato plano para compatibilidad)
-      // @ts-ignore
+      // @ts-expect-error
       vehiculos:
         habilitacion.habilitaciones_vehiculos?.map((hv: any) => ({
           id: hv.id,
@@ -132,7 +132,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         })) || [],
 
       // Establecimientos
-      // @ts-ignore
+      // @ts-expect-error
       establecimientos:
         habilitacion.habilitaciones_establecimientos?.map((he: any) => ({
           id: he.id,
@@ -184,9 +184,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         },
       }),
 
-      // @ts-ignore
+      // @ts-expect-error
       tiene_resolucion: habilitacion.habilitaciones_documentos?.length > 0,
-      // @ts-ignore
+      // @ts-expect-error
       resolucion_doc_id: habilitacion.habilitaciones_documentos?.[0]?.id || null,
     }
 
@@ -217,7 +217,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     }
 
     // Verificar que la habilitación exista
-    // @ts-ignore
+    // @ts-expect-error
     const habilitacionExistente = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
     })
@@ -232,7 +232,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
     // Usar transacción para mantener integridad
     const habilitacionActualizada = await prisma.$transaction(async tx => {
       // 1. Actualizar datos básicos
-      // @ts-ignore
+      // @ts-expect-error
       const hab = await tx.habilitaciones_generales.update({
         where: { id: Number(id) },
         data: {
@@ -252,7 +252,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       // 2. Actualizar personas (eliminar y recrear)
       if (body.personas && Array.isArray(body.personas)) {
         // Eliminar todas las personas existentes
-        // @ts-ignore
+        // @ts-expect-error
         await tx.habilitaciones_personas.deleteMany({
           where: {
             habilitacion_id: Number(id),
@@ -262,7 +262,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
 
         // Crear nuevas relaciones
         for (const persona of body.personas) {
-          // @ts-ignore
+          // @ts-expect-error
           await tx.habilitaciones_personas.create({
             data: {
               habilitacion_id: Number(id),
@@ -277,14 +277,14 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       // 3. Actualizar vehículos (eliminar y recrear)
       if (body.vehiculos && Array.isArray(body.vehiculos)) {
         // Eliminar todos los vehículos existentes
-        // @ts-ignore
+        // @ts-expect-error
         await tx.habilitaciones_vehiculos.deleteMany({
           where: { habilitacion_id: Number(id) },
         })
 
         // Crear nuevas relaciones
         for (const vehiculo of body.vehiculos) {
-          // @ts-ignore
+          // @ts-expect-error
           await tx.habilitaciones_vehiculos.create({
             data: {
               habilitacion_id: Number(id),
