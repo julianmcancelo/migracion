@@ -29,10 +29,21 @@ async function convertirImagenABase64(path: string): Promise<string | null> {
 
     // Si es path local del servidor
     if (path.startsWith('/') || path.startsWith('./')) {
-      const fullPath = join(process.cwd(), 'public', path)
-      const fileBuffer = await readFile(fullPath)
-      const mimeType = path.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
-      return `data:${mimeType};base64,${fileBuffer.toString('base64')}`
+      // Intentar primero desde public/
+      try {
+        const publicPath = join(process.cwd(), 'public', path)
+        const fileBuffer = await readFile(publicPath)
+        const mimeType = path.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
+        console.log(`✅ Imagen leída desde public: ${publicPath}`)
+        return `data:${mimeType};base64,${fileBuffer.toString('base64')}`
+      } catch (err) {
+        // Si falla, intentar desde la raíz del sistema
+        console.log(`⚠️ No encontrado en public, intentando desde raíz: ${path}`)
+        const fileBuffer = await readFile(path)
+        const mimeType = path.toLowerCase().includes('.png') ? 'image/png' : 'image/jpeg'
+        console.log(`✅ Imagen leída desde raíz: ${path}`)
+        return `data:${mimeType};base64,${fileBuffer.toString('base64')}`
+      }
     }
 
     return null
