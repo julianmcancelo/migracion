@@ -12,6 +12,7 @@ import {
   X,
   FileCheck,
   Shield,
+  Car,
 } from 'lucide-react'
 
 interface NavItem {
@@ -47,6 +48,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       name: 'Habilitaciones',
       href: '/habilitaciones',
       icon: ClipboardList,
+    },
+    {
+      name: 'Vehículos',
+      href: '/vehiculos',
+      icon: Car,
     },
     {
       name: 'Obleas',
