@@ -358,8 +358,8 @@ model habilitaciones_novedades {
   entidad_afectada   String                    @db.VarChar(50)
   entidad_id         Int?
   descripcion        String                    @db.Text
-  datos_anteriores   String?                   @db.JSON
-  datos_nuevos       String?                   @db.JSON
+  datos_anteriores   String?                   @db.Text
+  datos_nuevos       String?                   @db.Text
   usuario_id         Int?
   usuario_nombre     String?                   @db.VarChar(100)
   fecha_novedad      DateTime                  @default(now())
