@@ -191,56 +191,53 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-h-[95vh] max-w-5xl overflow-hidden p-0">
-          {/* Header con botones de acción */}
-          <div className="sticky top-0 z-10 border-b bg-white">
-            <div className="flex items-center justify-between p-6">
-              <div className="flex items-center gap-3">
-                <Button variant="ghost" size="sm" onClick={onClose} className="-ml-2">
-                  <ArrowLeft className="mr-1 h-4 w-4" />
-                  Volver
-                </Button>
-                <div>
-                  <h2 className="text-2xl font-bold">
-                    Licencia Nº <span className="text-blue-600">{hab.nro_licencia || 'S/N'}</span>
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    Información detallada y registro de actividad de la habilitación.
-                  </p>
-                </div>
+        <DialogContent className="max-w-[96vw] w-[96vw] max-h-[96vh] overflow-hidden p-0">
+          {/* Header Mejorado con Gradiente */}
+          <DialogHeader className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white px-8 py-6 border-b-4 border-blue-900 shadow-lg">
+            <div className="flex items-center justify-between">
+              <div>
+                <DialogTitle className="text-3xl font-bold flex items-center gap-3">
+                  <FileCheck className="h-9 w-9 text-white drop-shadow-lg" />
+                  Licencia N° {habilitacion?.nro_licencia || 'S/N'}
+                </DialogTitle>
+                <p className="mt-2 text-blue-50 text-sm font-medium">
+                  📄 Información detallada y registro completo de actividad
+                </p>
               </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" onClick={handleEditar}>
-                  <Edit className="mr-1 h-4 w-4" />
-                  Editar
-                </Button>
-                <Button variant="outline" size="sm" onClick={handleDescargarConstancia}>
-                  <Download className="mr-1 h-4 w-4" />
+              <div className="flex gap-3">
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
+                >
+                  <Download className="mr-2 h-5 w-5" />
                   Descargar Constancia
                 </Button>
-                {hab.resolucion && (
-                  <Button variant="default" size="sm" onClick={handleDescargarResolucion}>
-                    <Download className="mr-1 h-4 w-4" />
-                    Descargar Resolución
-                  </Button>
-                )}
+                <Button 
+                  variant="outline" 
+                  size="lg"
+                  className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
+                >
+                  <Download className="mr-2 h-5 w-5" />
+                  Descargar Resolución
+                </Button>
               </div>
             </div>
-          </div>
+          </DialogHeader>
 
           {/* Contenido scrolleable */}
-          <div className="overflow-y-auto p-6" style={{ maxHeight: 'calc(95vh - 120px)' }}>
+          <div className="overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50 p-6" style={{ maxHeight: 'calc(96vh - 120px)' }}>
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
                   <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-                  <p className="text-gray-500">Cargando información...</p>
+                  <p className="text-gray-600 font-medium">Cargando información completa...</p>
                 </div>
               </div>
             ) : (
               <div className="space-y-6">
                 {/* Datos de la Habilitación */}
-                <div className="rounded-lg border bg-white">
+                <div className="rounded-xl border-2 border-blue-200 bg-white shadow-lg">
                   <div className="border-b bg-gray-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
                       <FileCheck className="h-5 w-5 text-blue-600" />
@@ -307,10 +304,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Personas Asociadas */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-green-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <User className="h-5 w-5 text-blue-600" />
+                      <User className="h-5 w-5 text-green-600" />
                       Personas Asociadas
                     </h3>
                   </div>
@@ -346,10 +343,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Vehículo Asociado */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-orange-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <Car className="h-5 w-5 text-blue-600" />
+                      <Car className="h-5 w-5 text-orange-600" />
                       Vehículo Asociado
                     </h3>
                   </div>
@@ -457,10 +454,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Colocación de Obleas */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-purple-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-purple-50 to-violet-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <Shield className="h-5 w-5 text-blue-600" />
+                      <Shield className="h-5 w-5 text-purple-600" />
                       Historial de Colocación de Obleas
                     </h3>
                   </div>
@@ -490,20 +487,18 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                         ))}
                       </div>
                     ) : (
-                      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-center">
-                        <p className="text-sm text-blue-700">
-                          No hay registros de colocación de obleas para esta habilitación.
-                        </p>
-                      </div>
+                      <p className="py-4 text-center text-sm text-gray-500">
+                        No hay registros de colocación de obleas para esta habilitación.
+                      </p>
                     )}
                   </div>
                 </div>
 
                 {/* Historial de Verificaciones */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-teal-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-teal-50 to-cyan-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <CheckCircle className="h-5 w-5 text-blue-600" />
+                      <CheckCircle className="h-5 w-5 text-teal-600" />
                       Historial de Verificaciones
                     </h3>
                   </div>
@@ -548,10 +543,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Inspecciones */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-indigo-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-indigo-50 to-blue-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <ClipboardList className="h-5 w-5 text-blue-600" />
+                      <ClipboardList className="h-5 w-5 text-indigo-600" />
                       Historial de Inspecciones
                     </h3>
                   </div>
@@ -604,10 +599,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Novedades */}
-                <div className="rounded-lg border bg-white">
-                  <div className="border-b bg-gray-50 px-4 py-3">
+                <div className="rounded-xl border-2 border-pink-200 bg-white shadow-lg">
+                  <div className="border-b bg-gradient-to-r from-pink-50 to-rose-50 px-4 py-3">
                     <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <History className="h-5 w-5 text-blue-600" />
+                      <History className="h-5 w-5 text-pink-600" />
                       Historial de Novedades
                     </h3>
                   </div>
@@ -618,10 +613,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
 
                 {/* Observaciones */}
                 {hab.observaciones && (
-                  <div className="rounded-lg border bg-white">
-                    <div className="border-b bg-gray-50 px-4 py-3">
+                  <div className="rounded-xl border-2 border-amber-200 bg-white shadow-lg">
+                    <div className="border-b bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3">
                       <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                        <FileText className="h-5 w-5 text-blue-600" />
+                        <FileText className="h-5 w-5 text-amber-600" />
                         Observaciones
                       </h3>
                     </div>
