@@ -82,7 +82,7 @@ export default function ModalCambioVehiculo({
       setLoading(true)
       setError(null)
 
-      const response = await fetch(`/api/vehiculos?q=${encodeURIComponent(busqueda)}`)
+      const response = await fetch(`/api/vehiculos?buscar=${encodeURIComponent(busqueda)}`)
       const data = await response.json()
 
       if (data.success) {

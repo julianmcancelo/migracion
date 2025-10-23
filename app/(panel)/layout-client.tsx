@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
+import ChatIAGlobal from '@/components/chat-ia-global'
 
 interface PanelLayoutClientProps {
   children: React.ReactNode
@@ -64,6 +65,9 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
           <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
+
+      {/* Chat IA Global - Disponible en toda la aplicación */}
+      <ChatIAGlobal />
     </div>
   )
 }

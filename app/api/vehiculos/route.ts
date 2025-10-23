@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     }
 
     const searchParams = request.nextUrl.searchParams
-    const buscar = searchParams.get('buscar') || ''
+    const buscar = searchParams.get('buscar') || searchParams.get('q') || ''
     const limite = parseInt(searchParams.get('limite') || '20')
 
     if (buscar.length < 2) {
