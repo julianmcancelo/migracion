@@ -13,8 +13,6 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
-import { ScrollArea } from '@/components/ui/scroll-area'
 
 interface Mensaje {
   id: string
@@ -131,15 +129,15 @@ export default function ChatIAHabilitacion({
 
       <CardContent className="space-y-4">
         {error && (
-          <Alert variant="destructive">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+            <AlertCircle className="h-4 w-4 text-red-600 mt-0.5" />
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
         )}
 
         {/* Área de mensajes */}
-        <ScrollArea 
-          className="h-[400px] w-full rounded-lg border p-4" 
+        <div 
+          className="h-[400px] w-full rounded-lg border p-4 overflow-y-auto" 
           ref={scrollRef}
         >
           {mensajes.length === 0 ? (
@@ -219,7 +217,7 @@ export default function ChatIAHabilitacion({
               )}
             </div>
           )}
-        </ScrollArea>
+        </div>
 
         {/* Sugerencias (cuando ya hay mensajes) */}
         {mensajes.length > 0 && sugerencias.length > 0 && (

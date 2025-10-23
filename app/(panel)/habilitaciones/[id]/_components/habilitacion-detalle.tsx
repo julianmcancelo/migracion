@@ -16,10 +16,14 @@ import {
   ClipboardCheck,
   Trash2,
   Shield,
+  RefreshCcw,
+  Bot,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
+import ModalCambioVehiculo from '@/components/habilitaciones/modal-cambio-vehiculo'
+import ChatIAHabilitacion from '@/components/habilitaciones/chat-ia-habilitacion'
 
 interface HabilitacionDetalleProps {
   id: string
@@ -39,6 +43,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
   const [inspecciones, setInspecciones] = useState<any[]>([])
   const [eliminandoInspeccion, setEliminandoInspeccion] = useState<number | null>(null)
   const [modalObleasOpen, setModalObleasOpen] = useState(false)
+  const [modalCambioVehiculoOpen, setModalCambioVehiculoOpen] = useState(false)
 
   useEffect(() => {
     fetchHabilitacion()
@@ -359,10 +364,20 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
             {/* Vehículo Asociado */}
             {habilitacion.vehiculos && habilitacion.vehiculos[0] && (
               <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
-                <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
-                  <Car className="h-6 w-6 text-blue-600" />
-                  Vehículo Asociado
-                </h3>
+                <div className="mb-4 flex items-center justify-between">
+                  <h3 className="flex items-center gap-2 text-lg font-bold text-gray-900">
+                    <Car className="h-6 w-6 text-blue-600" />
+                    Vehículo Asociado
+                  </h3>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setModalCambioVehiculoOpen(true)}
+                  >
+                    <RefreshCcw className="h-4 w-4 mr-2" />
+                    Cambiar Vehículo
+                  </Button>
+                </div>
                 <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
                   {(() => {
                     const v = habilitacion.vehiculos[0]
@@ -661,6 +676,18 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 </div>
               )}
             </div>
+
+            {/* Asistente con IA */}
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
+                <Bot className="h-6 w-6 text-purple-600" />
+                Consultar con IA
+              </h3>
+              <ChatIAHabilitacion
+                habilitacionId={parseInt(id)}
+                nroLicencia={habilitacion.nro_licencia}
+              />
+            </div>
           </div>
         </div>
       </main>
@@ -672,6 +699,25 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
           nroLicencia={habilitacion.nro_licencia}
           open={modalObleasOpen}
           onClose={() => setModalObleasOpen(false)}
+        />
+      )}
+
+      {/* Modal de Cambio de Vehículo */}
+      {habilitacion && habilitacion.vehiculos?.[0] && (
+        <ModalCambioVehiculo
+          open={modalCambioVehiculoOpen}
+          onOpenChange={setModalCambioVehiculoOpen}
+          habilitacionId={parseInt(id)}
+          vehiculoActual={{
+            id: habilitacion.vehiculos[0].id,
+            dominio: habilitacion.vehiculos[0].dominio,
+            marca: habilitacion.vehiculos[0].marca,
+            modelo: habilitacion.vehiculos[0].modelo,
+          }}
+          onCambioExitoso={() => {
+            fetchHabilitacion()
+            fetchHistoriales()
+          }}
         />
       )}
     </div>

@@ -46,23 +46,23 @@ export async function POST(
       where: { id: habilitacionId },
       include: {
         habilitaciones_personas: {
-          where: { activo: true },
           include: {
             persona: true,
           },
         },
         habilitaciones_vehiculos: {
-          where: { activo: true },
           include: {
             vehiculo: true,
           },
+          take: 1,
+          orderBy: { id: 'desc' },
         },
         habilitaciones_establecimientos: {
           include: {
             establecimiento: true,
           },
         },
-        obleas_historial: {
+        oblea_historial: {
           orderBy: { fecha_solicitud: 'desc' },
           take: 5,
         },
@@ -237,12 +237,12 @@ ${index + 1}. ${he.establecimiento.nombre || 'Sin nombre'}
   }
 
   // Obleas
-  if (habilitacion.obleas_historial && habilitacion.obleas_historial.length > 0) {
+  if (habilitacion.oblea_historial && habilitacion.oblea_historial.length > 0) {
     contexto += `
 === OBLEAS EMITIDAS ===
-Total de obleas: ${habilitacion.obleas_historial.length}
+Total de obleas: ${habilitacion.oblea_historial.length}
 `
-    habilitacion.obleas_historial.slice(0, 3).forEach((oblea: any, index: number) => {
+    habilitacion.oblea_historial.slice(0, 3).forEach((oblea: any, index: number) => {
       contexto += `
 ${index + 1}. Fecha: ${new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')} - Estado: ${oblea.estado || 'Sin estado'}
 `
