@@ -515,7 +515,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
           }}
           onCambioExitoso={() => {
             setShowCambioVehiculoModal(false)
-            window.location.reload() // Recargar para ver cambios
+            // Refrescar la página para ver el nuevo vehículo
+            router.refresh()
           }}
         />
       )}

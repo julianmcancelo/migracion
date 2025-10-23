@@ -81,6 +81,9 @@ export async function GET(request: NextRequest) {
           },
         },
         habilitaciones_vehiculos: {
+          where: {
+            activo: true,
+          },
           include: {
             vehiculo: true,
           },
@@ -284,6 +287,9 @@ export async function POST(request: NextRequest) {
           include: { persona: true },
         },
         habilitaciones_vehiculos: {
+          where: {
+            activo: true,
+          },
           include: { vehiculo: true },
         },
         habilitaciones_establecimientos: true,

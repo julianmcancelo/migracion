@@ -54,15 +54,19 @@ export default function ModalRegistrarVehiculo({
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validar tipo de archivo
-    if (!file.type.startsWith('image/')) {
-      setError('Por favor seleccione una imagen válida')
+    // Validar tipo de archivo (imagen o PDF)
+    const isImage = file.type.startsWith('image/')
+    const isPDF = file.type === 'application/pdf'
+
+    if (!isImage && !isPDF) {
+      setError('Por favor seleccione una imagen (JPG, PNG) o un archivo PDF válido')
       return
     }
 
-    // Validar tamaño (máx 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('La imagen no debe superar los 5MB')
+    // Validar tamaño (máx 10MB para PDFs, 5MB para imágenes)
+    const maxSize = isPDF ? 10 * 1024 * 1024 : 5 * 1024 * 1024
+    if (file.size > maxSize) {
+      setError(`El archivo no debe superar los ${isPDF ? '10MB' : '5MB'}`)
       return
     }
 
@@ -207,13 +211,13 @@ export default function ModalRegistrarVehiculo({
               ) : (
                 <>
                   <Upload className="h-4 w-4 mr-2" />
-                  Subir Foto del Título
+                  Subir Título (Foto o PDF)
                 </>
               )}
             </Button>
           </div>
           <p className="text-xs text-gray-500 mt-2">
-            📸 Formatos: JPG, PNG. Máx 5MB. Asegúrate que la imagen sea clara y legible.
+            📸 Formatos: JPG, PNG, PDF. Imágenes: máx 5MB. PDFs: máx 10MB.
           </p>
         </div>
 
@@ -221,7 +225,7 @@ export default function ModalRegistrarVehiculo({
         <input
           ref={fileInputRef}
           type="file"
-          accept="image/*"
+          accept="image/*,application/pdf"
           onChange={handleFileChange}
           className="hidden"
         />

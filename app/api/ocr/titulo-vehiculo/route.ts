@@ -21,7 +21,18 @@ export async function POST(request: NextRequest) {
 
     if (!file) {
       return NextResponse.json(
-        { success: false, error: 'No se proporcionó ninguna imagen' },
+        { success: false, error: 'No se proporcionó ningún archivo' },
+        { status: 400 }
+      )
+    }
+
+    // Validar tipo de archivo (imagen o PDF)
+    const isImage = file.type.startsWith('image/')
+    const isPDF = file.type === 'application/pdf'
+
+    if (!isImage && !isPDF) {
+      return NextResponse.json(
+        { success: false, error: 'Solo se permiten imágenes (JPG, PNG) o archivos PDF' },
         { status: 400 }
       )
     }
@@ -29,7 +40,7 @@ export async function POST(request: NextRequest) {
     // Convertir archivo a base64
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const base64Image = buffer.toString('base64')
+    const base64Data = buffer.toString('base64')
 
     // Usar Gemini 2.0 Flash con capacidad de visión
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
@@ -38,7 +49,7 @@ export async function POST(request: NextRequest) {
     const prompt = `
 Eres un sistema experto en lectura de títulos de vehículos y cédulas verdes/azules argentinas.
 
-Analiza la imagen del título del vehículo y extrae EXACTAMENTE los siguientes datos:
+Analiza ${isPDF ? 'el documento PDF' : 'la imagen'} del título del vehículo y extrae EXACTAMENTE los siguientes datos:
 
 1. DOMINIO (Patente): Formato argentino (ABC123, AA123BB, etc.)
 2. MARCA: Nombre del fabricante
@@ -73,7 +84,7 @@ NO agregues texto adicional, solo el JSON.
       prompt,
       {
         inlineData: {
-          data: base64Image,
+          data: base64Data,
           mimeType: file.type,
         },
       },
