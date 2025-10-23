@@ -23,7 +23,6 @@ import {
   TableRow,
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
-import { Alert, AlertDescription } from '@/components/ui/alert'
 
 interface Vehiculo {
   id: number
@@ -195,10 +194,10 @@ export default function ModalCambioVehiculo({
         </div>
 
         {error && (
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+            <AlertTriangle className="h-4 w-4 text-red-600 mt-0.5" />
+            <p className="text-sm text-red-800">{error}</p>
+          </div>
         )}
 
         {/* PASO 1: Seleccionar Vehículo */}
@@ -206,15 +205,15 @@ export default function ModalCambioVehiculo({
           <div className="space-y-4">
             {/* Vehículo Actual */}
             {vehiculoActual && (
-              <Alert>
-                <AlertDescription>
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-gray-700">
                   <strong>Vehículo Actual:</strong>{' '}
                   <Badge variant="outline" className="ml-2">
                     {vehiculoActual.dominio}
                   </Badge>{' '}
                   {vehiculoActual.marca} {vehiculoActual.modelo}
-                </AlertDescription>
-              </Alert>
+                </p>
+              </div>
             )}
 
             {/* Buscar Nuevo Vehículo */}
@@ -286,13 +285,13 @@ export default function ModalCambioVehiculo({
         {/* PASO 2: Confirmar Cambio */}
         {paso === 'confirmar' && vehiculoSeleccionado && (
           <div className="space-y-4">
-            <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertDescription>
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 flex items-start gap-2">
+              <AlertTriangle className="h-4 w-4 text-yellow-600 mt-0.5" />
+              <p className="text-sm text-gray-700">
                 <strong>Atención:</strong> Está por cambiar el vehículo de esta habilitación. El
                 vehículo anterior quedará registrado en el historial.
-              </AlertDescription>
-            </Alert>
+              </p>
+            </div>
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
@@ -341,9 +340,9 @@ export default function ModalCambioVehiculo({
         {paso === 'historial' && (
           <div className="space-y-4">
             {historial.length === 0 ? (
-              <Alert>
-                <AlertDescription>No hay cambios de vehículo registrados</AlertDescription>
-              </Alert>
+              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                <p className="text-sm text-gray-600">No hay cambios de vehículo registrados</p>
+              </div>
             ) : (
               <div className="border rounded-lg">
                 <Table>
