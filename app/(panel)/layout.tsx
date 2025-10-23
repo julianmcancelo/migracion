@@ -14,14 +14,10 @@ export const metadata: Metadata = {
  * - Sidebar colapsable + Header
  * - Rutas protegidas
  */
-export default async function PanelLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function PanelLayout({ children }: { children: React.ReactNode }) {
   // Verificar autenticación
   const session = await getSession()
-  
+
   if (!session) {
     redirect('/login?error=acceso_denegado')
   }

@@ -23,7 +23,7 @@ export default function ConfirmarTurnoPublicoPage() {
   const confirmarTurno = async () => {
     try {
       const response = await fetch(`/api/turnos/${params.id}/confirmar-publico`, {
-        method: 'POST'
+        method: 'POST',
       })
 
       const data = await response.json()
@@ -42,15 +42,18 @@ export default function ConfirmarTurnoPublicoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-        <div className="text-center relative z-10 animate-in fade-in duration-500">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50">
+        <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+        <div className="relative z-10 text-center duration-500 animate-in fade-in">
           <div className="relative">
-            <div className="absolute inset-0 bg-green-400 blur-3xl opacity-20 animate-pulse"></div>
-            <Loader2 className="h-16 w-16 animate-spin text-green-600 mx-auto mb-6 relative" strokeWidth={2.5} />
+            <div className="absolute inset-0 animate-pulse bg-green-400 opacity-20 blur-3xl"></div>
+            <Loader2
+              className="relative mx-auto mb-6 h-16 w-16 animate-spin text-green-600"
+              strokeWidth={2.5}
+            />
           </div>
-          <p className="text-gray-700 text-lg font-medium animate-pulse">Confirmando su turno...</p>
-          <p className="text-gray-500 text-sm mt-2">Por favor espere un momento</p>
+          <p className="animate-pulse text-lg font-medium text-gray-700">Confirmando su turno...</p>
+          <p className="mt-2 text-sm text-gray-500">Por favor espere un momento</p>
         </div>
       </div>
     )
@@ -58,21 +61,23 @@ export default function ConfirmarTurnoPublicoPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center relative z-10 border border-red-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 p-4">
+        <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+        <div className="relative z-10 w-full max-w-md rounded-3xl border border-red-100 bg-white p-10 text-center shadow-2xl duration-500 animate-in fade-in slide-in-from-bottom-4">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-red-400 blur-3xl opacity-20 animate-pulse"></div>
-            <div className="w-24 h-24 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto relative shadow-lg">
-              <span className="text-5xl animate-bounce">❌</span>
+            <div className="absolute inset-0 animate-pulse bg-red-400 opacity-20 blur-3xl"></div>
+            <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-red-100 to-red-200 shadow-lg">
+              <span className="animate-bounce text-5xl">❌</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Algo salió mal</h1>
-          <p className="text-gray-600 mb-6 text-lg">{error}</p>
-          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-red-900 font-semibold mb-2">📞 ¿Necesita ayuda?</p>
-            <p className="text-sm text-red-800">Contacte al <strong>4357-5100 int. 7137</strong></p>
-            <p className="text-xs text-red-700 mt-1">Lunes a Viernes de 8:00 a 16:00 hs</p>
+          <h1 className="mb-3 text-3xl font-bold text-gray-900">Algo salió mal</h1>
+          <p className="mb-6 text-lg text-gray-600">{error}</p>
+          <div className="mb-6 rounded-xl border-2 border-red-200 bg-red-50 p-4">
+            <p className="mb-2 text-sm font-semibold text-red-900">📞 ¿Necesita ayuda?</p>
+            <p className="text-sm text-red-800">
+              Contacte al <strong>4357-5100 int. 7137</strong>
+            </p>
+            <p className="mt-1 text-xs text-red-700">Lunes a Viernes de 8:00 a 16:00 hs</p>
           </div>
         </div>
       </div>
@@ -80,62 +85,76 @@ export default function ConfirmarTurnoPublicoPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-      
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 p-4">
+      <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+
       {/* Efectos de fondo decorativos */}
-      <div className="absolute top-20 left-20 w-72 h-72 bg-green-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-      <div className="absolute bottom-20 right-20 w-72 h-72 bg-emerald-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-      
-      <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center relative z-10 border border-green-100 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="absolute left-20 top-20 h-72 w-72 animate-pulse rounded-full bg-green-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+      <div
+        className="absolute bottom-20 right-20 h-72 w-72 animate-pulse rounded-full bg-emerald-300 opacity-20 mix-blend-multiply blur-3xl filter"
+        style={{ animationDelay: '1s' }}
+      ></div>
+
+      <div className="relative z-10 w-full max-w-lg rounded-3xl border border-green-100 bg-white p-10 text-center shadow-2xl duration-700 animate-in fade-in slide-in-from-bottom-8">
         {/* Ícono de éxito con animación */}
         <div className="relative mb-6">
-          <div className="absolute inset-0 bg-green-400 blur-3xl opacity-30 animate-ping" style={{ animationDuration: '2s' }}></div>
-          <div className="w-28 h-28 bg-gradient-to-br from-green-400 to-emerald-500 rounded-full flex items-center justify-center mx-auto relative shadow-2xl animate-in zoom-in duration-500">
+          <div
+            className="absolute inset-0 animate-ping bg-green-400 opacity-30 blur-3xl"
+            style={{ animationDuration: '2s' }}
+          ></div>
+          <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-green-400 to-emerald-500 shadow-2xl duration-500 animate-in zoom-in">
             <CheckCircle className="h-16 w-16 text-white" strokeWidth={2.5} />
           </div>
         </div>
-        
-        <h1 className="text-4xl font-bold bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent mb-4">
+
+        <h1 className="mb-4 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-4xl font-bold text-transparent">
           ¡Turno Confirmado!
         </h1>
-        
-        <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-          Su turno ha sido <strong className="text-green-600">confirmado exitosamente</strong>. Hemos notificado a nuestro equipo sobre su confirmación.
+
+        <p className="mb-8 text-lg leading-relaxed text-gray-600">
+          Su turno ha sido <strong className="text-green-600">confirmado exitosamente</strong>.
+          Hemos notificado a nuestro equipo sobre su confirmación.
         </p>
-        
-        <div className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 mb-6 shadow-inner">
-          <p className="text-base text-green-900 font-bold mb-4 flex items-center justify-center gap-2">
+
+        <div className="mb-6 rounded-2xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-6 shadow-inner">
+          <p className="mb-4 flex items-center justify-center gap-2 text-base font-bold text-green-900">
             <span className="text-2xl">📋</span>
             Recordatorios Importantes
           </p>
-          <ul className="text-sm text-green-800 text-left space-y-3">
+          <ul className="space-y-3 text-left text-sm text-green-800">
             <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">✓</span>
-              <span>Presentarse con <strong>15 minutos de anticipación</strong></span>
+              <span className="mt-0.5 font-bold text-green-500">✓</span>
+              <span>
+                Presentarse con <strong>15 minutos de anticipación</strong>
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">✓</span>
-              <span>Traer <strong>DNI del titular y cédula verde</strong></span>
+              <span className="mt-0.5 font-bold text-green-500">✓</span>
+              <span>
+                Traer <strong>DNI del titular y cédula verde</strong>
+              </span>
             </li>
             <li className="flex items-start gap-2">
-              <span className="text-green-500 font-bold mt-0.5">✓</span>
-              <span>Toda la <strong>documentación en regla</strong></span>
+              <span className="mt-0.5 font-bold text-green-500">✓</span>
+              <span>
+                Toda la <strong>documentación en regla</strong>
+              </span>
             </li>
           </ul>
         </div>
-        
-        <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-          <p className="text-xs text-gray-500 font-semibold mb-2">CONTACTO</p>
+
+        <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+          <p className="mb-2 text-xs font-semibold text-gray-500">CONTACTO</p>
           <p className="text-sm text-gray-700">
-            📞 <strong>4357-5100</strong> int. <strong>7137</strong><br/>
+            📞 <strong>4357-5100</strong> int. <strong>7137</strong>
+            <br />
             📧 <strong>transportepublicolanus@gmail.com</strong>
           </p>
         </div>
-        
-        <div className="mt-6 pt-6 border-t border-gray-200">
+
+        <div className="mt-6 border-t border-gray-200 pt-6">
           <p className="text-xs text-gray-500">🏛️ Municipalidad de Lanús</p>
-          <p className="text-xs text-gray-400 mt-1">Dirección Gral. de Movilidad y Transporte</p>
+          <p className="mt-1 text-xs text-gray-400">Dirección Gral. de Movilidad y Transporte</p>
         </div>
       </div>
     </div>

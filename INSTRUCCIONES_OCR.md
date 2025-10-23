@@ -39,7 +39,7 @@ npm install @google/generative-ai
 import { OCRScanner } from '@/components/ocr-scanner'
 
 function MiFormulario() {
-  const handleDNIExtracted = (data) => {
+  const handleDNIExtracted = data => {
     console.log('Datos del DNI:', data)
     // Llenar formulario automáticamente
     setNombre(data.nombre)
@@ -49,8 +49,8 @@ function MiFormulario() {
   }
 
   return (
-    <OCRScanner 
-      type="dni" 
+    <OCRScanner
+      type="dni"
       onDataExtracted={handleDNIExtracted}
       buttonText="Escanear DNI del Titular"
     />
@@ -61,9 +61,9 @@ function MiFormulario() {
 ### Para Cédula de Vehículo:
 
 ```tsx
-<OCRScanner 
-  type="cedula" 
-  onDataExtracted={(data) => {
+<OCRScanner
+  type="cedula"
+  onDataExtracted={data => {
     setDominio(data.dominio)
     setMarca(data.marca)
     setModelo(data.modelo)
@@ -77,11 +77,13 @@ function MiFormulario() {
 ## 🎯 Página de Prueba
 
 Accede a `/ocr-demo` en el panel para probar el sistema:
+
 - `http://localhost:3000/ocr-demo`
 
 ## 📊 Estructura de Datos
 
 ### DNI Response:
+
 ```json
 {
   "nombre": "Juan Pérez",
@@ -98,6 +100,7 @@ Accede a `/ocr-demo` en el panel para probar el sistema:
 ```
 
 ### Cédula Response:
+
 ```json
 {
   "dominio": "ABC123",
@@ -118,34 +121,43 @@ Accede a `/ocr-demo` en el panel para probar el sistema:
 ## 🔧 APIs Disponibles
 
 ### POST /api/ai/ocr-dni
+
 Procesa una imagen de DNI.
 
 **Body:** `FormData` con campo `image` (File)
 
 **Response:**
+
 ```json
 {
   "success": true,
-  "data": { /* datos del DNI */ }
+  "data": {
+    /* datos del DNI */
+  }
 }
 ```
 
 ### POST /api/ai/ocr-cedula
+
 Procesa una imagen de cédula verde/azul.
 
 **Body:** `FormData` con campo `image` (File)
 
 **Response:**
+
 ```json
 {
   "success": true,
-  "data": { /* datos de la cédula */ }
+  "data": {
+    /* datos de la cédula */
+  }
 }
 ```
 
 ## 💡 Consejos para Mejores Resultados
 
 ### Para el Usuario:
+
 - ✅ Buena iluminación
 - ✅ Documento completo en la foto
 - ✅ Evitar reflejos y sombras
@@ -154,6 +166,7 @@ Procesa una imagen de cédula verde/azul.
 - ❌ No fotos borrosas
 
 ### Para el Desarrollador:
+
 - Validar siempre los datos extraídos
 - Permitir edición manual si la IA se equivoca
 - Mostrar nivel de confianza al usuario
@@ -169,11 +182,13 @@ Procesa una imagen de cédula verde/azul.
 ## 📈 Limitaciones de Uso
 
 **Plan Gratuito de Gemini:**
+
 - 60 requests por minuto
 - 1500 requests por día
 - Suficiente para uso normal
 
 **Si necesitas más:**
+
 - Upgrade a plan pago en Google AI Studio
 - O implementar rate limiting
 
@@ -187,14 +202,12 @@ const [showOCR, setShowOCR] = useState(false)
 
 return (
   <div>
-    <Button onClick={() => setShowOCR(!showOCR)}>
-      📸 Escanear DNI con IA
-    </Button>
+    <Button onClick={() => setShowOCR(!showOCR)}>📸 Escanear DNI con IA</Button>
 
     {showOCR && (
-      <OCRScanner 
+      <OCRScanner
         type="dni"
-        onDataExtracted={(data) => {
+        onDataExtracted={data => {
           // Llenar formulario
           form.setValue('nombre', data.nombre)
           form.setValue('dni', data.dni)
@@ -222,6 +235,7 @@ return (
 ## 📞 Soporte
 
 Si tienes problemas:
+
 1. Verifica que `GEMINI_API_KEY` esté configurada
 2. Revisa los logs del servidor
 3. Prueba en `/ocr-demo` primero

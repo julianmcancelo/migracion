@@ -16,12 +16,12 @@ export async function GET() {
 
     // Test 1: Conexión básica
     const count = await prisma.habilitaciones_generales.count()
-    
+
     // Test 2: Una habilitación sin relaciones
     const simple = await prisma.habilitaciones_generales.findFirst({
       take: 1,
     })
-    
+
     // Test 3: Con relación a personas
     let withPersonas = null
     try {
@@ -73,24 +73,31 @@ export async function GET() {
         withAll: (withAll as any)?.error || 'OK',
       },
       sample: {
-        simple: simple ? {
-          id: simple.id,
-          nro_licencia: simple.nro_licencia,
-        } : null,
-        withAll: withAll && !(withAll as any).error ? {
-          id: (withAll as any).id,
-          personas: (withAll as any).habilitaciones_personas?.length || 0,
-          vehiculos: (withAll as any).habilitaciones_vehiculos?.length || 0,
-          establecimientos: (withAll as any).habilitaciones_establecimientos?.length || 0,
-        } : withAll,
+        simple: simple
+          ? {
+              id: simple.id,
+              nro_licencia: simple.nro_licencia,
+            }
+          : null,
+        withAll:
+          withAll && !(withAll as any).error
+            ? {
+                id: (withAll as any).id,
+                personas: (withAll as any).habilitaciones_personas?.length || 0,
+                vehiculos: (withAll as any).habilitaciones_vehiculos?.length || 0,
+                establecimientos: (withAll as any).habilitaciones_establecimientos?.length || 0,
+              }
+            : withAll,
       },
     })
-
   } catch (error: any) {
-    return NextResponse.json({
-      success: false,
-      error: error.message,
-      stack: error.stack,
-    }, { status: 500 })
+    return NextResponse.json(
+      {
+        success: false,
+        error: error.message,
+        stack: error.stack,
+      },
+      { status: 500 }
+    )
   }
 }

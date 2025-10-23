@@ -2,7 +2,17 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { ChevronRight, MoreVertical, Eye, Edit, FileText, Calendar, Download, QrCode, Shield } from 'lucide-react'
+import {
+  ChevronRight,
+  MoreVertical,
+  Eye,
+  Edit,
+  FileText,
+  Calendar,
+  Download,
+  QrCode,
+  Shield,
+} from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
 import { DetalleModal } from './detalle-modal'
@@ -106,17 +116,17 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const handleGenerarCredencial = async (hab: any) => {
     try {
       const res = await fetch(`/api/habilitaciones/${hab.id}/generar-token-credencial`, {
-        method: 'POST'
+        method: 'POST',
       })
       const data = await res.json()
-      
+
       if (data.success) {
         // Copiar URL al portapapeles
         await navigator.clipboard.writeText(data.data.url)
-        
+
         // Abrir credencial en nueva pestaña
         window.open(data.data.url, '_blank')
-        
+
         alert('✅ Credencial generada. URL copiada al portapapeles.')
       } else {
         alert('❌ Error: ' + data.error)
@@ -134,29 +144,33 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
   const getEstadoBadge = (estado: string | null) => {
     const estados: Record<string, { className: string; label: string }> = {
-      'HABILITADO': { 
+      HABILITADO: {
         className: 'bg-green-600 text-white border-green-700',
-        label: 'Habilitado' 
+        label: 'Habilitado',
       },
-      'EN_TRAMITE': { 
+      EN_TRAMITE: {
         className: 'bg-yellow-500 text-white border-yellow-600',
-        label: 'En Trámite' 
+        label: 'En Trámite',
       },
-      'NO_HABILITADO': { 
+      NO_HABILITADO: {
         className: 'bg-red-600 text-white border-red-700',
-        label: 'No Habilitado' 
+        label: 'No Habilitado',
       },
-      'INICIADO': { 
+      INICIADO: {
         className: 'bg-blue-600 text-white border-blue-700',
-        label: 'Iniciado' 
+        label: 'Iniciado',
       },
     }
 
-    const config = estados[estado || ''] || { 
+    const config = estados[estado || ''] || {
       className: 'bg-gray-400 text-white border-gray-500',
-      label: estado || 'N/A' 
+      label: estado || 'N/A',
     }
-    return <Badge className={`${config.className} px-2.5 py-0.5 text-xs font-medium border uppercase`}>{config.label}</Badge>
+    return (
+      <Badge className={`${config.className} border px-2.5 py-0.5 text-xs font-medium uppercase`}>
+        {config.label}
+      </Badge>
+    )
   }
 
   const getEstadoVigencia = (fecha: Date | null) => {
@@ -173,11 +187,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
         </Badge>
       )
     } else if (diasRestantes <= 30) {
-      return (
-        <Badge className="bg-orange-500 text-white text-xs">
-          {diasRestantes} días
-        </Badge>
-      )
+      return <Badge className="bg-orange-500 text-xs text-white">{diasRestantes} días</Badge>
     }
     return null
   }
@@ -186,7 +196,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
     return (
       <div className="space-y-4">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-lg" />
+          <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
         ))}
       </div>
     )
@@ -194,11 +204,13 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
   if (habilitaciones.length === 0) {
     return (
-      <div className="text-center py-12">
-        <div className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 mb-4">
+      <div className="py-12 text-center">
+        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
           <FileText className="h-6 w-6 text-gray-400" />
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">No se encontraron habilitaciones</h3>
+        <h3 className="mb-2 text-lg font-semibold text-gray-900">
+          No se encontraron habilitaciones
+        </h3>
         <p className="text-gray-500">Intenta con otro término de búsqueda o revisa los filtros</p>
       </div>
     )
@@ -206,104 +218,115 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
   return (
     <div className="space-y-2">
-      {habilitaciones.map((hab) => {
+      {habilitaciones.map(hab => {
         const isExpanded = expandedRows.has(hab.id)
-        
+
         return (
-          <div 
-            key={hab.id} 
-            className="border border-gray-300 bg-white hover:bg-gray-50 transition-colors"
+          <div
+            key={hab.id}
+            className="border border-gray-300 bg-white transition-colors hover:bg-gray-50"
           >
             {/* Fila principal */}
-            <div className="flex items-center p-4 gap-4">
+            <div className="flex items-center gap-4 p-4">
               {/* Botón expandir */}
               <button
                 onClick={() => toggleRow(hab.id)}
-                className="shrink-0 p-1 hover:bg-gray-200 transition-colors"
+                className="shrink-0 p-1 transition-colors hover:bg-gray-200"
               >
                 <ChevronRight
                   className={cn(
-                    "h-4 w-4 text-gray-600 transition-transform",
-                    isExpanded && "rotate-90"
+                    'h-4 w-4 text-gray-600 transition-transform',
+                    isExpanded && 'rotate-90'
                   )}
                 />
               </button>
 
               {/* Licencia y Expediente */}
-              <div className="min-w-0 flex-shrink-0 w-40">
-                <div className="font-semibold text-sm text-gray-900 truncate">{hab.nro_licencia || 'N/A'}</div>
-                <div className="text-xs text-gray-500 truncate">Exp: {hab.expte || 'N/A'}</div>
+              <div className="w-40 min-w-0 flex-shrink-0">
+                <div className="truncate text-sm font-semibold text-gray-900">
+                  {hab.nro_licencia || 'N/A'}
+                </div>
+                <div className="truncate text-xs text-gray-500">Exp: {hab.expte || 'N/A'}</div>
               </div>
 
               {/* Titular */}
               <div className="min-w-0 flex-1">
-                <div className="font-medium text-sm text-gray-900 truncate">
-                  {hab.titular_principal || <span className="italic text-gray-500">Sin asignar</span>}
+                <div className="truncate text-sm font-medium text-gray-900">
+                  {hab.titular_principal || (
+                    <span className="italic text-gray-500">Sin asignar</span>
+                  )}
                 </div>
-                <div className="text-xs text-gray-500 mt-0.5">
+                <div className="mt-0.5 text-xs text-gray-500">
                   {hab.tipo_transporte || 'Sin tipo'}
                 </div>
               </div>
 
               {/* Estado */}
-              <div className="flex-shrink-0">
-                {getEstadoBadge(hab.estado)}
-              </div>
+              <div className="flex-shrink-0">{getEstadoBadge(hab.estado)}</div>
 
               {/* Vigencia */}
-              <div className="flex-shrink-0 w-32">
-                <div className="text-xs text-gray-500 mb-0.5">Vence</div>
+              <div className="w-32 flex-shrink-0">
+                <div className="mb-0.5 text-xs text-gray-500">Vence</div>
                 <div className="text-sm font-semibold text-gray-900">
                   {hab.vigencia_fin ? formatearFecha(hab.vigencia_fin) : 'N/A'}
                 </div>
-                <div className="mt-1">
-                  {getEstadoVigencia(hab.vigencia_fin)}
-                </div>
+                <div className="mt-1">{getEstadoVigencia(hab.vigencia_fin)}</div>
               </div>
 
               {/* Menú de acciones */}
               <div className="flex-shrink-0">
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button 
-                      variant="ghost" 
-                      size="sm"
-                      className="h-8 w-8 p-0"
-                    >
+                    <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-48">
-                    <DropdownMenuItem onClick={() => handleVerDetalle(hab)} className="cursor-pointer">
-                      <Eye className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem
+                      onClick={() => handleVerDetalle(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Eye className="mr-2 h-4 w-4" />
                       Ver Detalle
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => handleEditar(hab)} className="cursor-pointer">
-                      <Edit className="h-4 w-4 mr-2" />
+                      <Edit className="mr-2 h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleGenerarCredencial(hab)} className="cursor-pointer">
-                      <QrCode className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem
+                      onClick={() => handleGenerarCredencial(hab)}
+                      className="cursor-pointer"
+                    >
+                      <QrCode className="mr-2 h-4 w-4" />
                       Ver Credencial
                     </DropdownMenuItem>
                     {hab.estado === 'HABILITADO' && (
-                      <DropdownMenuItem onClick={() => handleGestionarObleas(hab)} className="cursor-pointer">
-                        <Shield className="h-4 w-4 mr-2" />
+                      <DropdownMenuItem
+                        onClick={() => handleGestionarObleas(hab)}
+                        className="cursor-pointer"
+                      >
+                        <Shield className="mr-2 h-4 w-4" />
                         Gestionar Obleas
                       </DropdownMenuItem>
                     )}
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
-                        <FileText className="h-4 w-4 mr-2" />
+                        <FileText className="mr-2 h-4 w-4" />
                         Ver Resolución
                       </DropdownMenuItem>
                     )}
-                    <DropdownMenuItem onClick={() => handleAsignarTurno(hab)} className="cursor-pointer">
-                      <Calendar className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem
+                      onClick={() => handleAsignarTurno(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Calendar className="mr-2 h-4 w-4" />
                       Asignar Turno
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleDescargarPDF(hab)} className="cursor-pointer">
-                      <Download className="h-4 w-4 mr-2" />
+                    <DropdownMenuItem
+                      onClick={() => handleDescargarPDF(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Download className="mr-2 h-4 w-4" />
                       Descargar PDF
                     </DropdownMenuItem>
                   </DropdownMenuContent>
@@ -313,27 +336,29 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
             {/* Detalles expandibles */}
             {isExpanded && (
-              <div className="border-t bg-gray-50 p-4 space-y-3">
+              <div className="space-y-3 border-t bg-gray-50 p-4">
                 {/* Personas */}
                 {hab.personas.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                    <h4 className="mb-2 text-xs font-semibold uppercase text-gray-700">
                       Personas ({hab.personas.length})
                     </h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      {hab.personas.map((persona) => (
+                    <div className="grid grid-cols-1 gap-2 md:grid-cols-2">
+                      {hab.personas.map(persona => (
                         <button
                           key={persona.id}
                           onClick={() => {
                             setSelectedPersona(persona)
                             setShowPersonaModal(true)
                           }}
-                          className="flex items-center gap-2 text-xs bg-white p-2 border border-gray-300 hover:bg-gray-100 transition-colors cursor-pointer text-left"
+                          className="flex cursor-pointer items-center gap-2 border border-gray-300 bg-white p-2 text-left text-xs transition-colors hover:bg-gray-100"
                         >
                           <Badge variant="outline" className="text-xs">
                             {persona.rol}
                           </Badge>
-                          <span className="font-medium text-gray-900 flex-1 truncate">{persona.nombre}</span>
+                          <span className="flex-1 truncate font-medium text-gray-900">
+                            {persona.nombre}
+                          </span>
                           {persona.licencia_categoria && (
                             <span className="text-gray-500">Cat: {persona.licencia_categoria}</span>
                           )}
@@ -347,18 +372,18 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Vehículos */}
                 {hab.vehiculos.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                    <h4 className="mb-2 text-xs font-semibold uppercase text-gray-700">
                       Vehículos ({hab.vehiculos.length})
                     </h4>
                     <div className="flex flex-wrap gap-2">
-                      {hab.vehiculos.map((vehiculo) => (
+                      {hab.vehiculos.map(vehiculo => (
                         <button
                           key={vehiculo.id}
                           onClick={() => {
                             setSelectedVehiculo(vehiculo)
                             setShowVehiculoModal(true)
                           }}
-                          className="inline-flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-300 text-xs font-medium hover:bg-gray-100 transition-colors cursor-pointer"
+                          className="inline-flex cursor-pointer items-center gap-2 border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium transition-colors hover:bg-gray-100"
                         >
                           <span>{vehiculo.dominio || 'N/A'}</span>
                           <Eye className="h-3 w-3 text-gray-400" />
@@ -371,12 +396,15 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Establecimientos */}
                 {hab.establecimientos.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-gray-700 uppercase mb-2">
+                    <h4 className="mb-2 text-xs font-semibold uppercase text-gray-700">
                       Destinos ({hab.establecimientos.length})
                     </h4>
                     <div className="space-y-1">
-                      {hab.establecimientos.map((est) => (
-                        <div key={est.id} className="text-xs bg-white p-2 border border-gray-300 text-gray-700">
+                      {hab.establecimientos.map(est => (
+                        <div
+                          key={est.id}
+                          className="border border-gray-300 bg-white p-2 text-xs text-gray-700"
+                        >
                           {est.nombre || 'N/A'}
                         </div>
                       ))}
@@ -387,8 +415,10 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                 {/* Observaciones */}
                 {hab.observaciones && (
                   <div>
-                    <h4 className="text-sm font-semibold text-gray-700 mb-2">Observaciones</h4>
-                    <p className="text-sm text-gray-600 bg-white p-3 rounded border">{hab.observaciones}</p>
+                    <h4 className="mb-2 text-sm font-semibold text-gray-700">Observaciones</h4>
+                    <p className="rounded border bg-white p-3 text-sm text-gray-600">
+                      {hab.observaciones}
+                    </p>
                   </div>
                 )}
               </div>
@@ -403,7 +433,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
         open={showVehiculoModal}
         onClose={() => setShowVehiculoModal(false)}
       />
-      
+
       <PersonaModal
         persona={selectedPersona}
         open={showPersonaModal}

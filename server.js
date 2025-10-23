@@ -21,11 +21,11 @@ app.prepare().then(() => {
       res.end('internal server error')
     }
   })
-  .once('error', (err) => {
-    console.error(err)
-    process.exit(1)
-  })
-  .listen(port, () => {
-    console.log(`> Ready on http://${hostname}:${port}`)
-  })
+    .once('error', err => {
+      console.error(err)
+      process.exit(1)
+    })
+    .listen(port, () => {
+      console.log(`> Ready on http://${hostname}:${port}`)
+    })
 })

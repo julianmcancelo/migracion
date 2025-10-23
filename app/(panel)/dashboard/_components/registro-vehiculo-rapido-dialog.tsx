@@ -1,7 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -32,12 +38,15 @@ interface VehiculoFormData {
 /**
  * Dialog para registro rápido de vehículos con OCR
  */
-export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVehiculoRapidoDialogProps) {
+export function RegistroVehiculoRapidoDialog({
+  open,
+  onOpenChange,
+}: RegistroVehiculoRapidoDialogProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showOCR, setShowOCR] = useState(false)
   const [vehiculoCreado, setVehiculoCreado] = useState<any>(null)
-  
+
   const [formData, setFormData] = useState<VehiculoFormData>({
     dominio: '',
     marca: '',
@@ -51,13 +60,13 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
     Aseguradora: '',
     poliza: '',
     Vencimiento_VTV: '',
-    Vencimiento_Poliza: ''
+    Vencimiento_Poliza: '',
   })
 
   // Procesar datos del OCR
   const handleOCRData = (data: any) => {
     console.log('Datos OCR Cédula recibidos:', data)
-    
+
     if (data.dominio) setFormData(prev => ({ ...prev, dominio: data.dominio.toUpperCase() }))
     if (data.marca) setFormData(prev => ({ ...prev, marca: data.marca }))
     if (data.modelo) setFormData(prev => ({ ...prev, modelo: data.modelo }))
@@ -65,7 +74,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
     if (data.ano) setFormData(prev => ({ ...prev, ano: String(data.ano) }))
     if (data.chasis) setFormData(prev => ({ ...prev, chasis: data.chasis }))
     if (data.motor) setFormData(prev => ({ ...prev, motor: data.motor }))
-    
+
     setShowOCR(false)
   }
 
@@ -76,7 +85,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!formData.dominio.trim()) {
       setError('El dominio es obligatorio')
       return
@@ -92,7 +101,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
         body: JSON.stringify({
           ...formData,
           ano: formData.ano ? parseInt(formData.ano) : null,
-          asientos: formData.asientos ? parseInt(formData.asientos) : null
+          asientos: formData.asientos ? parseInt(formData.asientos) : null,
         }),
       })
 
@@ -103,7 +112,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
       }
 
       setVehiculoCreado(data.data)
-      
+
       // Resetear formulario
       setFormData({
         dominio: '',
@@ -118,7 +127,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
         Aseguradora: '',
         poliza: '',
         Vencimiento_VTV: '',
-        Vencimiento_Poliza: ''
+        Vencimiento_Poliza: '',
       })
 
       // Cerrar después de 3 segundos
@@ -147,7 +156,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
       Aseguradora: '',
       poliza: '',
       Vencimiento_VTV: '',
-      Vencimiento_Poliza: ''
+      Vencimiento_Poliza: '',
     })
     setError(null)
     setShowOCR(false)
@@ -157,7 +166,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Car className="h-5 w-5" />
@@ -166,33 +175,37 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
         </DialogHeader>
 
         {vehiculoCreado ? (
-          <div className="bg-green-50 border-2 border-green-500 rounded-lg p-8 text-center">
-            <div className="text-green-600 text-6xl mb-4">✅</div>
-            <h3 className="font-bold text-green-900 text-xl mb-3">¡Vehículo Registrado!</h3>
+          <div className="rounded-lg border-2 border-green-500 bg-green-50 p-8 text-center">
+            <div className="mb-4 text-6xl text-green-600">✅</div>
+            <h3 className="mb-3 text-xl font-bold text-green-900">¡Vehículo Registrado!</h3>
             <div className="space-y-1">
-              <p className="text-green-700 font-semibold text-lg">{vehiculoCreado.dominio}</p>
-              <p className="text-green-600">{vehiculoCreado.marca} {vehiculoCreado.modelo}</p>
-              {vehiculoCreado.ano && <p className="text-sm text-green-600">Año: {vehiculoCreado.ano}</p>}
+              <p className="text-lg font-semibold text-green-700">{vehiculoCreado.dominio}</p>
+              <p className="text-green-600">
+                {vehiculoCreado.marca} {vehiculoCreado.modelo}
+              </p>
+              {vehiculoCreado.ano && (
+                <p className="text-sm text-green-600">Año: {vehiculoCreado.ano}</p>
+              )}
             </div>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                 {error}
               </div>
             )}
 
             {/* Botón OCR */}
             {!showOCR && (
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <h4 className="font-semibold text-blue-900 flex items-center gap-2 text-sm">
+                    <h4 className="flex items-center gap-2 text-sm font-semibold text-blue-900">
                       <Scan className="h-4 w-4" />
                       ¿Tenés la Cédula Verde?
                     </h4>
-                    <p className="text-xs text-blue-700 mt-1">
+                    <p className="mt-1 text-xs text-blue-700">
                       Escaneá y autocompletamos los datos
                     </p>
                   </div>
@@ -203,7 +216,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                     size="sm"
                     className="border-blue-300 text-blue-700 hover:bg-blue-100"
                   >
-                    <Scan className="h-3 w-3 mr-1" />
+                    <Scan className="mr-1 h-3 w-3" />
                     Escanear
                   </Button>
                 </div>
@@ -212,15 +225,15 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
 
             {/* OCR */}
             {showOCR && (
-              <div className="border-2 border-blue-300 rounded-lg p-3 bg-blue-50">
-                <div className="flex justify-between items-center mb-2">
-                  <h5 className="font-semibold text-blue-900 text-sm">Escanear Cédula Verde</h5>
+              <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-3">
+                <div className="mb-2 flex items-center justify-between">
+                  <h5 className="text-sm font-semibold text-blue-900">Escanear Cédula Verde</h5>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={() => setShowOCR(false)}
-                    className="text-blue-700 h-6"
+                    className="h-6 text-blue-700"
                   >
                     Cerrar
                   </Button>
@@ -236,11 +249,13 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
             {/* Formulario */}
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <Label htmlFor="dominio">Dominio / Patente <span className="text-red-500">*</span></Label>
+                <Label htmlFor="dominio">
+                  Dominio / Patente <span className="text-red-500">*</span>
+                </Label>
                 <Input
                   id="dominio"
                   value={formData.dominio}
-                  onChange={(e) => handleChange('dominio', e.target.value.toUpperCase())}
+                  onChange={e => handleChange('dominio', e.target.value.toUpperCase())}
                   placeholder="Ej: ABC123"
                   required
                   disabled={loading}
@@ -253,7 +268,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                 <Input
                   id="marca"
                   value={formData.marca}
-                  onChange={(e) => handleChange('marca', e.target.value)}
+                  onChange={e => handleChange('marca', e.target.value)}
                   disabled={loading}
                 />
               </div>
@@ -263,7 +278,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                 <Input
                   id="modelo"
                   value={formData.modelo}
-                  onChange={(e) => handleChange('modelo', e.target.value)}
+                  onChange={e => handleChange('modelo', e.target.value)}
                   disabled={loading}
                 />
               </div>
@@ -273,7 +288,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                 <Input
                   id="tipo"
                   value={formData.tipo}
-                  onChange={(e) => handleChange('tipo', e.target.value)}
+                  onChange={e => handleChange('tipo', e.target.value)}
                   placeholder="Ej: Automóvil"
                   disabled={loading}
                 />
@@ -285,7 +300,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                   id="ano"
                   type="number"
                   value={formData.ano}
-                  onChange={(e) => handleChange('ano', e.target.value)}
+                  onChange={e => handleChange('ano', e.target.value)}
                   disabled={loading}
                 />
               </div>
@@ -295,7 +310,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                 <Input
                   id="chasis"
                   value={formData.chasis}
-                  onChange={(e) => handleChange('chasis', e.target.value.toUpperCase())}
+                  onChange={e => handleChange('chasis', e.target.value.toUpperCase())}
                   disabled={loading}
                   className="uppercase"
                 />
@@ -306,7 +321,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                 <Input
                   id="motor"
                   value={formData.motor}
-                  onChange={(e) => handleChange('motor', e.target.value.toUpperCase())}
+                  onChange={e => handleChange('motor', e.target.value.toUpperCase())}
                   disabled={loading}
                   className="uppercase"
                 />
@@ -318,7 +333,7 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                   id="asientos"
                   type="number"
                   value={formData.asientos}
-                  onChange={(e) => handleChange('asientos', e.target.value)}
+                  onChange={e => handleChange('asientos', e.target.value)}
                   disabled={loading}
                   min="1"
                 />
@@ -330,30 +345,25 @@ export function RegistroVehiculoRapidoDialog({ open, onOpenChange }: RegistroVeh
                   id="inscripcion_inicial"
                   type="date"
                   value={formData.inscripcion_inicial}
-                  onChange={(e) => handleChange('inscripcion_inicial', e.target.value)}
+                  onChange={e => handleChange('inscripcion_inicial', e.target.value)}
                   disabled={loading}
                 />
               </div>
             </div>
 
             <DialogFooter className="gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleClose}
-                disabled={loading}
-              >
+              <Button type="button" variant="outline" onClick={handleClose} disabled={loading}>
                 Cancelar
               </Button>
               <Button type="submit" disabled={loading || !formData.dominio.trim()}>
                 {loading ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Registrando...
                   </>
                 ) : (
                   <>
-                    <Car className="h-4 w-4 mr-2" />
+                    <Car className="mr-2 h-4 w-4" />
                     Registrar Vehículo
                   </>
                 )}

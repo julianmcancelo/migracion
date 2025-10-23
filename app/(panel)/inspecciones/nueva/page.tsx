@@ -24,7 +24,7 @@ const ITEMS_CHECKLIST = [
   { id: 'balizas', nombre: 'Balizas' },
   { id: 'botiquin', nombre: 'Botiquín' },
   { id: 'carroceria', nombre: 'Estado de carrocería' },
-  { id: 'chasis', nombre: 'Estado de chasis' }
+  { id: 'chasis', nombre: 'Estado de chasis' },
 ]
 
 const TIPOS_FOTOS = [
@@ -32,7 +32,7 @@ const TIPOS_FOTOS = [
   { id: 'contrafrente', nombre: 'Contrafrente' },
   { id: 'lateral_izq', nombre: 'Lateral izquierdo' },
   { id: 'lateral_der', nombre: 'Lateral derecho' },
-  { id: 'interior', nombre: 'Interior' }
+  { id: 'interior', nombre: 'Interior' },
 ]
 
 interface ItemState {
@@ -48,13 +48,13 @@ function NuevaInspeccionContent() {
 
   const [habilitacionId] = useState(searchParams.get('habilitacion_id'))
   const [turnoId] = useState(searchParams.get('turno_id'))
-  
+
   // Estados del formulario
   const [nroLicencia, setNroLicencia] = useState('')
   const [nombreInspector, setNombreInspector] = useState('')
   const [emailContribuyente, setEmailContribuyente] = useState('')
   const [tipoTransporte, setTipoTransporte] = useState<'ESCOLAR' | 'REMIS'>('ESCOLAR')
-  
+
   // Estados de items
   const [items, setItems] = useState<Record<string, ItemState>>(() => {
     const initial: Record<string, ItemState> = {}
@@ -66,7 +66,7 @@ function NuevaInspeccionContent() {
 
   // Estados de fotos
   const [fotos, setFotos] = useState<Record<string, string>>({})
-  
+
   // Estados de firmas
   const [firmandoInspector, setFirmandoInspector] = useState(false)
   const [firmandoContribuyente, setFirmandoContribuyente] = useState(false)
@@ -82,13 +82,13 @@ function NuevaInspeccionContent() {
     // Obtener geolocalización
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        position => {
           setCoordenadas({
             lat: position.coords.latitude,
-            lng: position.coords.longitude
+            lng: position.coords.longitude,
           })
         },
-        (error) => console.error('Error obteniendo ubicación:', error)
+        error => console.error('Error obteniendo ubicación:', error)
       )
     }
   }, [])
@@ -96,14 +96,14 @@ function NuevaInspeccionContent() {
   const setItemEstado = (itemId: string, estado: 'BIEN' | 'REGULAR' | 'MAL') => {
     setItems(prev => ({
       ...prev,
-      [itemId]: { ...prev[itemId], estado }
+      [itemId]: { ...prev[itemId], estado },
     }))
   }
 
   const setItemObservacion = (itemId: string, observacion: string) => {
     setItems(prev => ({
       ...prev,
-      [itemId]: { ...prev[itemId], observacion }
+      [itemId]: { ...prev[itemId], observacion },
     }))
   }
 
@@ -112,21 +112,21 @@ function NuevaInspeccionContent() {
     input.type = 'file'
     input.accept = 'image/*'
     input.capture = 'environment' as any
-    
+
     input.onchange = (e: any) => {
       const file = e.target.files[0]
       if (file) {
         const reader = new FileReader()
-        reader.onload = (event) => {
+        reader.onload = event => {
           setFotos(prev => ({
             ...prev,
-            [tipoFoto]: event.target?.result as string
+            [tipoFoto]: event.target?.result as string,
           }))
         }
         reader.readAsDataURL(file)
       }
     }
-    
+
     input.click()
   }
 
@@ -142,7 +142,7 @@ function NuevaInspeccionContent() {
       const clientY = 'touches' in e ? e.touches[0].clientY : e.clientY
       return {
         x: clientX - rect.left,
-        y: clientY - rect.top
+        y: clientY - rect.top,
       }
     }
 
@@ -193,9 +193,7 @@ function NuevaInspeccionContent() {
     }
 
     // Verificar que todos los items estén evaluados
-    const itemsIncompletos = ITEMS_CHECKLIST.filter(
-      item => !items[item.id].estado
-    )
+    const itemsIncompletos = ITEMS_CHECKLIST.filter(item => !items[item.id].estado)
 
     if (itemsIncompletos.length > 0) {
       alert(`Complete la evaluación de: ${itemsIncompletos.map(i => i.nombre).join(', ')}`)
@@ -209,14 +207,14 @@ function NuevaInspeccionContent() {
       const itemsData = ITEMS_CHECKLIST.map(item => ({
         item_id: item.id,
         estado: items[item.id].estado,
-        observacion: items[item.id].observacion
+        observacion: items[item.id].observacion,
       }))
 
       const fotosData = Object.entries(fotos).map(([tipo, base64]) => ({
         tipo_foto: tipo,
         foto_base64: base64,
         latitud: coordenadas?.lat,
-        longitud: coordenadas?.lng
+        longitud: coordenadas?.lng,
       }))
 
       const body = {
@@ -230,13 +228,13 @@ function NuevaInspeccionContent() {
         items: itemsData,
         fotos_vehiculo: fotosData,
         latitud: coordenadas?.lat,
-        longitud: coordenadas?.lng
+        longitud: coordenadas?.lng,
       }
 
       const response = await fetch('/api/inspecciones', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       })
 
       const result = await response.json()
@@ -257,75 +255,75 @@ function NuevaInspeccionContent() {
 
   const getEstadoColor = (estado: string | null) => {
     switch (estado) {
-      case 'BIEN': return 'bg-green-500 text-white'
-      case 'REGULAR': return 'bg-yellow-500 text-white'
-      case 'MAL': return 'bg-red-500 text-white'
-      default: return 'bg-gray-200 text-gray-700'
+      case 'BIEN':
+        return 'bg-green-500 text-white'
+      case 'REGULAR':
+        return 'bg-yellow-500 text-white'
+      case 'MAL':
+        return 'bg-red-500 text-white'
+      default:
+        return 'bg-gray-200 text-gray-700'
     }
   }
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-5xl">
+    <div className="container mx-auto max-w-5xl px-4 py-8">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Nueva Inspección Vehicular</h1>
-        <p className="text-gray-600 mt-2">
+        <p className="mt-2 text-gray-600">
           Complete todos los campos y evalúe cada ítem del vehículo
         </p>
       </div>
 
       {/* Datos Generales */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Datos Generales</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Datos Generales</h2>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nro. Licencia *
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Nro. Licencia *</label>
             <input
               type="text"
               value={nroLicencia}
-              onChange={(e) => setNroLicencia(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => setNroLicencia(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               placeholder="Ej: 123456"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Inspector *
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Inspector *</label>
             <input
               type="text"
               value={nombreInspector}
-              onChange={(e) => setNombreInspector(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => setNombreInspector(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               placeholder="Nombre completo"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Email Contribuyente
             </label>
             <input
               type="email"
               value={emailContribuyente}
-              onChange={(e) => setEmailContribuyente(e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => setEmailContribuyente(e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               placeholder="email@ejemplo.com"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-gray-700">
               Tipo de Transporte *
             </label>
             <select
               value={tipoTransporte}
-              onChange={(e) => setTipoTransporte(e.target.value as any)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => setTipoTransporte(e.target.value as any)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
             >
               <option value="ESCOLAR">Escolar</option>
               <option value="REMIS">Remis</option>
@@ -341,60 +339,58 @@ function NuevaInspeccionContent() {
       </div>
 
       {/* Checklist de Items */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Checklist de Inspección</h2>
-        
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Checklist de Inspección</h2>
+
         <div className="space-y-4">
-          {ITEMS_CHECKLIST.map((item) => (
+          {ITEMS_CHECKLIST.map(item => (
             <div key={item.id} className="border-b border-gray-200 pb-4 last:border-0">
-              <div className="flex items-center justify-between mb-2">
-                <label className="text-sm font-medium text-gray-900">
-                  {item.nombre}
-                </label>
-                
+              <div className="mb-2 flex items-center justify-between">
+                <label className="text-sm font-medium text-gray-900">{item.nombre}</label>
+
                 <div className="flex gap-2">
                   <button
                     onClick={() => setItemEstado(item.id, 'BIEN')}
-                    className={`px-4 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                    className={`rounded-lg px-4 py-1 text-xs font-semibold transition-colors ${
                       items[item.id].estado === 'BIEN'
                         ? 'bg-green-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    <CheckCircle className="h-4 w-4 inline mr-1" />
+                    <CheckCircle className="mr-1 inline h-4 w-4" />
                     BIEN
                   </button>
                   <button
                     onClick={() => setItemEstado(item.id, 'REGULAR')}
-                    className={`px-4 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                    className={`rounded-lg px-4 py-1 text-xs font-semibold transition-colors ${
                       items[item.id].estado === 'REGULAR'
                         ? 'bg-yellow-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    <AlertCircle className="h-4 w-4 inline mr-1" />
+                    <AlertCircle className="mr-1 inline h-4 w-4" />
                     REGULAR
                   </button>
                   <button
                     onClick={() => setItemEstado(item.id, 'MAL')}
-                    className={`px-4 py-1 rounded-lg text-xs font-semibold transition-colors ${
+                    className={`rounded-lg px-4 py-1 text-xs font-semibold transition-colors ${
                       items[item.id].estado === 'MAL'
                         ? 'bg-red-500 text-white'
                         : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                     }`}
                   >
-                    <XCircle className="h-4 w-4 inline mr-1" />
+                    <XCircle className="mr-1 inline h-4 w-4" />
                     MAL
                   </button>
                 </div>
               </div>
-              
+
               {items[item.id].estado && items[item.id].estado !== 'BIEN' && (
                 <textarea
                   value={items[item.id].observacion}
-                  onChange={(e) => setItemObservacion(item.id, e.target.value)}
+                  onChange={e => setItemObservacion(item.id, e.target.value)}
                   placeholder="Observaciones..."
-                  className="w-full mt-2 px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-transparent focus:ring-2 focus:ring-blue-500"
                   rows={2}
                 />
               )}
@@ -404,28 +400,30 @@ function NuevaInspeccionContent() {
       </div>
 
       {/* Fotos del Vehículo */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Fotos del Vehículo</h2>
-        
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {TIPOS_FOTOS.map((tipo) => (
-            <div key={tipo.id} className="border border-gray-300 rounded-lg p-4">
-              <p className="text-sm font-medium text-gray-700 mb-2">{tipo.nombre}</p>
-              
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Fotos del Vehículo</h2>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+          {TIPOS_FOTOS.map(tipo => (
+            <div key={tipo.id} className="rounded-lg border border-gray-300 p-4">
+              <p className="mb-2 text-sm font-medium text-gray-700">{tipo.nombre}</p>
+
               {fotos[tipo.id] ? (
                 <div className="relative">
                   <img
                     src={fotos[tipo.id]}
                     alt={tipo.nombre}
-                    className="w-full h-40 object-cover rounded-lg"
+                    className="h-40 w-full rounded-lg object-cover"
                   />
                   <button
-                    onClick={() => setFotos(prev => {
-                      const newFotos = { ...prev }
-                      delete newFotos[tipo.id]
-                      return newFotos
-                    })}
-                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                    onClick={() =>
+                      setFotos(prev => {
+                        const newFotos = { ...prev }
+                        delete newFotos[tipo.id]
+                        return newFotos
+                      })
+                    }
+                    className="absolute right-2 top-2 rounded-full bg-red-500 p-2 text-white hover:bg-red-600"
                   >
                     <XCircle className="h-4 w-4" />
                   </button>
@@ -433,10 +431,10 @@ function NuevaInspeccionContent() {
               ) : (
                 <button
                   onClick={() => capturarFoto(tipo.id)}
-                  className="w-full h-40 border-2 border-dashed border-gray-300 rounded-lg flex items-center justify-center hover:border-blue-500 hover:bg-blue-50 transition-colors"
+                  className="flex h-40 w-full items-center justify-center rounded-lg border-2 border-dashed border-gray-300 transition-colors hover:border-blue-500 hover:bg-blue-50"
                 >
                   <div className="text-center">
-                    <Camera className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+                    <Camera className="mx-auto mb-2 h-8 w-8 text-gray-400" />
                     <span className="text-sm text-gray-600">Tomar foto</span>
                   </div>
                 </button>
@@ -447,20 +445,20 @@ function NuevaInspeccionContent() {
       </div>
 
       {/* Firmas */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 mb-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-4">Firmas Digitales</h2>
-        
+      <div className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+        <h2 className="mb-4 text-xl font-bold text-gray-900">Firmas Digitales</h2>
+
         {/* Firma Inspector */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Firma del Inspector *
           </label>
-          <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
+          <div className="overflow-hidden rounded-lg border-2 border-gray-300">
             <canvas
               ref={canvasInspectorRef}
               width={600}
               height={200}
-              className="w-full bg-white cursor-crosshair"
+              className="w-full cursor-crosshair bg-white"
               onMouseDown={() => {
                 if (canvasInspectorRef.current && !firmandoInspector) {
                   iniciarFirma(canvasInspectorRef.current)
@@ -469,7 +467,7 @@ function NuevaInspeccionContent() {
               }}
             />
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="mt-2 flex gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -491,22 +489,20 @@ function NuevaInspeccionContent() {
               Guardar Firma
             </Button>
           </div>
-          {firmaInspector && (
-            <p className="text-sm text-green-600 mt-2">✓ Firma guardada</p>
-          )}
+          {firmaInspector && <p className="mt-2 text-sm text-green-600">✓ Firma guardada</p>}
         </div>
 
         {/* Firma Contribuyente */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="mb-2 block text-sm font-medium text-gray-700">
             Firma del Contribuyente (Opcional)
           </label>
-          <div className="border-2 border-gray-300 rounded-lg overflow-hidden">
+          <div className="overflow-hidden rounded-lg border-2 border-gray-300">
             <canvas
               ref={canvasContribuyenteRef}
               width={600}
               height={200}
-              className="w-full bg-white cursor-crosshair"
+              className="w-full cursor-crosshair bg-white"
               onMouseDown={() => {
                 if (canvasContribuyenteRef.current && !firmandoContribuyente) {
                   iniciarFirma(canvasContribuyenteRef.current)
@@ -515,7 +511,7 @@ function NuevaInspeccionContent() {
               }}
             />
           </div>
-          <div className="flex gap-2 mt-2">
+          <div className="mt-2 flex gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -537,18 +533,13 @@ function NuevaInspeccionContent() {
               Guardar Firma
             </Button>
           </div>
-          {firmaContribuyente && (
-            <p className="text-sm text-green-600 mt-2">✓ Firma guardada</p>
-          )}
+          {firmaContribuyente && <p className="mt-2 text-sm text-green-600">✓ Firma guardada</p>}
         </div>
       </div>
 
       {/* Botones de Acción */}
       <div className="flex justify-end gap-4">
-        <Button
-          variant="outline"
-          onClick={() => router.push('/inspecciones')}
-        >
+        <Button variant="outline" onClick={() => router.push('/inspecciones')}>
           Cancelar
         </Button>
         <Button
@@ -556,7 +547,7 @@ function NuevaInspeccionContent() {
           disabled={guardando}
           className="bg-green-600 hover:bg-green-700"
         >
-          <Save className="h-5 w-5 mr-2" />
+          <Save className="mr-2 h-5 w-5" />
           {guardando ? 'Guardando...' : 'Guardar Inspección'}
         </Button>
       </div>

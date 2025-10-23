@@ -6,17 +6,14 @@ import crypto from 'crypto'
  * POST /api/habilitaciones/[id]/generar-token
  * Genera un token de acceso único para la credencial digital
  */
-export async function POST(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const habilitacionId = Number(id)
 
     // Verificar que la habilitación existe
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
-      where: { id: habilitacionId }
+      where: { id: habilitacionId },
     })
 
     if (!habilitacion) {
@@ -28,14 +25,14 @@ export async function POST(
 
     // Generar token único
     const token = crypto.randomBytes(32).toString('hex')
-    
+
     // Fecha de expiración: 1 año desde ahora
     const fechaExpiracion = new Date()
     fechaExpiracion.setFullYear(fechaExpiracion.getFullYear() + 1)
 
     // Verificar si ya existe un token para esta habilitación
     const tokenExistente = await prisma.tokens_acceso.findFirst({
-      where: { habilitacion_id: habilitacionId }
+      where: { habilitacion_id: habilitacionId },
     })
 
     let tokenCreado
@@ -46,8 +43,8 @@ export async function POST(
         where: { id: tokenExistente.id },
         data: {
           token,
-          fecha_expiracion: fechaExpiracion
-        }
+          fecha_expiracion: fechaExpiracion,
+        },
       })
     } else {
       // Crear nuevo token
@@ -55,8 +52,8 @@ export async function POST(
         data: {
           token,
           habilitacion_id: habilitacionId,
-          fecha_expiracion: fechaExpiracion
-        }
+          fecha_expiracion: fechaExpiracion,
+        },
       })
     }
 
@@ -70,17 +67,16 @@ export async function POST(
         token,
         url: credencialUrl,
         fecha_expiracion: fechaExpiracion,
-        habilitacion_id: habilitacionId
-      }
+        habilitacion_id: habilitacionId,
+      },
     })
-
   } catch (error: any) {
     console.error('Error al generar token:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al generar token',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )
@@ -91,10 +87,7 @@ export async function POST(
  * GET /api/habilitaciones/[id]/generar-token
  * Obtiene el token existente o crea uno nuevo
  */
-export async function GET(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const habilitacionId = Number(id)
@@ -104,9 +97,9 @@ export async function GET(
       where: {
         habilitacion_id: habilitacionId,
         fecha_expiracion: {
-          gt: new Date()
-        }
-      }
+          gt: new Date(),
+        },
+      },
     })
 
     if (tokenExistente) {
@@ -119,21 +112,20 @@ export async function GET(
           token: tokenExistente.token,
           url: credencialUrl,
           fecha_expiracion: tokenExistente.fecha_expiracion,
-          habilitacion_id: habilitacionId
-        }
+          habilitacion_id: habilitacionId,
+        },
       })
     }
 
     // Si no existe, generar uno nuevo
     return POST(request, context)
-
   } catch (error: any) {
     console.error('Error al obtener token:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al obtener token',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

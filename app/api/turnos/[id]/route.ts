@@ -4,10 +4,7 @@ import { prisma } from '@/lib/db'
 /**
  * GET /api/turnos/[id] - Obtener turno por ID
  */
-export async function GET(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
 
@@ -29,10 +26,7 @@ export async function GET(
     `
 
     if (!turnos || turnos.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Turno no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Turno no encontrado' }, { status: 404 })
     }
 
     const turno = turnos[0]
@@ -44,23 +38,19 @@ export async function GET(
         id: true,
         nro_licencia: true,
         tipo_transporte: true,
-      }
+      },
     })
 
     return NextResponse.json({
       success: true,
       data: {
         ...turno,
-        habilitacion
-      }
+        habilitacion,
+      },
     })
-
   } catch (error) {
     console.error('Error al obtener turno:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al obtener turno' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al obtener turno' }, { status: 500 })
   }
 }
 
@@ -68,10 +58,7 @@ export async function GET(
  * PATCH /api/turnos/[id] - Actualizar turno
  * Body: { estado?: string, observaciones?: string }
  */
-export async function PATCH(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const body = await request.json()
@@ -88,10 +75,7 @@ export async function PATCH(
     `
 
     if (!turnosExistentes || turnosExistentes.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Turno no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Turno no encontrado' }, { status: 404 })
     }
 
     // Actualizar turno usando raw SQL para evitar leer fecha_hora
@@ -119,16 +103,15 @@ export async function PATCH(
 
     return NextResponse.json({
       success: true,
-      message: `Turno actualizado exitosamente`
+      message: `Turno actualizado exitosamente`,
     })
-
   } catch (error: any) {
     console.error('Error al actualizar turno:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al actualizar turno',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )
@@ -138,10 +121,7 @@ export async function PATCH(
 /**
  * DELETE /api/turnos/[id] - Eliminar turno permanentemente
  */
-export async function DELETE(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
 
@@ -154,10 +134,7 @@ export async function DELETE(
     `
 
     if (!turnosExistentes || turnosExistentes.length === 0) {
-      return NextResponse.json(
-        { success: false, error: 'Turno no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Turno no encontrado' }, { status: 404 })
     }
 
     // Eliminar turno físicamente usando raw SQL
@@ -168,14 +145,10 @@ export async function DELETE(
 
     return NextResponse.json({
       success: true,
-      message: 'Turno eliminado exitosamente'
+      message: 'Turno eliminado exitosamente',
     })
-
   } catch (error) {
     console.error('Error al eliminar turno:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al eliminar turno' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al eliminar turno' }, { status: 500 })
   }
 }

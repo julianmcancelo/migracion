@@ -22,23 +22,22 @@ export async function GET(request: NextRequest) {
     const obleasConEvidencia = await prisma.obleas.findMany({
       where: whereConditions,
       orderBy: {
-        fecha_colocacion: 'desc'
-      }
+        fecha_colocacion: 'desc',
+      },
     })
 
     return NextResponse.json({
       success: true,
       data: obleasConEvidencia,
-      count: obleasConEvidencia.length
+      count: obleasConEvidencia.length,
     })
-
   } catch (error: any) {
     console.error('Error al obtener obleas con evidencia:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al obtener obleas con evidencia',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

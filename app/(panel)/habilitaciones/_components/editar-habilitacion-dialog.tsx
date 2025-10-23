@@ -1,29 +1,30 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogHeader, 
-  DialogTitle 
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { 
-  Save, 
-  X, 
-  Loader2, 
-  FileText, 
-  User, 
-  Car, 
+import {
+  Save,
+  X,
+  Loader2,
+  FileText,
+  User,
+  Car,
   Building2,
   Plus,
   Trash2,
-  Search
+  Search,
 } from 'lucide-react'
 import { useDebounce } from '@/lib/hooks/use-debounce'
 
@@ -34,32 +35,32 @@ interface EditarHabilitacionDialogProps {
   onSaved?: () => void
 }
 
-export function EditarHabilitacionDialog({ 
-  habilitacion, 
-  open, 
+export function EditarHabilitacionDialog({
+  habilitacion,
+  open,
   onClose,
-  onSaved 
+  onSaved,
 }: EditarHabilitacionDialogProps) {
   // Estados principales
   const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  
+
   // Datos del formulario
   const [formData, setFormData] = useState<any>({})
-  
+
   // Estados para personas
   const [personas, setPersonas] = useState<any[]>([])
   const [busquedaPersona, setBusquedaPersona] = useState('')
   const [resultadosPersonas, setResultadosPersonas] = useState<any[]>([])
   const [buscandoPersonas, setBuscandoPersonas] = useState(false)
-  
+
   // Estados para vehículos
   const [vehiculos, setVehiculos] = useState<any[]>([])
   const [busquedaVehiculo, setBusquedaVehiculo] = useState('')
   const [resultadosVehiculos, setResultadosVehiculos] = useState<any[]>([])
   const [buscandoVehiculos, setBuscandoVehiculos] = useState(false)
-  
+
   const busquedaPersonaDebounced = useDebounce(busquedaPersona, 500)
   const busquedaVehiculoDebounced = useDebounce(busquedaVehiculo, 500)
 
@@ -90,23 +91,23 @@ export function EditarHabilitacionDialog({
 
   const cargarDatos = async () => {
     if (!habilitacion?.id) return
-    
+
     setLoading(true)
     try {
       const response = await fetch(`/api/habilitaciones/${habilitacion.id}`)
       const data = await response.json()
-      
+
       if (data.success) {
         const hab = data.data
-        
+
         // Formatear fechas para inputs de tipo date
-        const vigenciaInicio = hab.vigencia_inicio 
-          ? new Date(hab.vigencia_inicio).toISOString().split('T')[0] 
+        const vigenciaInicio = hab.vigencia_inicio
+          ? new Date(hab.vigencia_inicio).toISOString().split('T')[0]
           : ''
-        const vigenciaFin = hab.vigencia_fin 
-          ? new Date(hab.vigencia_fin).toISOString().split('T')[0] 
+        const vigenciaFin = hab.vigencia_fin
+          ? new Date(hab.vigencia_fin).toISOString().split('T')[0]
           : ''
-        
+
         setFormData({
           tipo_transporte: hab.tipo_transporte || 'Escolar',
           estado: hab.estado || 'EN_TRAMITE',
@@ -119,25 +120,29 @@ export function EditarHabilitacionDialog({
           observaciones: hab.observaciones || '',
           oblea_colocada: hab.oblea_colocada || false,
         })
-        
+
         // Cargar personas
-        setPersonas(hab.habilitaciones_personas?.map((hp: any) => ({
-          id: hp.id,
-          persona_id: hp.persona?.id,
-          nombre: hp.persona?.nombre,
-          dni: hp.persona?.dni,
-          rol: hp.rol,
-          licencia_categoria: hp.licencia_categoria,
-        })) || [])
-        
+        setPersonas(
+          hab.habilitaciones_personas?.map((hp: any) => ({
+            id: hp.id,
+            persona_id: hp.persona?.id,
+            nombre: hp.persona?.nombre,
+            dni: hp.persona?.dni,
+            rol: hp.rol,
+            licencia_categoria: hp.licencia_categoria,
+          })) || []
+        )
+
         // Cargar vehículos
-        setVehiculos(hab.habilitaciones_vehiculos?.map((hv: any) => ({
-          id: hv.id,
-          vehiculo_id: hv.vehiculo?.id,
-          dominio: hv.vehiculo?.dominio,
-          marca: hv.vehiculo?.marca,
-          modelo: hv.vehiculo?.modelo,
-        })) || [])
+        setVehiculos(
+          hab.habilitaciones_vehiculos?.map((hv: any) => ({
+            id: hv.id,
+            vehiculo_id: hv.vehiculo?.id,
+            dominio: hv.vehiculo?.dominio,
+            marca: hv.vehiculo?.marca,
+            modelo: hv.vehiculo?.modelo,
+          })) || []
+        )
       }
     } catch (err) {
       console.error('Error al cargar habilitación:', err)
@@ -150,7 +155,9 @@ export function EditarHabilitacionDialog({
   const buscarPersonas = async () => {
     setBuscandoPersonas(true)
     try {
-      const response = await fetch(`/api/personas?buscar=${encodeURIComponent(busquedaPersonaDebounced)}`)
+      const response = await fetch(
+        `/api/personas?buscar=${encodeURIComponent(busquedaPersonaDebounced)}`
+      )
       const data = await response.json()
       if (data.success) {
         setResultadosPersonas(data.data)
@@ -165,7 +172,9 @@ export function EditarHabilitacionDialog({
   const buscarVehiculos = async () => {
     setBuscandoVehiculos(true)
     try {
-      const response = await fetch(`/api/vehiculos?buscar=${encodeURIComponent(busquedaVehiculoDebounced)}`)
+      const response = await fetch(
+        `/api/vehiculos?buscar=${encodeURIComponent(busquedaVehiculoDebounced)}`
+      )
       const data = await response.json()
       if (data.success) {
         setResultadosVehiculos(data.data)
@@ -182,15 +191,18 @@ export function EditarHabilitacionDialog({
       alert('Esta persona ya está agregada')
       return
     }
-    
-    setPersonas([...personas, {
-      persona_id: persona.id,
-      nombre: persona.nombre,
-      dni: persona.dni,
-      rol,
-      licencia_categoria: '',
-      _nuevo: true
-    }])
+
+    setPersonas([
+      ...personas,
+      {
+        persona_id: persona.id,
+        nombre: persona.nombre,
+        dni: persona.dni,
+        rol,
+        licencia_categoria: '',
+        _nuevo: true,
+      },
+    ])
     setBusquedaPersona('')
     setResultadosPersonas([])
   }
@@ -204,14 +216,17 @@ export function EditarHabilitacionDialog({
       alert('Este vehículo ya está agregado')
       return
     }
-    
-    setVehiculos([...vehiculos, {
-      vehiculo_id: vehiculo.id,
-      dominio: vehiculo.dominio,
-      marca: vehiculo.marca,
-      modelo: vehiculo.modelo,
-      _nuevo: true
-    }])
+
+    setVehiculos([
+      ...vehiculos,
+      {
+        vehiculo_id: vehiculo.id,
+        dominio: vehiculo.dominio,
+        marca: vehiculo.marca,
+        modelo: vehiculo.modelo,
+        _nuevo: true,
+      },
+    ])
     setBusquedaVehiculo('')
     setResultadosVehiculos([])
   }
@@ -222,10 +237,10 @@ export function EditarHabilitacionDialog({
 
   const handleGuardar = async () => {
     if (!habilitacion?.id) return
-    
+
     setSaving(true)
     setError(null)
-    
+
     try {
       const payload = {
         ...formData,
@@ -240,19 +255,19 @@ export function EditarHabilitacionDialog({
           vehiculo_id: v.vehiculo_id,
         })),
       }
-      
+
       const response = await fetch(`/api/habilitaciones/${habilitacion.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       })
-      
+
       const data = await response.json()
-      
+
       if (!response.ok) {
         throw new Error(data.error || 'Error al guardar')
       }
-      
+
       onSaved?.()
       onClose()
     } catch (err: any) {
@@ -266,9 +281,9 @@ export function EditarHabilitacionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-5xl max-h-[95vh] overflow-hidden p-0">
+      <DialogContent className="max-h-[95vh] max-w-5xl overflow-hidden p-0">
         {/* Header */}
-        <div className="sticky top-0 z-10 bg-white border-b p-6">
+        <div className="sticky top-0 z-10 border-b bg-white p-6">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-2xl">
               <FileText className="h-6 w-6" />
@@ -287,23 +302,23 @@ export function EditarHabilitacionDialog({
             <Tabs defaultValue="basicos" className="w-full">
               <TabsList className="grid w-full grid-cols-3">
                 <TabsTrigger value="basicos">
-                  <FileText className="h-4 w-4 mr-2" />
+                  <FileText className="mr-2 h-4 w-4" />
                   Datos Básicos
                 </TabsTrigger>
                 <TabsTrigger value="personas">
-                  <User className="h-4 w-4 mr-2" />
+                  <User className="mr-2 h-4 w-4" />
                   Personas ({personas.length})
                 </TabsTrigger>
                 <TabsTrigger value="vehiculos">
-                  <Car className="h-4 w-4 mr-2" />
+                  <Car className="mr-2 h-4 w-4" />
                   Vehículos ({vehiculos.length})
                 </TabsTrigger>
               </TabsList>
 
               {/* Tab: Datos Básicos */}
-              <TabsContent value="basicos" className="space-y-6 mt-6">
+              <TabsContent value="basicos" className="mt-6 space-y-6">
                 {error && (
-                  <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+                  <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
                     {error}
                   </div>
                 )}
@@ -313,7 +328,7 @@ export function EditarHabilitacionDialog({
                     <Label>Tipo de Transporte *</Label>
                     <Select
                       value={formData.tipo_transporte}
-                      onValueChange={(value) => setFormData({ ...formData, tipo_transporte: value })}
+                      onValueChange={value => setFormData({ ...formData, tipo_transporte: value })}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -329,7 +344,7 @@ export function EditarHabilitacionDialog({
                     <Label>Estado *</Label>
                     <Select
                       value={formData.estado}
-                      onValueChange={(value) => setFormData({ ...formData, estado: value })}
+                      onValueChange={value => setFormData({ ...formData, estado: value })}
                     >
                       <SelectTrigger>
                         <SelectValue />
@@ -347,7 +362,7 @@ export function EditarHabilitacionDialog({
                     <Label>N° de Licencia *</Label>
                     <Input
                       value={formData.nro_licencia}
-                      onChange={(e) => setFormData({ ...formData, nro_licencia: e.target.value })}
+                      onChange={e => setFormData({ ...formData, nro_licencia: e.target.value })}
                       placeholder="Ej: 868-0055"
                     />
                   </div>
@@ -356,7 +371,7 @@ export function EditarHabilitacionDialog({
                     <Label>N° de Expediente *</Label>
                     <Input
                       value={formData.expte}
-                      onChange={(e) => setFormData({ ...formData, expte: e.target.value })}
+                      onChange={e => setFormData({ ...formData, expte: e.target.value })}
                       placeholder="Ej: EXP-2024-001"
                     />
                   </div>
@@ -365,7 +380,7 @@ export function EditarHabilitacionDialog({
                     <Label>N° de Resolución</Label>
                     <Input
                       value={formData.resolucion}
-                      onChange={(e) => setFormData({ ...formData, resolucion: e.target.value })}
+                      onChange={e => setFormData({ ...formData, resolucion: e.target.value })}
                       placeholder="Ej: RES-2024-001"
                     />
                   </div>
@@ -375,7 +390,7 @@ export function EditarHabilitacionDialog({
                     <Input
                       type="number"
                       value={formData.anio}
-                      onChange={(e) => setFormData({ ...formData, anio: parseInt(e.target.value) })}
+                      onChange={e => setFormData({ ...formData, anio: parseInt(e.target.value) })}
                       min={2020}
                       max={2100}
                     />
@@ -386,7 +401,7 @@ export function EditarHabilitacionDialog({
                     <Input
                       type="date"
                       value={formData.vigencia_inicio}
-                      onChange={(e) => setFormData({ ...formData, vigencia_inicio: e.target.value })}
+                      onChange={e => setFormData({ ...formData, vigencia_inicio: e.target.value })}
                     />
                   </div>
 
@@ -395,16 +410,16 @@ export function EditarHabilitacionDialog({
                     <Input
                       type="date"
                       value={formData.vigencia_fin}
-                      onChange={(e) => setFormData({ ...formData, vigencia_fin: e.target.value })}
+                      onChange={e => setFormData({ ...formData, vigencia_fin: e.target.value })}
                     />
                   </div>
 
                   <div className="space-y-2 sm:col-span-2">
                     <Label>Observaciones</Label>
                     <textarea
-                      className="w-full min-h-[100px] px-3 py-2 text-sm border rounded-md"
+                      className="min-h-[100px] w-full rounded-md border px-3 py-2 text-sm"
                       value={formData.observaciones}
-                      onChange={(e) => setFormData({ ...formData, observaciones: e.target.value })}
+                      onChange={e => setFormData({ ...formData, observaciones: e.target.value })}
                       placeholder="Notas adicionales..."
                     />
                   </div>
@@ -414,7 +429,9 @@ export function EditarHabilitacionDialog({
                       <input
                         type="checkbox"
                         checked={formData.oblea_colocada}
-                        onChange={(e) => setFormData({ ...formData, oblea_colocada: e.target.checked })}
+                        onChange={e =>
+                          setFormData({ ...formData, oblea_colocada: e.target.checked })
+                        }
                         className="h-4 w-4"
                       />
                       <Label>Oblea Colocada</Label>
@@ -424,30 +441,30 @@ export function EditarHabilitacionDialog({
               </TabsContent>
 
               {/* Tab: Personas */}
-              <TabsContent value="personas" className="space-y-6 mt-6">
+              <TabsContent value="personas" className="mt-6 space-y-6">
                 {/* Buscar persona */}
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                <div className="rounded-lg border bg-gray-50 p-4">
                   <Label className="mb-2">Agregar Persona</Label>
                   <div className="relative mt-2">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
                       className="pl-9"
                       value={busquedaPersona}
-                      onChange={(e) => setBusquedaPersona(e.target.value)}
+                      onChange={e => setBusquedaPersona(e.target.value)}
                       placeholder="Buscar por nombre o DNI..."
                     />
                   </div>
 
                   {/* Resultados búsqueda */}
                   {busquedaPersona.length >= 2 && (
-                    <div className="mt-2 bg-white border rounded-md max-h-48 overflow-y-auto">
+                    <div className="mt-2 max-h-48 overflow-y-auto rounded-md border bg-white">
                       {buscandoPersonas ? (
                         <div className="p-4 text-center text-sm text-gray-500">Buscando...</div>
                       ) : resultadosPersonas.length > 0 ? (
-                        resultadosPersonas.map((persona) => (
+                        resultadosPersonas.map(persona => (
                           <div
                             key={persona.id}
-                            className="p-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                            className="flex cursor-pointer items-center justify-between p-3 hover:bg-gray-50"
                           >
                             <div>
                               <p className="font-medium">{persona.nombre}</p>
@@ -475,27 +492,30 @@ export function EditarHabilitacionDialog({
                 <div className="space-y-3">
                   <h4 className="font-medium">Personas Asociadas ({personas.length})</h4>
                   {personas.length === 0 ? (
-                    <div className="text-center py-8 border-2 border-dashed rounded-lg text-gray-500">
+                    <div className="rounded-lg border-2 border-dashed py-8 text-center text-gray-500">
                       No hay personas asociadas
                     </div>
                   ) : (
                     personas.map((persona, index) => (
-                      <div key={index} className="bg-gray-50 p-4 rounded-lg border flex items-start justify-between">
+                      <div
+                        key={index}
+                        className="flex items-start justify-between rounded-lg border bg-gray-50 p-4"
+                      >
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-2">
+                          <div className="mb-2 flex items-center gap-2">
                             <p className="font-bold">{persona.nombre}</p>
                             <Badge variant={persona._nuevo ? 'default' : 'secondary'}>
                               {persona._nuevo ? 'Nuevo' : persona.rol}
                             </Badge>
                           </div>
                           <p className="text-sm text-gray-600">DNI: {persona.dni}</p>
-                          
-                          <div className="grid grid-cols-2 gap-2 mt-3">
+
+                          <div className="mt-3 grid grid-cols-2 gap-2">
                             <div className="space-y-1">
                               <Label className="text-xs">Rol</Label>
                               <Select
                                 value={persona.rol}
-                                onValueChange={(value) => {
+                                onValueChange={value => {
                                   const newPersonas = [...personas]
                                   newPersonas[index].rol = value
                                   setPersonas(newPersonas)
@@ -512,13 +532,13 @@ export function EditarHabilitacionDialog({
                                 </SelectContent>
                               </Select>
                             </div>
-                            
+
                             <div className="space-y-1">
                               <Label className="text-xs">Licencia</Label>
                               <Input
                                 className="h-8 text-xs"
                                 value={persona.licencia_categoria || ''}
-                                onChange={(e) => {
+                                onChange={e => {
                                   const newPersonas = [...personas]
                                   newPersonas[index].licencia_categoria = e.target.value
                                   setPersonas(newPersonas)
@@ -528,12 +548,8 @@ export function EditarHabilitacionDialog({
                             </div>
                           </div>
                         </div>
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => eliminarPersona(index)}
-                        >
+
+                        <Button variant="ghost" size="sm" onClick={() => eliminarPersona(index)}>
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
@@ -543,30 +559,30 @@ export function EditarHabilitacionDialog({
               </TabsContent>
 
               {/* Tab: Vehículos */}
-              <TabsContent value="vehiculos" className="space-y-6 mt-6">
+              <TabsContent value="vehiculos" className="mt-6 space-y-6">
                 {/* Buscar vehículo */}
-                <div className="bg-gray-50 p-4 rounded-lg border">
+                <div className="rounded-lg border bg-gray-50 p-4">
                   <Label className="mb-2">Agregar Vehículo</Label>
                   <div className="relative mt-2">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+                    <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
                     <Input
                       className="pl-9"
                       value={busquedaVehiculo}
-                      onChange={(e) => setBusquedaVehiculo(e.target.value)}
+                      onChange={e => setBusquedaVehiculo(e.target.value)}
                       placeholder="Buscar por dominio..."
                     />
                   </div>
 
                   {/* Resultados búsqueda */}
                   {busquedaVehiculo.length >= 2 && (
-                    <div className="mt-2 bg-white border rounded-md max-h-48 overflow-y-auto">
+                    <div className="mt-2 max-h-48 overflow-y-auto rounded-md border bg-white">
                       {buscandoVehiculos ? (
                         <div className="p-4 text-center text-sm text-gray-500">Buscando...</div>
                       ) : resultadosVehiculos.length > 0 ? (
-                        resultadosVehiculos.map((vehiculo) => (
+                        resultadosVehiculos.map(vehiculo => (
                           <div
                             key={vehiculo.id}
-                            className="p-3 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                            className="flex cursor-pointer items-center justify-between p-3 hover:bg-gray-50"
                           >
                             <div>
                               <p className="font-bold">{vehiculo.dominio}</p>
@@ -596,29 +612,26 @@ export function EditarHabilitacionDialog({
                 <div className="space-y-3">
                   <h4 className="font-medium">Vehículos Asociados ({vehiculos.length})</h4>
                   {vehiculos.length === 0 ? (
-                    <div className="text-center py-8 border-2 border-dashed rounded-lg text-gray-500">
+                    <div className="rounded-lg border-2 border-dashed py-8 text-center text-gray-500">
                       No hay vehículos asociados
                     </div>
                   ) : (
                     vehiculos.map((vehiculo, index) => (
-                      <div key={index} className="bg-gray-50 p-4 rounded-lg border flex items-center justify-between">
+                      <div
+                        key={index}
+                        className="flex items-center justify-between rounded-lg border bg-gray-50 p-4"
+                      >
                         <div>
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="font-bold text-lg">{vehiculo.dominio}</p>
-                            {vehiculo._nuevo && (
-                              <Badge variant="default">Nuevo</Badge>
-                            )}
+                          <div className="mb-1 flex items-center gap-2">
+                            <p className="text-lg font-bold">{vehiculo.dominio}</p>
+                            {vehiculo._nuevo && <Badge variant="default">Nuevo</Badge>}
                           </div>
                           <p className="text-sm text-gray-600">
                             {vehiculo.marca} {vehiculo.modelo}
                           </p>
                         </div>
-                        
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => eliminarVehiculo(index)}
-                        >
+
+                        <Button variant="ghost" size="sm" onClick={() => eliminarVehiculo(index)}>
                           <Trash2 className="h-4 w-4 text-red-500" />
                         </Button>
                       </div>
@@ -631,27 +644,20 @@ export function EditarHabilitacionDialog({
         </div>
 
         {/* Footer */}
-        <div className="sticky bottom-0 bg-white border-t p-6 flex justify-end gap-3">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={saving}
-          >
-            <X className="h-4 w-4 mr-2" />
+        <div className="sticky bottom-0 flex justify-end gap-3 border-t bg-white p-6">
+          <Button variant="outline" onClick={onClose} disabled={saving}>
+            <X className="mr-2 h-4 w-4" />
             Cancelar
           </Button>
-          <Button
-            onClick={handleGuardar}
-            disabled={saving || loading}
-          >
+          <Button onClick={handleGuardar} disabled={saving || loading}>
             {saving ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Guardando...
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="mr-2 h-4 w-4" />
                 Guardar Cambios
               </>
             )}

@@ -47,7 +47,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: vehiculos,
     })
-
   } catch (error: any) {
     console.error('Error al buscar vehículos:', error)
     return NextResponse.json(
@@ -82,7 +81,7 @@ export async function POST(request: NextRequest) {
       Aseguradora,
       poliza,
       Vencimiento_VTV,
-      Vencimiento_Poliza
+      Vencimiento_Poliza,
     } = body
 
     // Validación básica
@@ -95,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar si ya existe
     const existente = await prisma.vehiculos.findFirst({
-      where: { dominio: dominio.toUpperCase() }
+      where: { dominio: dominio.toUpperCase() },
     })
 
     if (existente) {
@@ -120,16 +119,15 @@ export async function POST(request: NextRequest) {
         Aseguradora: Aseguradora || null,
         poliza: poliza || null,
         Vencimiento_VTV: Vencimiento_VTV || null,
-        Vencimiento_Poliza: Vencimiento_Poliza || null
-      }
+        Vencimiento_Poliza: Vencimiento_Poliza || null,
+      },
     })
 
     return NextResponse.json({
       success: true,
       data: vehiculo,
-      message: 'Vehículo registrado exitosamente'
+      message: 'Vehículo registrado exitosamente',
     })
-
   } catch (error: any) {
     console.error('Error al crear vehículo:', error)
     return NextResponse.json(

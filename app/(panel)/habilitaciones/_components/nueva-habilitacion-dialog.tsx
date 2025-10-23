@@ -1,12 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { ChevronLeft, ChevronRight, Loader2 } from 'lucide-react'
 import { HabilitacionFormData } from '@/lib/validations/habilitacion'
@@ -101,7 +96,6 @@ export function NuevaHabilitacionDialog({
       setPasoActual(1)
       onOpenChange(false)
       onSuccess?.()
-
     } catch (err: any) {
       console.error('Error al crear habilitación:', err)
       setError(err.message || 'Error al crear habilitación')
@@ -116,34 +110,32 @@ export function NuevaHabilitacionDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-4xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Nueva Habilitación</DialogTitle>
         </DialogHeader>
 
         {/* Indicador de pasos */}
-        <div className="flex items-center justify-between mb-6">
+        <div className="mb-6 flex items-center justify-between">
           {PASOS.map((paso, index) => (
-            <div key={paso.id} className="flex items-center flex-1">
-              <div className="flex flex-col items-center flex-1">
+            <div key={paso.id} className="flex flex-1 items-center">
+              <div className="flex flex-1 flex-col items-center">
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold transition-colors ${
+                  className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-colors ${
                     pasoActual === paso.id
                       ? 'bg-blue-600 text-white'
                       : pasoActual > paso.id
-                      ? 'bg-green-600 text-white'
-                      : 'bg-gray-200 text-gray-600'
+                        ? 'bg-green-600 text-white'
+                        : 'bg-gray-200 text-gray-600'
                   }`}
                 >
                   {paso.id}
                 </div>
-                <div className="text-xs font-medium mt-2 text-center">
-                  {paso.titulo}
-                </div>
+                <div className="mt-2 text-center text-xs font-medium">{paso.titulo}</div>
               </div>
               {index < PASOS.length - 1 && (
                 <div
-                  className={`h-1 flex-1 mx-2 transition-colors ${
+                  className={`mx-2 h-1 flex-1 transition-colors ${
                     pasoActual > paso.id ? 'bg-green-600' : 'bg-gray-200'
                   }`}
                 />
@@ -154,28 +146,23 @@ export function NuevaHabilitacionDialog({
 
         {/* Contenido del paso actual */}
         <div className="py-4">
-          {pasoActual === 1 && (
-            <DatosBasicosStep
-              data={formData}
-              onChange={updateFormData}
-            />
-          )}
+          {pasoActual === 1 && <DatosBasicosStep data={formData} onChange={updateFormData} />}
           {pasoActual === 2 && (
             <PersonasStep
               personas={formData.personas || []}
-              onChange={(personas) => updateFormData({ personas })}
+              onChange={personas => updateFormData({ personas })}
             />
           )}
           {pasoActual === 3 && (
             <VehiculosStep
               vehiculos={formData.vehiculos || []}
-              onChange={(vehiculos) => updateFormData({ vehiculos })}
+              onChange={vehiculos => updateFormData({ vehiculos })}
             />
           )}
           {pasoActual === 4 && (
             <EstablecimientosStep
               establecimientos={formData.establecimientos || []}
-              onChange={(establecimientos) => updateFormData({ establecimientos })}
+              onChange={establecimientos => updateFormData({ establecimientos })}
               tipoTransporte={formData.tipo_transporte}
             />
           )}
@@ -183,19 +170,15 @@ export function NuevaHabilitacionDialog({
 
         {/* Error */}
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+          <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
             {error}
           </div>
         )}
 
         {/* Botones de navegación */}
-        <div className="flex items-center justify-between pt-4 border-t">
-          <Button
-            variant="outline"
-            onClick={handleBack}
-            disabled={pasoActual === 1 || loading}
-          >
-            <ChevronLeft className="h-4 w-4 mr-2" />
+        <div className="flex items-center justify-between border-t pt-4">
+          <Button variant="outline" onClick={handleBack} disabled={pasoActual === 1 || loading}>
+            <ChevronLeft className="mr-2 h-4 w-4" />
             Anterior
           </Button>
 
@@ -206,13 +189,13 @@ export function NuevaHabilitacionDialog({
           {pasoActual < PASOS.length ? (
             <Button onClick={handleNext} disabled={loading}>
               Siguiente
-              <ChevronRight className="h-4 w-4 ml-2" />
+              <ChevronRight className="ml-2 h-4 w-4" />
             </Button>
           ) : (
             <Button onClick={handleSubmit} disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Creando...
                 </>
               ) : (

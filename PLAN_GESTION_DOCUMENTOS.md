@@ -1,6 +1,7 @@
 # 📂 Sistema de Gestión de Documentos
 
 ## Objetivo
+
 Implementar un sistema completo para cargar, almacenar y gestionar documentos digitales asociados a habilitaciones, personas y vehículos.
 
 ## Flujo de Trabajo
@@ -8,11 +9,13 @@ Implementar un sistema completo para cargar, almacenar y gestionar documentos di
 ### 1. **Al crear Habilitación Nueva**
 
 #### Paso 1: Datos Básicos
+
 - Seleccionar tipo (Remis/Escolar)
 - Datos de titular
 - Datos de vehículo
 
 #### Paso 2: Cargar Documentos (NUEVO)
+
 ```
 ┌─────────────────────────────────────────┐
 │  📄 Documentos del Titular             │
@@ -40,6 +43,7 @@ Implementar un sistema completo para cargar, almacenar y gestionar documentos di
 ```
 
 #### Paso 3: Revisión y Envío
+
 - Ver lista de documentos cargados
 - Faltantes marcados en rojo
 - Botón: "Enviar Solicitud"
@@ -47,6 +51,7 @@ Implementar un sistema completo para cargar, almacenar y gestionar documentos di
 ### 2. **Revisión del Operador**
 
 El operador puede:
+
 - Ver todos los documentos escaneados
 - Aprobar/Rechazar cada documento
 - Solicitar recarga si está ilegible
@@ -55,6 +60,7 @@ El operador puede:
 ### 3. **Almacenamiento**
 
 **Estructura de carpetas:**
+
 ```
 /uploads/
   /habilitaciones/
@@ -84,6 +90,7 @@ El operador puede:
 ## Implementación Técnica
 
 ### Fase 1: Backend (APIs)
+
 - [ ] `POST /api/documentos/upload` - Subir archivo
 - [ ] `GET /api/documentos/[id]` - Descargar archivo
 - [ ] `GET /api/habilitaciones/[id]/documentos` - Listar documentos
@@ -91,7 +98,9 @@ El operador puede:
 - [ ] `PATCH /api/documentos/[id]` - Actualizar estado
 
 ### Fase 2: Base de Datos
+
 Tabla: `documentos`
+
 ```sql
 CREATE TABLE documentos (
   id INT PRIMARY KEY AUTO_INCREMENT,
@@ -114,6 +123,7 @@ CREATE TABLE documentos (
 ```
 
 ### Fase 3: Frontend (Componentes)
+
 - [ ] `<FileUploader />` - Componente drag & drop
 - [ ] `<DocumentosList />` - Lista de documentos
 - [ ] `<DocumentViewer />` - Preview de PDF/imágenes
@@ -121,6 +131,7 @@ CREATE TABLE documentos (
 - [ ] `<BulkUpload />` - Carga múltiple
 
 ### Fase 4: Integración OCR (Ya implementado ✅)
+
 - [x] OCR para DNI (extrae datos automáticamente)
 - [x] OCR para Cédula Verde (extrae datos del vehículo)
 - [ ] OCR para Póliza de Seguro
@@ -129,11 +140,13 @@ CREATE TABLE documentos (
 ## Validaciones
 
 ### Al subir:
+
 - Formato válido: PDF, JPG, PNG
 - Tamaño máximo: 5MB por archivo
 - Nombre descriptivo automático
 
 ### Al revisar:
+
 - Documento legible
 - Datos coinciden con los registrados
 - Documento vigente (no vencido)
@@ -141,11 +154,13 @@ CREATE TABLE documentos (
 ## Notificaciones
 
 ### Para el Usuario:
+
 - Email cuando todos los documentos son aprobados
 - Notificación si algún documento es rechazado
 - Recordatorio si faltan documentos
 
 ### Para el Operador:
+
 - Alerta cuando llegan nuevos documentos
 - Dashboard con pendientes de revisión
 
@@ -170,17 +185,20 @@ CREATE TABLE documentos (
 ## Prioridad de Implementación
 
 ### Alta Prioridad:
+
 1. Backend de carga/descarga
 2. Modelo de BD
 3. Componente FileUploader básico
 4. Integración en formulario de habilitación
 
 ### Media Prioridad:
+
 5. Sistema de revisión para operadores
 6. Preview de documentos
 7. Notificaciones
 
 ### Baja Prioridad:
+
 8. OCR adicionales
 9. Validaciones cruzadas
 10. Mejoras futuras

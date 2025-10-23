@@ -1,12 +1,30 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Card } from '@/components/ui/card'
 import { Textarea } from '@/components/ui/textarea'
-import { Shield, Download, FileText, Calendar, User, Car, CheckCircle, Clock, Edit, Save, X } from 'lucide-react'
+import {
+  Shield,
+  Download,
+  FileText,
+  Calendar,
+  User,
+  Car,
+  CheckCircle,
+  Clock,
+  Edit,
+  Save,
+  X,
+} from 'lucide-react'
 
 interface Oblea {
   id: number
@@ -47,11 +65,11 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
       const response = await fetch(`/api/obleas/${oblea.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ notificado: nuevoEstado })
+        body: JSON.stringify({ notificado: nuevoEstado }),
       })
 
       const data = await response.json()
-      
+
       if (data.success) {
         setNotificado(nuevoEstado)
         alert('✅ Estado actualizado exitosamente')
@@ -72,11 +90,11 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
     setRegenerandoPDF(true)
     try {
       const response = await fetch(`/api/habilitaciones/${oblea.habilitacion_id}/generar-oblea`, {
-        method: 'POST'
+        method: 'POST',
       })
 
       const data = await response.json()
-      
+
       if (data.success) {
         alert('✅ PDF regenerado exitosamente. Descargando...')
         // Aquí podrías descargar automáticamente el PDF
@@ -95,12 +113,12 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
   const getEstadoBadge = (estado: string) => {
     return estado === 'si' ? (
       <Badge className="bg-green-100 text-green-800">
-        <CheckCircle className="h-3 w-3 mr-1" />
+        <CheckCircle className="mr-1 h-3 w-3" />
         Notificada
       </Badge>
     ) : (
       <Badge className="bg-yellow-100 text-yellow-800">
-        <Clock className="h-3 w-3 mr-1" />
+        <Clock className="mr-1 h-3 w-3" />
         Pendiente
       </Badge>
     )
@@ -108,11 +126,11 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-orange-100 rounded-lg">
+              <div className="rounded-lg bg-orange-100 p-2">
                 <Shield className="h-6 w-6 text-orange-600" />
               </div>
               <div>
@@ -126,10 +144,10 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 mt-4">
+        <div className="mt-4 space-y-6">
           {/* Información Principal */}
-          <Card className="p-4 bg-blue-50 border-blue-200">
-            <h3 className="font-semibold text-blue-900 mb-3 flex items-center gap-2">
+          <Card className="border-blue-200 bg-blue-50 p-4">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold text-blue-900">
               <FileText className="h-4 w-4" />
               Información de la Oblea
             </h3>
@@ -159,7 +177,7 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
 
           {/* Datos del Titular */}
           <Card className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold text-gray-900">
               <User className="h-4 w-4" />
               Datos del Titular
             </h3>
@@ -177,14 +195,14 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
 
           {/* Datos del Vehículo */}
           <Card className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold text-gray-900">
               <Car className="h-4 w-4" />
               Datos del Vehículo
             </h3>
             <div className="grid grid-cols-2 gap-3 text-sm">
               <div>
                 <span className="font-medium text-gray-700">Dominio:</span>
-                <span className="ml-2 text-gray-900 font-mono">{oblea.vehiculo_dominio}</span>
+                <span className="ml-2 font-mono text-gray-900">{oblea.vehiculo_dominio}</span>
               </div>
               <div>
                 <span className="font-medium text-gray-700">Marca:</span>
@@ -198,20 +216,20 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
           </Card>
 
           {/* Gestión de Estado */}
-          <Card className="p-4 bg-gray-50">
-            <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+          <Card className="bg-gray-50 p-4">
+            <h3 className="mb-3 flex items-center gap-2 font-semibold text-gray-900">
               <Edit className="h-4 w-4" />
               Gestión de Estado
             </h3>
-            
+
             {!editando ? (
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-600 mb-1">Estado actual:</p>
+                  <p className="mb-1 text-sm text-gray-600">Estado actual:</p>
                   {getEstadoBadge(notificado)}
                 </div>
                 <Button onClick={() => setEditando(true)} variant="outline" size="sm">
-                  <Edit className="h-4 w-4 mr-2" />
+                  <Edit className="mr-2 h-4 w-4" />
                   Cambiar Estado
                 </Button>
               </div>
@@ -225,10 +243,10 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
                     className="flex-1 bg-green-600 hover:bg-green-700"
                   >
                     {guardando ? (
-                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     ) : (
                       <>
-                        <CheckCircle className="h-4 w-4 mr-2" />
+                        <CheckCircle className="mr-2 h-4 w-4" />
                         Marcar como Notificada
                       </>
                     )}
@@ -239,18 +257,15 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
                     className="flex-1 bg-yellow-600 hover:bg-yellow-700"
                   >
                     {guardando ? (
-                      <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                      <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                     ) : (
                       <>
-                        <Clock className="h-4 w-4 mr-2" />
+                        <Clock className="mr-2 h-4 w-4" />
                         Marcar como Pendiente
                       </>
                     )}
                   </Button>
-                  <Button
-                    onClick={() => setEditando(false)}
-                    variant="outline"
-                  >
+                  <Button onClick={() => setEditando(false)} variant="outline">
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -260,16 +275,16 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
 
           {/* Observaciones */}
           <Card className="p-4">
-            <h3 className="font-semibold text-gray-900 mb-3">Observaciones / Notas</h3>
+            <h3 className="mb-3 font-semibold text-gray-900">Observaciones / Notas</h3>
             <Textarea
               placeholder="Agregar observaciones o notas sobre esta oblea..."
               value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
+              onChange={e => setObservaciones(e.target.value)}
               rows={4}
               className="mb-3"
             />
             <Button variant="outline" size="sm" disabled={!observaciones.trim()}>
-              <Save className="h-4 w-4 mr-2" />
+              <Save className="mr-2 h-4 w-4" />
               Guardar Observaciones
             </Button>
           </Card>
@@ -282,9 +297,9 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
               className="flex-1 bg-orange-600 hover:bg-orange-700"
             >
               {regenerandoPDF ? (
-                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full mr-2" />
+                <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
               ) : (
-                <Download className="h-4 w-4 mr-2" />
+                <Download className="mr-2 h-4 w-4" />
               )}
               Regenerar PDF
             </Button>
@@ -293,13 +308,13 @@ export function ModalGestionOblea({ oblea, open, onClose, onUpdate }: ModalGesti
               variant="outline"
               className="flex-1"
             >
-              <FileText className="h-4 w-4 mr-2" />
+              <FileText className="mr-2 h-4 w-4" />
               Ver Habilitación
             </Button>
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 mt-6 pt-4 border-t">
+        <div className="mt-6 flex justify-end gap-3 border-t pt-4">
           <Button onClick={onClose} variant="outline">
             Cerrar
           </Button>

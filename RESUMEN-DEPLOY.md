@@ -9,19 +9,23 @@ El backend de Next.js está **100% configurado** y listo para subir a Vercel con
 ## 📦 ARCHIVOS CREADOS (7 archivos nuevos)
 
 ### 1. Configuración de Vercel
+
 - ✅ `vercel.json` - Configuración de deployment
 - ✅ `.env.production.example` - Template de variables de entorno
 
 ### 2. Backend API
+
 - ✅ `lib/db-config.ts` - Cliente Prisma optimizado para Serverless
 - ✅ `app/api/health/route.ts` - Endpoint para verificar conexión a BD
 
 ### 3. Documentación
+
 - ✅ `DEPLOY-VERCEL.md` - Guía completa paso a paso
 - ✅ `QUICK-START-VERCEL.md` - Guía rápida de 5 minutos
 - ✅ `README-BACKEND.md` - Documentación técnica del backend
 
 ### 4. Scripts
+
 - ✅ `scripts/test-db-connection.js` - Probar conexión MySQL antes de deploy
 - ✅ Actualizaciones en `package.json` con nuevos scripts
 
@@ -32,11 +36,13 @@ El backend de Next.js está **100% configurado** y listo para subir a Vercel con
 ### PASO 1: Configurar MySQL para Acceso Remoto ⚠️
 
 **TU MySQL ACTUAL:**
+
 ```
 Host: localhost ❌ (NO funciona en Vercel)
 ```
 
 **NECESITAS:**
+
 ```
 Host: IP pública o dominio ✅
 ```
@@ -44,11 +50,13 @@ Host: IP pública o dominio ✅
 **Opciones:**
 
 **A) Si usas cPanel/Hosting:**
+
 1. MySQL® Databases → Remote MySQL®
 2. Agregar: `0.0.0.0/0`
 3. Usar como host: `servidor123.tuhost.com`
 
 **B) Si usas Servidor Propio:**
+
 ```bash
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
 # Cambiar: bind-address = 0.0.0.0
@@ -103,6 +111,7 @@ NEXT_PUBLIC_APP_URL = https://tu-proyecto.vercel.app
 ```
 
 **Generar JWT_SECRET:**
+
 ```powershell
 # Windows PowerShell:
 [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
@@ -115,11 +124,13 @@ NEXT_PUBLIC_APP_URL = https://tu-proyecto.vercel.app
 ### PASO 5: Verificar Deploy
 
 **Health Check:**
+
 ```
 https://tu-proyecto.vercel.app/api/health
 ```
 
 Debe responder:
+
 ```json
 {
   "status": "healthy",
@@ -130,6 +141,7 @@ Debe responder:
 ```
 
 **Probar Login:**
+
 ```
 https://tu-proyecto.vercel.app/login
 ```
@@ -149,11 +161,11 @@ npm run vercel:deploy    # Deploy directo
 
 ## 📚 DOCUMENTACIÓN
 
-| Archivo | Cuándo Leerlo |
-|---------|---------------|
-| `QUICK-START-VERCEL.md` | Si quieres deployar YA (5 min) |
-| `DEPLOY-VERCEL.md` | Si quieres entender todo el proceso |
-| `README-BACKEND.md` | Para detalles técnicos del backend |
+| Archivo                 | Cuándo Leerlo                       |
+| ----------------------- | ----------------------------------- |
+| `QUICK-START-VERCEL.md` | Si quieres deployar YA (5 min)      |
+| `DEPLOY-VERCEL.md`      | Si quieres entender todo el proceso |
+| `README-BACKEND.md`     | Para detalles técnicos del backend  |
 
 ---
 
@@ -179,18 +191,21 @@ npm run vercel:deploy    # Deploy directo
 Una vez deployado, tendrás:
 
 ✨ **Aplicación Next.js en producción**
+
 - URL: `https://tu-proyecto.vercel.app`
 - SSL/HTTPS automático
 - CDN global
 - Escalado automático
 
 ✨ **Backend API funcional**
+
 - Login/Logout/Session
 - Conexión a MySQL
 - Autenticación JWT
 - Health checks
 
 ✨ **Dashboard moderno**
+
 - UI con glassmorphism
 - Animaciones fluidas
 - Responsive design
@@ -201,12 +216,14 @@ Una vez deployado, tendrás:
 ## 📊 COMPARACIÓN
 
 ### Antes (PHP):
+
 - 🟡 Servidor tradicional
 - 🟡 Sin TypeScript
 - 🟡 UI básica
 - 🟡 Deploy manual
 
 ### Ahora (Next.js):
+
 - 🟢 Serverless (escala automáticamente)
 - 🟢 TypeScript (menos bugs)
 - 🟢 UI moderna y profesional
@@ -217,12 +234,15 @@ Una vez deployado, tendrás:
 ## 🆘 ¿NECESITAS AYUDA?
 
 ### Problema: "Can't connect to MySQL"
+
 **Solución:** Lee sección "Configurar MySQL" en `DEPLOY-VERCEL.md`
 
 ### Problema: "Access denied"
+
 **Solución:** Crear usuario remoto con `CREATE USER 'user'@'%'`
 
 ### Problema: Health check falla
+
 **Solución:** Ver logs en Vercel → Functions → Logs
 
 ---

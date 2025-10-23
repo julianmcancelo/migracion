@@ -6,10 +6,10 @@ console.log('🔍 Verificando variables de entorno...\n')
 // Variables requeridas
 const requiredVars = [
   'DATABASE_URL',
-  'JWT_SECRET', 
+  'JWT_SECRET',
   'NEXT_PUBLIC_APP_URL',
   'GMAIL_USER',
-  'GMAIL_APP_PASSWORD'
+  'GMAIL_APP_PASSWORD',
 ]
 
 // Verificar archivo .env
@@ -19,12 +19,12 @@ const envExamplePath = path.join(__dirname, '..', '.env.example')
 if (!fs.existsSync(envPath)) {
   console.log('❌ Archivo .env no encontrado')
   console.log('📋 Copia .env.example a .env y configura las variables\n')
-  
+
   if (fs.existsSync(envExamplePath)) {
     console.log('✅ Archivo .env.example encontrado')
     console.log('💡 Ejecuta: cp .env.example .env\n')
   }
-  
+
   process.exit(1)
 }
 
@@ -37,7 +37,7 @@ let allGood = true
 
 requiredVars.forEach(varName => {
   const value = process.env[varName]
-  
+
   if (!value) {
     console.log(`❌ ${varName}: No configurada`)
     allGood = false

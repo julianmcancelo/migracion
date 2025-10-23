@@ -10,7 +10,7 @@ export const dynamic = 'force-dynamic'
 export async function GET() {
   try {
     console.log('📊 GET /api/obleas/stats - Iniciando...')
-    
+
     // Total de obleas colocadas
     const totalObleas = await prisma.obleas.count()
     console.log('🔢 Total obleas colocadas:', totalObleas)
@@ -48,14 +48,14 @@ export async function GET() {
     const obleasRecientes = await prisma.obleas.findMany({
       take: 10,
       orderBy: {
-        fecha_colocacion: 'desc'
+        fecha_colocacion: 'desc',
       },
       select: {
         id: true,
         nro_licencia: true,
         titular: true,
-        fecha_colocacion: true
-      }
+        fecha_colocacion: true,
+      },
     })
 
     // Habilitaciones sin oblea - usando query SQL
@@ -78,7 +78,7 @@ export async function GET() {
           total_obleas: totalObleas,
           notificadas,
           no_notificadas: noNotificadas,
-          habilitaciones_sin_oblea: habilitacionesSinOblea
+          habilitaciones_sin_oblea: habilitacionesSinOblea,
         },
         por_mes: obleasPorMes,
         por_tipo: obleasPorTipo,
@@ -88,18 +88,17 @@ export async function GET() {
           nro_licencia: oblea.nro_licencia,
           tipo_transporte: 'Verificar habilitación',
           titular: oblea.titular,
-          notificado: 'si'
-        }))
-      }
+          notificado: 'si',
+        })),
+      },
     })
-
   } catch (error: any) {
     console.error('❌ Error al obtener estadísticas de obleas:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al obtener estadísticas',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

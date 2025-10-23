@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
 
     const formData = await request.formData()
     const file = formData.get('image') as File
-    
+
     if (!file) {
       return NextResponse.json(
         { success: false, error: 'No se recibió ningún archivo' },
@@ -31,7 +31,7 @@ export async function POST(request: NextRequest) {
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
     const base64 = buffer.toString('base64')
-    
+
     // Determinar mime type
     const mimeType = file.type || 'image/jpeg'
 
@@ -85,15 +85,15 @@ Ejemplo de respuesta:
       {
         inlineData: {
           mimeType: mimeType,
-          data: base64
-        }
+          data: base64,
+        },
       },
-      prompt
+      prompt,
     ])
 
     const response = result.response
     const text = response.text()
-    
+
     console.log('Respuesta de Gemini (Licencia):', text)
 
     // Limpiar respuesta
@@ -109,13 +109,16 @@ Ejemplo de respuesta:
 
     return NextResponse.json({
       success: true,
-      data: data
+      data: data,
     })
-
   } catch (error: any) {
     console.error('Error en OCR de licencia:', error)
     return NextResponse.json(
-      { success: false, error: 'Error al procesar la licencia de conducir', details: error.message },
+      {
+        success: false,
+        error: 'Error al procesar la licencia de conducir',
+        details: error.message,
+      },
       { status: 500 }
     )
   }

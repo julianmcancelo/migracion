@@ -5,6 +5,7 @@
 ### 1. **CREDENCIAL DIGITAL (`credencial.php`)**
 
 #### **🔐 Sistema de Tokens de Acceso**
+
 ```sql
 tokens_acceso
 ├── token (string único)
@@ -14,6 +15,7 @@ tokens_acceso
 ```
 
 **Funcionalidad:**
+
 - Genera un token único para cada habilitación
 - Token con URL: `https://credenciales.transportelanus.com.ar/credencial.php?token=ABC123`
 - Validación de expiración automática
@@ -22,12 +24,14 @@ tokens_acceso
 #### **📄 Contenido de la Credencial:**
 
 **A. Header Institucional**
+
 - Logo de Municipalidad de Lanús
 - Gradiente rojo institucional (#891628)
 - Marca de agua "LANÚS"
 - Badge de estado (Habilitado/En Trámite/Vencido)
 
 **B. Datos de la Habilitación**
+
 - Tipo de transporte (ESCOLAR/REMIS)
 - Número de licencia (grande, destacado)
 - Vigencia inicio/fin
@@ -35,12 +39,14 @@ tokens_acceso
 - Fecha de emisión digital
 
 **C. Titular**
+
 - Foto (70x85px, redondeada)
 - Nombre completo
 - DNI
 - CUIT (solo para Remis)
 
 **D. Vehículo Afectado**
+
 - Dominio (destacado, fondo amarillo)
 - Marca, modelo, año
 - Chasis
@@ -51,29 +57,35 @@ tokens_acceso
 - **Vencimiento Póliza** (con colores de alerta)
 
 **E. Conductores** (múltiples)
+
 - Foto de cada conductor
 - Nombre, DNI
 - Categoría de licencia
 
 **F. Celadores** (solo Escolar, múltiples)
+
 - Foto de cada celador
 - Nombre, DNI
 
 **G. Establecimiento/Remisería**
+
 - Nombre
 - Dirección
 - Localidad
 
 **H. QR Code de Verificación**
+
 - Código QR grande (140x140px)
 - Enlace al mismo token
 - Texto: "Verifique autenticidad escaneando el código"
 
 **I. Acciones**
+
 - Botón: Imprimir Credencial
 - Botón: Copiar Enlace
 
 #### **🎨 Diseño Visual:**
+
 ```css
 - Fondo celeste claro (#DCEEFB)
 - Card blanco con sombra elevada
@@ -94,17 +106,20 @@ tokens_acceso
 #### **📄 Contenido del Certificado:**
 
 **A. Header**
+
 - Logo institucional
 - Título: "CERTIFICADO DE VERIFICACIÓN VEHICULAR"
 - Fecha y hora del turno (último turno registrado)
 
 **B. Datos Generales** (barra superior)
+
 - Expediente N°
 - Licencia N°
 - Tipo de habilitación
 - Tipo de transporte
 
 **C. Información en Grid**
+
 - **Titular**: Nombre, DNI, Domicilio
 - **Conductor**: Nombre, DNI
 - **Vehículo**: Dominio, Marca, Modelo, Inscripción inicial
@@ -112,6 +127,7 @@ tokens_acceso
 **D. Tabla de Verificación Técnica**
 
 Checklist con columnas:
+
 - Descripción
 - Bien
 - Regular
@@ -119,6 +135,7 @@ Checklist con columnas:
 - Observaciones
 
 **Items verificados:**
+
 1. Puerta accionada conductor (derecha)
 2. Puerta accionada conductor (izquierda)
 3. Salida de emergencia
@@ -134,10 +151,12 @@ Checklist con columnas:
 13. Leyenda "Escolares" o "Niños" (tamaño mínimo)
 
 **E. Firmas**
+
 - Firma del interesado
 - Firma del agente verificador
 
 #### **💾 Tecnología:**
+
 - **html2pdf.js** - Generación de PDF desde HTML
 - Diseño A4 (210mm x 297mm)
 - Descarga automática al cargar la página
@@ -152,6 +171,7 @@ Checklist con columnas:
 #### **Fase 1: Backend**
 
 **1.1. Tabla de Tokens**
+
 ```prisma
 model tokens_acceso {
   id                 Int       @id @default(autoincrement())
@@ -160,13 +180,14 @@ model tokens_acceso {
   fecha_expiracion   DateTime
   fecha_creacion     DateTime  @default(now())
   habilitacion       habilitaciones_generales @relation(fields: [habilitacion_id], references: [id])
-  
+
   @@index([token])
   @@index([habilitacion_id])
 }
 ```
 
 **1.2. API Routes necesarias:**
+
 ```
 POST   /api/habilitaciones/[id]/generar-token
   → Genera token con expiración (30 días)
@@ -182,6 +203,7 @@ POST   /api/habilitaciones/[id]/reenviar-credencial
 ```
 
 **1.3. Modificar Schema de Vehículos**
+
 ```prisma
 model vehiculos {
   // ... campos existentes
@@ -195,6 +217,7 @@ model vehiculos {
 #### **Fase 2: Frontend Público**
 
 **2.1. Página Pública de Credencial**
+
 ```
 /credencial/[token]/page.tsx
   → Sin autenticación
@@ -204,6 +227,7 @@ model vehiculos {
 ```
 
 **Componentes:**
+
 - `CredencialCard.tsx` - Card principal
 - `PersonaBlock.tsx` - Bloque de persona con foto
 - `VehiculoInfo.tsx` - Info del vehículo
@@ -211,6 +235,7 @@ model vehiculos {
 - `EstadoBadge.tsx` - Badge de estado con colores
 
 **2.2. Funcionalidades:**
+
 - ✅ Imprimir credencial (CSS print-friendly)
 - ✅ Copiar enlace al portapapeles
 - ✅ QR code dinámico
@@ -220,14 +245,16 @@ model vehiculos {
 #### **Fase 3: Panel Administrativo**
 
 **3.1. Agregar en Detalle de Habilitación**
+
 ```tsx
 <Button onClick={handleGenerarCredencial}>
-  <QrCode className="h-4 w-4 mr-2" />
+  <QrCode className="mr-2 h-4 w-4" />
   Generar Credencial Digital
 </Button>
 ```
 
 **3.2. Funciones:**
+
 - Generar token y obtener URL
 - Copiar URL
 - Enviar por email al titular
@@ -240,6 +267,7 @@ model vehiculos {
 #### **Fase 1: Backend**
 
 **1.1. API Route**
+
 ```
 GET /api/habilitaciones/[id]/certificado-verificacion/pdf
   → Genera HTML del certificado
@@ -248,6 +276,7 @@ GET /api/habilitaciones/[id]/certificado-verificacion/pdf
 ```
 
 **1.2. Tecnología:**
+
 - **Opción A**: `@react-pdf/renderer` (React components → PDF)
 - **Opción B**: `puppeteer` (HTML → PDF, más flexible)
 - **Recomendado**: puppeteer (permite reutilizar estilos)
@@ -255,6 +284,7 @@ GET /api/habilitaciones/[id]/certificado-verificacion/pdf
 #### **Fase 2: Template del Certificado**
 
 **2.1. Componente React**
+
 ```tsx
 components/certificado-verificacion.tsx
   → Header institucional
@@ -264,6 +294,7 @@ components/certificado-verificacion.tsx
 ```
 
 **2.2. Estilos print-ready**
+
 - A4 (210mm x 297mm)
 - Colores institucionales
 - Page breaks inteligentes
@@ -272,9 +303,10 @@ components/certificado-verificacion.tsx
 #### **Fase 3: Integración**
 
 **3.1. En Panel Admin**
+
 ```tsx
 <DropdownMenuItem onClick={handleDescargarCertificado}>
-  <FileText className="h-4 w-4 mr-2" />
+  <FileText className="mr-2 h-4 w-4" />
   Certificado de Verificación
 </DropdownMenuItem>
 ```
@@ -284,6 +316,7 @@ components/certificado-verificacion.tsx
 ## 📊 PRIORIZACIÓN
 
 ### **🔴 CRÍTICO (Esta semana)**
+
 1. **Sistema de Tokens de Acceso**
    - Crear tabla y migraciones
    - API de generación y validación
@@ -298,6 +331,7 @@ components/certificado-verificacion.tsx
    - QR code
 
 ### **🟠 IMPORTANTE (Semana 2)**
+
 4. **Credencial - Funcionalidades**
    - Envío por email
    - Integración en panel admin
@@ -309,6 +343,7 @@ components/certificado-verificacion.tsx
    - Descarga desde panel
 
 ### **🟡 MEJORAS (Semana 3)**
+
 6. **Optimizaciones**
    - Cache de credenciales
    - Tokens renovables
@@ -321,27 +356,32 @@ components/certificado-verificacion.tsx
 ### **Ventajas del nuevo sistema:**
 
 ✅ **Tecnología**
+
 - React Server Components para SSR
 - TypeScript para type safety
 - Tailwind con sistema de diseño consistente
 
 ✅ **Performance**
+
 - Generación de credencial más rápida
 - Cache de Next.js
 - Optimización de imágenes automática
 
 ✅ **UX Mejorada**
+
 - Animaciones suaves
 - Loading states
 - Feedback visual inmediato
 - Responsive perfecto
 
 ✅ **Seguridad**
+
 - Validación en servidor y cliente
 - Tokens con expiración
 - Rate limiting en generación
 
 ✅ **Mantenibilidad**
+
 - Componentes reutilizables
 - Estilos centralizados
 - Testing más fácil
@@ -351,6 +391,7 @@ components/certificado-verificacion.tsx
 ## 📝 NOTAS TÉCNICAS
 
 ### **Librerías necesarias:**
+
 ```bash
 npm install qrcode.react
 npm install @react-pdf/renderer  # Para PDFs
@@ -359,12 +400,14 @@ npm install puppeteer  # Alternativa más potente
 ```
 
 ### **Variables de entorno:**
+
 ```env
 # URL pública para credenciales
 NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 ```
 
 ### **Consideraciones:**
+
 - Los tokens deben expirar (recomendado: 30-90 días)
 - Permitir regenerar token si expira
 - Enviar email con enlace al generar
@@ -376,6 +419,7 @@ NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 ## ✅ CHECKLIST DE IMPLEMENTACIÓN
 
 ### **Backend**
+
 - [ ] Crear modelo `tokens_acceso` en Prisma
 - [ ] Migración de BD
 - [ ] API: Generar token
@@ -385,6 +429,7 @@ NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 - [ ] Agregar campos de seguro a vehículos
 
 ### **Frontend Público**
+
 - [ ] Página `/credencial/[token]`
 - [ ] Componente CredencialCard
 - [ ] Componente PersonaBlock
@@ -395,6 +440,7 @@ NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 - [ ] Responsive design
 
 ### **Panel Admin**
+
 - [ ] Botón "Generar Credencial"
 - [ ] Modal con URL generada
 - [ ] Botón "Enviar por Email"
@@ -403,6 +449,7 @@ NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 - [ ] Lista de tokens activos
 
 ### **Extras**
+
 - [ ] Email template para credencial
 - [ ] Historial de generación
 - [ ] Renovación de tokens
@@ -415,17 +462,20 @@ NEXT_PUBLIC_CREDENCIAL_URL=https://transporte.lanus.gob.ar/credencial
 Al completar este sprint tendremos:
 
 ✅ **Credencial Digital Completa**
+
 - Accesible vía URL pública con token
 - QR code de verificación
 - Imprimible en formato físico
 - Envío automático por email
 
 ✅ **Certificado de Verificación**
+
 - PDF generado automáticamente
 - Checklist técnico completo
 - Listo para imprimir y firmar
 
 ✅ **Integración Total**
+
 - Desde panel admin
 - Portal público
 - Sistema de emails

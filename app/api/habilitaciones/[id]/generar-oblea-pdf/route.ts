@@ -7,10 +7,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/habilitaciones/[id]/generar-oblea-pdf
  * Genera el HTML para crear el PDF de una oblea
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const habilitacionId = parseInt(params.id)
     const { searchParams } = new URL(request.url)
@@ -27,17 +24,17 @@ export async function GET(
         habilitaciones_personas: {
           where: { rol: 'TITULAR' },
           include: {
-            persona: true
+            persona: true,
           },
-          take: 1
+          take: 1,
         },
         habilitaciones_vehiculos: {
           include: {
-            vehiculo: true
+            vehiculo: true,
           },
-          take: 1
-        }
-      }
+          take: 1,
+        },
+      },
     })
 
     if (!habilitacion) {
@@ -51,7 +48,7 @@ export async function GET(
     let oblea = null
     if (obleaId) {
       oblea = await prisma.oblea_historial.findUnique({
-        where: { id: parseInt(obleaId) }
+        where: { id: parseInt(obleaId) },
       })
     }
 
@@ -332,7 +329,7 @@ export async function GET(
     setTimeout(generarPDF, 1000);
   </script>
 </body>
-</html>`;
+</html>`
 
     return new NextResponse(html, {
       status: 200,
@@ -340,7 +337,6 @@ export async function GET(
         'Content-Type': 'text/html; charset=utf-8',
       },
     })
-
   } catch (error: any) {
     console.error('Error al generar página de PDF:', error)
     return new NextResponse('Error al generar PDF: ' + error.message, { status: 500 })

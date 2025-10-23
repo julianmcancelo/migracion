@@ -13,10 +13,7 @@ export async function GET(request: Request) {
     const token = searchParams.get('token')
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Token no proporcionado' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'Token no proporcionado' }, { status: 400 })
     }
 
     // Buscar el token
@@ -34,10 +31,10 @@ export async function GET(request: Request) {
                     dni: true,
                     cuit: true,
                     foto_url: true,
-                    domicilio: true
-                  }
-                }
-              }
+                    domicilio: true,
+                  },
+                },
+              },
             },
             habilitaciones_vehiculos: {
               include: {
@@ -54,11 +51,11 @@ export async function GET(request: Request) {
                     Aseguradora: true,
                     poliza: true,
                     Vencimiento_VTV: true,
-                    Vencimiento_Poliza: true
-                  }
-                }
+                    Vencimiento_Poliza: true,
+                  },
+                },
               },
-              take: 1
+              take: 1,
             },
             habilitaciones_establecimientos: {
               include: {
@@ -67,23 +64,23 @@ export async function GET(request: Request) {
                     id: true,
                     nombre: true,
                     domicilio: true,
-                    localidad: true
-                  }
+                    localidad: true,
+                  },
                 },
                 remiseria: {
                   select: {
                     id: true,
                     nombre: true,
                     direccion: true,
-                    localidad: true
-                  }
-                }
+                    localidad: true,
+                  },
+                },
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     })
 
     if (!tokenData) {
@@ -110,7 +107,7 @@ export async function GET(request: Request) {
       .filter(hp => hp.rol === 'CONDUCTOR' || hp.rol === 'CHOFER')
       .map(hp => ({
         ...hp.persona,
-        licencia_categoria: hp.licencia_categoria
+        licencia_categoria: hp.licencia_categoria,
       }))
 
     const celadores = tokenData.habilitacion.habilitaciones_personas
@@ -130,14 +127,14 @@ export async function GET(request: Request) {
           tipo: 'establecimiento',
           nombre: destinoRelacion.establecimiento.nombre,
           direccion: destinoRelacion.establecimiento.domicilio,
-          localidad: destinoRelacion.establecimiento.localidad
+          localidad: destinoRelacion.establecimiento.localidad,
         }
       } else if (destinoRelacion.tipo === 'remiseria' && destinoRelacion.remiseria) {
         destino = {
           tipo: 'remiseria',
           nombre: destinoRelacion.remiseria.nombre,
           direccion: destinoRelacion.remiseria.direccion,
-          localidad: destinoRelacion.remiseria.localidad
+          localidad: destinoRelacion.remiseria.localidad,
         }
       }
     }
@@ -153,7 +150,7 @@ export async function GET(request: Request) {
         estado: tokenData.habilitacion.estado,
         tipo: tokenData.habilitacion.tipo,
         tipo_transporte: tokenData.habilitacion.tipo_transporte,
-        expte: tokenData.habilitacion.expte
+        expte: tokenData.habilitacion.expte,
       },
       titular,
       conductores,
@@ -162,15 +159,14 @@ export async function GET(request: Request) {
       destino,
       token: {
         token: tokenData.token,
-        fecha_expiracion: tokenData.fecha_expiracion
-      }
+        fecha_expiracion: tokenData.fecha_expiracion,
+      },
     }
 
     return NextResponse.json({
       success: true,
-      data: credencialData
+      data: credencialData,
     })
-
   } catch (error) {
     console.error('Error al verificar token:', error)
     return NextResponse.json(

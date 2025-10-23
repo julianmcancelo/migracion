@@ -36,6 +36,7 @@ npm install tesseract.js multer
 ## 🗂️ **Archivos Creados**
 
 ### **1. API OCR** - `/app/api/ocr/dni/route.ts`
+
 ```typescript
 POST /api/ocr/dni
 Content-Type: multipart/form-data
@@ -51,7 +52,7 @@ Content-Type: multipart/form-data
     "datosExtraidos": {
       "dni": "12345678",
       "nombre": "JUAN CARLOS",
-      "apellido": "PÉREZ GONZÁLEZ", 
+      "apellido": "PÉREZ GONZÁLEZ",
       "fechaNacimiento": "1985-03-15",
       "sexo": "MASCULINO",
       "nacionalidad": "ARGENTINA",
@@ -64,6 +65,7 @@ Content-Type: multipart/form-data
 ```
 
 ### **2. Componente DNI Uploader** - `/components/ocr/dni-uploader.tsx`
+
 - ✅ **Drag & Drop** - Arrastra imagen o selecciona archivo
 - ✅ **Validaciones** - Tipo de archivo y tamaño
 - ✅ **Preview** - Muestra imagen antes de procesar
@@ -72,6 +74,7 @@ Content-Type: multipart/form-data
 - ✅ **Consejos** - Tips para mejores resultados
 
 ### **3. Formulario con OCR** - `/components/forms/persona-form-with-ocr.tsx`
+
 - ✅ **Integración completa** - OCR + formulario manual
 - ✅ **Auto-completado** - Llena campos automáticamente
 - ✅ **Validaciones** - DNI, email, campos requeridos
@@ -79,6 +82,7 @@ Content-Type: multipart/form-data
 - ✅ **Edición manual** - Usuario puede corregir datos
 
 ### **4. Página de Creación** - `/app/(panel)/habilitaciones/crear/page.tsx`
+
 - ✅ **Wizard multi-paso** - Flujo guiado de creación
 - ✅ **Stepper visual** - Progreso claro del proceso
 - ✅ **Integración OCR** - En cada paso de persona
@@ -114,6 +118,7 @@ Content-Type: multipart/form-data
 ```
 
 ### **Procesamiento de Texto:**
+
 1. **Limpieza** - Elimina saltos de línea y espacios extra
 2. **Normalización** - Convierte a mayúsculas
 3. **Extracción** - Aplica expresiones regulares
@@ -128,14 +133,15 @@ Content-Type: multipart/form-data
 function calcularConfianza(datos: any): number {
   const camposImportantes = ['dni', 'nombre', 'fechaNacimiento', 'sexo']
   const camposEncontrados = camposImportantes.filter(campo => datos[campo])
-  
+
   return Math.round((camposEncontrados.length / camposImportantes.length) * 100)
 }
 ```
 
 **Niveles de Confianza:**
+
 - 🟢 **85-100%** - Excelente, datos muy confiables
-- 🟡 **70-84%** - Bueno, revisar datos extraídos  
+- 🟡 **70-84%** - Bueno, revisar datos extraídos
 - 🔴 **<70%** - Bajo, verificar manualmente
 
 ---
@@ -143,6 +149,7 @@ function calcularConfianza(datos: any): number {
 ## 🎨 **Experiencia de Usuario**
 
 ### **Flujo Completo:**
+
 ```
 1. Usuario hace clic en "Escanear DNI"
 2. Aparece zona de carga con drag & drop
@@ -155,6 +162,7 @@ function calcularConfianza(datos: any): number {
 ```
 
 ### **Estados Visuales:**
+
 - ✅ **Carga inicial** - Zona drag & drop con instrucciones
 - ⏳ **Procesando** - Spinner con mensaje "Procesando DNI con OCR..."
 - ✅ **Éxito** - Datos extraídos en tarjeta verde con % confianza
@@ -166,22 +174,25 @@ function calcularConfianza(datos: any): number {
 ## 🔧 **Configuración y Optimización**
 
 ### **Tesseract.js Config:**
+
 ```typescript
 await Tesseract.recognize(
   buffer,
   'spa', // Idioma español
   {
-    logger: m => console.log('OCR Progress:', m)
+    logger: m => console.log('OCR Progress:', m),
   }
 )
 ```
 
 ### **Validaciones de Archivo:**
+
 - **Tipos permitidos:** JPG, PNG, WebP
 - **Tamaño máximo:** 10MB
 - **Resolución recomendada:** Mínimo 300 DPI
 
 ### **Optimizaciones:**
+
 - ✅ **Preprocessing** - Limpieza de texto antes de extraer
 - ✅ **Fallbacks** - Múltiples patrones para cada campo
 - ✅ **Validación cruzada** - Verificación de consistencia
@@ -192,6 +203,7 @@ await Tesseract.recognize(
 ## 💡 **Consejos para Mejores Resultados**
 
 ### **Para el Usuario:**
+
 1. **Iluminación** - DNI bien iluminado, sin sombras
 2. **Enfoque** - Imagen nítida, sin desenfoque
 3. **Ángulo** - DNI plano, sin perspectiva
@@ -199,6 +211,7 @@ await Tesseract.recognize(
 5. **Contraste** - Evitar reflejos en el plástico
 
 ### **Para el Desarrollador:**
+
 1. **Preprocesamiento** - Ajustar contraste/brillo si es necesario
 2. **Múltiples patrones** - Diferentes formatos de DNI
 3. **Validación semántica** - Verificar coherencia de fechas
@@ -210,10 +223,11 @@ await Tesseract.recognize(
 ## 🚀 **Integración en el Flujo**
 
 ### **Creación de Habilitación:**
+
 ```
 Paso 1: Tipo de habilitación
 Paso 2: Titular (CON OCR) 👈
-Paso 3: Conductor (CON OCR) 👈  
+Paso 3: Conductor (CON OCR) 👈
 Paso 4: Celador (CON OCR) 👈
 Paso 5: Vehículo
 Paso 6: Establecimiento
@@ -221,6 +235,7 @@ Paso 7: Resumen y confirmación
 ```
 
 ### **Beneficios:**
+
 - ⚡ **Velocidad** - Reduce tiempo de carga de datos
 - ✅ **Precisión** - Evita errores de tipeo
 - 🎯 **UX** - Experiencia moderna e intuitiva
@@ -232,15 +247,17 @@ Paso 7: Resumen y confirmación
 ## 🧪 **Testing y Validación**
 
 ### **Casos de Prueba:**
+
 1. **DNI nuevo** - Formato actual con chip
-2. **DNI viejo** - Formato anterior sin chip  
+2. **DNI viejo** - Formato anterior sin chip
 3. **Calidad baja** - Imagen borrosa o con sombras
 4. **Ángulo inclinado** - DNI no completamente plano
 5. **Datos parciales** - Solo algunos campos legibles
 
 ### **Métricas de Éxito:**
+
 - **Precisión DNI:** >95% (campo más importante)
-- **Precisión nombre:** >90% 
+- **Precisión nombre:** >90%
 - **Tiempo procesamiento:** <10 segundos
 - **Tasa de éxito:** >80% de imágenes procesables
 
@@ -249,16 +266,19 @@ Paso 7: Resumen y confirmación
 ## 🔮 **Futuras Mejoras**
 
 ### **Corto Plazo:**
+
 - ✅ **Captura desde cámara** - Tomar foto directamente
 - ✅ **Múltiples formatos** - Pasaporte, licencia de conducir
 - ✅ **Validación RENAPER** - Verificar DNI contra base oficial
 
 ### **Mediano Plazo:**
+
 - ✅ **IA mejorada** - Modelos específicos para documentos argentinos
 - ✅ **Batch processing** - Procesar múltiples DNIs a la vez
 - ✅ **Historial OCR** - Guardar resultados para análisis
 
 ### **Largo Plazo:**
+
 - ✅ **OCR en tiempo real** - Procesamiento mientras se toma la foto
 - ✅ **Detección automática** - Reconocer tipo de documento
 - ✅ **Integración blockchain** - Verificación descentralizada
@@ -283,7 +303,7 @@ Paso 7: Resumen y confirmación
 
 1. **Probar OCR** con diferentes tipos de DNI
 2. **Ajustar patrones** según resultados de testing
-3. **Integrar en producción** 
+3. **Integrar en producción**
 4. **Capacitar usuarios** sobre mejores prácticas
 5. **Monitorear métricas** de precisión y uso
 

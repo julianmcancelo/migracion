@@ -48,16 +48,16 @@ interface DatosOblea {
 export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
   try {
     console.log('Generando PDF de oblea con evidencia...')
-    
+
     const doc = new jsPDF('p', 'mm', 'a4')
-    
+
     // Colores institucionales
     const azulMunicipal: [number, number, number] = [30, 64, 175]
     const naranjaOblea: [number, number, number] = [242, 113, 28]
     const verdeAprobado: [number, number, number] = [76, 175, 80]
     const grisTexto: [number, number, number] = [50, 50, 50]
     const grisClaro: [number, number, number] = [245, 245, 245]
-    
+
     let yPos = 10
 
     // ==================== HEADER ====================
@@ -65,34 +65,34 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       // Fondo azul
       doc.setFillColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
       doc.rect(0, 0, 210, 35, 'F')
-      
+
       // Logo circular
       doc.setFillColor(255, 255, 255)
       doc.circle(20, 17.5, 8, 'F')
       doc.setDrawColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
       doc.setLineWidth(1)
       doc.circle(20, 17.5, 8)
-      
+
       doc.setTextColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
       doc.setFontSize(6)
       doc.setFont('helvetica', 'bold')
       doc.text('LANUS', 20, 18, { align: 'center' })
-      
+
       // Título header
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(18)
       doc.text('MUNICIPALIDAD DE LANUS', 105, 14, { align: 'center' })
-      
+
       doc.setFontSize(9)
       doc.setFont('helvetica', 'normal')
       doc.text('Subsecretaria de Ordenamiento Urbano', 105, 20, { align: 'center' })
       doc.text('Direccion General de Movilidad y Transporte', 105, 25, { align: 'center' })
-      
+
       // Fecha
       doc.setFontSize(8)
       const fechaEmision = new Date(datos.oblea.fecha_solicitud)
       doc.text(`Fecha: ${fechaEmision.toLocaleDateString('es-AR')}`, 195, 30, { align: 'right' })
-      
+
       yPos = 42
     }
 
@@ -103,12 +103,14 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     doc.setFontSize(16)
     doc.setFont('helvetica', 'bold')
     doc.text('CERTIFICADO DE ENTREGA DE OBLEA', 105, yPos, { align: 'center' })
-    
+
     yPos += 6
     doc.setFontSize(11)
     doc.setFont('helvetica', 'normal')
-    doc.text(`Transporte ${String(datos.habilitacion.tipo_transporte)}`, 105, yPos, { align: 'center' })
-    
+    doc.text(`Transporte ${String(datos.habilitacion.tipo_transporte)}`, 105, yPos, {
+      align: 'center',
+    })
+
     yPos += 10
 
     // ==================== DATOS DEL TITULAR ====================
@@ -117,93 +119,104 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     doc.setDrawColor(200, 200, 200)
     doc.setLineWidth(0.3)
     doc.rect(15, yPos, 180, 25)
-    
+
     yPos += 7
     doc.setTextColor(grisTexto[0], grisTexto[1], grisTexto[2])
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.text('DATOS DEL TITULAR:', 20, yPos)
-    
+
     yPos += 5
     doc.setFont('helvetica', 'normal')
     doc.text(`Nombre: ${String(datos.titular.nombre)}`, 20, yPos)
-    
+
     yPos += 5
     doc.text(`DNI: ${String(datos.titular.dni)}`, 20, yPos)
     if (datos.titular.domicilio) {
       doc.text(`Domicilio: ${String(datos.titular.domicilio).substring(0, 50)}`, 80, yPos)
     }
-    
+
     yPos += 10
 
     // ==================== DATOS DEL VEHÍCULO ====================
     doc.setFillColor(grisClaro[0], grisClaro[1], grisClaro[2])
     doc.rect(15, yPos, 180, 20, 'F')
     doc.rect(15, yPos, 180, 20)
-    
+
     yPos += 7
     doc.setFont('helvetica', 'bold')
     doc.text('DATOS DEL VEHICULO:', 20, yPos)
-    
+
     yPos += 5
     doc.setFont('helvetica', 'normal')
     doc.text(`Dominio: ${String(datos.vehiculo.dominio)}`, 20, yPos)
-    doc.text(`Marca/Modelo: ${String(datos.vehiculo.marca)} ${String(datos.vehiculo.modelo)}`, 80, yPos)
+    doc.text(
+      `Marca/Modelo: ${String(datos.vehiculo.marca)} ${String(datos.vehiculo.modelo)}`,
+      80,
+      yPos
+    )
     if (datos.vehiculo.ano) {
       doc.text(`Año: ${String(datos.vehiculo.ano)}`, 150, yPos)
     }
-    
+
     yPos += 15
 
     // ==================== LICENCIA DE HABILITACIÓN ====================
     doc.setFillColor(naranjaOblea[0], naranjaOblea[1], naranjaOblea[2])
     doc.roundedRect(15, yPos, 180, 35, 3, 3, 'F')
-    
+
     yPos += 10
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(11)
     doc.setFont('helvetica', 'bold')
     doc.text('LICENCIA DE HABILITACION N°', 105, yPos, { align: 'center' })
-    
+
     yPos += 8
     doc.setFontSize(24)
     doc.text(String(datos.habilitacion.nro_licencia), 105, yPos, { align: 'center' })
-    
+
     yPos += 8
     doc.setFontSize(9)
     doc.setFont('helvetica', 'normal')
     if (datos.habilitacion.vigencia_fin) {
       const vigenciaFin = new Date(datos.habilitacion.vigencia_fin)
-      doc.text(`Vigencia hasta ${vigenciaFin.toLocaleDateString('es-AR')}`, 105, yPos, { align: 'center' })
+      doc.text(`Vigencia hasta ${vigenciaFin.toLocaleDateString('es-AR')}`, 105, yPos, {
+        align: 'center',
+      })
     }
-    
+
     yPos += 15
 
     // ==================== DATOS DE INSPECCIÓN (si existe) ====================
     if (datos.inspeccion) {
       doc.setFillColor(verdeAprobado[0], verdeAprobado[1], verdeAprobado[2])
       doc.rect(15, yPos, 180, 12, 'F')
-      
+
       yPos += 7
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(10)
       doc.setFont('helvetica', 'bold')
       const fechaInsp = new Date(datos.inspeccion.fecha)
-      doc.text(`✓ Inspección realizada: ${fechaInsp.toLocaleDateString('es-AR')} - Resultado: ${String(datos.inspeccion.resultado)}`, 105, yPos, { align: 'center' })
-      
+      doc.text(
+        `✓ Inspección realizada: ${fechaInsp.toLocaleDateString('es-AR')} - Resultado: ${String(datos.inspeccion.resultado)}`,
+        105,
+        yPos,
+        { align: 'center' }
+      )
+
       yPos += 12
     }
 
     // ==================== FIRMAS DIGITALES ====================
     doc.setFillColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
     doc.roundedRect(15, yPos, 180, 8, 2, 2, 'F')
-    
+
     yPos += 6
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(10)
     doc.setFont('helvetica', 'bold')
     doc.text('FIRMAS Y CONFORMIDAD', 105, yPos, { align: 'center' })
-    
+
     yPos += 10
 
     // Cajas de firmas
@@ -239,7 +252,9 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(grisTexto[0], grisTexto[1], grisTexto[2])
-    doc.text(String(datos.inspector?.nombre || 'Inspector Municipal'), firmaInspectorX, yPos + 29, { align: 'center' })
+    doc.text(String(datos.inspector?.nombre || 'Inspector Municipal'), firmaInspectorX, yPos + 29, {
+      align: 'center',
+    })
 
     // Firma Contribuyente
     doc.setFillColor(grisClaro[0], grisClaro[1], grisClaro[2])
@@ -279,12 +294,12 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
 
       doc.setFillColor(azulMunicipal[0], azulMunicipal[1], azulMunicipal[2])
       doc.roundedRect(15, yPos - 5, 180, 8, 2, 2, 'F')
-      
+
       doc.setTextColor(255, 255, 255)
       doc.setFontSize(11)
       doc.setFont('helvetica', 'bold')
       doc.text('EVIDENCIA FOTOGRÁFICA', 105, yPos, { align: 'center' })
-      
+
       yPos += 12
 
       const imgWidth = 85
@@ -319,14 +334,18 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
             doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
             doc.setFontSize(8)
             doc.setTextColor(150, 150, 150)
-            doc.text('Foto no disponible', xPos + imgWidth / 2, yPos + imgHeight / 2, { align: 'center' })
+            doc.text('Foto no disponible', xPos + imgWidth / 2, yPos + imgHeight / 2, {
+              align: 'center',
+            })
           }
         } else {
           doc.setFillColor(240, 240, 250)
           doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
           doc.setFontSize(8)
           doc.setTextColor(100, 100, 150)
-          doc.text('Foto en servidor', xPos + imgWidth / 2, yPos + imgHeight / 2, { align: 'center' })
+          doc.text('Foto en servidor', xPos + imgWidth / 2, yPos + imgHeight / 2, {
+            align: 'center',
+          })
         }
 
         // Título de foto
@@ -352,36 +371,44 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     const totalPages = doc.getNumberOfPages()
     for (let i = 1; i <= totalPages; i++) {
       doc.setPage(i)
-      
+
       // Línea separadora
       doc.setDrawColor(200, 200, 200)
       doc.setLineWidth(0.3)
       doc.line(15, 280, 195, 280)
-      
+
       // Fondo amarillo de advertencia
       doc.setFillColor(255, 252, 240)
       doc.rect(15, 282, 180, 10, 'F')
       doc.setDrawColor(255, 193, 7)
       doc.setLineWidth(0.5)
       doc.rect(15, 282, 180, 10)
-      
+
       doc.setTextColor(133, 77, 14)
       doc.setFontSize(7)
       doc.setFont('helvetica', 'bold')
       doc.text('IMPORTANTE:', 18, 287)
       doc.setFont('helvetica', 'normal')
-      doc.text('La oblea debe exhibirse en lugar visible del vehículo. Documento oficial con validez legal.', 40, 287)
-      
+      doc.text(
+        'La oblea debe exhibirse en lugar visible del vehículo. Documento oficial con validez legal.',
+        40,
+        287
+      )
+
       // Info de página
       doc.setTextColor(150, 150, 150)
       doc.setFontSize(6)
-      doc.text(`Pág. ${i} de ${totalPages} | Oblea ID: ${datos.oblea.id} | Generado: ${new Date().toLocaleString('es-AR')}`, 105, 295, { align: 'center' })
+      doc.text(
+        `Pág. ${i} de ${totalPages} | Oblea ID: ${datos.oblea.id} | Generado: ${new Date().toLocaleString('es-AR')}`,
+        105,
+        295,
+        { align: 'center' }
+      )
     }
 
     // Convertir a Buffer
     const pdfOutput = doc.output('arraybuffer')
     return Buffer.from(pdfOutput)
-    
   } catch (error) {
     console.error('Error generando PDF de oblea:', error)
     throw error

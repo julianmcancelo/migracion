@@ -46,18 +46,18 @@ export async function GET(request: Request) {
 
     // Enriquecer con datos de habilitación (titular y vehículo)
     const inspeccionesEnriquecidas = await Promise.all(
-      inspecciones.map(async (inspeccion) => {
+      inspecciones.map(async inspeccion => {
         try {
           // Obtener habilitación
           const habilitacion = await prisma.habilitaciones_generales.findUnique({
-            where: { id: inspeccion.habilitacion_id }
+            where: { id: inspeccion.habilitacion_id },
           })
 
           if (!habilitacion) {
             return {
               ...inspeccion,
               titular: null,
-              dominio: null
+              dominio: null,
             }
           }
 
@@ -65,27 +65,27 @@ export async function GET(request: Request) {
           const habPersona = await prisma.habilitaciones_personas.findFirst({
             where: {
               habilitacion_id: habilitacion.id,
-              rol: 'TITULAR'
-            }
+              rol: 'TITULAR',
+            },
           })
 
           let titular: string | null = null
           if (habPersona && habPersona.persona_id) {
             const persona = await prisma.personas.findUnique({
-              where: { id: habPersona.persona_id }
+              where: { id: habPersona.persona_id },
             })
             titular = persona?.nombre || null
           }
 
           // Obtener vehículo
           const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
-            where: { habilitacion_id: habilitacion.id }
+            where: { habilitacion_id: habilitacion.id },
           })
 
           let dominio: string | null = null
           if (habVehiculo && habVehiculo.vehiculo_id) {
             const vehiculo = await prisma.vehiculos.findUnique({
-              where: { id: habVehiculo.vehiculo_id }
+              where: { id: habVehiculo.vehiculo_id },
             })
             dominio = vehiculo?.dominio || null
           }
@@ -93,14 +93,14 @@ export async function GET(request: Request) {
           return {
             ...inspeccion,
             titular,
-            dominio
+            dominio,
           }
         } catch (error) {
           console.error(`Error al enriquecer inspección ${inspeccion.id}:`, error)
           return {
             ...inspeccion,
             titular: null,
-            dominio: null
+            dominio: null,
           }
         }
       })
@@ -109,9 +109,8 @@ export async function GET(request: Request) {
     return NextResponse.json({
       success: true,
       data: inspeccionesEnriquecidas,
-      total: inspeccionesEnriquecidas.length
+      total: inspeccionesEnriquecidas.length,
     })
-
   } catch (error) {
     console.error('Error al obtener inspecciones:', error)
     return NextResponse.json(
@@ -159,7 +158,7 @@ export async function POST(request: Request) {
       items,
       fotos_vehiculo,
       latitud,
-      longitud
+      longitud,
     } = body
 
     // Validaciones
@@ -172,7 +171,7 @@ export async function POST(request: Request) {
 
     // Verificar habilitación existe
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
-      where: { id: Number(habilitacion_id) }
+      where: { id: Number(habilitacion_id) },
     })
 
     if (!habilitacion) {
@@ -185,15 +184,22 @@ export async function POST(request: Request) {
     // Calcular resultado automático
     const itemsMalos = items?.filter((i: any) => i.estado === 'MAL').length || 0
     const itemsRegulares = items?.filter((i: any) => i.estado === 'REGULAR').length || 0
-    
+
     let resultado = 'APROBADO'
     if (itemsMalos > 0) {
       resultado = 'RECHAZADO'
     } else if (itemsRegulares > 2) {
       resultado = 'CONDICIONAL'
     }
-    
-    console.log('🔍 Items malos:', itemsMalos, '| Regulares:', itemsRegulares, '| Resultado:', resultado)
+
+    console.log(
+      '🔍 Items malos:',
+      itemsMalos,
+      '| Regulares:',
+      itemsRegulares,
+      '| Resultado:',
+      resultado
+    )
 
     // Crear inspección
     const inspeccion = await prisma.inspecciones.create({
@@ -206,8 +212,8 @@ export async function POST(request: Request) {
         firma_contribuyente: firma_contribuyente || null,
         email_contribuyente: email_contribuyente || null,
         tipo_transporte: tipo_transporte || null,
-        resultado
-      }
+        resultado,
+      },
     })
 
     // Crear items de inspección
@@ -217,8 +223,8 @@ export async function POST(request: Request) {
           id_inspeccion: inspeccion.id,
           item_id_original: item.item_id,
           estado: item.estado,
-          observacion: item.observacion || null
-        }))
+          observacion: item.observacion || null,
+        })),
       })
     }
 
@@ -231,8 +237,8 @@ export async function POST(request: Request) {
           item_id_original: foto.tipo_foto, // Para compatibilidad
           foto_path: foto.foto_base64, // En producción, guardar en storage y poner URL
           latitud: foto.latitud || null,
-          longitud: foto.longitud || null
-        }))
+          longitud: foto.longitud || null,
+        })),
       })
     }
 
@@ -240,28 +246,30 @@ export async function POST(request: Request) {
     const turno = await prisma.turnos.findFirst({
       where: {
         habilitacion_id: Number(habilitacion_id),
-        estado: 'CONFIRMADO'
+        estado: 'CONFIRMADO',
       },
-      orderBy: { fecha_hora: 'desc' }
+      orderBy: { fecha_hora: 'desc' },
     })
 
     if (turno) {
       await prisma.turnos.update({
         where: { id: turno.id },
-        data: { estado: 'FINALIZADO' }
+        data: { estado: 'FINALIZADO' },
       })
     }
 
-    return NextResponse.json({
-      success: true,
-      data: {
-        ...inspeccion,
-        items: items?.length || 0,
-        fotos: fotos_vehiculo?.length || 0
+    return NextResponse.json(
+      {
+        success: true,
+        data: {
+          ...inspeccion,
+          items: items?.length || 0,
+          fotos: fotos_vehiculo?.length || 0,
+        },
+        message: `Inspección ${resultado.toLowerCase()} creada exitosamente`,
       },
-      message: `Inspección ${resultado.toLowerCase()} creada exitosamente`
-    }, { status: 201 })
-
+      { status: 201 }
+    )
   } catch (error) {
     console.error('Error al crear inspección:', error)
     return NextResponse.json(

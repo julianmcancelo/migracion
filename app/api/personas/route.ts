@@ -34,10 +34,7 @@ export async function GET(request: NextRequest) {
     // Buscar personas por nombre o DNI
     const personas = await prisma.personas.findMany({
       where: {
-        OR: [
-          { nombre: { contains: buscar } },
-          { dni: { contains: buscar } },
-        ],
+        OR: [{ nombre: { contains: buscar } }, { dni: { contains: buscar } }],
       },
       take: limite,
       orderBy: { nombre: 'asc' },
@@ -47,7 +44,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: personas,
     })
-
   } catch (error: any) {
     console.error('Error al buscar personas:', error)
     return NextResponse.json(
@@ -78,10 +74,13 @@ export async function POST(request: NextRequest) {
     // Validar datos con Zod
     const validacion = crearPersonaSchema.safeParse(body)
     if (!validacion.success) {
-      return NextResponse.json({
-        error: 'Datos inválidos',
-        details: validacion.error.errors,
-      }, { status: 400 })
+      return NextResponse.json(
+        {
+          error: 'Datos inválidos',
+          details: validacion.error.errors,
+        },
+        { status: 400 }
+      )
     }
 
     const datos = validacion.data
@@ -92,9 +91,12 @@ export async function POST(request: NextRequest) {
     })
 
     if (personaExistente) {
-      return NextResponse.json({
-        error: 'Ya existe una persona con ese DNI',
-      }, { status: 409 })
+      return NextResponse.json(
+        {
+          error: 'Ya existe una persona con ese DNI',
+        },
+        { status: 409 }
+      )
     }
 
     // Crear la persona
@@ -113,12 +115,14 @@ export async function POST(request: NextRequest) {
       },
     })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Persona creada exitosamente',
-      data: nuevaPersona,
-    }, { status: 201 })
-
+    return NextResponse.json(
+      {
+        success: true,
+        message: 'Persona creada exitosamente',
+        data: nuevaPersona,
+      },
+      { status: 201 }
+    )
   } catch (error: any) {
     console.error('Error al crear persona:', error)
     return NextResponse.json(

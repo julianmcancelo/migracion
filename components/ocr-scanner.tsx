@@ -26,7 +26,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
     poliza: '/api/ai/ocr-poliza',
     vtv: '/api/ai/ocr-vtv',
     titulo: '/api/ai/ocr-titulo',
-    licencia: '/api/ai/ocr-licencia'
+    licencia: '/api/ai/ocr-licencia',
   }
 
   const docNames: Record<string, string> = {
@@ -35,7 +35,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
     poliza: 'Póliza de Seguro',
     vtv: 'Certificado VTV',
     titulo: 'Título del Vehículo',
-    licencia: 'Licencia de Conducir'
+    licencia: 'Licencia de Conducir',
   }
 
   const endpoint = endpoints[type]
@@ -64,7 +64,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
 
       const response = await fetch(endpoint, {
         method: 'POST',
-        body: formData
+        body: formData,
       })
 
       const data = await response.json()
@@ -102,7 +102,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
     <Card className="p-4">
       <div className="space-y-4">
         {/* Header */}
-        <div className="flex items-center gap-2 pb-3 border-b">
+        <div className="flex items-center gap-2 border-b pb-3">
           <Scan className="h-5 w-5 text-blue-600" />
           <h3 className="font-semibold text-gray-900">
             {buttonText || `Escanear ${docName} con IA`}
@@ -115,16 +115,16 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
             <Button
               onClick={() => cameraInputRef.current?.click()}
               variant="outline"
-              className="h-24 flex flex-col gap-2"
+              className="flex h-24 flex-col gap-2"
             >
               <Camera className="h-8 w-8" />
               <span className="text-sm">Tomar Foto</span>
             </Button>
-            
+
             <Button
               onClick={() => fileInputRef.current?.click()}
               variant="outline"
-              className="h-24 flex flex-col gap-2"
+              className="flex h-24 flex-col gap-2"
             >
               <Upload className="h-8 w-8" />
               <span className="text-sm">Subir Imagen/PDF</span>
@@ -153,25 +153,21 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
         {preview && (
           <div className="space-y-3">
             {preview.startsWith('PDF:') ? (
-              <div className="w-full p-4 border-2 border-dashed border-gray-300 rounded-lg bg-gray-50 text-center">
-                <div className="text-red-600 text-4xl mb-2">📄</div>
+              <div className="w-full rounded-lg border-2 border-dashed border-gray-300 bg-gray-50 p-4 text-center">
+                <div className="mb-2 text-4xl text-red-600">📄</div>
                 <p className="text-sm font-semibold text-gray-700">{preview}</p>
-                <p className="text-xs text-gray-500 mt-1">Listo para procesar</p>
+                <p className="mt-1 text-xs text-gray-500">Listo para procesar</p>
               </div>
             ) : (
-              <img 
-                src={preview} 
-                alt="Preview" 
-                className="w-full max-h-64 object-contain border rounded-lg bg-gray-50"
+              <img
+                src={preview}
+                alt="Preview"
+                className="max-h-64 w-full rounded-lg border bg-gray-50 object-contain"
               />
             )}
-            
+
             {!loading && !result && !error && (
-              <Button
-                onClick={handleReset}
-                variant="outline"
-                className="w-full"
-              >
+              <Button onClick={handleReset} variant="outline" className="w-full">
                 Cambiar {preview.startsWith('PDF:') ? 'Archivo' : 'Imagen'}
               </Button>
             )}
@@ -189,36 +185,28 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
         {/* Resultado exitoso */}
         {result && !error && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 p-3">
               <CheckCircle className="h-5 w-5 text-green-600" />
               <div className="flex-1">
                 <p className="font-semibold text-green-900">¡Datos extraídos correctamente!</p>
-                <p className="text-sm text-green-700">
-                  Confianza: {result.confianza || 'N/A'}
-                </p>
+                <p className="text-sm text-green-700">Confianza: {result.confianza || 'N/A'}</p>
               </div>
             </div>
 
             {/* Datos extraídos */}
-            <div className="bg-gray-50 border rounded-lg p-3 space-y-2 text-sm">
+            <div className="space-y-2 rounded-lg border bg-gray-50 p-3 text-sm">
               {Object.entries(result).map(([key, value]) => {
                 if (key === 'confianza' || value === null) return null
                 return (
                   <div key={key} className="flex justify-between">
-                    <span className="text-gray-600 capitalize">
-                      {key.replace(/_/g, ' ')}:
-                    </span>
+                    <span className="capitalize text-gray-600">{key.replace(/_/g, ' ')}:</span>
                     <span className="font-medium text-gray-900">{String(value)}</span>
                   </div>
                 )
               })}
             </div>
 
-            <Button
-              onClick={handleReset}
-              variant="outline"
-              className="w-full"
-            >
+            <Button onClick={handleReset} variant="outline" className="w-full">
               Escanear Otro Documento
             </Button>
           </div>
@@ -227,7 +215,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
         {/* Error */}
         {error && (
           <div className="space-y-3">
-            <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <div className="flex items-center gap-2 rounded-lg border border-red-200 bg-red-50 p-3">
               <XCircle className="h-5 w-5 text-red-600" />
               <div className="flex-1">
                 <p className="font-semibold text-red-900">Error al procesar</p>
@@ -235,11 +223,7 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
               </div>
             </div>
 
-            <Button
-              onClick={handleReset}
-              variant="outline"
-              className="w-full"
-            >
+            <Button onClick={handleReset} variant="outline" className="w-full">
               Intentar de Nuevo
             </Button>
           </div>
@@ -247,9 +231,9 @@ export function OCRScanner({ type, onDataExtracted, buttonText }: OCRScannerProp
 
         {/* Ayuda */}
         {!preview && (
-          <div className="text-xs text-gray-500 bg-blue-50 border border-blue-200 rounded p-3">
-            <p className="font-medium text-blue-900 mb-1">💡 Consejos para mejores resultados:</p>
-            <ul className="list-disc list-inside space-y-1 text-blue-800">
+          <div className="rounded border border-blue-200 bg-blue-50 p-3 text-xs text-gray-500">
+            <p className="mb-1 font-medium text-blue-900">💡 Consejos para mejores resultados:</p>
+            <ul className="list-inside list-disc space-y-1 text-blue-800">
               <li>Toma la foto con buena iluminación</li>
               <li>Asegúrate que el {docName} esté completo y legible</li>
               <li>Evita reflejos o sombras sobre el documento</li>

@@ -79,7 +79,6 @@ export async function GET(request: NextRequest) {
       success: true,
       data: resultados,
     })
-
   } catch (error: any) {
     console.error('Error al buscar establecimientos:', error)
     return NextResponse.json(

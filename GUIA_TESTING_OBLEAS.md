@@ -17,24 +17,28 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## ✅ **Checklist de Testing**
 
 ### **1. 🔐 Acceso al Sistema**
+
 - [ ] Cargar https://migracionnext.vercel.app
 - [ ] Iniciar sesión con credenciales válidas
 - [ ] Verificar que el dashboard carga correctamente
 - [ ] Navegar a "Habilitaciones"
 
 ### **2. 📋 Acceso a Habilitaciones**
+
 - [ ] Ver listado de habilitaciones
 - [ ] Filtrar por habilitaciones "HABILITADO" (activas)
 - [ ] Hacer clic en "Ver detalles" de una habilitación activa
 - [ ] Verificar que carga la página de detalle
 
 ### **3. 🔘 Botón de Obleas**
+
 - [ ] Localizar el botón naranja "Gestionar Obleas" (ícono Shield)
 - [ ] Verificar que está junto a otros botones de acción
 - [ ] Hacer clic en "Gestionar Obleas"
 - [ ] Verificar que se abre el modal
 
 ### **4. 📱 Modal de Obleas**
+
 - [ ] **Header:** Verificar título "Gestión de Obleas" y número de licencia
 - [ ] **Sección izquierda:** "Generar Nueva Oblea" visible
 - [ ] **Sección derecha:** "Historial de Obleas" visible
@@ -42,6 +46,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 - [ ] **Cerrar:** Botón X funciona correctamente
 
 ### **5. 📄 Generación de Certificado**
+
 - [ ] Leer la información sobre el certificado
 - [ ] Hacer clic en "Generar Certificado de Oblea"
 - [ ] Verificar loading state (spinner + texto)
@@ -49,6 +54,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 - [ ] **CRÍTICO:** Verificar que se descarga el PDF automáticamente
 
 ### **6. 🔍 Verificación del PDF**
+
 - [ ] **Archivo descargado:** `certificado_oblea_[LICENCIA].pdf`
 - [ ] **Header:** Logo y datos del municipio
 - [ ] **Título:** "CERTIFICADO DE ENTREGA DE OBLEA"
@@ -61,6 +67,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 - [ ] **Footer:** ID de oblea y fecha de generación
 
 ### **7. 📊 Historial de Obleas**
+
 - [ ] Verificar que aparece la oblea recién generada
 - [ ] **Badge verde:** "Entregada" visible
 - [ ] **Fecha:** Correcta y en formato argentino
@@ -68,6 +75,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 - [ ] **Número de licencia:** Coincide con la habilitación
 
 ### **8. 🔄 Funcionalidad Completa**
+
 - [ ] Generar una segunda oblea para la misma habilitación
 - [ ] Verificar que aparecen ambas en el historial
 - [ ] Cerrar y reabrir el modal
@@ -79,22 +87,27 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## 🐛 **Posibles Errores y Soluciones**
 
 ### **Causa 3: Estado Incorrecto**
+
 - El botón solo aparece en habilitaciones con estado **"HABILITADO"**
 - **Solución:** Asegúrate de abrir una habilitación con estado HABILITADO
 
 ### **Error: "El estado debe ser HABILITADO para generar oblea"**
+
 - **Causa:** Habilitación inactiva o en trámite
 - **Solución:** Usar una habilitación con estado "HABILITADO"
 
 ### **Error: PDF no se descarga**
+
 - **Causa:** Bloqueador de pop-ups o error de jsPDF
 - **Solución:** Permitir descargas, revisar consola del navegador
 
 ### **Error: "No se encontró email del titular"**
+
 - **Causa:** Datos incompletos en la habilitación
 - **Solución:** Verificar que la habilitación tenga titular con datos completos
 
 ### **Error: Modal no se abre**
+
 - **Causa:** Error de JavaScript o componente no cargado
 - **Solución:** Revisar consola del navegador, recargar página
 
@@ -103,6 +116,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## 📋 **Datos de Prueba Sugeridos**
 
 ### **Habilitaciones Ideales para Testing:**
+
 - **Estado:** HABILITADO
 - **Tipo:** Escolar o Remis (ambos funcionan)
 - **Con titular:** Nombre y DNI completos
@@ -114,6 +128,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## 🎯 **Criterios de Éxito**
 
 ### **✅ Testing Exitoso si:**
+
 1. **Modal se abre** sin errores
 2. **PDF se genera** y descarga automáticamente
 3. **Contenido del PDF** es correcto y completo
@@ -122,6 +137,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 6. **No hay errores** en consola del navegador
 
 ### **❌ Testing Fallido si:**
+
 1. Modal no se abre o tiene errores visuales
 2. PDF no se genera o está corrupto
 3. Datos incorrectos en el certificado
@@ -133,6 +149,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## 🔧 **Debugging**
 
 ### **Si algo falla:**
+
 1. **Abrir DevTools** (F12)
 2. **Revisar Console** para errores JavaScript
 3. **Revisar Network** para errores de API
@@ -140,6 +157,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 5. **Comprobar conexión a BD** con /api/health
 
 ### **URLs de Debug:**
+
 - **Health Check:** https://migracionnext.vercel.app/api/health
 - **API Obleas:** https://migracionnext.vercel.app/api/habilitaciones/[ID]/obleas
 - **API Generar:** https://migracionnext.vercel.app/api/habilitaciones/[ID]/generar-oblea
@@ -149,6 +167,7 @@ Verificar que el sistema de obleas funcione correctamente en producción, desde 
 ## 📞 **Contacto en Caso de Problemas**
 
 Si encuentras algún error durante el testing:
+
 1. **Captura de pantalla** del error
 2. **Copia el mensaje** de error completo
 3. **Anota los pasos** que llevaron al error

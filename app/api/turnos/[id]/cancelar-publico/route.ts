@@ -6,19 +6,16 @@ import nodemailer from 'nodemailer'
  * POST /api/turnos/[id]/cancelar-publico
  * Cancelar turno desde email (no requiere autenticación)
  */
-export async function POST(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const turnoId = parseInt(params.id)
 
     // Verificar que el turno existe
     const turno = await prisma.turnos.findUnique({
-      where: { id: turnoId }
+      where: { id: turnoId },
     })
-    
+
     // Obtener datos de la habilitación
     let habilitacion: any = null
     if (turno?.habilitacion_id) {
@@ -26,16 +23,13 @@ export async function POST(
         where: { id: turno.habilitacion_id },
         select: {
           nro_licencia: true,
-          tipo_transporte: true
-        }
+          tipo_transporte: true,
+        },
       })
     }
 
     if (!turno) {
-      return NextResponse.json(
-        { success: false, error: 'Turno no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Turno no encontrado' }, { status: 404 })
     }
 
     // Verificar que el turno no esté ya cancelado
@@ -57,7 +51,7 @@ export async function POST(
     // Actualizar estado a CANCELADO
     await prisma.turnos.update({
       where: { id: turnoId },
-      data: { estado: 'CANCELADO' }
+      data: { estado: 'CANCELADO' },
     })
 
     // Crear notificación para el sistema
@@ -67,8 +61,8 @@ export async function POST(
         tipo: 'TURNO_CANCELADO',
         titulo: `Turno cancelado - Lic. ${habilitacion?.nro_licencia || turnoId}`,
         texto: `El titular ha cancelado el turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}.`,
-        leida: false
-      }
+        leida: false,
+      },
     })
 
     // Obtener email del titular
@@ -76,12 +70,12 @@ export async function POST(
     const habPersona: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: turno.habilitacion_id,
-        rol: 'TITULAR'
+        rol: 'TITULAR',
       },
       // @ts-ignore
       include: {
-        persona: true
-      }
+        persona: true,
+      },
     })
 
     // Enviar email de confirmación de cancelación
@@ -91,15 +85,15 @@ export async function POST(
           service: 'gmail',
           auth: {
             user: process.env.GMAIL_USER,
-            pass: process.env.GMAIL_APP_PASSWORD
-          }
+            pass: process.env.GMAIL_APP_PASSWORD,
+          },
         })
 
         const fechaFormateada = new Date(turno.fecha).toLocaleDateString('es-AR', {
           weekday: 'long',
           year: 'numeric',
           month: 'long',
-          day: 'numeric'
+          day: 'numeric',
         })
 
         await transporter.sendMail({
@@ -167,7 +161,7 @@ export async function POST(
               </div>
             </body>
             </html>
-          `
+          `,
         })
 
         console.log('Email de cancelación enviado a:', habPersona.persona.email)
@@ -178,9 +172,8 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      message: 'Turno cancelado exitosamente'
+      message: 'Turno cancelado exitosamente',
     })
-
   } catch (error) {
     console.error('Error al cancelar turno:', error)
     return NextResponse.json(

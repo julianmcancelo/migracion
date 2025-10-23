@@ -47,6 +47,7 @@ NEXT_PUBLIC_URL=https://tu-dominio.vercel.app
 ### Envío Automático al Crear Turno
 
 Cuando se crea un turno, el sistema:
+
 1. ✅ Crea el registro en la base de datos
 2. ✅ Busca el email del titular de la habilitación
 3. ✅ Si tiene email, envía automáticamente un correo de confirmación
@@ -55,6 +56,7 @@ Cuando se crea un turno, el sistema:
 ### Plantilla del Email
 
 El email incluye:
+
 - ✅ Logo y header del municipio
 - ✅ Datos del turno (licencia, fecha, hora)
 - ✅ Información importante para la inspección
@@ -78,14 +80,17 @@ npm run dev
 ## Solución de Problemas
 
 ### Error: "Invalid login"
+
 - Verifica que la contraseña sea de aplicación (16 dígitos)
 - Asegúrate que la verificación en 2 pasos esté activa
 
 ### Error: "Missing credentials"
+
 - Verifica que las variables GMAIL_USER y GMAIL_APP_PASSWORD estén configuradas
 - Revisa que el archivo .env.local esté en la raíz del proyecto
 
 ### No se envía el email
+
 - Revisa la consola del servidor para ver errores
 - Verifica que el titular tenga un email en la base de datos
 - Chequea los logs en Vercel si está en producción
@@ -93,11 +98,13 @@ npm run dev
 ## Personalización
 
 Para modificar la plantilla del email, edita:
+
 ```
 /app/api/turnos/enviar-email/route.ts
 ```
 
 Puedes cambiar:
+
 - Colores del diseño
 - Texto del mensaje
 - Información adicional
@@ -110,6 +117,7 @@ Puedes cambiar:
 Envía email de confirmación de turno.
 
 **Body:**
+
 ```json
 {
   "email": "usuario@ejemplo.com",
@@ -122,6 +130,7 @@ Envía email de confirmación de turno.
 ```
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -135,6 +144,7 @@ Envía email de confirmación de turno.
 Si prefieres usar otro proveedor:
 
 ### Outlook/Office 365
+
 ```javascript
 service: 'outlook',
 auth: {
@@ -144,6 +154,7 @@ auth: {
 ```
 
 ### SMTP Personalizado
+
 ```javascript
 host: 'smtp.tudominio.com',
 port: 587,
@@ -157,6 +168,7 @@ auth: {
 ## Notas de Seguridad
 
 ⚠️ **IMPORTANTE:**
+
 - Nunca subas el archivo `.env.local` al repositorio
 - Usa contraseñas de aplicación, nunca tu contraseña principal
 - En producción, rota las credenciales periódicamente
@@ -165,10 +177,12 @@ auth: {
 ## Límites de Gmail
 
 Gmail tiene límites de envío:
+
 - **500 emails por día** (cuentas gratuitas)
 - **2000 emails por día** (Google Workspace)
 
 Para alto volumen, considera:
+
 - SendGrid
 - AWS SES
 - Mailgun

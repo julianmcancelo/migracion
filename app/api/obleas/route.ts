@@ -17,25 +17,34 @@ export async function GET(request: NextRequest) {
     const estado = searchParams.get('estado') || ''
     const fechaDesde = searchParams.get('fechaDesde') || searchParams.get('fecha_desde') || ''
     const fechaHasta = searchParams.get('fechaHasta') || searchParams.get('fecha_hasta') || ''
-    const tipoTransporte = searchParams.get('tipoTransporte') || searchParams.get('tipo_transporte') || ''
+    const tipoTransporte =
+      searchParams.get('tipoTransporte') || searchParams.get('tipo_transporte') || ''
     const notificado = searchParams.get('notificado') || ''
-    
-    console.log('🔍 Parámetros:', { pagina, limite, busqueda, fechaDesde, fechaHasta, tipoTransporte, notificado })
-    
+
+    console.log('🔍 Parámetros:', {
+      pagina,
+      limite,
+      busqueda,
+      fechaDesde,
+      fechaHasta,
+      tipoTransporte,
+      notificado,
+    })
+
     const offset = (pagina - 1) * limite
 
     // Construir condiciones de búsqueda
     const whereConditions: any = {}
-    
+
     // Filtro por búsqueda general
     if (busqueda) {
       whereConditions.OR = [
         {
           habilitaciones_generales: {
             nro_licencia: {
-              contains: busqueda
-            }
-          }
+              contains: busqueda,
+            },
+          },
         },
         {
           habilitaciones_generales: {
@@ -43,12 +52,12 @@ export async function GET(request: NextRequest) {
               some: {
                 persona: {
                   nombre: {
-                    contains: busqueda
-                  }
-                }
-              }
-            }
-          }
+                    contains: busqueda,
+                  },
+                },
+              },
+            },
+          },
         },
         {
           habilitaciones_generales: {
@@ -56,13 +65,13 @@ export async function GET(request: NextRequest) {
               some: {
                 vehiculo: {
                   dominio: {
-                    contains: busqueda
-                  }
-                }
-              }
-            }
-          }
-        }
+                    contains: busqueda,
+                  },
+                },
+              },
+            },
+          },
+        },
       ]
     }
 
@@ -83,7 +92,7 @@ export async function GET(request: NextRequest) {
     if (tipoTransporte) {
       whereConditions.habilitaciones_generales = {
         ...whereConditions.habilitaciones_generales,
-        tipo_transporte: tipoTransporte
+        tipo_transporte: tipoTransporte,
       }
     }
 
@@ -98,46 +107,49 @@ export async function GET(request: NextRequest) {
       skip: offset,
       take: limite,
       orderBy: {
-        fecha_colocacion: 'desc'
-      }
+        fecha_colocacion: 'desc',
+      },
     })
 
     console.log('📦 Obleas encontradas:', obleas.length)
 
     // Contar total para paginación
     const total = await prisma.obleas.count()
-    
+
     console.log('🔢 Total de obleas:', total)
 
     // Formatear obleas con datos relacionados
     const obleasFormateadas = await Promise.all(
-      obleas.map(async (oblea) => {
+      obleas.map(async oblea => {
         // Obtener habilitación
         const habilitacion = await prisma.habilitaciones_generales.findUnique({
-          where: { id: oblea.habilitacion_id }
+          where: { id: oblea.habilitacion_id },
         })
 
         // Obtener vehículo
         const vehiculoRel = await prisma.habilitaciones_vehiculos.findFirst({
           where: {
-            habilitacion_id: oblea.habilitacion_id
+            habilitacion_id: oblea.habilitacion_id,
           },
           include: {
             vehiculo: {
               select: {
                 dominio: true,
                 marca: true,
-                modelo: true
-              }
-            }
-          }
+                modelo: true,
+              },
+            },
+          },
         })
 
         return {
           id: oblea.id,
           habilitacion_id: oblea.habilitacion_id,
           fecha_solicitud: oblea.fecha_colocacion,
-          hora_solicitud: new Date(oblea.fecha_colocacion).toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' }),
+          hora_solicitud: new Date(oblea.fecha_colocacion).toLocaleTimeString('es-AR', {
+            hour: '2-digit',
+            minute: '2-digit',
+          }),
           creado_en: oblea.fecha_colocacion,
           notificado: 'si', // Asumimos que las obleas colocadas están notificadas
           nro_licencia: oblea.nro_licencia,
@@ -147,7 +159,7 @@ export async function GET(request: NextRequest) {
           titular_dni: 'N/A', // No está en la tabla
           vehiculo_dominio: vehiculoRel?.vehiculo?.dominio || 'N/A',
           vehiculo_marca: vehiculoRel?.vehiculo?.marca || 'N/A',
-          vehiculo_modelo: vehiculoRel?.vehiculo?.modelo || 'N/A'
+          vehiculo_modelo: vehiculoRel?.vehiculo?.modelo || 'N/A',
         }
       })
     )
@@ -161,17 +173,16 @@ export async function GET(request: NextRequest) {
         pagina_actual: pagina,
         limite,
         total,
-        total_paginas: totalPaginas
-      }
+        total_paginas: totalPaginas,
+      },
     })
-
   } catch (error: any) {
     console.error('Error al obtener obleas:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al obtener obleas',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )
@@ -189,7 +200,7 @@ export async function POST(request: NextRequest) {
 
     // Verificar que la habilitación existe
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
-      where: { id: habilitacion_id }
+      where: { id: habilitacion_id },
     })
 
     if (!habilitacion) {
@@ -205,23 +216,22 @@ export async function POST(request: NextRequest) {
         habilitacion_id,
         fecha_solicitud: new Date(),
         hora_solicitud: new Date(),
-        notificado: 'no'
-      }
+        notificado: 'no',
+      },
     })
 
     return NextResponse.json({
       success: true,
       data: nuevaOblea,
-      message: 'Oblea creada exitosamente'
+      message: 'Oblea creada exitosamente',
     })
-
   } catch (error: any) {
     console.error('Error al crear oblea:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al crear oblea',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

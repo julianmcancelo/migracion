@@ -15,7 +15,10 @@ interface SearchBarProps {
  * - Búsqueda en tiempo real
  * - Delay de 500ms para evitar requests excesivos
  */
-export function SearchBar({ onSearch, placeholder = 'Buscar por licencia, expediente...' }: SearchBarProps) {
+export function SearchBar({
+  onSearch,
+  placeholder = 'Buscar por licencia, expediente...',
+}: SearchBarProps) {
   const [searchTerm, setSearchTerm] = useState('')
   const debouncedSearch = useDebounce(searchTerm, 500)
 
@@ -30,7 +33,7 @@ export function SearchBar({ onSearch, placeholder = 'Buscar por licencia, expedi
         type="search"
         placeholder={placeholder}
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={e => setSearchTerm(e.target.value)}
         className="pl-10 pr-4"
       />
     </div>

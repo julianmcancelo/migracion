@@ -49,7 +49,7 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
   return (
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* Sidebar */}
-      <Sidebar 
+      <Sidebar
         collapsed={sidebarCollapsed}
         onToggle={handleToggleCollapsed}
         mobileOpen={mobileOpen}
@@ -58,15 +58,10 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
 
       {/* Contenido principal */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        <Header 
-          user={user} 
-          onMenuClick={handleMobileOpen}
-        />
-        
+        <Header user={user} onMenuClick={handleMobileOpen} />
+
         <main className="flex-1 overflow-y-auto">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8">
-            {children}
-          </div>
+          <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">{children}</div>
         </main>
       </div>
     </div>

@@ -2,7 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { ClipboardCheck, Plus, Calendar, CheckCircle, XCircle, AlertCircle, FileText, Mail } from 'lucide-react'
+import {
+  ClipboardCheck,
+  Plus,
+  Calendar,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  FileText,
+  Mail,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
 interface Inspeccion {
@@ -34,7 +43,7 @@ export default function InspeccionesPage() {
     try {
       const response = await fetch('/api/inspecciones')
       const data = await response.json()
-      
+
       if (data.success) {
         setInspecciones(data.data)
       }
@@ -49,9 +58,9 @@ export default function InspeccionesPage() {
     if (!resultado || resultado === 'PENDIENTE') {
       return 'bg-blue-100 text-blue-800 border-blue-300'
     }
-    
+
     const resultadoUpper = resultado.toUpperCase()
-    
+
     if (resultadoUpper.includes('APROBAD')) {
       return 'bg-green-100 text-green-800 border-green-300'
     } else if (resultadoUpper.includes('RECHAZAD')) {
@@ -59,21 +68,21 @@ export default function InspeccionesPage() {
     } else if (resultadoUpper.includes('CONDICIONAL')) {
       return 'bg-yellow-100 text-yellow-800 border-yellow-300'
     }
-    
+
     return 'bg-gray-100 text-gray-800 border-gray-300'
   }
 
   const getResultadoIcon = (resultado: string) => {
     if (!resultado) return <AlertCircle className="h-4 w-4" />
-    
+
     const resultadoUpper = resultado.toUpperCase()
-    
+
     if (resultadoUpper.includes('APROBAD')) {
       return <CheckCircle className="h-4 w-4" />
     } else if (resultadoUpper.includes('RECHAZAD')) {
       return <XCircle className="h-4 w-4" />
     }
-    
+
     return <AlertCircle className="h-4 w-4" />
   }
 
@@ -85,7 +94,7 @@ export default function InspeccionesPage() {
     try {
       const response = await fetch(`/api/inspecciones/${inspeccionId}/enviar-email`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       })
 
       const data = await response.json()
@@ -102,29 +111,27 @@ export default function InspeccionesPage() {
   }
 
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex justify-between items-center mb-8">
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+          <h1 className="flex items-center gap-3 text-3xl font-bold text-gray-900">
             <ClipboardCheck className="h-8 w-8 text-blue-600" />
             Inspecciones Vehiculares
           </h1>
-          <p className="text-gray-600 mt-2">
-            Gestión de inspecciones técnicas de vehículos
-          </p>
+          <p className="mt-2 text-gray-600">Gestión de inspecciones técnicas de vehículos</p>
         </div>
-        
+
         <div className="flex gap-3">
           <Link href="/turnos">
             <Button variant="outline" className="border-blue-600 text-blue-600 hover:bg-blue-50">
-              <Calendar className="h-5 w-5 mr-2" />
+              <Calendar className="mr-2 h-5 w-5" />
               Gestión de Turnos
             </Button>
           </Link>
           <Link href="/inspecciones/nueva">
             <Button className="bg-blue-600 hover:bg-blue-700">
-              <Plus className="h-5 w-5 mr-2" />
+              <Plus className="mr-2 h-5 w-5" />
               Nueva Inspección
             </Button>
           </Link>
@@ -132,11 +139,11 @@ export default function InspeccionesPage() {
       </div>
 
       {/* Estadísticas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="mb-6 grid grid-cols-1 gap-4 md:grid-cols-4">
+        <div className="rounded-xl border border-blue-200 bg-blue-50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-blue-700 font-medium">Pendientes</p>
+              <p className="text-sm font-medium text-blue-700">Pendientes</p>
               <p className="text-2xl font-bold text-blue-900">
                 {inspecciones.filter(i => i.resultado === 'PENDIENTE' || !i.resultado).length}
               </p>
@@ -145,10 +152,10 @@ export default function InspeccionesPage() {
           </div>
         </div>
 
-        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+        <div className="rounded-xl border border-green-200 bg-green-50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-green-700 font-medium">Aprobadas</p>
+              <p className="text-sm font-medium text-green-700">Aprobadas</p>
               <p className="text-2xl font-bold text-green-900">
                 {inspecciones.filter(i => i.resultado === 'APROBADO').length}
               </p>
@@ -157,10 +164,10 @@ export default function InspeccionesPage() {
           </div>
         </div>
 
-        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
+        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-yellow-700 font-medium">Condicionales</p>
+              <p className="text-sm font-medium text-yellow-700">Condicionales</p>
               <p className="text-2xl font-bold text-yellow-900">
                 {inspecciones.filter(i => i.resultado === 'CONDICIONAL').length}
               </p>
@@ -169,10 +176,10 @@ export default function InspeccionesPage() {
           </div>
         </div>
 
-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+        <div className="rounded-xl border border-red-200 bg-red-50 p-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-red-700 font-medium">Rechazadas</p>
+              <p className="text-sm font-medium text-red-700">Rechazadas</p>
               <p className="text-2xl font-bold text-red-900">
                 {inspecciones.filter(i => i.resultado === 'RECHAZADO').length}
               </p>
@@ -183,18 +190,16 @@ export default function InspeccionesPage() {
       </div>
 
       {/* Lista de Inspecciones */}
-      <div className="bg-white rounded-xl shadow-lg border border-gray-200">
+      <div className="rounded-xl border border-gray-200 bg-white shadow-lg">
         {loading ? (
-          <div className="p-12 text-center text-gray-500">
-            Cargando inspecciones...
-          </div>
+          <div className="p-12 text-center text-gray-500">Cargando inspecciones...</div>
         ) : inspecciones.length === 0 ? (
           <div className="p-12 text-center">
-            <ClipboardCheck className="h-16 w-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-500 mb-4">No hay inspecciones registradas</p>
+            <ClipboardCheck className="mx-auto mb-4 h-16 w-16 text-gray-300" />
+            <p className="mb-4 text-gray-500">No hay inspecciones registradas</p>
             <Link href="/inspecciones/nueva">
               <Button className="bg-blue-600 hover:bg-blue-700">
-                <Plus className="h-5 w-5 mr-2" />
+                <Plus className="mr-2 h-5 w-5" />
                 Crear Primera Inspección
               </Button>
             </Link>
@@ -202,49 +207,49 @@ export default function InspeccionesPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-50 border-b border-gray-200">
+              <thead className="border-b border-gray-200 bg-gray-50">
                 <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Fecha
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Licencia
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Titular
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Dominio
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Inspector
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Tipo
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Resultado
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Email
                   </th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
                     Acciones
                   </th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200">
-                {inspecciones.map((inspeccion) => (
-                  <tr 
-                    key={inspeccion.id} 
-                    className="hover:bg-blue-50 cursor-pointer transition-colors"
-                    onClick={() => window.location.href = `/inspecciones/${inspeccion.id}`}
+                {inspecciones.map(inspeccion => (
+                  <tr
+                    key={inspeccion.id}
+                    className="cursor-pointer transition-colors hover:bg-blue-50"
+                    onClick={() => (window.location.href = `/inspecciones/${inspeccion.id}`)}
                     title="Click para ver/editar"
                   >
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-900">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-900">
                       {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm">
                       <span className="font-mono font-bold text-blue-600">
                         {inspeccion.nro_licencia}
                       </span>
@@ -254,7 +259,7 @@ export default function InspeccionesPage() {
                         {inspeccion.titular || '-'}
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm">
                       <span className="font-mono font-bold text-gray-900">
                         {inspeccion.dominio || '-'}
                       </span>
@@ -262,27 +267,35 @@ export default function InspeccionesPage() {
                     <td className="px-4 py-3 text-sm text-gray-700">
                       {inspeccion.nombre_inspector}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm text-gray-600">
+                    <td className="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
                       {inspeccion.tipo_transporte || '-'}
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap">
-                      <span className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-semibold border ${getResultadoBadge(inspeccion.resultado)}`}>
+                    <td className="whitespace-nowrap px-4 py-3">
+                      <span
+                        className={`inline-flex items-center gap-1 rounded-full border px-2 py-1 text-xs font-semibold ${getResultadoBadge(inspeccion.resultado)}`}
+                      >
                         {getResultadoIcon(inspeccion.resultado)}
                         {inspeccion.resultado || 'Sin resultado'}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-sm text-gray-600">
-                      <div className="max-w-[120px] truncate" title={inspeccion.email_contribuyente || '-'}>
+                      <div
+                        className="max-w-[120px] truncate"
+                        title={inspeccion.email_contribuyente || '-'}
+                      >
                         {inspeccion.email_contribuyente || '-'}
                       </div>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap text-sm" onClick={(e) => e.stopPropagation()}>
+                    <td
+                      className="whitespace-nowrap px-4 py-3 text-sm"
+                      onClick={e => e.stopPropagation()}
+                    >
                       <div className="flex items-center gap-2">
                         <a
                           href={`/api/inspecciones/${inspeccion.id}/pdf`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                          className="inline-flex items-center gap-1 font-medium text-red-600 hover:text-red-900"
                           title="Descargar PDF"
                         >
                           <FileText className="h-4 w-4" />
@@ -290,11 +303,11 @@ export default function InspeccionesPage() {
                         </a>
                         {inspeccion.email_contribuyente && (
                           <button
-                            onClick={(e) => {
+                            onClick={e => {
                               e.stopPropagation()
                               enviarEmail(inspeccion.id, inspeccion.email_contribuyente!)
                             }}
-                            className="inline-flex items-center gap-1 text-blue-600 hover:text-blue-900 font-medium"
+                            className="inline-flex items-center gap-1 font-medium text-blue-600 hover:text-blue-900"
                             title="Enviar por email"
                           >
                             <Mail className="h-4 w-4" />

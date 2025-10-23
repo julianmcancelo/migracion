@@ -15,15 +15,15 @@ const loginSchema = z.object({
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    
+
     // Validar datos de entrada
     const validationResult = loginSchema.safeParse(body)
-    
+
     if (!validationResult.success) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: validationResult.error.errors[0].message 
+        {
+          success: false,
+          error: validationResult.error.errors[0].message,
         },
         { status: 400 }
       )
@@ -38,9 +38,9 @@ export async function POST(request: Request) {
 
     if (!user || !user.password) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Credenciales incorrectas. Inténtalo de nuevo.' 
+        {
+          success: false,
+          error: 'Credenciales incorrectas. Inténtalo de nuevo.',
         },
         { status: 401 }
       )
@@ -51,9 +51,9 @@ export async function POST(request: Request) {
 
     if (!passwordMatch) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Credenciales incorrectas. Inténtalo de nuevo.' 
+        {
+          success: false,
+          error: 'Credenciales incorrectas. Inténtalo de nuevo.',
         },
         { status: 401 }
       )
@@ -78,13 +78,12 @@ export async function POST(request: Request) {
         rol: user.rol,
       },
     })
-
   } catch (error) {
     console.error('Error en login:', error)
     return NextResponse.json(
-      { 
-        success: false, 
-        error: 'Error del servidor. Por favor, intenta más tarde.' 
+      {
+        success: false,
+        error: 'Error del servidor. Por favor, intenta más tarde.',
       },
       { status: 500 }
     )

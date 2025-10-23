@@ -14,30 +14,21 @@ export async function GET(request: Request) {
     const token = searchParams.get('token')
 
     if (!token) {
-      return NextResponse.json(
-        { success: false, error: 'Token no proporcionado' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'Token no proporcionado' }, { status: 400 })
     }
 
     // Buscar token y verificar validez
     const tokenData = await prisma.tokens_acceso.findFirst({
-      where: { token }
+      where: { token },
     })
 
     if (!tokenData) {
-      return NextResponse.json(
-        { success: false, error: 'Token inválido' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Token inválido' }, { status: 404 })
     }
 
     // Verificar expiración
     if (new Date(tokenData.fecha_expiracion) < new Date()) {
-      return NextResponse.json(
-        { success: false, error: 'Token expirado' },
-        { status: 403 }
-      )
+      return NextResponse.json({ success: false, error: 'Token expirado' }, { status: 403 })
     }
 
     // Consulta SQL completa para obtener todos los datos
@@ -128,17 +119,16 @@ export async function GET(request: Request) {
       success: true,
       data: {
         ...data,
-        isExpired
-      }
+        isExpired,
+      },
     })
-
   } catch (error: any) {
     console.error('Error al obtener credencial:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al obtener credencial',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

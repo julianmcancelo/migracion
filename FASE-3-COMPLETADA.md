@@ -5,15 +5,18 @@
 ### 📁 Archivos Creados
 
 #### **Validaciones**
+
 - ✅ `lib/validations/habilitacion.ts` - Schemas Zod para validación de datos
 
 #### **API Routes**
+
 - ✅ `app/api/habilitaciones/route.ts` - **Método POST** agregado para crear habilitaciones
 - ✅ `app/api/personas/route.ts` - Búsqueda de personas por nombre/DNI
 - ✅ `app/api/vehiculos/route.ts` - Búsqueda de vehículos por dominio/marca/modelo
 - ✅ `app/api/establecimientos/route.ts` - Búsqueda de establecimientos y remiserías
 
 #### **Componentes del Formulario**
+
 - ✅ `app/(panel)/habilitaciones/_components/nueva-habilitacion-dialog.tsx` - Dialog principal multi-paso
 - ✅ `app/(panel)/habilitaciones/_components/nueva-habilitacion/datos-basicos-step.tsx` - Paso 1
 - ✅ `app/(panel)/habilitaciones/_components/nueva-habilitacion/personas-step.tsx` - Paso 2
@@ -21,6 +24,7 @@
 - ✅ `app/(panel)/habilitaciones/_components/nueva-habilitacion/establecimientos-step.tsx` - Paso 4
 
 #### **Actualizaciones**
+
 - ✅ `app/(panel)/habilitaciones/page.tsx` - Integrado con el modal de nueva habilitación
 
 ---
@@ -28,6 +32,7 @@
 ## 🚀 Funcionalidades Implementadas
 
 ### **Formulario Multi-Paso**
+
 1. **Paso 1 - Datos Básicos**
    - Tipo de transporte (Escolar/Remis)
    - Estado (Iniciado/En Trámite/Habilitado/No Habilitado)
@@ -59,6 +64,7 @@
    - Vista de establecimientos agregados con opción de eliminar
 
 ### **Características del Formulario**
+
 - ✅ Indicador visual de progreso (4 pasos)
 - ✅ Navegación entre pasos (Anterior/Siguiente)
 - ✅ Validación en tiempo real
@@ -69,6 +75,7 @@
 - ✅ Modal responsivo y accesible
 
 ### **API Features**
+
 - ✅ **POST /api/habilitaciones** - Crear habilitación con transacción atómica
 - ✅ **GET /api/personas** - Buscar personas (limite: 20)
 - ✅ **GET /api/vehiculos** - Buscar vehículos (limite: 20)
@@ -82,6 +89,7 @@
 ## 🎨 Tecnologías y Patrones Utilizados
 
 ### **Frontend**
+
 - **shadcn/ui**: Dialog, Input, Label, Select, Button
 - **lucide-react**: Iconos (Plus, Search, Trash2, User, Car, Building2, etc.)
 - **Zod**: Validación de schemas
@@ -89,12 +97,14 @@
 - **Custom Hook**: useDebounce para optimización de búsquedas
 
 ### **Backend**
+
 - **Prisma**: ORM con transacciones atómicas
 - **Zod**: Validación server-side
 - **Next.js API Routes**: RESTful endpoints
 - **TypeScript**: Tipado fuerte en todo el stack
 
 ### **Patrones de Diseño**
+
 - ✅ Formulario multi-paso con estado compartido
 - ✅ Búsqueda incremental con debouncing
 - ✅ Transacciones atómicas para integridad de datos
@@ -145,6 +155,7 @@
 ## 🔧 Estructura de Datos
 
 ### **Request Body (POST /api/habilitaciones)**
+
 ```typescript
 {
   // Datos básicos
@@ -158,7 +169,7 @@
   vigencia_fin?: string,     // ISO date
   observaciones?: string,
   oblea_colocada: boolean,
-  
+
   // Relaciones
   personas: [
     {
@@ -180,6 +191,7 @@
 ```
 
 ### **Response (Success)**
+
 ```typescript
 {
   success: true,
@@ -237,21 +249,21 @@ git push
 
 ## ✅ Estado del Proyecto
 
-| Característica | Estado |
-|----------------|--------|
-| Login | ✅ Completado |
-| Estructura base | ✅ Completado |
-| shadcn/ui | ✅ Completado |
-| Header + Sidebar | ✅ Completado |
-| Dashboard | ✅ Con datos reales |
-| Lista habilitaciones | ✅ Completado |
-| Búsqueda y filtros | ✅ Completado |
-| Paginación | ✅ Completado |
-| **Crear habilitación** | ✅ **Completado** |
-| Editar habilitación | ⏳ Pendiente |
-| Ver detalle | ⏳ Pendiente |
-| PDF/QR | ⏳ Pendiente |
-| Inspecciones | ⏳ Pendiente |
+| Característica         | Estado              |
+| ---------------------- | ------------------- |
+| Login                  | ✅ Completado       |
+| Estructura base        | ✅ Completado       |
+| shadcn/ui              | ✅ Completado       |
+| Header + Sidebar       | ✅ Completado       |
+| Dashboard              | ✅ Con datos reales |
+| Lista habilitaciones   | ✅ Completado       |
+| Búsqueda y filtros     | ✅ Completado       |
+| Paginación             | ✅ Completado       |
+| **Crear habilitación** | ✅ **Completado**   |
+| Editar habilitación    | ⏳ Pendiente        |
+| Ver detalle            | ⏳ Pendiente        |
+| PDF/QR                 | ⏳ Pendiente        |
+| Inspecciones           | ⏳ Pendiente        |
 
 ---
 

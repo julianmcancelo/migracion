@@ -22,7 +22,7 @@ export default function CancelarTurnoPublicoPage() {
     setConfirming(true)
     try {
       const response = await fetch(`/api/turnos/${params.id}/cancelar-publico`, {
-        method: 'POST'
+        method: 'POST',
       })
 
       const data = await response.json()
@@ -42,23 +42,28 @@ export default function CancelarTurnoPublicoPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center relative z-10 border border-red-100 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-red-50 via-rose-50 to-pink-50 p-4">
+        <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+        <div className="relative z-10 w-full max-w-md rounded-3xl border border-red-100 bg-white p-10 text-center shadow-2xl duration-500 animate-in fade-in slide-in-from-bottom-4">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-red-400 blur-3xl opacity-20 animate-pulse"></div>
-            <div className="w-24 h-24 bg-gradient-to-br from-red-100 to-red-200 rounded-full flex items-center justify-center mx-auto relative shadow-lg">
-              <span className="text-5xl animate-bounce">❌</span>
+            <div className="absolute inset-0 animate-pulse bg-red-400 opacity-20 blur-3xl"></div>
+            <div className="relative mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-red-100 to-red-200 shadow-lg">
+              <span className="animate-bounce text-5xl">❌</span>
             </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-3">Algo salió mal</h1>
-          <p className="text-gray-600 mb-6 text-lg">{error}</p>
-          <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4 mb-6">
-            <p className="text-sm text-red-900 font-semibold mb-2">📞 ¿Necesita ayuda?</p>
-            <p className="text-sm text-red-800">Contacte al <strong>4357-5100 int. 7137</strong></p>
-            <p className="text-xs text-red-700 mt-1">Lunes a Viernes de 8:00 a 16:00 hs</p>
+          <h1 className="mb-3 text-3xl font-bold text-gray-900">Algo salió mal</h1>
+          <p className="mb-6 text-lg text-gray-600">{error}</p>
+          <div className="mb-6 rounded-xl border-2 border-red-200 bg-red-50 p-4">
+            <p className="mb-2 text-sm font-semibold text-red-900">📞 ¿Necesita ayuda?</p>
+            <p className="text-sm text-red-800">
+              Contacte al <strong>4357-5100 int. 7137</strong>
+            </p>
+            <p className="mt-1 text-xs text-red-700">Lunes a Viernes de 8:00 a 16:00 hs</p>
           </div>
-          <Button onClick={() => setError(null)} className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700">
+          <Button
+            onClick={() => setError(null)}
+            className="w-full bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700"
+          >
             Reintentar
           </Button>
         </div>
@@ -68,52 +73,59 @@ export default function CancelarTurnoPublicoPage() {
 
   if (success) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-        <div className="absolute top-20 left-20 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-amber-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center relative z-10 border border-orange-100 animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 p-4">
+        <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+        <div className="absolute left-20 top-20 h-72 w-72 animate-pulse rounded-full bg-orange-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+        <div
+          className="absolute bottom-20 right-20 h-72 w-72 animate-pulse rounded-full bg-amber-300 opacity-20 mix-blend-multiply blur-3xl filter"
+          style={{ animationDelay: '1s' }}
+        ></div>
+
+        <div className="relative z-10 w-full max-w-lg rounded-3xl border border-orange-100 bg-white p-10 text-center shadow-2xl duration-700 animate-in fade-in slide-in-from-bottom-8">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-orange-400 blur-3xl opacity-30 animate-ping" style={{ animationDuration: '2s' }}></div>
-            <div className="w-28 h-28 bg-gradient-to-br from-orange-400 to-amber-500 rounded-full flex items-center justify-center mx-auto relative shadow-2xl animate-in zoom-in duration-500">
+            <div
+              className="absolute inset-0 animate-ping bg-orange-400 opacity-30 blur-3xl"
+              style={{ animationDuration: '2s' }}
+            ></div>
+            <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-orange-400 to-amber-500 shadow-2xl duration-500 animate-in zoom-in">
               <XCircle className="h-16 w-16 text-white" strokeWidth={2.5} />
             </div>
           </div>
-          
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-transparent mb-4">
+
+          <h1 className="mb-4 bg-gradient-to-r from-orange-600 to-amber-600 bg-clip-text text-4xl font-bold text-transparent">
             Turno Cancelado
           </h1>
-          
-          <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-            Su turno ha sido <strong className="text-orange-600">cancelado exitosamente</strong>. Hemos notificado a nuestro equipo sobre la cancelación.
+
+          <p className="mb-8 text-lg leading-relaxed text-gray-600">
+            Su turno ha sido <strong className="text-orange-600">cancelado exitosamente</strong>.
+            Hemos notificado a nuestro equipo sobre la cancelación.
           </p>
-          
-          <div className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6 mb-6 shadow-inner">
-            <p className="text-base text-blue-900 font-bold mb-4 flex items-center justify-center gap-2">
+
+          <div className="mb-6 rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-cyan-50 p-6 shadow-inner">
+            <p className="mb-4 flex items-center justify-center gap-2 text-base font-bold text-blue-900">
               <span className="text-2xl">📅</span>
               ¿Nuevo Turno?
             </p>
-            <p className="text-sm text-blue-800 mb-3">
+            <p className="mb-3 text-sm text-blue-800">
               Puede solicitar un nuevo turno cuando lo necesite
             </p>
-            <div className="bg-white rounded-xl p-4 border border-blue-200">
+            <div className="rounded-xl border border-blue-200 bg-white p-4">
               <p className="text-lg font-bold text-blue-700">
                 📞 4357-5100 <span className="text-sm">int.</span> 7137
               </p>
             </div>
           </div>
-          
-          <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-            <p className="text-xs text-gray-500 font-semibold mb-2">CONTACTO</p>
+
+          <div className="rounded-xl border border-gray-200 bg-gray-50 p-4">
+            <p className="mb-2 text-xs font-semibold text-gray-500">CONTACTO</p>
             <p className="text-sm text-gray-700">
               📧 <strong>transportepublicolanus@gmail.com</strong>
             </p>
           </div>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
+
+          <div className="mt-6 border-t border-gray-200 pt-6">
             <p className="text-xs text-gray-500">🏛️ Municipalidad de Lanús</p>
-            <p className="text-xs text-gray-400 mt-1">Dirección Gral. de Movilidad y Transporte</p>
+            <p className="mt-1 text-xs text-gray-400">Dirección Gral. de Movilidad y Transporte</p>
           </div>
         </div>
       </div>
@@ -122,29 +134,35 @@ export default function CancelarTurnoPublicoPage() {
 
   if (showConfirm) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 p-4 relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-slate-100 [mask-image:radial-gradient(white,transparent_70%)] opacity-30"></div>
-        <div className="absolute top-20 left-20 w-72 h-72 bg-yellow-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-orange-300 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse" style={{ animationDelay: '1s' }}></div>
-        
-        <div className="bg-white rounded-3xl shadow-2xl p-10 max-w-lg w-full text-center relative z-10 border border-yellow-100 animate-in fade-in slide-in-from-bottom-6 duration-600">
+      <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-yellow-50 via-amber-50 to-orange-50 p-4">
+        <div className="bg-grid-slate-100 absolute inset-0 opacity-30 [mask-image:radial-gradient(white,transparent_70%)]"></div>
+        <div className="absolute left-20 top-20 h-72 w-72 animate-pulse rounded-full bg-yellow-300 opacity-20 mix-blend-multiply blur-3xl filter"></div>
+        <div
+          className="absolute bottom-20 right-20 h-72 w-72 animate-pulse rounded-full bg-orange-300 opacity-20 mix-blend-multiply blur-3xl filter"
+          style={{ animationDelay: '1s' }}
+        ></div>
+
+        <div className="duration-600 relative z-10 w-full max-w-lg rounded-3xl border border-yellow-100 bg-white p-10 text-center shadow-2xl animate-in fade-in slide-in-from-bottom-6">
           <div className="relative mb-6">
-            <div className="absolute inset-0 bg-yellow-400 blur-3xl opacity-30 animate-pulse"></div>
-            <div className="w-28 h-28 bg-gradient-to-br from-yellow-200 to-amber-300 rounded-full flex items-center justify-center mx-auto relative shadow-2xl animate-in zoom-in duration-500">
-              <span className="text-6xl animate-bounce" style={{ animationDuration: '1.5s' }}>⚠️</span>
+            <div className="absolute inset-0 animate-pulse bg-yellow-400 opacity-30 blur-3xl"></div>
+            <div className="relative mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 to-amber-300 shadow-2xl duration-500 animate-in zoom-in">
+              <span className="animate-bounce text-6xl" style={{ animationDuration: '1.5s' }}>
+                ⚠️
+              </span>
             </div>
           </div>
-          
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-transparent mb-4">
+
+          <h1 className="mb-4 bg-gradient-to-r from-yellow-600 to-amber-600 bg-clip-text text-4xl font-bold text-transparent">
             ¿Cancelar Turno?
           </h1>
-          
-          <p className="text-gray-600 text-lg mb-8 leading-relaxed">
-            ¿Está seguro que desea <strong className="text-yellow-700">cancelar su turno</strong>? Esta acción notificará al municipio y liberará el horario.
+
+          <p className="mb-8 text-lg leading-relaxed text-gray-600">
+            ¿Está seguro que desea <strong className="text-yellow-700">cancelar su turno</strong>?
+            Esta acción notificará al municipio y liberará el horario.
           </p>
-          
-          <div className="bg-gradient-to-br from-yellow-50 to-amber-50 border-2 border-yellow-200 rounded-2xl p-6 mb-6 shadow-inner">
-            <p className="text-base text-yellow-900 font-bold mb-3 flex items-center justify-center gap-2">
+
+          <div className="mb-6 rounded-2xl border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 p-6 shadow-inner">
+            <p className="mb-3 flex items-center justify-center gap-2 text-base font-bold text-yellow-900">
               <span className="text-2xl">💡</span>
               ¿Prefiere reprogramar?
             </p>
@@ -152,24 +170,24 @@ export default function CancelarTurnoPublicoPage() {
               Puede solicitar un nuevo turno contactándonos al <strong>4357-5100 int. 7137</strong>
             </p>
           </div>
-          
+
           <div className="flex gap-4">
-            <Button 
-              onClick={() => window.history.back()} 
-              variant="outline" 
-              className="flex-1 h-12 border-2 hover:bg-gray-50 font-semibold"
+            <Button
+              onClick={() => window.history.back()}
+              variant="outline"
+              className="h-12 flex-1 border-2 font-semibold hover:bg-gray-50"
               disabled={confirming}
             >
               No, Mantener
             </Button>
-            <Button 
-              onClick={cancelarTurno} 
-              className="flex-1 h-12 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700 font-semibold shadow-lg"
+            <Button
+              onClick={cancelarTurno}
+              className="h-12 flex-1 bg-gradient-to-r from-red-600 to-rose-600 font-semibold shadow-lg hover:from-red-700 hover:to-rose-700"
               disabled={confirming}
             >
               {confirming ? (
                 <>
-                  <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
                   Cancelando...
                 </>
               ) : (
@@ -177,10 +195,10 @@ export default function CancelarTurnoPublicoPage() {
               )}
             </Button>
           </div>
-          
-          <div className="mt-6 pt-6 border-t border-gray-200">
+
+          <div className="mt-6 border-t border-gray-200 pt-6">
             <p className="text-xs text-gray-500">🏛️ Municipalidad de Lanús</p>
-            <p className="text-xs text-gray-400 mt-1">Dirección Gral. de Movilidad y Transporte</p>
+            <p className="mt-1 text-xs text-gray-400">Dirección Gral. de Movilidad y Transporte</p>
           </div>
         </div>
       </div>

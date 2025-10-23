@@ -9,10 +9,7 @@ import path from 'path'
  * GET /api/habilitaciones/[id]/generar-resolucion
  * Genera un documento Word (.docx) con la resolución de habilitación
  */
-export async function GET(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await context.params
     const habilitacionId = Number(id)
@@ -53,7 +50,7 @@ export async function GET(
     `
 
     const result: any = await prisma.$queryRawUnsafe(sql, habilitacionId)
-    
+
     if (!result || result.length === 0) {
       return NextResponse.json(
         { success: false, error: 'Habilitación no encontrada' },
@@ -65,7 +62,7 @@ export async function GET(
 
     // Validar datos requeridos
     const camposFaltantes: string[] = []
-    
+
     if (!data.titular_dni) camposFaltantes.push('DNI del Titular')
     if (!data.domicilio_calle) camposFaltantes.push('Calle del Domicilio')
     if (!data.domicilio_localidad) camposFaltantes.push('Localidad')
@@ -78,21 +75,22 @@ export async function GET(
 
     if (camposFaltantes.length > 0) {
       return NextResponse.json(
-        { 
-          success: false, 
-          error: 'Faltan datos requeridos', 
+        {
+          success: false,
+          error: 'Faltan datos requeridos',
           camposFaltantes,
-          data 
+          data,
         },
         { status: 400 }
       )
     }
 
     // Seleccionar plantilla según tipo
-    const templateFileName = data.tipo_transporte === 'Escolar' 
-      ? 'resolucion_escolar_template.docx'
-      : 'resolucion_remis_template.docx'
-    
+    const templateFileName =
+      data.tipo_transporte === 'Escolar'
+        ? 'resolucion_escolar_template.docx'
+        : 'resolucion_remis_template.docx'
+
     const templatePath = path.join(process.cwd(), 'public', 'plantillas', templateFileName)
 
     if (!fs.existsSync(templatePath)) {
@@ -127,17 +125,27 @@ export async function GET(
     // Preparar datos
     const domicilioCompleto = `${data.domicilio_calle || ''} ${data.domicilio_nro || ''}`.trim()
     const resolucionNro = String(habilitacionId).padStart(4, '0') + '/' + new Date().getFullYear()
-    
+
     // Fecha larga en español
-    const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 
-                   'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre']
+    const meses = [
+      'enero',
+      'febrero',
+      'marzo',
+      'abril',
+      'mayo',
+      'junio',
+      'julio',
+      'agosto',
+      'septiembre',
+      'octubre',
+      'noviembre',
+      'diciembre',
+    ]
     const fecha = new Date()
     const fechaLarga = `${fecha.getDate()} de ${meses[fecha.getMonth()]} de ${fecha.getFullYear()}`
 
     // Formatear DNI con puntos
-    const dniFormateado = data.titular_dni 
-      ? Number(data.titular_dni).toLocaleString('es-AR')
-      : ''
+    const dniFormateado = data.titular_dni ? Number(data.titular_dni).toLocaleString('es-AR') : ''
 
     // Asignar valores a la plantilla
     doc.setData({
@@ -157,7 +165,7 @@ export async function GET(
       vehiculo_anho: data.vehiculo_ano || '',
       vehiculo_dominio: data.vehiculo_dominio || '',
       vehiculo_tipo: data.vehiculo_tipo || '',
-      vehiculo_inscripcion_inicial: data.vehiculo_inscripcion_inicial 
+      vehiculo_inscripcion_inicial: data.vehiculo_inscripcion_inicial
         ? new Date(data.vehiculo_inscripcion_inicial).toLocaleDateString('es-AR')
         : '',
       vehiculo_motor: data.vehiculo_motor || '',
@@ -188,14 +196,13 @@ export async function GET(
         'Cache-Control': 'no-cache',
       },
     })
-
   } catch (error: any) {
     console.error('Error al generar resolución:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al generar resolución',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

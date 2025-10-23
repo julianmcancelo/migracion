@@ -5,19 +5,23 @@
 ### 📁 Archivos Creados
 
 #### **API Routes**
+
 - ✅ `app/api/habilitaciones/route.ts` - Lista con filtros y paginación
 - ✅ `app/api/habilitaciones/stats/route.ts` - Estadísticas para dashboard
 
 #### **Componentes**
+
 - ✅ `app/(panel)/habilitaciones/_components/search-bar.tsx` - Búsqueda con debounce
 - ✅ `app/(panel)/habilitaciones/_components/habilitaciones-table.tsx` - Tabla expandible
 - ✅ `app/(panel)/habilitaciones/_components/pagination.tsx` - Paginación avanzada
 - ✅ `app/(panel)/habilitaciones/page.tsx` - Página principal con tabs
 
 #### **Utilidades**
+
 - ✅ `lib/hooks/use-debounce.ts` - Hook para debouncing
 
 #### **Actualizaciones**
+
 - ✅ `app/(panel)/dashboard/page.tsx` - Conectado con datos reales
 
 ---
@@ -25,6 +29,7 @@
 ## 🚀 Funcionalidades Implementadas
 
 ### **Lista de Habilitaciones**
+
 - ✅ Tabs por tipo de transporte (Escolar/Remis)
 - ✅ Búsqueda en tiempo real (licencia, expediente, titular)
 - ✅ Paginación (15 resultados por página)
@@ -40,6 +45,7 @@
   - Descargar PDF
 
 ### **Dashboard**
+
 - ✅ KPIs conectados a base de datos real:
   - Habilitaciones activas
   - En trámite
@@ -47,6 +53,7 @@
   - Obleas pendientes
 
 ### **API Features**
+
 - ✅ Filtrado por tipo de transporte
 - ✅ Búsqueda global
 - ✅ Paginación server-side
@@ -67,6 +74,7 @@
 ## 📊 Estructura de Datos
 
 ### **Habilitación (API Response)**
+
 ```typescript
 {
   id: number
@@ -79,9 +87,9 @@
   expte: string
   observaciones: string
   titular_principal: string
-  personas: Array<{id, nombre, rol, licencia_categoria}>
-  vehiculos: Array<{id, dominio}>
-  establecimientos: Array<{id, nombre, tipo}>
+  personas: Array<{ id; nombre; rol; licencia_categoria }>
+  vehiculos: Array<{ id; dominio }>
+  establecimientos: Array<{ id; nombre; tipo }>
   tiene_resolucion: boolean
   resolucion_doc_id: number
 }
@@ -92,6 +100,7 @@
 ## 🔧 Próximos Pasos
 
 ### **Implementar (Opcional)**
+
 - [ ] Formulario de nueva habilitación
 - [ ] Edición de habilitación existente
 - [ ] Vista de detalle completa
@@ -137,19 +146,19 @@ git push
 
 ## ✅ Estado del Proyecto
 
-| Característica | Estado |
-|----------------|--------|
-| Login | ✅ Completado |
-| Estructura base | ✅ Completado |
-| shadcn/ui | ✅ Completado |
-| Header + Sidebar | ✅ Completado |
-| Dashboard | ✅ Con datos reales |
-| Lista habilitaciones | ✅ Completado |
-| Búsqueda y filtros | ✅ Completado |
-| Paginación | ✅ Completado |
-| CRUD completo | ⏳ Pendiente |
-| PDF/QR | ⏳ Pendiente |
-| Inspecciones | ⏳ Pendiente |
+| Característica       | Estado              |
+| -------------------- | ------------------- |
+| Login                | ✅ Completado       |
+| Estructura base      | ✅ Completado       |
+| shadcn/ui            | ✅ Completado       |
+| Header + Sidebar     | ✅ Completado       |
+| Dashboard            | ✅ Con datos reales |
+| Lista habilitaciones | ✅ Completado       |
+| Búsqueda y filtros   | ✅ Completado       |
+| Paginación           | ✅ Completado       |
+| CRUD completo        | ⏳ Pendiente        |
+| PDF/QR               | ⏳ Pendiente        |
+| Inspecciones         | ⏳ Pendiente        |
 
 ---
 

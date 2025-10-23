@@ -3,6 +3,7 @@
 ## [0.3.0] - 2025-01-17
 
 ### ✨ Añadido
+
 - **Formulario de nueva habilitación**: Modal multi-paso (4 pasos) completo
 - **Validación Zod**: Schemas para habilitaciones, personas, vehículos y establecimientos
 - **APIs de búsqueda**:
@@ -19,10 +20,12 @@
 - **Transacciones Prisma**: Creación atómica de habilitación con todas sus relaciones
 
 ### 🔧 Cambiado
+
 - API de habilitaciones ahora soporta GET (lista) y POST (crear)
 - Botón "Nueva Habilitación" conectado con modal funcional
 
 ### 🎨 Componentes Creados
+
 - `NuevaHabilitacionDialog` - Dialog principal con stepper
 - `datos-basicos-step.tsx` - Paso 1 del formulario
 - `personas-step.tsx` - Paso 2 con búsqueda incremental
@@ -30,6 +33,7 @@
 - `establecimientos-step.tsx` - Paso 4 opcional
 
 ### 📦 Features
+
 - Indicador visual de progreso (4 pasos)
 - Validación en cliente y servidor
 - Loading states y manejo de errores
@@ -41,6 +45,7 @@
 ## [0.2.0] - 2025-01-17
 
 ### ✨ Añadido
+
 - **Estructura con Route Groups**: `(auth)` y `(panel)` para organización modular
 - **Header del panel**: Con búsqueda, notificaciones y menú de usuario
 - **Sidebar de navegación**: 6 secciones con indicadores visuales
@@ -52,16 +57,19 @@
 - **Protección de rutas**: Middleware automático para rutas del panel
 
 ### 🔧 Cambiado
+
 - Login movido a `(auth)/login`
 - Página principal ahora hace redirect inteligente (login/dashboard)
 - `lib/utils.ts` mejorado con funciones de formateo
 
 ### 🎨 Componentes Creados
+
 - `components/layout/header.tsx` - Header con menú de usuario
 - `components/layout/sidebar.tsx` - Navegación lateral
 - `components/ui/*` - 10 componentes de shadcn/ui
 
 ### 📦 Dependencias Agregadas
+
 - `@radix-ui/react-*` - Componentes headless UI
 - `class-variance-authority` - Manejo de variantes
 - `lucide-react` - Iconos SVG
@@ -73,6 +81,7 @@
 ## [0.1.0] - 2025-01-17
 
 ### ✨ Inicial
+
 - Login funcionando con JWT
 - Conexión a MySQL (24 tablas)
 - Prisma ORM configurado

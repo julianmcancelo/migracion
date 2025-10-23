@@ -8,10 +8,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/personas/[id]
  * Obtener una persona específica por ID
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession()
     if (!session) {
@@ -19,7 +16,7 @@ export async function GET(
     }
 
     const id = parseInt(params.id)
-    
+
     if (isNaN(id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
@@ -36,7 +33,6 @@ export async function GET(
       success: true,
       data: persona,
     })
-
   } catch (error: any) {
     console.error('Error al obtener persona:', error)
     return NextResponse.json(

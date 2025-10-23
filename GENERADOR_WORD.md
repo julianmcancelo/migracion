@@ -56,6 +56,7 @@ copy plantillas\resolucion_remis_template.docx migracion\public\plantillas\
 ### Paso 2: Verificar
 
 Las plantillas deben estar en:
+
 - `public/plantillas/resolucion_escolar_template.docx`
 - `public/plantillas/resolucion_remis_template.docx`
 
@@ -64,12 +65,14 @@ Las plantillas deben estar en:
 Los documentos Word deben contener estos marcadores:
 
 ### Generales:
+
 - `{fecha_larga}` - Fecha completa en español
 - `{resolucion_nro}` - Número de resolución
 - `{expediente_nro}` - Número de expediente
 - `{licencia_nro}` - Número de licencia
 
 ### Titular:
+
 - `{tratamiento}` - "el Señor" / "la Señora"
 - `{propiedad_de}` - "del Señor" / "de la Señora"
 - `{domiciliada}` - "domiciliado" / "domiciliada"
@@ -79,6 +82,7 @@ Los documentos Word deben contener estos marcadores:
 - `{titular_domicilio_localidad}` - Localidad
 
 ### Vehículo:
+
 - `{vehiculo_marca}` - Marca
 - `{vehiculo_modelo}` - Modelo
 - `{vehiculo_anho}` - Año
@@ -88,6 +92,7 @@ Los documentos Word deben contener estos marcadores:
 - `{vehiculo_inscripcion_inicial}` - Fecha inscripción
 
 ### Remis (opcional):
+
 - `{nombre_remiseria}`, `{expte_remiseria}`, `{cuenta_remiseria}`, `{domicilio_remiseria}`
 
 ## 🚀 Uso
@@ -106,6 +111,7 @@ GET /api/habilitaciones/{id}/generar-resolucion
 ```
 
 **Respuesta:**
+
 - ✅ **200** - Descarga el archivo .docx
 - ⚠️ **400** - Faltan datos (devuelve JSON con campos faltantes)
 - ❌ **404** - Habilitación no encontrada
@@ -188,6 +194,7 @@ El sistema valida que existan estos datos antes de generar:
 ## 🧪 Testing
 
 Para probar:
+
 1. Crear/editar una habilitación
 2. Ir a generar resolución
 3. Verificar que se descarga el .docx

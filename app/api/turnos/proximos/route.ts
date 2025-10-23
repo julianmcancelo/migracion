@@ -11,10 +11,10 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url)
     const limite = parseInt(searchParams.get('limite') || '10')
-    
+
     // Usar query raw para evitar campo fecha_hora corrupto
     const hoy = new Date().toISOString().split('T')[0]
-    
+
     const turnosRaw: any[] = await prisma.$queryRaw`
       SELECT 
         t.id, t.habilitacion_id, t.fecha, t.hora, t.estado, 
@@ -28,24 +28,24 @@ export async function GET(request: Request) {
 
     // Enriquecer con datos de habilitación
     const turnosFormateados = await Promise.all(
-      turnosRaw.map(async (turno) => {
+      turnosRaw.map(async turno => {
         const habilitacion = await prisma.habilitaciones_generales.findUnique({
           where: { id: turno.habilitacion_id },
           include: {
             habilitaciones_personas: {
               where: {
-                rol: 'TITULAR'
+                rol: 'TITULAR',
               },
               include: {
                 persona: {
                   select: {
                     nombre: true,
                     email: true,
-                    dni: true
-                  }
-                }
+                    dni: true,
+                  },
+                },
               },
-              take: 1
+              take: 1,
             },
             habilitaciones_vehiculos: {
               include: {
@@ -53,13 +53,13 @@ export async function GET(request: Request) {
                   select: {
                     dominio: true,
                     marca: true,
-                    modelo: true
-                  }
-                }
+                    modelo: true,
+                  },
+                },
               },
-              take: 1
-            }
-          }
+              take: 1,
+            },
+          },
         })
 
         const titular = habilitacion?.habilitaciones_personas?.[0]?.persona
@@ -75,25 +75,29 @@ export async function GET(request: Request) {
           habilitacion: {
             id: habilitacion?.id,
             nro_licencia: habilitacion?.nro_licencia,
-            tipo_transporte: habilitacion?.tipo_transporte
+            tipo_transporte: habilitacion?.tipo_transporte,
           },
-          titular: titular ? {
-            nombre: titular.nombre,
-            email: titular.email,
-            dni: titular.dni
-          } : null,
-          vehiculo: vehiculo ? {
-            dominio: vehiculo.dominio,
-            marca: vehiculo.marca,
-            modelo: vehiculo.modelo
-          } : null
+          titular: titular
+            ? {
+                nombre: titular.nombre,
+                email: titular.email,
+                dni: titular.dni,
+              }
+            : null,
+          vehiculo: vehiculo
+            ? {
+                dominio: vehiculo.dominio,
+                marca: vehiculo.marca,
+                modelo: vehiculo.modelo,
+              }
+            : null,
         }
       })
     )
 
     return NextResponse.json({
       success: true,
-      data: turnosFormateados
+      data: turnosFormateados,
     })
   } catch (error) {
     console.error('Error al obtener próximos turnos:', error)

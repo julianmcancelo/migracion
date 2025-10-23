@@ -8,19 +8,19 @@ import nodemailer from 'nodemailer'
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const { 
-      email, 
-      nombre, 
-      nro_licencia, 
-      fecha, 
-      hora, 
-      tipo_transporte, 
+    const {
+      email,
+      nombre,
+      nro_licencia,
+      fecha,
+      hora,
+      tipo_transporte,
       turno_id,
       dni,
       telefono,
       vehiculo_patente,
       vehiculo_marca,
-      vehiculo_modelo
+      vehiculo_modelo,
     } = body
 
     // Validaciones
@@ -36,8 +36,8 @@ export async function POST(request: Request) {
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER, // tu-email@gmail.com
-        pass: process.env.GMAIL_APP_PASSWORD // Contraseña de aplicación de Gmail
-      }
+        pass: process.env.GMAIL_APP_PASSWORD, // Contraseña de aplicación de Gmail
+      },
     })
 
     // Formatear fecha y hora
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
 
     // Plantilla HTML del email
@@ -286,12 +286,16 @@ export async function POST(request: Request) {
         <div style="background: white; border-radius: 12px; padding: 25px; margin: 20px auto; max-width: 400px;">
           <div style="font-size: 15px; color: #92400E; font-weight: 600; margin-bottom: 10px;">N° de Licencia</div>
           <div style="font-size: 28px; color: #78350F; font-weight: 700; font-family: monospace; letter-spacing: 2px;">${nro_licencia}</div>
-          ${vehiculo_patente ? `
+          ${
+            vehiculo_patente
+              ? `
           <div style="border-top: 2px solid #FDE68A; margin: 20px 0; padding-top: 20px;">
             <div style="font-size: 15px; color: #92400E; font-weight: 600; margin-bottom: 10px;">Dominio/Patente</div>
             <div style="font-size: 32px; color: #78350F; font-weight: 700; font-family: monospace; letter-spacing: 3px;">${vehiculo_patente}</div>
           </div>
-          ` : ''}
+          `
+              : ''
+          }
         </div>
       </div>
 
@@ -393,7 +397,7 @@ export async function POST(request: Request) {
       to: email,
       replyTo: 'transportepublicolanus@gmail.com',
       subject: `✅ Turno Confirmado - Inspección Vehicular - Licencia ${nro_licencia}`,
-      html: htmlContent
+      html: htmlContent,
     })
 
     console.log('Email enviado:', info.messageId)
@@ -401,16 +405,15 @@ export async function POST(request: Request) {
     return NextResponse.json({
       success: true,
       message: 'Email enviado correctamente',
-      messageId: info.messageId
+      messageId: info.messageId,
     })
-
   } catch (error: any) {
     console.error('Error al enviar email:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al enviar email',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

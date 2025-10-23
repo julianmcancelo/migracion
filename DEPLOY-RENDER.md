@@ -13,6 +13,7 @@
 ## 📋 **Pasos para Deploy**
 
 ### **1. Preparar el Repositorio**
+
 ```bash
 # Ya está listo ✅
 git add .
@@ -21,11 +22,13 @@ git push
 ```
 
 ### **2. Crear Cuenta en Render**
+
 1. Ve a [render.com](https://render.com)
 2. Regístrate con GitHub
 3. Conecta tu repositorio `migracion`
 
 ### **3. Configurar Web Service**
+
 ```yaml
 # Configuración automática con render.yaml
 Name: credenciales-lanus
@@ -35,6 +38,7 @@ Start Command: npm start
 ```
 
 ### **4. Variables de Entorno**
+
 ```bash
 # Obligatorias
 DATABASE_URL=postgresql://user:pass@host:5432/db
@@ -53,6 +57,7 @@ GMAIL_APP_PASSWORD=tu_app_password
 ## 🗄️ **Base de Datos**
 
 ### **Opción 1: PostgreSQL en Render (Recomendado)**
+
 ```bash
 # Render creará automáticamente:
 - PostgreSQL 15
@@ -62,6 +67,7 @@ GMAIL_APP_PASSWORD=tu_app_password
 ```
 
 ### **Opción 2: Mantener MySQL Actual**
+
 ```bash
 # Usar la misma BD de Vercel
 DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
@@ -72,6 +78,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ## 🔧 **Configuración del Proyecto**
 
 ### **1. Actualizar package.json**
+
 ```json
 {
   "scripts": {
@@ -83,6 +90,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ```
 
 ### **2. Configurar Prisma para PostgreSQL** (si cambias de BD)
+
 ```prisma
 // prisma/schema.prisma
 generator client {
@@ -96,6 +104,7 @@ datasource db {
 ```
 
 ### **3. Migrar Base de Datos** (si cambias a PostgreSQL)
+
 ```bash
 # Exportar datos de MySQL
 mysqldump -h 167.250.5.55 -u user -p transpo1_credenciales > backup.sql
@@ -114,12 +123,14 @@ npx prisma db push
 ### **Paso a Paso:**
 
 1. **Conectar Repositorio**
+
    ```
    Render Dashboard → New → Web Service
    → Connect GitHub → Seleccionar "migracion"
    ```
 
 2. **Configuración Automática**
+
    ```
    Render detectará render.yaml
    → Configuración automática
@@ -127,6 +138,7 @@ npx prisma db push
    ```
 
 3. **Deploy Inicial**
+
    ```
    ⏳ Installing dependencies...
    ⏳ Running build...
@@ -143,20 +155,21 @@ npx prisma db push
 
 ## 🔍 **Ventajas vs Vercel**
 
-| Aspecto | Vercel | Render |
-|---------|--------|--------|
-| **Builds** | Rápidos pero inestables | Más lentos pero confiables |
-| **Base de Datos** | Externa (PlanetScale) | Incluida (PostgreSQL) |
-| **Variables ENV** | Interfaz compleja | Más simple |
-| **Logs** | Limitados | Completos |
-| **Precio** | Gratis limitado | Gratis generoso |
-| **Uptime** | 99.9% | 99.9% |
+| Aspecto           | Vercel                  | Render                     |
+| ----------------- | ----------------------- | -------------------------- |
+| **Builds**        | Rápidos pero inestables | Más lentos pero confiables |
+| **Base de Datos** | Externa (PlanetScale)   | Incluida (PostgreSQL)      |
+| **Variables ENV** | Interfaz compleja       | Más simple                 |
+| **Logs**          | Limitados               | Completos                  |
+| **Precio**        | Gratis limitado         | Gratis generoso            |
+| **Uptime**        | 99.9%                   | 99.9%                      |
 
 ---
 
 ## 🛠️ **Configuración Específica**
 
 ### **Variables de Entorno en Render:**
+
 ```bash
 # Automáticas (render.yaml)
 NODE_ENV=production
@@ -172,6 +185,7 @@ GMAIL_APP_PASSWORD=app_specific_password
 ```
 
 ### **Build Settings:**
+
 ```yaml
 Build Command: npm install && npm run build
 Start Command: npm start
@@ -184,12 +198,14 @@ Auto-Deploy: Yes (on git push)
 ## 🔄 **Migración desde Vercel**
 
 ### **1. Backup de Datos**
+
 ```bash
 # Exportar desde MySQL actual
 mysqldump -h 167.250.5.55 -u user -p transpo1_credenciales > backup.sql
 ```
 
 ### **2. Configurar Render**
+
 ```bash
 # Crear servicio en Render
 # Configurar variables de entorno
@@ -197,6 +213,7 @@ mysqldump -h 167.250.5.55 -u user -p transpo1_credenciales > backup.sql
 ```
 
 ### **3. Migrar Base de Datos**
+
 ```bash
 # Opción A: Mantener MySQL
 DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
@@ -206,6 +223,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ```
 
 ### **4. Actualizar DNS** (opcional)
+
 ```bash
 # Si tienes dominio personalizado
 # Cambiar CNAME de Vercel a Render
@@ -216,6 +234,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ## 📊 **Monitoreo y Logs**
 
 ### **Logs en Tiempo Real:**
+
 ```bash
 # Render Dashboard → Service → Logs
 # Ver builds, errores, requests
@@ -223,6 +242,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ```
 
 ### **Métricas:**
+
 ```bash
 # CPU, RAM, Response Time
 # Uptime monitoring
@@ -236,6 +256,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ### **Errores Comunes:**
 
 1. **Build Failed**
+
    ```bash
    # Verificar package.json
    # Revisar dependencias
@@ -243,6 +264,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
    ```
 
 2. **Database Connection**
+
    ```bash
    # Verificar DATABASE_URL
    # Prisma generate
@@ -261,6 +283,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ## ⚡ **Optimizaciones**
 
 ### **Performance:**
+
 ```bash
 # Render optimiza automáticamente:
 - Gzip compression
@@ -270,6 +293,7 @@ DATABASE_URL=mysql://user:pass@167.250.5.55:3306/transpo1_credenciales
 ```
 
 ### **Scaling:**
+
 ```bash
 # Plan gratuito:
 - 512MB RAM

@@ -39,7 +39,7 @@ interface CredencialData {
 function CredencialContent() {
   const searchParams = useSearchParams()
   const token = searchParams.get('token')
-  
+
   const [data, setData] = useState<CredencialData | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -62,7 +62,7 @@ function CredencialContent() {
 
       if (result.success) {
         setData(result.data)
-        
+
         // Generar QR con la URL actual
         const currentUrl = window.location.href
         const qrDataUrl = await QRCode.toDataURL(currentUrl, {
@@ -70,8 +70,8 @@ function CredencialContent() {
           margin: 2,
           color: {
             dark: '#1e293b', // slate-800
-            light: '#ffffff'
-          }
+            light: '#ffffff',
+          },
         })
         setQrUrl(qrDataUrl)
       } else {
@@ -103,9 +103,9 @@ function CredencialContent() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-slate-100">
+      <div className="flex min-h-screen items-center justify-center bg-slate-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-sky-600 mx-auto"></div>
+          <div className="mx-auto h-16 w-16 animate-spin rounded-full border-b-4 border-sky-600"></div>
           <p className="mt-4 text-slate-600">Cargando credencial...</p>
         </div>
       </div>
@@ -114,21 +114,28 @@ function CredencialContent() {
 
   if (error || !data) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-cyan-50 to-blue-100 p-4">
-        <div className="bg-white/90 backdrop-blur-xl shadow-2xl rounded-2xl p-8 sm:p-12 max-w-lg w-full text-center">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-cyan-50 to-blue-100 p-4">
+        <div className="w-full max-w-lg rounded-2xl bg-white/90 p-8 text-center shadow-2xl backdrop-blur-xl sm:p-12">
           <div className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-sky-100">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-sky-600" viewBox="0 0 24 24" fill="currentColor">
-              <path fillRule="evenodd" d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3A5.25 5.25 0 0012 1.5zM12 3a3.75 3.75 0 00-3.75 3.75v3h7.5v-3A3.75 3.75 0 0012 3z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-16 w-16 text-sky-600"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M12 1.5a5.25 5.25 0 00-5.25 5.25v3a3 3 0 00-3 3v6.75a3 3 0 003 3h10.5a3 3 0 003-3v-6.75a3 3 0 00-3-3v-3A5.25 5.25 0 0012 1.5zM12 3a3.75 3.75 0 00-3.75 3.75v3h7.5v-3A3.75 3.75 0 0012 3z"
+                clipRule="evenodd"
+              />
             </svg>
           </div>
-          <h1 className="text-3xl font-black text-slate-900 mt-6 mb-3">
-            Acceso Restringido
-          </h1>
-          <p className="text-slate-700 text-lg mb-8">
+          <h1 className="mb-3 mt-6 text-3xl font-black text-slate-900">Acceso Restringido</h1>
+          <p className="mb-8 text-lg text-slate-700">
             {error || 'No se pudo cargar la credencial'}
           </p>
-          <div className="text-sm text-left text-slate-800 bg-sky-50/80 border border-sky-200 p-4 rounded-lg">
-            <p className="font-semibold text-slate-900 mb-3">Contacto:</p>
+          <div className="rounded-lg border border-sky-200 bg-sky-50/80 p-4 text-left text-sm text-slate-800">
+            <p className="mb-3 font-semibold text-slate-900">Contacto:</p>
             <div className="space-y-2">
               <p>📞 4357-5100 (Int. 7137)</p>
               <p>📧 movilidadytransporte@lanus.gob.ar</p>
@@ -140,158 +147,147 @@ function CredencialContent() {
   }
 
   const cicloLectivo = new Date().getFullYear()
-  const estadoClase = data.estado === 'HABILITADO' 
-    ? 'bg-green-100 text-green-800' 
-    : 'bg-red-100 text-red-800'
+  const estadoClase =
+    data.estado === 'HABILITADO' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
 
   return (
-    <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center p-4 sm:p-8">
-      <main className="w-full max-w-4xl mx-auto">
-        <div 
-          id="credencial" 
-          className="bg-white rounded-2xl overflow-hidden relative shadow-2xl border border-slate-200"
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-100 p-4 sm:p-8">
+      <main className="mx-auto w-full max-w-4xl">
+        <div
+          id="credencial"
+          className="relative overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl"
         >
           {/* Marca de agua si está vencida */}
           {data.isExpired && (
             <>
-              <div className="absolute inset-0 z-20 flex items-center justify-center p-4 pointer-events-none">
-                <div className="bg-red-600/95 text-white text-center py-8 px-12 transform -rotate-12 border-4 border-white shadow-2xl rounded-lg backdrop-blur-sm">
+              <div className="pointer-events-none absolute inset-0 z-20 flex items-center justify-center p-4">
+                <div className="-rotate-12 transform rounded-lg border-4 border-white bg-red-600/95 px-12 py-8 text-center text-white shadow-2xl backdrop-blur-sm">
                   <h2 className="text-5xl font-black uppercase tracking-wider">VENCIDA</h2>
-                  <p className="text-lg mt-1">Por favor, regularice su situación.</p>
+                  <p className="mt-1 text-lg">Por favor, regularice su situación.</p>
                 </div>
               </div>
-              <div className="absolute inset-0 bg-white/60 backdrop-blur-sm z-10"></div>
+              <div className="absolute inset-0 z-10 bg-white/60 backdrop-blur-sm"></div>
             </>
           )}
 
           {/* Header */}
-          <header className="bg-gradient-to-r from-sky-700 to-sky-500 text-white p-6 flex justify-between items-center">
+          <header className="flex items-center justify-between bg-gradient-to-r from-sky-700 to-sky-500 p-6 text-white">
             <div>
-              <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight">
+              <h1 className="text-xl font-extrabold tracking-tight sm:text-2xl">
                 Credencial de Habilitación
               </h1>
               <p className="text-sm opacity-90">
                 Transporte {data.tipo_transporte} - Ciclo Lectivo {cicloLectivo}
               </p>
             </div>
-            <img 
-              src="https://www.lanus.gob.ar/img/logo-footer.svg" 
-              className="w-32 sm:w-36 h-auto brightness-0 invert"
+            <img
+              src="https://www.lanus.gob.ar/img/logo-footer.svg"
+              className="h-auto w-32 brightness-0 invert sm:w-36"
               alt="Logo Lanús"
             />
           </header>
 
-          <div className="bg-slate-100 text-slate-700 px-6 py-3 text-sm font-semibold border-b border-slate-200">
+          <div className="border-b border-slate-200 bg-slate-100 px-6 py-3 text-sm font-semibold text-slate-700">
             <p>Dirección General de Movilidad y Transporte</p>
           </div>
 
           <div className="p-6">
             {/* Datos principales con QR */}
-            <section className="grid grid-cols-1 md:grid-cols-3 gap-6 pb-6 border-b border-slate-200">
-              <div className="md:col-span-2 grid grid-cols-2 gap-x-6 gap-y-4">
+            <section className="grid grid-cols-1 gap-6 border-b border-slate-200 pb-6 md:grid-cols-3">
+              <div className="grid grid-cols-2 gap-x-6 gap-y-4 md:col-span-2">
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">
+                  <span className="text-xs font-semibold uppercase text-slate-500">
                     N° de Licencia
                   </span>
-                  <p className="text-lg font-bold text-sky-600">
-                    {data.nro_licencia}
-                  </p>
+                  <p className="text-lg font-bold text-sky-600">{data.nro_licencia}</p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">
-                    Estado
-                  </span>
-                  <p className={`text-base font-bold px-3 py-1 rounded-full inline-block ${estadoClase}`}>
+                  <span className="text-xs font-semibold uppercase text-slate-500">Estado</span>
+                  <p
+                    className={`inline-block rounded-full px-3 py-1 text-base font-bold ${estadoClase}`}
+                  >
                     {data.estado}
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">
-                    Vigencia
-                  </span>
+                  <span className="text-xs font-semibold uppercase text-slate-500">Vigencia</span>
                   <p className="font-semibold text-slate-700">
                     {formatFecha(data.vigencia_inicio)} al {formatFecha(data.vigencia_fin)}
                   </p>
                 </div>
                 <div>
-                  <span className="text-xs font-semibold text-slate-500 uppercase">
-                    Resolución
-                  </span>
-                  <p className="font-semibold text-slate-700">
-                    {data.resolucion}
-                  </p>
+                  <span className="text-xs font-semibold uppercase text-slate-500">Resolución</span>
+                  <p className="font-semibold text-slate-700">{data.resolucion}</p>
                 </div>
               </div>
 
               {/* QR Code */}
-              <div className="flex flex-col items-center justify-center bg-slate-50 rounded-lg p-3">
+              <div className="flex flex-col items-center justify-center rounded-lg bg-slate-50 p-3">
                 {qrUrl && (
-                  <img 
-                    src={qrUrl} 
-                    alt="QR Code" 
-                    className="border-4 border-white rounded-lg shadow-md"
+                  <img
+                    src={qrUrl}
+                    alt="QR Code"
+                    className="rounded-lg border-4 border-white shadow-md"
                   />
                 )}
-                <p className="mt-2 text-xs text-slate-600 font-medium">
-                  Verificar validez
-                </p>
+                <p className="mt-2 text-xs font-medium text-slate-600">Verificar validez</p>
               </div>
             </section>
 
             {/* Personas y Vehículo */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 py-6">
+            <div className="grid grid-cols-1 gap-6 py-6 lg:grid-cols-2">
               <div className="space-y-6">
                 {/* Titular */}
                 <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 flex-shrink-0 rounded-full border-4 border-white shadow-lg overflow-hidden bg-slate-200">
+                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-lg">
                     {data.titular_foto ? (
-                      <img 
-                        src={data.titular_foto} 
+                      <img
+                        src={data.titular_foto}
                         alt="Foto Titular"
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <svg className="w-12 h-12 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      <div className="flex h-full w-full items-center justify-center">
+                        <svg
+                          className="h-12 w-12 text-slate-400"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                       </div>
                     )}
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-slate-800">
-                      Titular del Permiso
-                    </h3>
-                    <p className="text-sm text-slate-600">
-                      {data.titular_nombre}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      DNI: {data.titular_dni}
-                    </p>
+                    <h3 className="text-lg font-bold text-slate-800">Titular del Permiso</h3>
+                    <p className="text-sm text-slate-600">{data.titular_nombre}</p>
+                    <p className="text-xs text-slate-500">DNI: {data.titular_dni}</p>
                   </div>
                 </div>
 
                 {/* Conductor */}
                 <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 flex-shrink-0 rounded-full border-4 border-white shadow-lg overflow-hidden bg-slate-200">
+                  <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-full border-4 border-white bg-slate-200 shadow-lg">
                     {data.conductor_foto ? (
-                      <img 
-                        src={data.conductor_foto} 
+                      <img
+                        src={data.conductor_foto}
                         alt="Foto Conductor"
-                        className="w-full h-full object-cover"
+                        className="h-full w-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <svg className="w-12 h-12 text-slate-400" fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                      <div className="flex h-full w-full items-center justify-center">
+                        <svg
+                          className="h-12 w-12 text-slate-400"
+                          fill="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                       </div>
                     )}
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-slate-800">
-                      Conductor/a Autorizado/a
-                    </h3>
+                    <h3 className="text-lg font-bold text-slate-800">Conductor/a Autorizado/a</h3>
                     <p className="text-sm text-slate-600">
                       {data.conductor_nombre || 'No Asignado'}
                     </p>
@@ -304,56 +300,56 @@ function CredencialContent() {
 
               {/* Vehículo y Celador */}
               <div className="space-y-6">
-                <div className="bg-slate-50 p-4 rounded-lg h-full">
-                  <h3 className="font-bold text-lg text-slate-800 mb-2">
-                    Vehículo Habilitado
-                  </h3>
+                <div className="h-full rounded-lg bg-slate-50 p-4">
+                  <h3 className="mb-2 text-lg font-bold text-slate-800">Vehículo Habilitado</h3>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-2">
                     <div className="col-span-2">
-                      <p className="text-2xl font-mono text-white bg-slate-800 inline-block px-3 py-1 rounded-md my-1">
+                      <p className="my-1 inline-block rounded-md bg-slate-800 px-3 py-1 font-mono text-2xl text-white">
                         {data.vehiculo_dominio || 'N/A'}
                       </p>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase">
+                      <span className="text-xs font-semibold uppercase text-slate-500">
                         Vehículo
                       </span>
-                      <p className="text-sm text-slate-700 font-semibold">
+                      <p className="text-sm font-semibold text-slate-700">
                         {data.vehiculo_marca} {data.vehiculo_modelo} ({data.vehiculo_ano})
                       </p>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase">
+                      <span className="text-xs font-semibold uppercase text-slate-500">
                         Asientos
                       </span>
-                      <p className="text-sm text-slate-700 font-semibold">
+                      <p className="text-sm font-semibold text-slate-700">
                         {data.vehiculo_asientos || 'N/A'}
                       </p>
                     </div>
                     <div className="col-span-2">
-                      <span className="text-xs font-semibold text-slate-500 uppercase">
-                        Chasis
-                      </span>
-                      <p className="text-sm text-slate-700 font-semibold font-mono">
+                      <span className="text-xs font-semibold uppercase text-slate-500">Chasis</span>
+                      <p className="font-mono text-sm font-semibold text-slate-700">
                         {data.vehiculo_chasis || 'N/A'}
                       </p>
                     </div>
-                    
+
                     <hr className="col-span-2 my-2" />
 
                     <div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase">
+                      <span className="text-xs font-semibold uppercase text-slate-500">
                         Vencimiento VTV
                       </span>
-                      <p className={`text-sm font-semibold ${getVencimientoClass(data.vehiculo_vencimiento_vtv)}`}>
+                      <p
+                        className={`text-sm font-semibold ${getVencimientoClass(data.vehiculo_vencimiento_vtv)}`}
+                      >
                         {formatFecha(data.vehiculo_vencimiento_vtv || '')}
                       </p>
                     </div>
                     <div>
-                      <span className="text-xs font-semibold text-slate-500 uppercase">
+                      <span className="text-xs font-semibold uppercase text-slate-500">
                         Vencimiento Póliza
                       </span>
-                      <p className={`text-sm font-semibold ${getVencimientoClass(data.vehiculo_vencimiento_poliza)}`}>
+                      <p
+                        className={`text-sm font-semibold ${getVencimientoClass(data.vehiculo_vencimiento_poliza)}`}
+                      >
                         {formatFecha(data.vehiculo_vencimiento_poliza || '')}
                       </p>
                     </div>
@@ -362,33 +358,35 @@ function CredencialContent() {
 
                 {/* Celador */}
                 <div className="flex items-center gap-4">
-                  <div className="w-24 h-24 flex-shrink-0 bg-slate-200 rounded-full border-4 border-white shadow-lg flex items-center justify-center">
-                    <svg className="h-12 w-12 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197" />
+                  <div className="flex h-24 w-24 flex-shrink-0 items-center justify-center rounded-full border-4 border-white bg-slate-200 shadow-lg">
+                    <svg
+                      className="h-12 w-12 text-slate-400"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M15 21a6 6 0 00-9-5.197"
+                      />
                     </svg>
                   </div>
                   <div>
-                    <h3 className="font-bold text-lg text-slate-800">
-                      Celador/a
-                    </h3>
-                    <p className="text-sm text-slate-600">
-                      {data.celador_nombre || 'No Asignado'}
-                    </p>
-                    <p className="text-xs text-slate-500">
-                      DNI: {data.celador_dni || 'N/A'}
-                    </p>
+                    <h3 className="text-lg font-bold text-slate-800">Celador/a</h3>
+                    <p className="text-sm text-slate-600">{data.celador_nombre || 'No Asignado'}</p>
+                    <p className="text-xs text-slate-500">DNI: {data.celador_dni || 'N/A'}</p>
                   </div>
                 </div>
               </div>
             </div>
 
             {/* Establecimiento */}
-            <section className="pt-6 border-t border-slate-200">
-              <h3 className="font-bold text-lg text-slate-800 mb-2">
-                Establecimiento Educativo
-              </h3>
-              <div className="bg-slate-50 p-4 rounded-lg text-sm">
-                <p className="text-slate-800 font-semibold">
+            <section className="border-t border-slate-200 pt-6">
+              <h3 className="mb-2 text-lg font-bold text-slate-800">Establecimiento Educativo</h3>
+              <div className="rounded-lg bg-slate-50 p-4 text-sm">
+                <p className="font-semibold text-slate-800">
                   {data.escuela_nombre || 'No Asignado'}
                 </p>
                 <p className="text-slate-600">
@@ -399,31 +397,32 @@ function CredencialContent() {
           </div>
 
           {/* Footer */}
-          <footer className="text-center text-xs text-slate-500 px-6 py-3 bg-slate-50 border-t">
+          <footer className="border-t bg-slate-50 px-6 py-3 text-center text-xs text-slate-500">
             <p>
-              El presente certificado es válido únicamente si se presenta junto a la VTV y el seguro obligatorio vigentes.
+              El presente certificado es válido únicamente si se presenta junto a la VTV y el seguro
+              obligatorio vigentes.
             </p>
           </footer>
         </div>
 
         {/* Botón de imprimir */}
-        <div className="text-center py-8 no-print">
+        <div className="no-print py-8 text-center">
           <button
             onClick={() => window.print()}
-            className="inline-flex items-center gap-3 px-8 py-3 bg-sky-700 text-white rounded-lg shadow-lg hover:bg-sky-800 transition-all transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-sky-500"
+            className="inline-flex transform items-center gap-3 rounded-lg bg-sky-700 px-8 py-3 text-white shadow-lg transition-all hover:scale-105 hover:bg-sky-800 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:ring-offset-2"
           >
-            <svg 
-              xmlns="http://www.w3.org/2000/svg" 
-              className="h-6 w-6" 
-              fill="none" 
-              viewBox="0 0 24 24" 
-              stroke="currentColor" 
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
               strokeWidth="2"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"
               />
             </svg>
             <span className="font-semibold">Imprimir o Guardar como PDF</span>
@@ -448,14 +447,16 @@ function CredencialContent() {
 
 export default function CredencialPage() {
   return (
-    <Suspense fallback={
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Cargando credencial...</p>
+    <Suspense
+      fallback={
+        <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
+          <div className="text-center">
+            <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
+            <p className="text-gray-600">Cargando credencial...</p>
+          </div>
         </div>
-      </div>
-    }>
+      }
+    >
       <CredencialContent />
     </Suspense>
   )

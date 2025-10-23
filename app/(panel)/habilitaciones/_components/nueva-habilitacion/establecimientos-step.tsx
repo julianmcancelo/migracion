@@ -25,36 +25,43 @@ interface Establecimiento {
 /**
  * Paso 4: Agregar establecimientos/remiserías (opcional)
  */
-export function EstablecimientosStep({ 
-  establecimientos, 
-  onChange, 
-  tipoTransporte 
+export function EstablecimientosStep({
+  establecimientos,
+  onChange,
+  tipoTransporte,
 }: EstablecimientosStepProps) {
   const [busqueda, setBusqueda] = useState('')
   const [resultados, setResultados] = useState<Establecimiento[]>([])
   const [buscando, setBuscando] = useState(false)
-  const [establecimientoSeleccionado, setEstablecimientoSeleccionado] = useState<Establecimiento | null>(null)
+  const [establecimientoSeleccionado, setEstablecimientoSeleccionado] =
+    useState<Establecimiento | null>(null)
   // Caché local para mantener información completa de establecimientos agregados
-  const [establecimientosCache, setEstablecimientosCache] = useState<Map<number, Establecimiento>>(new Map())
+  const [establecimientosCache, setEstablecimientosCache] = useState<Map<number, Establecimiento>>(
+    new Map()
+  )
 
   const busquedaDebounced = useDebounce(busqueda, 500)
 
   // Cargar datos completos de establecimientos ya agregados
   useEffect(() => {
     const cargarEstablecimientosAgregados = async () => {
-      const establecimientosSinDatos = establecimientos.filter(e => !establecimientosCache.has(e.establecimiento_id))
-      
+      const establecimientosSinDatos = establecimientos.filter(
+        e => !establecimientosCache.has(e.establecimiento_id)
+      )
+
       if (establecimientosSinDatos.length === 0) return
 
       try {
-        const promesas = establecimientosSinDatos.map(async (e) => {
-          const response = await fetch(`/api/establecimientos/${e.establecimiento_id}?tipo=${e.tipo}`)
+        const promesas = establecimientosSinDatos.map(async e => {
+          const response = await fetch(
+            `/api/establecimientos/${e.establecimiento_id}?tipo=${e.tipo}`
+          )
           const data = await response.json()
           return data.success ? data.data : null
         })
 
         const establecimientosData = await Promise.all(promesas)
-        
+
         const nuevoCache = new Map(establecimientosCache)
         establecimientosData.forEach((establecimiento, index) => {
           if (establecimiento) {
@@ -118,7 +125,7 @@ export function EstablecimientosStep({
     setEstablecimientosCache(nuevoCache)
 
     onChange([...establecimientos, nuevoEstablecimiento])
-    
+
     // Resetear campos
     setEstablecimientoSeleccionado(null)
     setBusqueda('')
@@ -134,17 +141,17 @@ export function EstablecimientosStep({
     // Primero buscar en el caché
     const establecimientoCache = establecimientosCache.get(establecimiento_id)
     if (establecimientoCache) return establecimientoCache
-    
+
     // Luego en resultados actuales
     const establecimiento = resultados.find(e => e.id === establecimiento_id)
     if (establecimiento) return establecimiento
-    
+
     // Fallback
-    return { 
+    return {
       id: establecimiento_id,
-      nombre: `Establecimiento ${establecimiento_id}`, 
+      nombre: `Establecimiento ${establecimiento_id}`,
       direccion: '-',
-      tipo_entidad: 'establecimiento' as const
+      tipo_entidad: 'establecimiento' as const,
     }
   }
 
@@ -153,45 +160,43 @@ export function EstablecimientosStep({
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="mb-4 text-lg font-semibold">
           {tipoTransporte === 'Remis' ? 'Remiserías' : 'Establecimientos'} (Opcional)
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="mb-4 text-sm text-gray-600">
           Agregue los {textoTipo} vinculados a esta habilitación. Este paso es opcional.
         </p>
       </div>
 
       {/* Formulario de búsqueda y agregar */}
-      <div className="bg-gray-50 p-4 rounded-lg border space-y-4">
+      <div className="space-y-4 rounded-lg border bg-gray-50 p-4">
         <h4 className="font-medium">
           Agregar {tipoTransporte === 'Remis' ? 'Remisería' : 'Establecimiento'}
         </h4>
-        
+
         {/* Búsqueda */}
         <div className="space-y-2">
           <Label>Buscar por nombre</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
               className="pl-9"
               value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
+              onChange={e => setBusqueda(e.target.value)}
               placeholder={`Ingrese nombre del ${tipoTransporte === 'Remis' ? 'remisería' : 'establecimiento'}...`}
             />
           </div>
-          
+
           {/* Resultados de búsqueda */}
           {busqueda.length >= 2 && (
-            <div className="bg-white border rounded-md max-h-48 overflow-y-auto">
+            <div className="max-h-48 overflow-y-auto rounded-md border bg-white">
               {buscando ? (
-                <div className="p-4 text-center text-sm text-gray-500">
-                  Buscando...
-                </div>
+                <div className="p-4 text-center text-sm text-gray-500">Buscando...</div>
               ) : resultados.length > 0 ? (
-                resultados.map((establecimiento) => (
+                resultados.map(establecimiento => (
                   <button
                     key={establecimiento.id}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center gap-3"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-gray-50"
                     onClick={() => {
                       setEstablecimientoSeleccionado(establecimiento)
                       setBusqueda(establecimiento.nombre)
@@ -199,7 +204,7 @@ export function EstablecimientosStep({
                   >
                     <Building2 className="h-4 w-4 text-gray-400" />
                     <div>
-                      <div className="font-medium text-sm">{establecimiento.nombre}</div>
+                      <div className="text-sm font-medium">{establecimiento.nombre}</div>
                       <div className="text-xs text-gray-500">
                         {establecimiento.direccion && `${establecimiento.direccion} • `}
                         {establecimiento.localidad}
@@ -222,19 +227,20 @@ export function EstablecimientosStep({
           disabled={!establecimientoSeleccionado}
           className="w-full"
         >
-          <Plus className="h-4 w-4 mr-2" />
+          <Plus className="mr-2 h-4 w-4" />
           Agregar {tipoTransporte === 'Remis' ? 'Remisería' : 'Establecimiento'}
         </Button>
       </div>
 
       {/* Lista de establecimientos agregados */}
       <div>
-        <h4 className="font-medium mb-3">
-          {tipoTransporte === 'Remis' ? 'Remiserías' : 'Establecimientos'} Agregados ({establecimientos.length})
+        <h4 className="mb-3 font-medium">
+          {tipoTransporte === 'Remis' ? 'Remiserías' : 'Establecimientos'} Agregados (
+          {establecimientos.length})
         </h4>
-        
+
         {establecimientos.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+          <div className="rounded-lg border-2 border-dashed py-8 text-center text-gray-500">
             No hay {textoTipo} agregados aún
           </div>
         ) : (
@@ -244,23 +250,23 @@ export function EstablecimientosStep({
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow"
+                  className="flex items-center justify-between rounded-lg border bg-white p-4 transition-shadow hover:shadow-md"
                 >
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="flex flex-1 items-center gap-3">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-purple-100">
                       <Building2 className="h-6 w-6 text-purple-600" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
+                    <div className="min-w-0 flex-1">
+                      <div className="mb-1 flex items-center gap-2">
                         <span className="font-bold text-gray-900">{info.nombre}</span>
                         {(info as any).tipo && (
-                          <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+                          <span className="rounded-full bg-purple-100 px-2 py-0.5 text-xs font-medium text-purple-700">
                             {(info as any).tipo}
                           </span>
                         )}
                       </div>
-                      
-                      <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
+
+                      <div className="mt-2 flex flex-col gap-1 text-xs text-gray-600">
                         {info.direccion && (
                           <div className="flex items-center gap-1">
                             <span>📍</span>
@@ -307,9 +313,10 @@ export function EstablecimientosStep({
         )}
       </div>
 
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+      <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
         <p className="text-sm text-blue-700">
-          💡 <strong>Nota:</strong> Este paso es opcional. Puede dejarlo vacío y agregar establecimientos más tarde.
+          💡 <strong>Nota:</strong> Este paso es opcional. Puede dejarlo vacío y agregar
+          establecimientos más tarde.
         </p>
       </div>
     </div>

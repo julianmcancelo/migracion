@@ -46,13 +46,21 @@ interface ModalTurnoProps {
 /**
  * Modal para crear o editar un turno
  */
-export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLicencia = '' }: ModalTurnoProps) {
+export function ModalTurno({
+  isOpen,
+  onClose,
+  onSuccess,
+  turnoEdit,
+  precargarLicencia = '',
+}: ModalTurnoProps) {
   const [tipoTransporte, setTipoTransporte] = useState<'Escolar' | 'Remis'>('Escolar')
   const [busqueda, setBusqueda] = useState('')
   const [habilitaciones, setHabilitaciones] = useState<Habilitacion[]>([])
   const [buscando, setBuscando] = useState(false)
-  const [habilitacionSeleccionada, setHabilitacionSeleccionada] = useState<Habilitacion | null>(null)
-  
+  const [habilitacionSeleccionada, setHabilitacionSeleccionada] = useState<Habilitacion | null>(
+    null
+  )
+
   const [fecha, setFecha] = useState('')
   const [hora, setHora] = useState('')
   const [observaciones, setObservaciones] = useState('')
@@ -62,7 +70,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
   useEffect(() => {
     if (turnoEdit) {
       setFecha(turnoEdit.fecha ? turnoEdit.fecha.split('T')[0] : '')
-      setHora(turnoEdit.hora ? (turnoEdit.hora.split('T')[1]?.substring(0, 5) || '') : '')
+      setHora(turnoEdit.hora ? turnoEdit.hora.split('T')[1]?.substring(0, 5) || '' : '')
       setObservaciones(turnoEdit.observaciones || '')
       setBusqueda(turnoEdit.habilitacion?.nro_licencia || '')
     } else {
@@ -94,7 +102,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
     try {
       const response = await fetch(`/api/habilitaciones?search=${busqueda}&tipo=${tipoTransporte}`)
       const data = await response.json()
-      
+
       if (data.success) {
         setHabilitaciones(data.data.slice(0, 10)) // Limitar a 10 resultados
       }
@@ -151,8 +159,8 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            observaciones
-          })
+            observaciones,
+          }),
         })
 
         const data = await response.json()
@@ -172,20 +180,20 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
             habilitacion_id: habilitacionSeleccionada!.id,
             fecha,
             hora,
-            observaciones
-          })
+            observaciones,
+          }),
         })
 
         const data = await response.json()
 
         if (data.success) {
           // Mostrar mensaje de éxito con info del email
-          const mensajeEmail = data.email_enviado 
+          const mensajeEmail = data.email_enviado
             ? '\n\n✅ Email de confirmación enviado al titular.'
             : '\n\n⚠️ El titular no tiene email registrado.'
-          
+
           alert('✅ Turno creado exitosamente!' + mensajeEmail)
-          
+
           onSuccess()
           onClose()
           limpiarFormulario()
@@ -204,34 +212,31 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+      <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-2xl">
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-gray-200">
+        <div className="flex items-center justify-between border-b border-gray-200 p-6">
           <h2 className="text-2xl font-bold text-gray-900">
             {turnoEdit ? 'Editar Turno' : 'Nuevo Turno'}
           </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
+          <button onClick={onClose} className="text-gray-400 transition-colors hover:text-gray-600">
             <X className="h-6 w-6" />
           </button>
         </div>
 
         {/* Contenido */}
-        <div className="p-6 space-y-6">
+        <div className="space-y-6 p-6">
           {/* Selector de Tipo de Transporte */}
           {!turnoEdit && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 Tipo de Transporte *
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
                   onClick={() => setTipoTransporte('Escolar')}
-                  className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                  className={`rounded-lg border-2 px-4 py-3 font-medium transition-all ${
                     tipoTransporte === 'Escolar'
                       ? 'border-blue-600 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
@@ -242,7 +247,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
                 <button
                   type="button"
                   onClick={() => setTipoTransporte('Remis')}
-                  className={`px-4 py-3 rounded-lg border-2 font-medium transition-all ${
+                  className={`rounded-lg border-2 px-4 py-3 font-medium transition-all ${
                     tipoTransporte === 'Remis'
                       ? 'border-blue-600 bg-blue-50 text-blue-700'
                       : 'border-gray-300 bg-white text-gray-700 hover:border-gray-400'
@@ -257,19 +262,19 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
           {/* Búsqueda de Habilitación */}
           {!turnoEdit && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-medium text-gray-700">
                 Buscar Habilitación {tipoTransporte} *
               </label>
               <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
                   <Search className="h-5 w-5 text-gray-400" />
                 </div>
                 <input
                   type="text"
                   value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
+                  onChange={e => setBusqueda(e.target.value)}
                   placeholder="Buscar por Nro. Licencia, DNI o Nombre..."
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full rounded-lg border border-gray-300 py-3 pl-10 pr-4 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                   disabled={!!habilitacionSeleccionada}
                 />
                 {habilitacionSeleccionada && (
@@ -278,7 +283,7 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
                       setHabilitacionSeleccionada(null)
                       setBusqueda('')
                     }}
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600"
+                    className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
                     <X className="h-5 w-5" />
                   </button>
@@ -287,31 +292,31 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
 
               {/* Resultados de búsqueda */}
               {habilitaciones.length > 0 && !habilitacionSeleccionada && (
-                <div className="mt-2 border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
-                  {habilitaciones.map((hab) => (
+                <div className="mt-2 max-h-60 overflow-y-auto rounded-lg border border-gray-200 shadow-lg">
+                  {habilitaciones.map(hab => (
                     <button
                       key={hab.id}
                       onClick={() => seleccionarHabilitacion(hab)}
-                      className="w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-0 transition-colors"
+                      className="w-full border-b border-gray-100 px-4 py-3 text-left transition-colors last:border-0 hover:bg-gray-50"
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="flex-1">
-                          <div className="flex items-center gap-2 mb-1">
-                            <p className="font-mono font-bold text-blue-600 text-base">
+                          <div className="mb-1 flex items-center gap-2">
+                            <p className="font-mono text-base font-bold text-blue-600">
                               {hab.nro_licencia}
                             </p>
-                            <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                              new Date(hab.vigencia_fin) > new Date()
-                                ? 'bg-green-100 text-green-800'
-                                : 'bg-red-100 text-red-800'
-                            }`}>
+                            <span
+                              className={`rounded px-2 py-0.5 text-xs font-semibold ${
+                                new Date(hab.vigencia_fin) > new Date()
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-red-100 text-red-800'
+                              }`}
+                            >
                               {new Date(hab.vigencia_fin) > new Date() ? 'Vigente' : 'Vencida'}
                             </span>
                           </div>
-                          <p className="text-sm font-medium text-gray-900">
-                            {hab.tipo_transporte}
-                          </p>
-                          
+                          <p className="text-sm font-medium text-gray-900">{hab.tipo_transporte}</p>
+
                           {/* Datos del Titular */}
                           {hab.titular_principal && (
                             <div className="mt-2 text-xs">
@@ -319,17 +324,18 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
                               <span className="text-gray-900">{hab.titular_principal}</span>
                             </div>
                           )}
-                          
+
                           {/* Datos del Vehículo */}
                           {hab.vehiculos && hab.vehiculos.length > 0 && (
                             <div className="mt-1 text-xs">
                               <span className="font-medium text-gray-700">Vehículo: </span>
                               <span className="text-gray-900">
-                                {hab.vehiculos[0].marca} {hab.vehiculos[0].modelo} - {hab.vehiculos[0].dominio}
+                                {hab.vehiculos[0].marca} {hab.vehiculos[0].modelo} -{' '}
+                                {hab.vehiculos[0].dominio}
                               </span>
                             </div>
                           )}
-                          
+
                           <div className="mt-2 grid grid-cols-2 gap-2 text-xs text-gray-600">
                             <div>
                               <span className="font-medium">Vigencia desde:</span>
@@ -358,93 +364,115 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
                 </p>
               )}
 
-              {!buscando && busqueda.length >= 3 && habilitaciones.length === 0 && !habilitacionSeleccionada && (
-                <div className="mt-2 p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
-                  <p className="text-sm text-yellow-800">
-                    No se encontraron habilitaciones de tipo <strong>{tipoTransporte}</strong> con el término "{busqueda}"
-                  </p>
-                  <p className="text-xs text-yellow-700 mt-1">
-                    Intenta cambiar el tipo de transporte o buscar con otro término
-                  </p>
-                </div>
-              )}
+              {!buscando &&
+                busqueda.length >= 3 &&
+                habilitaciones.length === 0 &&
+                !habilitacionSeleccionada && (
+                  <div className="mt-2 rounded-lg border border-yellow-200 bg-yellow-50 p-4">
+                    <p className="text-sm text-yellow-800">
+                      No se encontraron habilitaciones de tipo <strong>{tipoTransporte}</strong> con
+                      el término "{busqueda}"
+                    </p>
+                    <p className="mt-1 text-xs text-yellow-700">
+                      Intenta cambiar el tipo de transporte o buscar con otro término
+                    </p>
+                  </div>
+                )}
 
               {habilitacionSeleccionada && (
-                <div className="mt-3 p-4 bg-gradient-to-r from-green-50 to-blue-50 border-2 border-green-300 rounded-lg shadow-sm">
+                <div className="mt-3 rounded-lg border-2 border-green-300 bg-gradient-to-r from-green-50 to-blue-50 p-4 shadow-sm">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-pulse"></div>
+                      <div className="mb-2 flex items-center gap-2">
+                        <div className="h-2.5 w-2.5 animate-pulse rounded-full bg-green-500"></div>
                         <span className="text-sm font-bold text-green-900">
                           Habilitación Seleccionada
                         </span>
                       </div>
-                      
+
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-gray-600">Licencia:</span>
                           <span className="font-mono font-bold text-blue-600">
                             {habilitacionSeleccionada.nro_licencia}
                           </span>
-                          <span className={`px-2 py-0.5 rounded text-xs font-semibold ${
-                            new Date(habilitacionSeleccionada.vigencia_fin) > new Date()
-                              ? 'bg-green-100 text-green-800'
-                              : 'bg-red-100 text-red-800'
-                          }`}>
-                            {new Date(habilitacionSeleccionada.vigencia_fin) > new Date() ? 'Vigente' : 'Vencida'}
+                          <span
+                            className={`rounded px-2 py-0.5 text-xs font-semibold ${
+                              new Date(habilitacionSeleccionada.vigencia_fin) > new Date()
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                            }`}
+                          >
+                            {new Date(habilitacionSeleccionada.vigencia_fin) > new Date()
+                              ? 'Vigente'
+                              : 'Vencida'}
                           </span>
                         </div>
-                        
+
                         <div className="flex items-center gap-2">
                           <span className="text-xs font-medium text-gray-600">Tipo:</span>
                           <span className="text-sm font-medium text-gray-900">
                             {habilitacionSeleccionada.tipo_transporte}
                           </span>
                         </div>
-                        
+
                         {/* Datos del Titular */}
                         {habilitacionSeleccionada.titular_principal && (
-                          <div className="flex items-center gap-2 mt-2">
+                          <div className="mt-2 flex items-center gap-2">
                             <span className="text-xs font-medium text-gray-600">Titular:</span>
                             <span className="text-sm font-semibold text-gray-900">
                               {habilitacionSeleccionada.titular_principal}
                             </span>
                           </div>
                         )}
-                        
+
                         {/* Datos del Vehículo */}
-                        {habilitacionSeleccionada.vehiculos && habilitacionSeleccionada.vehiculos.length > 0 && (
-                          <div className="mt-2">
-                            <span className="text-xs font-medium text-gray-600">Vehículo:</span>
+                        {habilitacionSeleccionada.vehiculos &&
+                          habilitacionSeleccionada.vehiculos.length > 0 && (
+                            <div className="mt-2">
+                              <span className="text-xs font-medium text-gray-600">Vehículo:</span>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {habilitacionSeleccionada.vehiculos[0].marca}{' '}
+                                {habilitacionSeleccionada.vehiculos[0].modelo}
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                Dominio:{' '}
+                                <span className="font-semibold">
+                                  {habilitacionSeleccionada.vehiculos[0].dominio}
+                                </span>{' '}
+                                | Año:{' '}
+                                <span className="font-semibold">
+                                  {habilitacionSeleccionada.vehiculos[0].ano}
+                                </span>
+                              </p>
+                            </div>
+                          )}
+
+                        <div className="mt-3 grid grid-cols-2 gap-3 border-t border-green-200 pt-3">
+                          <div>
+                            <span className="text-xs font-medium text-gray-600">
+                              Vigencia desde
+                            </span>
                             <p className="text-sm font-semibold text-gray-900">
-                              {habilitacionSeleccionada.vehiculos[0].marca} {habilitacionSeleccionada.vehiculos[0].modelo}
-                            </p>
-                            <p className="text-xs text-gray-600">
-                              Dominio: <span className="font-semibold">{habilitacionSeleccionada.vehiculos[0].dominio}</span> | 
-                              Año: <span className="font-semibold">{habilitacionSeleccionada.vehiculos[0].ano}</span>
+                              {new Date(
+                                habilitacionSeleccionada.vigencia_inicio
+                              ).toLocaleDateString('es-AR')}
                             </p>
                           </div>
-                        )}
-                        
-                        <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-green-200">
                           <div>
-                            <span className="text-xs font-medium text-gray-600">Vigencia desde</span>
+                            <span className="text-xs font-medium text-gray-600">
+                              Vigencia hasta
+                            </span>
                             <p className="text-sm font-semibold text-gray-900">
-                              {new Date(habilitacionSeleccionada.vigencia_inicio).toLocaleDateString('es-AR')}
-                            </p>
-                          </div>
-                          <div>
-                            <span className="text-xs font-medium text-gray-600">Vigencia hasta</span>
-                            <p className="text-sm font-semibold text-gray-900">
-                              {new Date(habilitacionSeleccionada.vigencia_fin).toLocaleDateString('es-AR')}
+                              {new Date(habilitacionSeleccionada.vigencia_fin).toLocaleDateString(
+                                'es-AR'
+                              )}
                             </p>
                           </div>
                         </div>
                       </div>
                     </div>
-                    <span className="text-3xl">
-                      {tipoTransporte === 'Escolar' ? '🚌' : '🚕'}
-                    </span>
+                    <span className="text-3xl">{tipoTransporte === 'Escolar' ? '🚌' : '🚕'}</span>
                   </div>
                 </div>
               )}
@@ -452,76 +480,71 @@ export function ModalTurno({ isOpen, onClose, onSuccess, turnoEdit, precargarLic
           )}
 
           {turnoEdit && (
-            <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
               <p className="text-sm font-medium text-blue-900">
                 Licencia: {turnoEdit.habilitacion?.nro_licencia}
               </p>
-              <p className="text-xs text-blue-700 mt-1">
+              <p className="mt-1 text-xs text-blue-700">
                 No se puede cambiar la habilitación en un turno existente
               </p>
             </div>
           )}
 
           {/* Fecha y Hora */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Calendar className="h-4 w-4 inline mr-1" />
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                <Calendar className="mr-1 inline h-4 w-4" />
                 Fecha del Turno *
               </label>
               <input
                 type="date"
                 value={fecha}
-                onChange={(e) => setFecha(e.target.value)}
+                onChange={e => setFecha(e.target.value)}
                 min={new Date().toISOString().split('T')[0]}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 disabled={!!turnoEdit}
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <Clock className="h-4 w-4 inline mr-1" />
+              <label className="mb-2 block text-sm font-medium text-gray-700">
+                <Clock className="mr-1 inline h-4 w-4" />
                 Hora del Turno *
               </label>
               <input
                 type="time"
                 value={hora}
-                onChange={(e) => setHora(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => setHora(e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 disabled={!!turnoEdit}
               />
             </div>
           </div>
 
           {turnoEdit && (
-            <div className="text-sm text-gray-600 bg-gray-50 p-3 rounded-lg">
-              ℹ️ Solo se pueden editar las observaciones. Para cambiar fecha/hora, cancele este turno y cree uno nuevo.
+            <div className="rounded-lg bg-gray-50 p-3 text-sm text-gray-600">
+              ℹ️ Solo se pueden editar las observaciones. Para cambiar fecha/hora, cancele este
+              turno y cree uno nuevo.
             </div>
           )}
 
           {/* Observaciones */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Observaciones
-            </label>
+            <label className="mb-2 block text-sm font-medium text-gray-700">Observaciones</label>
             <textarea
               value={observaciones}
-              onChange={(e) => setObservaciones(e.target.value)}
+              onChange={e => setObservaciones(e.target.value)}
               placeholder="Detalles adicionales del turno..."
               rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full resize-none rounded-lg border border-gray-300 px-4 py-3 focus:border-transparent focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-end gap-3 p-6 border-t border-gray-200 bg-gray-50">
-          <Button
-            variant="outline"
-            onClick={onClose}
-            disabled={guardando}
-          >
+        <div className="flex items-center justify-end gap-3 border-t border-gray-200 bg-gray-50 p-6">
+          <Button variant="outline" onClick={onClose} disabled={guardando}>
             Cancelar
           </Button>
           <Button

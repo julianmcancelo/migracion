@@ -24,10 +24,10 @@ export default function GenerarResolucionPage() {
   const generarDocumento = async () => {
     setLoading(true)
     setError(null)
-    
+
     try {
       const response = await fetch(`/api/habilitaciones/${habilitacionId}/generar-resolucion`)
-      
+
       if (response.ok) {
         // Descargar el archivo
         const blob = await response.blob()
@@ -41,7 +41,7 @@ export default function GenerarResolucionPage() {
         document.body.removeChild(a)
       } else {
         const data = await response.json()
-        
+
         if (data.camposFaltantes) {
           // Hay campos faltantes, mostrar formulario
           setDatosFaltantes(data)
@@ -69,13 +69,14 @@ export default function GenerarResolucionPage() {
         if (formData.titular_dni) personaData.dni = formData.titular_dni
         if (formData.domicilio_calle) personaData.domicilio_calle = formData.domicilio_calle
         if (formData.domicilio_nro) personaData.domicilio_nro = formData.domicilio_nro
-        if (formData.domicilio_localidad) personaData.domicilio_localidad = formData.domicilio_localidad
+        if (formData.domicilio_localidad)
+          personaData.domicilio_localidad = formData.domicilio_localidad
 
         if (Object.keys(personaData).length > 0) {
           await fetch(`/api/personas/${formData.persona_id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(personaData)
+            body: JSON.stringify(personaData),
           })
         }
       }
@@ -92,7 +93,7 @@ export default function GenerarResolucionPage() {
           await fetch(`/api/vehiculos/${formData.vehiculo_id}`, {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(vehiculoData)
+            body: JSON.stringify(vehiculoData),
           })
         }
       }
@@ -106,14 +107,13 @@ export default function GenerarResolucionPage() {
         await fetch(`/api/habilitaciones/${habilitacionId}`, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(habData)
+          body: JSON.stringify(habData),
         })
       }
 
       // Reintentar generación
       setDatosFaltantes(null)
       await generarDocumento()
-
     } catch (err) {
       setError('Error al guardar los datos')
     } finally {
@@ -127,9 +127,9 @@ export default function GenerarResolucionPage() {
 
   if (loading && !datosFaltantes) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="flex flex-col items-center justify-center min-h-[400px]">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mb-4" />
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex min-h-[400px] flex-col items-center justify-center">
+          <Loader2 className="mb-4 h-12 w-12 animate-spin text-blue-600" />
           <p className="text-lg text-gray-600">Generando documento...</p>
         </div>
       </div>
@@ -138,16 +138,16 @@ export default function GenerarResolucionPage() {
 
   if (error && !datosFaltantes) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="bg-red-50 border border-red-200 rounded-xl p-8 max-w-2xl mx-auto">
-          <div className="flex items-center gap-3 mb-4">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto max-w-2xl rounded-xl border border-red-200 bg-red-50 p-8">
+          <div className="mb-4 flex items-center gap-3">
             <AlertTriangle className="h-8 w-8 text-red-600" />
             <h2 className="text-2xl font-bold text-red-900">Error</h2>
           </div>
-          <p className="text-red-700 mb-6">{error}</p>
+          <p className="mb-6 text-red-700">{error}</p>
           <div className="flex gap-3">
             <Button onClick={() => router.back()} variant="outline">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Volver
             </Button>
             <Button onClick={generarDocumento} className="bg-blue-600 hover:bg-blue-700">
@@ -161,60 +161,59 @@ export default function GenerarResolucionPage() {
 
   if (datosFaltantes) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 max-w-3xl mx-auto p-8">
-          <div className="text-center mb-8">
-            <div className="mx-auto bg-amber-100 rounded-full h-16 w-16 flex items-center justify-center mb-4">
+      <div className="container mx-auto px-4 py-8">
+        <div className="mx-auto max-w-3xl rounded-2xl border border-gray-200 bg-white p-8 shadow-lg">
+          <div className="mb-8 text-center">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-amber-100">
               <AlertTriangle className="h-8 w-8 text-amber-600" />
             </div>
             <h1 className="text-3xl font-bold text-gray-900">Faltan Datos Requeridos</h1>
-            <p className="text-gray-600 mt-2">
+            <p className="mt-2 text-gray-600">
               Complete la siguiente información para generar la resolución
             </p>
           </div>
 
           <form onSubmit={guardarDatos} className="space-y-6">
-            {datosFaltantes.camposFaltantes.map((campo) => {
-              const fieldName = campo.toLowerCase().replace(/\s+/g, '_').replace(/ú/g, 'u').replace(/é/g, 'e').replace(/í/g, 'i')
-              
+            {datosFaltantes.camposFaltantes.map(campo => {
+              const fieldName = campo
+                .toLowerCase()
+                .replace(/\s+/g, '_')
+                .replace(/ú/g, 'u')
+                .replace(/é/g, 'e')
+                .replace(/í/g, 'i')
+
               return (
                 <div key={campo}>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {campo}
-                  </label>
+                  <label className="mb-2 block text-sm font-medium text-gray-700">{campo}</label>
                   <input
                     type={campo.includes('Año') ? 'number' : 'text'}
                     value={formData[fieldName] || ''}
-                    onChange={(e) => setFormData({ ...formData, [fieldName]: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    onChange={e => setFormData({ ...formData, [fieldName]: e.target.value })}
+                    className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                     required
                   />
                 </div>
               )
             })}
 
-            <div className="border-t pt-6 flex gap-3 justify-end">
-              <Button 
-                type="button" 
-                variant="outline" 
+            <div className="flex justify-end gap-3 border-t pt-6">
+              <Button
+                type="button"
+                variant="outline"
                 onClick={() => router.back()}
                 disabled={guardando}
               >
                 Cancelar
               </Button>
-              <Button 
-                type="submit" 
-                className="bg-blue-600 hover:bg-blue-700"
-                disabled={guardando}
-              >
+              <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={guardando}>
                 {guardando ? (
                   <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Guardando...
                   </>
                 ) : (
                   <>
-                    <Download className="h-4 w-4 mr-2" />
+                    <Download className="mr-2 h-4 w-4" />
                     Guardar y Generar
                   </>
                 )}

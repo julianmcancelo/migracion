@@ -1,5 +1,5 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
+import { clsx, type ClassValue } from 'clsx'
+import { twMerge } from 'tailwind-merge'
 
 /**
  * Combina clases de Tailwind CSS de forma inteligente
@@ -38,7 +38,7 @@ export function formatearMoneda(monto: number): string {
 export function obtenerIniciales(nombre: string): string {
   return nombre
     .split(' ')
-    .map((n) => n[0])
+    .map(n => n[0])
     .join('')
     .toUpperCase()
     .slice(0, 2)
@@ -55,5 +55,5 @@ export function sanitizar(str: string): string {
     '"': '&quot;',
     "'": '&#039;',
   }
-  return str.replace(/[&<>"']/g, (m) => map[m])
+  return str.replace(/[&<>"']/g, m => map[m])
 }

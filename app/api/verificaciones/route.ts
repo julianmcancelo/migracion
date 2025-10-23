@@ -11,13 +11,13 @@ export async function GET() {
   try {
     const verificaciones = await prisma.verificaciones_historial.findMany({
       orderBy: {
-        fecha: 'desc'
-      }
+        fecha: 'desc',
+      },
     })
 
     return NextResponse.json({
       success: true,
-      data: verificaciones
+      data: verificaciones,
     })
   } catch (error) {
     console.error('Error al obtener verificaciones:', error)

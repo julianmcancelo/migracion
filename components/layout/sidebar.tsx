@@ -3,7 +3,16 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { cn } from '@/lib/utils'
-import { LayoutDashboard, ClipboardList, CheckCircle, Calendar, ChevronLeft, X, FileCheck, Shield } from 'lucide-react'
+import {
+  LayoutDashboard,
+  ClipboardList,
+  CheckCircle,
+  Calendar,
+  ChevronLeft,
+  X,
+  FileCheck,
+  Shield,
+} from 'lucide-react'
 
 interface NavItem {
   name: string
@@ -75,46 +84,45 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       <div className="flex items-center justify-between border-b border-gray-800 px-4 py-4">
         {!collapsed && (
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-sky-500 to-blue-600 flex items-center justify-center">
-              <span className="text-white font-bold text-sm">ML</span>
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-blue-600">
+              <span className="text-sm font-bold text-white">ML</span>
             </div>
-            <span className="text-white font-semibold text-sm">Municipio Lanús</span>
+            <span className="text-sm font-semibold text-white">Municipio Lanús</span>
           </div>
         )}
-        
+
         {/* Botón para colapsar (desktop) o cerrar (móvil) */}
         <button
           onClick={mobileOpen ? onMobileClose : onToggle}
           className={cn(
-            "rounded-lg p-1.5 text-gray-400 hover:bg-gray-800 hover:text-white transition-colors",
-            collapsed && "mx-auto"
+            'rounded-lg p-1.5 text-gray-400 transition-colors hover:bg-gray-800 hover:text-white',
+            collapsed && 'mx-auto'
           )}
-          aria-label={mobileOpen ? "Cerrar menú" : "Colapsar sidebar"}
+          aria-label={mobileOpen ? 'Cerrar menú' : 'Colapsar sidebar'}
         >
           {mobileOpen ? (
             <X className="h-5 w-5" />
           ) : (
-            <ChevronLeft className={cn(
-              "h-5 w-5 transition-transform",
-              collapsed && "rotate-180"
-            )} />
+            <ChevronLeft
+              className={cn('h-5 w-5 transition-transform', collapsed && 'rotate-180')}
+            />
           )}
         </button>
       </div>
 
       {/* Navegación */}
       <nav className="flex-1 space-y-1 px-3 py-4">
-        {navigation.map((item) => {
+        {navigation.map(item => {
           const isActive = pathname === item.href || pathname?.startsWith(item.href + '/')
           const Icon = item.icon
-          
+
           return (
             <Link
               key={item.name}
               href={item.href}
               onClick={handleLinkClick}
               className={cn(
-                'group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all relative',
+                'group relative flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all',
                 isActive
                   ? 'bg-gray-800 text-white shadow-md'
                   : 'text-gray-400 hover:bg-gray-800 hover:text-white',
@@ -122,11 +130,13 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
               )}
               title={collapsed ? item.name : undefined}
             >
-              <Icon className={cn(
-                'h-5 w-5 flex-shrink-0 transition-colors',
-                isActive ? 'text-sky-400' : 'text-gray-500 group-hover:text-sky-400'
-              )} />
-              
+              <Icon
+                className={cn(
+                  'h-5 w-5 flex-shrink-0 transition-colors',
+                  isActive ? 'text-sky-400' : 'text-gray-500 group-hover:text-sky-400'
+                )}
+              />
+
               {!collapsed && (
                 <>
                   <span className="flex-1">{item.name}</span>
@@ -137,10 +147,10 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
                   )}
                 </>
               )}
-              
+
               {/* Badge en modo colapsado */}
               {collapsed && item.badge && (
-                <span className="absolute -top-1 -right-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                <span className="absolute -right-1 -top-1 inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
                   {item.badge}
                 </span>
               )}
@@ -152,8 +162,8 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       {/* Footer del sidebar - solo visible cuando está expandido */}
       {!collapsed && (
         <div className="border-t border-gray-800 p-4">
-          <div className="rounded-lg bg-gradient-to-br from-sky-500/10 to-blue-600/10 p-3 border border-sky-500/20">
-            <p className="text-xs font-semibold text-gray-300 mb-1">Sistema de Gestión</p>
+          <div className="rounded-lg border border-sky-500/20 bg-gradient-to-br from-sky-500/10 to-blue-600/10 p-3">
+            <p className="mb-1 text-xs font-semibold text-gray-300">Sistema de Gestión</p>
             <p className="text-[10px] text-gray-500">Versión 0.3.0</p>
           </div>
         </div>
@@ -165,7 +175,7 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
     <>
       {/* Overlay para móvil */}
       {mobileOpen && (
-        <div 
+        <div
           className="fixed inset-0 z-40 bg-gray-900/50 backdrop-blur-sm lg:hidden"
           onClick={onMobileClose}
           aria-hidden="true"
@@ -175,14 +185,14 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       {/* Sidebar */}
       <div
         className={cn(
-          "fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-900 transition-all duration-300 ease-in-out",
+          'fixed inset-y-0 left-0 z-50 flex flex-col bg-gray-900 transition-all duration-300 ease-in-out',
           // Móvil: overlay deslizable
-          "lg:relative lg:translate-x-0",
-          mobileOpen ? "translate-x-0" : "-translate-x-full",
+          'lg:relative lg:translate-x-0',
+          mobileOpen ? 'translate-x-0' : '-translate-x-full',
           // Desktop: colapsable
-          collapsed ? "lg:w-16" : "lg:w-64",
+          collapsed ? 'lg:w-16' : 'lg:w-64',
           // Ancho fijo en móvil
-          "w-64"
+          'w-64'
         )}
       >
         {sidebarContent}

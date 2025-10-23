@@ -7,18 +7,12 @@ import nodemailer from 'nodemailer'
  * POST /api/inspecciones/[id]/enviar-email
  * Envía el PDF de inspección por email al contribuyente
  */
-export async function POST(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = params
 
     if (!id || isNaN(Number(id))) {
-      return NextResponse.json(
-        { success: false, error: 'ID inválido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'ID inválido' }, { status: 400 })
     }
 
     // Obtener inspección
@@ -26,13 +20,13 @@ export async function POST(
       where: { id: Number(id) },
       include: {
         inspeccion_detalles: {
-          orderBy: { id: 'asc' }
+          orderBy: { id: 'asc' },
         },
         inspeccion_items: true,
         inspeccion_fotos: {
-          orderBy: { id: 'asc' }
-        }
-      }
+          orderBy: { id: 'asc' },
+        },
+      },
     })
 
     if (!inspeccion) {
@@ -51,24 +45,24 @@ export async function POST(
 
     // Obtener datos de habilitación
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
-      where: { id: inspeccion.habilitacion_id }
+      where: { id: inspeccion.habilitacion_id },
     })
 
     // Obtener titular
     let nombreTitular = 'Contribuyente'
     let dniTitular = 'N/A'
-    
+
     if (habilitacion) {
       const habPersona = await prisma.habilitaciones_personas.findFirst({
         where: {
           habilitacion_id: habilitacion.id,
-          rol: 'TITULAR'
-        }
+          rol: 'TITULAR',
+        },
       })
 
       if (habPersona && habPersona.persona_id) {
         const persona = await prisma.personas.findUnique({
-          where: { id: habPersona.persona_id }
+          where: { id: habPersona.persona_id },
         })
         if (persona) {
           nombreTitular = persona.nombre || 'Contribuyente'
@@ -78,7 +72,7 @@ export async function POST(
 
       // Obtener vehículo
       const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
-        where: { habilitacion_id: habilitacion.id }
+        where: { habilitacion_id: habilitacion.id },
       })
 
       let dominio = 'N/A'
@@ -89,7 +83,7 @@ export async function POST(
 
       if (habVehiculo && habVehiculo.vehiculo_id) {
         const vehiculo = await prisma.vehiculos.findUnique({
-          where: { id: habVehiculo.vehiculo_id }
+          where: { id: habVehiculo.vehiculo_id },
         })
         if (vehiculo) {
           dominio = vehiculo.dominio || 'N/A'
@@ -110,42 +104,46 @@ export async function POST(
           tipo_transporte: inspeccion.tipo_transporte,
           resultado: inspeccion.resultado,
           firma_inspector: inspeccion.firma_inspector,
-          firma_contribuyente: inspeccion.firma_contribuyente || null
+          firma_contribuyente: inspeccion.firma_contribuyente || null,
         },
         titular: {
           nombre: nombreTitular,
-          dni: dniTitular
+          dni: dniTitular,
         },
         vehiculo: {
           dominio,
           marca,
           modelo,
           ano,
-          chasis
+          chasis,
         },
-        items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0 
-          ? inspeccion.inspeccion_detalles 
+        items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0
+          ? inspeccion.inspeccion_detalles
           : inspeccion.inspeccion_items
         ).map((item: any) => ({
           nombre: item.nombre_item || item.item_id_original,
           categoria: item.item_id || 'GENERAL',
           estado: item.estado,
           observacion: item.observacion || '',
-          foto_path: item.foto_path || undefined
+          foto_path: item.foto_path || undefined,
         })),
         fotos: inspeccion.inspeccion_fotos.map(foto => ({
           tipo: foto.tipo_foto || 'Adicional',
-          path: foto.foto_path || ''
-        }))
+          path: foto.foto_path || '',
+        })),
       }
 
       // Generar PDF
       const pdfBuffer = await generarPDFInspeccion(datosCompletos)
 
       // Enviar email
-      const resultadoTexto = inspeccion.resultado === 'APROBADO' ? 'APROBADA' : 
-                            inspeccion.resultado === 'RECHAZADO' ? 'RECHAZADA' : 'CONDICIONAL'
-      
+      const resultadoTexto =
+        inspeccion.resultado === 'APROBADO'
+          ? 'APROBADA'
+          : inspeccion.resultado === 'RECHAZADO'
+            ? 'RECHAZADA'
+            : 'CONDICIONAL'
+
       const emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -195,10 +193,10 @@ export async function POST(
                 </div>
                 <div class="info-row">
                   <span class="label">Fecha:</span>
-                  <span>${new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR', { 
-                    year: 'numeric', 
-                    month: 'long', 
-                    day: 'numeric' 
+                  <span>${new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR', {
+                    year: 'numeric',
+                    month: 'long',
+                    day: 'numeric',
                   })}</span>
                 </div>
                 <div class="info-row">
@@ -209,11 +207,12 @@ export async function POST(
               
               <p>En el archivo adjunto encontrará el informe completo con todos los detalles de la inspección.</p>
               
-              ${resultadoTexto === 'RECHAZADA' ? 
-                '<p style="color: #991b1b;"><strong>Nota:</strong> Su vehículo no ha aprobado la inspección. Por favor, realice las correcciones necesarias y solicite una nueva inspección.</p>' : 
-                resultadoTexto === 'CONDICIONAL' ? 
-                '<p style="color: #92400e;"><strong>Nota:</strong> Su vehículo ha obtenido una aprobación condicional. Revise las observaciones en el informe adjunto.</p>' :
-                '<p style="color: #065f46;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>'
+              ${
+                resultadoTexto === 'RECHAZADA'
+                  ? '<p style="color: #991b1b;"><strong>Nota:</strong> Su vehículo no ha aprobado la inspección. Por favor, realice las correcciones necesarias y solicite una nueva inspección.</p>'
+                  : resultadoTexto === 'CONDICIONAL'
+                    ? '<p style="color: #92400e;"><strong>Nota:</strong> Su vehículo ha obtenido una aprobación condicional. Revise las observaciones en el informe adjunto.</p>'
+                    : '<p style="color: #065f46;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>'
               }
             </div>
             <div class="footer">
@@ -231,8 +230,8 @@ export async function POST(
         service: 'gmail',
         auth: {
           user: process.env.GMAIL_USER,
-          pass: process.env.GMAIL_APP_PASSWORD
-        }
+          pass: process.env.GMAIL_APP_PASSWORD,
+        },
       })
 
       // Enviar email con PDF adjunto
@@ -242,15 +241,17 @@ export async function POST(
         replyTo: 'transportepublicolanus@gmail.com',
         subject: `Informe de Inspección Vehicular - ${dominio} - ${resultadoTexto}`,
         html: emailHtml,
-        attachments: [{
-          filename: `inspeccion_${dominio}_${inspeccion.id}.pdf`,
-          content: pdfBuffer
-        }]
+        attachments: [
+          {
+            filename: `inspeccion_${dominio}_${inspeccion.id}.pdf`,
+            content: pdfBuffer,
+          },
+        ],
       })
 
       return NextResponse.json({
         success: true,
-        message: 'Email enviado correctamente'
+        message: 'Email enviado correctamente',
       })
     }
 
@@ -258,12 +259,8 @@ export async function POST(
       { success: false, error: 'No se pudo obtener información de la habilitación' },
       { status: 404 }
     )
-
   } catch (error) {
     console.error('Error al enviar email:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al enviar email' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al enviar email' }, { status: 500 })
   }
 }

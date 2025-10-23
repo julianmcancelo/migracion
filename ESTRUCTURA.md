@@ -49,6 +49,7 @@ migracion/
 ## 🎨 Componentes Creados
 
 ### **Header** (`components/layout/header.tsx`)
+
 - Logo del municipio
 - Búsqueda global
 - Notificaciones (con badge)
@@ -56,6 +57,7 @@ migracion/
 - Botón de logout funcional
 
 ### **Sidebar** (`components/layout/sidebar.tsx`)
+
 - Navegación principal (6 secciones)
 - Indicador visual de ruta activa
 - Badges para notificaciones pendientes
@@ -63,6 +65,7 @@ migracion/
 - Diseño oscuro (gray-900)
 
 ### **Dashboard** (`app/(panel)/dashboard/page.tsx`)
+
 - 4 KPIs principales:
   - Habilitaciones activas
   - En trámite
@@ -76,11 +79,13 @@ migracion/
 ## 🔒 Sistema de Autenticación
 
 ### **Rutas Protegidas**
+
 - Todo dentro de `(panel)/` requiere login
 - Redirect automático a `/login` si no autenticado
 - Redirect a `/dashboard` si ya autenticado
 
 ### **Flow de Autenticación**
+
 1. Usuario visita `/` → Redirect a `/login` o `/dashboard`
 2. Usuario hace login → Redirect a `/dashboard`
 3. Usuario accede a ruta protegida sin login → Redirect a `/login?error=acceso_denegado`
@@ -115,8 +120,8 @@ migracion/
 
 ```json
 {
-  "clsx": "^2.1.1",              // Combinar clases condicionales
-  "tailwind-merge": "^2.5.4"      // Merge inteligente de Tailwind
+  "clsx": "^2.1.1", // Combinar clases condicionales
+  "tailwind-merge": "^2.5.4" // Merge inteligente de Tailwind
 }
 ```
 
@@ -125,17 +130,20 @@ migracion/
 ## 🚀 Próximos Pasos
 
 ### **Paso 2: Instalar Dependencias**
+
 ```bash
 npm install
 ```
 
 ### **Paso 3: Instalar shadcn/ui**
+
 ```bash
 npx shadcn@latest init
 npx shadcn@latest add button card table dialog tabs badge
 ```
 
 ### **Paso 4: Implementar Habilitaciones**
+
 - Lista con tabs (Escolar/Remis)
 - Tabla expandible
 - Búsqueda y filtros
@@ -143,6 +151,7 @@ npx shadcn@latest add button card table dialog tabs badge
 - CRUD completo
 
 ### **Paso 5: Dashboard Dinámico**
+
 - Conectar KPIs a base de datos real
 - Implementar gráfico con Recharts
 - Obleas pendientes (lista)
@@ -173,11 +182,13 @@ git push
 ## 🎯 URLs del Sistema
 
 ### **Desarrollo**
+
 - http://localhost:3000 → Redirect automático
 - http://localhost:3000/login → Login
 - http://localhost:3000/dashboard → Dashboard
 
 ### **Producción**
+
 - https://migracionnext.vercel.app
 
 ---

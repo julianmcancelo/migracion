@@ -13,10 +13,7 @@ export async function PUT(request: NextRequest) {
     const { accion, obleas_ids, datos_actualizacion } = body
 
     if (!accion || !obleas_ids || !Array.isArray(obleas_ids)) {
-      return NextResponse.json(
-        { success: false, error: 'Parámetros inválidos' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'Parámetros inválidos' }, { status: 400 })
     }
 
     let resultado: any = {}
@@ -26,12 +23,12 @@ export async function PUT(request: NextRequest) {
         resultado = await prisma.oblea_historial.updateMany({
           where: {
             id: {
-              in: obleas_ids
-            }
+              in: obleas_ids,
+            },
           },
           data: {
-            notificado: 'si'
-          }
+            notificado: 'si',
+          },
         })
         break
 
@@ -39,12 +36,12 @@ export async function PUT(request: NextRequest) {
         resultado = await prisma.oblea_historial.updateMany({
           where: {
             id: {
-              in: obleas_ids
-            }
+              in: obleas_ids,
+            },
           },
           data: {
-            notificado: 'no'
-          }
+            notificado: 'no',
+          },
         })
         break
 
@@ -52,9 +49,9 @@ export async function PUT(request: NextRequest) {
         resultado = await prisma.oblea_historial.deleteMany({
           where: {
             id: {
-              in: obleas_ids
-            }
-          }
+              in: obleas_ids,
+            },
+          },
         })
         break
 
@@ -68,36 +65,32 @@ export async function PUT(request: NextRequest) {
         resultado = await prisma.oblea_historial.updateMany({
           where: {
             id: {
-              in: obleas_ids
-            }
+              in: obleas_ids,
+            },
           },
           data: {
-            fecha_solicitud: new Date(datos_actualizacion.nueva_fecha)
-          }
+            fecha_solicitud: new Date(datos_actualizacion.nueva_fecha),
+          },
         })
         break
 
       default:
-        return NextResponse.json(
-          { success: false, error: 'Acción no válida' },
-          { status: 400 }
-        )
+        return NextResponse.json({ success: false, error: 'Acción no válida' }, { status: 400 })
     }
 
     return NextResponse.json({
       success: true,
       data: resultado,
       message: `Acción "${accion}" aplicada a ${resultado.count} obleas`,
-      obleas_afectadas: resultado.count
+      obleas_afectadas: resultado.count,
     })
-
   } catch (error: any) {
     console.error('Error en actualización masiva:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error en actualización masiva',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )
@@ -124,10 +117,10 @@ export async function POST(request: NextRequest) {
     const habilitaciones = await prisma.habilitaciones_generales.findMany({
       where: {
         id: {
-          in: habilitaciones_ids
+          in: habilitaciones_ids,
         },
-        estado: 'HABILITADO'
-      }
+        estado: 'HABILITADO',
+      },
     })
 
     if (habilitaciones.length !== habilitaciones_ids.length) {
@@ -145,8 +138,8 @@ export async function POST(request: NextRequest) {
             habilitacion_id,
             fecha_solicitud: new Date(),
             hora_solicitud: new Date(),
-            notificado: 'no'
-          }
+            notificado: 'no',
+          },
         })
       })
     )
@@ -155,16 +148,15 @@ export async function POST(request: NextRequest) {
       success: true,
       data: obleasCreadas,
       message: `${obleasCreadas.length} obleas creadas exitosamente`,
-      obleas_creadas: obleasCreadas.length
+      obleas_creadas: obleasCreadas.length,
     })
-
   } catch (error: any) {
     console.error('Error en creación masiva:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error en creación masiva',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

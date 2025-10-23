@@ -2,9 +2,20 @@
 
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
-import { 
-  ArrowLeft, Edit, FileText, Download, AlertTriangle, 
-  Info, Users, Car, Calendar, CheckCircle, ClipboardCheck, Trash2, Shield
+import {
+  ArrowLeft,
+  Edit,
+  FileText,
+  Download,
+  AlertTriangle,
+  Info,
+  Users,
+  Car,
+  Calendar,
+  CheckCircle,
+  ClipboardCheck,
+  Trash2,
+  Shield,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -38,10 +49,10 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
     try {
       const response = await fetch(`/api/habilitaciones/${id}`)
       if (!response.ok) throw new Error('Error al cargar habilitación')
-      
+
       const data = await response.json()
       setHabilitacion(data.data)
-      
+
       // Calcular alertas de vencimiento
       calcularAlertas(data.data)
     } catch (err: any) {
@@ -86,7 +97,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
     setEliminandoInspeccion(inspeccionId)
     try {
       const res = await fetch(`/api/inspecciones/${inspeccionId}/eliminar`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
 
       const data = await res.json()
@@ -114,25 +125,27 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
 
     const checkVencimiento = (fechaStr: string | null, nombre: string) => {
       if (!fechaStr) return
-      
+
       const fechaVenc = new Date(fechaStr)
-      
+
       if (fechaVenc < hoy) {
         alertasTemp.push({
           tipo: 'vencido',
-          mensaje: `${nombre} VENCIDA el día ${fechaVenc.toLocaleDateString('es-AR')}`
+          mensaje: `${nombre} VENCIDA el día ${fechaVenc.toLocaleDateString('es-AR')}`,
         })
       } else if (fechaVenc <= limite30Dias) {
-        const diasRestantes = Math.ceil((fechaVenc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24))
+        const diasRestantes = Math.ceil(
+          (fechaVenc.getTime() - hoy.getTime()) / (1000 * 60 * 60 * 24)
+        )
         alertasTemp.push({
           tipo: 'pronto',
-          mensaje: `${nombre} PRONTA A VENCER. Vence el ${fechaVenc.toLocaleDateString('es-AR')} (en ${diasRestantes} días)`
+          mensaje: `${nombre} PRONTA A VENCER. Vence el ${fechaVenc.toLocaleDateString('es-AR')} (en ${diasRestantes} días)`,
         })
       }
     }
 
     checkVencimiento(hab.vigencia_fin, 'La Habilitación')
-    
+
     if (hab.vehiculos?.[0]) {
       checkVencimiento(hab.vehiculos[0].Vencimiento_VTV, 'La VTV')
       checkVencimiento(hab.vehiculos[0].Vencimiento_Poliza, 'La Póliza de Seguro')
@@ -143,20 +156,20 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
 
   const getEstadoBadge = (estado: string) => {
     const estados: Record<string, { class: string; label: string }> = {
-      'HABILITADO': { class: 'bg-green-100 text-green-800', label: 'HABILITADO' },
-      'VENCIDO': { class: 'bg-red-100 text-red-800', label: 'VENCIDO' },
-      'EN_TRAMITE': { class: 'bg-yellow-100 text-yellow-800', label: 'EN TRÁMITE' },
+      HABILITADO: { class: 'bg-green-100 text-green-800', label: 'HABILITADO' },
+      VENCIDO: { class: 'bg-red-100 text-red-800', label: 'VENCIDO' },
+      EN_TRAMITE: { class: 'bg-yellow-100 text-yellow-800', label: 'EN TRÁMITE' },
     }
-    
+
     const config = estados[estado] || { class: 'bg-gray-100 text-gray-800', label: estado }
     return <Badge className={config.class}>{config.label}</Badge>
   }
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex min-h-screen items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
           <p className="mt-4 text-gray-600">Cargando habilitación...</p>
         </div>
       </div>
@@ -165,9 +178,9 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
 
   if (error || !habilitacion) {
     return (
-      <div className="max-w-3xl mx-auto mt-8 p-6">
-        <div className="bg-red-50 border-l-4 border-red-500 text-red-700 p-6 rounded-lg">
-          <p className="font-bold text-lg">Error al Cargar la Habilitación</p>
+      <div className="mx-auto mt-8 max-w-3xl p-6">
+        <div className="rounded-lg border-l-4 border-red-500 bg-red-50 p-6 text-red-700">
+          <p className="text-lg font-bold">Error al Cargar la Habilitación</p>
           <p className="mt-2">{error || 'Habilitación no encontrada'}</p>
           <Link href="/habilitaciones" className="mt-4 inline-block text-blue-600 hover:underline">
             ← Volver al listado
@@ -180,12 +193,12 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-white shadow-sm sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto flex justify-between items-center p-4">
+      <header className="sticky top-0 z-40 bg-white shadow-sm">
+        <div className="mx-auto flex max-w-7xl items-center justify-between p-4">
           <h1 className="text-xl font-bold text-blue-600">Detalle de Habilitación</h1>
-          <Link 
+          <Link
             href="/habilitaciones"
-            className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-semibold py-2 px-4 rounded-lg transition-colors flex items-center gap-2 text-sm"
+            className="flex items-center gap-2 rounded-lg bg-gray-100 px-4 py-2 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200"
           >
             <ArrowLeft className="h-5 w-5" />
             Volver
@@ -193,58 +206,59 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto mt-8 px-4 sm:px-6 lg:px-8 mb-16">
+      <main className="mx-auto mb-16 mt-8 max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Título y Botones de Acción */}
-        <div className="bg-white rounded-xl shadow-lg p-6 mb-8 border border-gray-200">
-          <div className="flex flex-wrap justify-between items-start gap-6">
+        <div className="mb-8 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+          <div className="flex flex-wrap items-start justify-between gap-6">
             <div>
               <h2 className="text-3xl font-bold tracking-tight text-gray-900">
-                Licencia N° <span className="font-mono text-blue-600">{habilitacion.numero || 'N/A'}</span>
+                Licencia N°{' '}
+                <span className="font-mono text-blue-600">{habilitacion.numero || 'N/A'}</span>
               </h2>
               <p className="mt-1 text-gray-600">
                 Información detallada y registro de actividad de la habilitación.
               </p>
             </div>
-            
+
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 href={`/habilitaciones/${id}/editar`}
-                className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-sm transition-all flex items-center gap-2"
+                className="flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 font-bold text-white shadow-sm transition-all hover:bg-blue-700"
               >
                 <Edit className="h-5 w-5" />
                 Editar
               </Link>
-              
+
               <Button
                 variant="outline"
-                className="bg-sky-500 hover:bg-sky-600 text-white font-bold"
+                className="bg-sky-500 font-bold text-white hover:bg-sky-600"
               >
-                <FileText className="h-5 w-5 mr-2" />
+                <FileText className="mr-2 h-5 w-5" />
                 Credencial
               </Button>
-              
+
               <Button
                 variant="outline"
-                className="bg-gray-600 hover:bg-gray-700 text-white font-bold"
+                className="bg-gray-600 font-bold text-white hover:bg-gray-700"
               >
-                <Download className="h-5 w-5 mr-2" />
+                <Download className="mr-2 h-5 w-5" />
                 Descargar Constancia
               </Button>
-              
+
               <Button
                 variant="outline"
-                className="bg-purple-600 hover:bg-purple-700 text-white font-bold"
+                className="bg-purple-600 font-bold text-white hover:bg-purple-700"
               >
-                <FileText className="h-5 w-5 mr-2" />
+                <FileText className="mr-2 h-5 w-5" />
                 Descargar Resolución
               </Button>
-              
+
               <Button
                 variant="outline"
                 onClick={() => setModalObleasOpen(true)}
-                className="bg-orange-600 hover:bg-orange-700 text-white font-bold"
+                className="bg-orange-600 font-bold text-white hover:bg-orange-700"
               >
-                <Shield className="h-5 w-5 mr-2" />
+                <Shield className="mr-2 h-5 w-5" />
                 Gestionar Obleas
               </Button>
             </div>
@@ -253,34 +267,36 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
 
         {/* Alertas de Vencimiento */}
         {alertas.length > 0 && (
-          <div className="space-y-4 mb-8">
+          <div className="mb-8 space-y-4">
             {alertas.map((alerta, idx) => (
               <div
                 key={idx}
-                className={`p-4 rounded-lg flex items-center gap-4 ${
+                className={`flex items-center gap-4 rounded-lg p-4 ${
                   alerta.tipo === 'vencido'
-                    ? 'bg-red-100 text-red-800 border border-red-300'
-                    : 'bg-yellow-100 text-yellow-800 border border-yellow-300'
+                    ? 'border border-red-300 bg-red-100 text-red-800'
+                    : 'border border-yellow-300 bg-yellow-100 text-yellow-800'
                 }`}
               >
                 <AlertTriangle className="h-8 w-8 flex-shrink-0" />
-                <p><strong>{alerta.mensaje}</strong></p>
+                <p>
+                  <strong>{alerta.mensaje}</strong>
+                </p>
               </div>
             ))}
           </div>
         )}
 
         {/* Grid Principal: 3 columnas en desktop */}
-        <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
           {/* Columna Izquierda: Datos generales */}
-          <div className="xl:col-span-1 space-y-8">
+          <div className="space-y-8 xl:col-span-1">
             {/* Datos de la Habilitación */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
                 <Info className="h-6 w-6 text-blue-600" />
                 Datos de la Habilitación
               </h3>
-              <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+              <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
                 <div className="sm:col-span-2">
                   <dt className="font-semibold text-gray-600">Estado</dt>
                   <dd className="mt-1">{getEstadoBadge(habilitacion.estado)}</dd>
@@ -296,7 +312,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 <div>
                   <dt className="font-semibold text-gray-600">Vigencia Inicio</dt>
                   <dd className="mt-1">
-                    {habilitacion.vigencia_inicio 
+                    {habilitacion.vigencia_inicio
                       ? new Date(habilitacion.vigencia_inicio).toLocaleDateString('es-AR')
                       : 'N/A'}
                   </dd>
@@ -304,7 +320,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                 <div>
                   <dt className="font-semibold text-gray-600">Vigencia Fin</dt>
                   <dd className="mt-1 font-bold">
-                    {habilitacion.vigencia_fin 
+                    {habilitacion.vigencia_fin
                       ? new Date(habilitacion.vigencia_fin).toLocaleDateString('es-AR')
                       : 'N/A'}
                   </dd>
@@ -313,8 +329,8 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
             </div>
 
             {/* Personas Asociadas */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
                 <Users className="h-6 w-6 text-blue-600" />
                 Personas Asociadas
               </h3>
@@ -323,10 +339,10 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                   habilitacion.personas.map((p: any) => (
                     <div
                       key={p.id}
-                      className="flex items-start gap-4 p-3 rounded-lg bg-gray-50 border border-gray-200"
+                      className="flex items-start gap-4 rounded-lg border border-gray-200 bg-gray-50 p-3"
                     >
                       <div className="flex-grow">
-                        <div className="flex justify-between items-center">
+                        <div className="flex items-center justify-between">
                           <p className="font-bold">{p.nombre}</p>
                           <Badge variant="outline">{p.rol}</Badge>
                         </div>
@@ -342,19 +358,19 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
 
             {/* Vehículo Asociado */}
             {habilitacion.vehiculos && habilitacion.vehiculos[0] && (
-              <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-                <h3 className="text-lg font-bold mb-4 flex items-center gap-2 text-gray-900">
+              <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+                <h3 className="mb-4 flex items-center gap-2 text-lg font-bold text-gray-900">
                   <Car className="h-6 w-6 text-blue-600" />
                   Vehículo Asociado
                 </h3>
-                <dl className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+                <dl className="grid grid-cols-1 gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
                   {(() => {
                     const v = habilitacion.vehiculos[0]
                     return (
                       <>
                         <div className="sm:col-span-2">
                           <dt className="font-semibold text-gray-600">Dominio</dt>
-                          <dd className="mt-1 font-mono font-bold text-base">{v.dominio}</dd>
+                          <dd className="mt-1 font-mono text-base font-bold">{v.dominio}</dd>
                         </div>
                         <div>
                           <dt className="font-semibold text-gray-600">Marca</dt>
@@ -380,7 +396,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                           <dt className="font-semibold text-gray-600">Motor</dt>
                           <dd className="mt-1 font-mono">{v.motor || 'N/A'}</dd>
                         </div>
-                        <hr className="sm:col-span-2 my-2" />
+                        <hr className="my-2 sm:col-span-2" />
                         <div>
                           <dt className="font-semibold text-gray-600">Aseguradora</dt>
                           <dd className="mt-1">{v.Aseguradora || 'N/A'}</dd>
@@ -392,7 +408,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                         <div>
                           <dt className="font-semibold text-gray-600">Vencimiento Póliza</dt>
                           <dd className="mt-1 font-bold">
-                            {v.Vencimiento_Poliza 
+                            {v.Vencimiento_Poliza
                               ? new Date(v.Vencimiento_Poliza).toLocaleDateString('es-AR')
                               : 'N/A'}
                           </dd>
@@ -400,7 +416,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                         <div>
                           <dt className="font-semibold text-gray-600">Vencimiento VTV</dt>
                           <dd className="mt-1 font-bold">
-                            {v.Vencimiento_VTV 
+                            {v.Vencimiento_VTV
                               ? new Date(v.Vencimiento_VTV).toLocaleDateString('es-AR')
                               : 'N/A'}
                           </dd>
@@ -414,26 +430,30 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
           </div>
 
           {/* Columna Derecha: Historial */}
-          <div className="xl:col-span-2 space-y-8">
+          <div className="space-y-8 xl:col-span-2">
             {/* Historial de Obleas */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-gray-900">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-6 flex items-center gap-3 text-xl font-bold text-gray-900">
                 <CheckCircle className="h-6 w-6 text-blue-600" />
                 Historial de Colocación de Obleas
               </h3>
               {obleas.length === 0 ? (
-                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                <div className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-4 text-blue-700">
                   <p>No hay registros de colocación de obleas para esta habilitación.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                    <thead className="border-b-2 border-gray-200 bg-gray-50">
                       <tr>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha Solicitud</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Fecha Solicitud
+                        </th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Hora</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Estado</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Acciones</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Acciones
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -442,15 +462,15 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                           <td className="px-4 py-3">
                             {new Date(oblea.fecha_solicitud).toLocaleDateString('es-AR')}
                           </td>
+                          <td className="px-4 py-3">{oblea.hora_solicitud}</td>
                           <td className="px-4 py-3">
-                            {oblea.hora_solicitud}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              oblea.notificado === 'si' 
-                                ? 'bg-green-100 text-green-800' 
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
+                            <span
+                              className={`rounded px-2 py-1 text-xs font-medium ${
+                                oblea.notificado === 'si'
+                                  ? 'bg-green-100 text-green-800'
+                                  : 'bg-yellow-100 text-yellow-800'
+                              }`}
+                            >
                               {oblea.notificado === 'si' ? 'Notificado' : 'Pendiente'}
                             </span>
                           </td>
@@ -459,7 +479,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                               href={`/api/obleas/${oblea.id}/pdf-historico`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="inline-flex items-center gap-1 text-red-600 hover:text-red-900 font-medium"
+                              className="inline-flex items-center gap-1 font-medium text-red-600 hover:text-red-900"
                               title="Descargar certificado con evidencia disponible"
                             >
                               <FileText className="h-4 w-4" />
@@ -475,25 +495,27 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
             </div>
 
             {/* Historial de Verificaciones */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-gray-900">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-6 flex items-center gap-3 text-xl font-bold text-gray-900">
                 <CheckCircle className="h-6 w-6 text-blue-600" />
                 Historial de Verificaciones
               </h3>
               {verificaciones.length === 0 ? (
-                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                <div className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-4 text-blue-700">
                   <p>No hay verificaciones técnicas registradas.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                    <thead className="border-b-2 border-gray-200 bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Hora</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Titular</th>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Dominio</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Resultado</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Resultado
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -501,7 +523,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                         // Formatear hora correctamente desde TIME o DATETIME
                         const formatearHora = (hora: any) => {
                           if (!hora) return 'N/A'
-                          
+
                           // Si es un string en formato TIME (HH:MM:SS) o solo hora
                           if (typeof hora === 'string') {
                             // Extraer solo HH:MM de formatos como "1970-01-01T10:03:00" o "10:03:00"
@@ -511,12 +533,15 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                             }
                             return hora
                           }
-                          
+
                           // Si es un objeto Date
                           if (hora instanceof Date) {
-                            return hora.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
+                            return hora.toLocaleTimeString('es-AR', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })
                           }
-                          
+
                           return String(hora)
                         }
 
@@ -529,13 +554,16 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                             <td className="px-4 py-3">{verif.nombre_titular}</td>
                             <td className="px-4 py-3 font-mono font-medium">{verif.dominio}</td>
                             <td className="px-4 py-3">
-                              <span className={`px-2 py-1 rounded text-xs font-medium ${
-                                verif.resultado?.toLowerCase().includes('aprobad') 
-                                  ? 'bg-green-100 text-green-800'
-                                  : verif.resultado?.toLowerCase().includes('rechazad') || verif.resultado?.toLowerCase().includes('desaprob')
-                                  ? 'bg-red-100 text-red-800'
-                                  : 'bg-blue-100 text-blue-800'
-                              }`}>
+                              <span
+                                className={`rounded px-2 py-1 text-xs font-medium ${
+                                  verif.resultado?.toLowerCase().includes('aprobad')
+                                    ? 'bg-green-100 text-green-800'
+                                    : verif.resultado?.toLowerCase().includes('rechazad') ||
+                                        verif.resultado?.toLowerCase().includes('desaprob')
+                                      ? 'bg-red-100 text-red-800'
+                                      : 'bg-blue-100 text-blue-800'
+                                }`}
+                              >
                                 {verif.resultado || 'Verificada'}
                               </span>
                             </td>
@@ -549,24 +577,30 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
             </div>
 
             {/* Historial de Inspecciones */}
-            <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-200">
-              <h3 className="text-xl font-bold mb-6 flex items-center gap-3 text-gray-900">
+            <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+              <h3 className="mb-6 flex items-center gap-3 text-xl font-bold text-gray-900">
                 <ClipboardCheck className="h-6 w-6 text-blue-600" />
                 Historial de Inspecciones
               </h3>
               {inspecciones.length === 0 ? (
-                <div className="bg-blue-50 border-l-4 border-blue-400 text-blue-700 p-4 rounded-lg">
+                <div className="rounded-lg border-l-4 border-blue-400 bg-blue-50 p-4 text-blue-700">
                   <p>No hay inspecciones técnicas registradas.</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
-                    <thead className="bg-gray-50 border-b-2 border-gray-200">
+                    <thead className="border-b-2 border-gray-200 bg-gray-50">
                       <tr>
                         <th className="px-4 py-3 text-left font-semibold text-gray-700">Fecha</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Inspector</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Resultado</th>
-                        <th className="px-4 py-3 text-left font-semibold text-gray-700">Acciones</th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Inspector
+                        </th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Resultado
+                        </th>
+                        <th className="px-4 py-3 text-left font-semibold text-gray-700">
+                          Acciones
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-gray-200">
@@ -577,13 +611,15 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                           </td>
                           <td className="px-4 py-3">{insp.nombre_inspector}</td>
                           <td className="px-4 py-3">
-                            <span className={`px-2 py-1 rounded text-xs font-medium ${
-                              insp.resultado === 'APROBADO' 
-                                ? 'bg-green-100 text-green-800'
-                                : insp.resultado === 'RECHAZADO'
-                                ? 'bg-red-100 text-red-800'
-                                : 'bg-yellow-100 text-yellow-800'
-                            }`}>
+                            <span
+                              className={`rounded px-2 py-1 text-xs font-medium ${
+                                insp.resultado === 'APROBADO'
+                                  ? 'bg-green-100 text-green-800'
+                                  : insp.resultado === 'RECHAZADO'
+                                    ? 'bg-red-100 text-red-800'
+                                    : 'bg-yellow-100 text-yellow-800'
+                              }`}
+                            >
                               {insp.resultado || 'PENDIENTE'}
                             </span>
                           </td>
@@ -593,7 +629,7 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                                 href={`/api/inspecciones/${insp.id}/pdf`}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="text-blue-600 hover:text-blue-800 font-medium flex items-center gap-1"
+                                className="flex items-center gap-1 font-medium text-blue-600 hover:text-blue-800"
                               >
                                 <FileText className="h-4 w-4" />
                                 Ver PDF
@@ -601,12 +637,12 @@ export function HabilitacionDetalle({ id }: HabilitacionDetalleProps) {
                               <button
                                 onClick={() => handleEliminarInspeccion(insp.id)}
                                 disabled={eliminandoInspeccion === insp.id}
-                                className="text-red-600 hover:text-red-800 font-medium flex items-center gap-1 disabled:opacity-50"
+                                className="flex items-center gap-1 font-medium text-red-600 hover:text-red-800 disabled:opacity-50"
                                 title="Eliminar inspección"
                               >
                                 {eliminandoInspeccion === insp.id ? (
                                   <>
-                                    <div className="animate-spin h-4 w-4 border-2 border-red-600 border-t-transparent rounded-full" />
+                                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
                                     Eliminando...
                                   </>
                                 ) : (

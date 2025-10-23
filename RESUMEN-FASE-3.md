@@ -64,6 +64,7 @@ CHANGELOG.md                           ✅ Actualizado
 ## 🔥 Características Principales
 
 ### **1. Búsqueda Inteligente**
+
 ```typescript
 // Búsqueda con debounce de 500ms
 Usuario escribe: "Juan Pe"
@@ -77,6 +78,7 @@ Resultados instantáneos:
 ```
 
 ### **2. Validación Zod (Cliente + Servidor)**
+
 ```typescript
 // Cliente: Validación inmediata
 const validacion = habilitacionSchema.safeParse(formData)
@@ -92,6 +94,7 @@ if (!validacion.success) {
 ```
 
 ### **3. Transacción Atómica**
+
 ```typescript
 // Todo se crea o nada se crea
 await prisma.$transaction(async (tx) => {
@@ -150,7 +153,7 @@ Paso 3 - Vehículos:
 Paso 4 - Establecimientos:
   ✓ Escuela Primaria N°1
   ✓ Colegio Secundario N°5
-  
+
 ✅ Habilitación creada exitosamente!
 ```
 
@@ -179,7 +182,7 @@ Content-Type: application/json
 # Buscar personas
 GET /api/personas?buscar=juan
 
-# Buscar vehículos  
+# Buscar vehículos
 GET /api/vehiculos?buscar=abc
 
 # Buscar establecimientos
@@ -208,13 +211,11 @@ import { NuevaHabilitacionDialog } from '@/app/(panel)/habilitaciones/_component
 
 function MiComponente() {
   const [open, setOpen] = useState(false)
-  
+
   return (
     <>
-      <button onClick={() => setOpen(true)}>
-        Crear Habilitación
-      </button>
-      
+      <button onClick={() => setOpen(true)}>Crear Habilitación</button>
+
       <NuevaHabilitacionDialog
         open={open}
         onOpenChange={setOpen}
@@ -232,34 +233,35 @@ function MiComponente() {
 
 ## 🎯 Métricas de Implementación
 
-| Métrica | Valor |
-|---------|-------|
-| **Archivos creados** | 11 |
-| **Líneas de código** | ~1,500 |
-| **Componentes React** | 5 |
-| **API endpoints** | 4 |
-| **Schemas Zod** | 5 |
-| **Pasos del formulario** | 4 |
+| Métrica                    | Valor                        |
+| -------------------------- | ---------------------------- |
+| **Archivos creados**       | 11                           |
+| **Líneas de código**       | ~1,500                       |
+| **Componentes React**      | 5                            |
+| **API endpoints**          | 4                            |
+| **Schemas Zod**            | 5                            |
+| **Pasos del formulario**   | 4                            |
 | **Tiempo estimado de uso** | 2-3 minutos por habilitación |
 
 ---
 
 ## ✨ Ventajas sobre Sistema Anterior (PHP)
 
-| Característica | PHP Anterior | Next.js Nuevo |
-|----------------|--------------|---------------|
-| **Validación** | Manual, propensa a errores | Zod automático en 2 capas |
-| **Búsqueda** | Página aparte, lento | Incremental en tiempo real |
-| **Transacciones** | Manual con try-catch | Prisma automático |
-| **UX** | Múltiples páginas | Single-page, stepper visual |
-| **Errores** | Recargar página | In-place, sin perder datos |
-| **Tipado** | Sin tipos | TypeScript full |
+| Característica    | PHP Anterior               | Next.js Nuevo               |
+| ----------------- | -------------------------- | --------------------------- |
+| **Validación**    | Manual, propensa a errores | Zod automático en 2 capas   |
+| **Búsqueda**      | Página aparte, lento       | Incremental en tiempo real  |
+| **Transacciones** | Manual con try-catch       | Prisma automático           |
+| **UX**            | Múltiples páginas          | Single-page, stepper visual |
+| **Errores**       | Recargar página            | In-place, sin perder datos  |
+| **Tipado**        | Sin tipos                  | TypeScript full             |
 
 ---
 
 ## 🐛 Notas sobre Errores de TypeScript
 
 Los errores que ves en el IDE como:
+
 ```
 Cannot find module 'react' or its corresponding type declarations
 Cannot find module 'lucide-react'...
@@ -312,5 +314,5 @@ Son **falsos positivos temporales del IDE**. El código funciona perfectamente p
 
 ---
 
-*Desarrollado con ❤️ para Municipio de Lanús*  
-*Next.js 14 • TypeScript • Prisma • Tailwind CSS • shadcn/ui*
+_Desarrollado con ❤️ para Municipio de Lanús_  
+_Next.js 14 • TypeScript • Prisma • Tailwind CSS • shadcn/ui_

@@ -14,10 +14,7 @@ export async function GET() {
     // Verificar autenticación
     const session = await getSession()
     if (!session) {
-      return NextResponse.json(
-        { error: 'No autenticado' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
     // Filtro según rol (simplificado por ahora)
@@ -82,7 +79,7 @@ export async function GET() {
       },
     })
 
-    const distribucionFormateada = distribucion.map((d) => ({
+    const distribucionFormateada = distribucion.map(d => ({
       estado: d.estado,
       total: d._count.id,
     }))
@@ -100,12 +97,8 @@ export async function GET() {
         distribucion: distribucionFormateada,
       },
     })
-
   } catch (error) {
     console.error('Error al obtener estadísticas:', error)
-    return NextResponse.json(
-      { error: 'Error al obtener estadísticas' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Error al obtener estadísticas' }, { status: 500 })
   }
 }

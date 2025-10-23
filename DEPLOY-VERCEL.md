@@ -18,11 +18,13 @@
 ### Si usas Servidor Dedicado/VPS:
 
 1. Editar configuración de MySQL:
+
 ```bash
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
 ```
 
 2. Cambiar bind-address:
+
 ```conf
 # De:
 bind-address = 127.0.0.1
@@ -32,6 +34,7 @@ bind-address = 0.0.0.0
 ```
 
 3. Crear usuario remoto:
+
 ```sql
 CREATE USER 'transpo1_credenciales'@'%' IDENTIFIED BY 'feelthesky1';
 GRANT ALL PRIVILEGES ON transpo1_credenciales.* TO 'transpo1_credenciales'@'%';
@@ -39,11 +42,13 @@ FLUSH PRIVILEGES;
 ```
 
 4. Reiniciar MySQL:
+
 ```bash
 sudo systemctl restart mysql
 ```
 
 5. Abrir puerto 3306 en firewall:
+
 ```bash
 sudo ufw allow 3306/tcp
 ```
@@ -89,6 +94,7 @@ vercel
 3. Agregar las siguientes variables:
 
 #### Variable 1: DATABASE_URL
+
 ```
 Nombre: DATABASE_URL
 Valor: mysql://transpo1_credenciales:feelthesky1@TU_HOST_MYSQL:3306/transpo1_credenciales
@@ -96,16 +102,19 @@ Environments: Production, Preview, Development
 ```
 
 **⚠️ IMPORTANTE**: Reemplazar `TU_HOST_MYSQL` con:
+
 - La IP pública de tu servidor MySQL, O
 - El dominio/hostname de tu servidor cPanel, O
 - El endpoint de tu base de datos en la nube
 
 Ejemplos válidos:
+
 - `mysql://user:pass@192.168.1.100:3306/dbname`
 - `mysql://user:pass@servidor123.tuhost.com:3306/dbname`
 - `mysql://user:pass@mysql.tudominio.com:3306/dbname`
 
 #### Variable 2: JWT_SECRET
+
 ```
 Nombre: JWT_SECRET
 Valor: [GENERAR UNO NUEVO - Ver abajo]
@@ -113,6 +122,7 @@ Environments: Production, Preview, Development
 ```
 
 Para generar un JWT_SECRET seguro:
+
 ```bash
 # En terminal (Mac/Linux):
 openssl rand -base64 32
@@ -125,6 +135,7 @@ openssl rand -base64 32
 ```
 
 #### Variable 3: NEXT_PUBLIC_APP_URL
+
 ```
 Nombre: NEXT_PUBLIC_APP_URL
 Valor: https://tu-proyecto.vercel.app
@@ -179,6 +190,7 @@ Una vez deployado, verificar:
 Visita: `https://tu-proyecto.vercel.app/api/health`
 
 Deberías ver:
+
 ```json
 {
   "status": "healthy",
@@ -201,11 +213,13 @@ Deberías ver:
 ### ❌ Error: "Can't connect to MySQL server"
 
 **Causas comunes**:
+
 1. MySQL no acepta conexiones remotas
 2. Firewall bloqueando puerto 3306
 3. Host incorrecto en DATABASE_URL
 
 **Solución**:
+
 ```bash
 # Probar conexión desde tu computadora
 mysql -h TU_HOST_MYSQL -u transpo1_credenciales -p transpo1_credenciales
@@ -216,13 +230,16 @@ mysql -h TU_HOST_MYSQL -u transpo1_credenciales -p transpo1_credenciales
 ### ❌ Error: "Access denied for user"
 
 **Solución**:
+
 - Verificar que el usuario tenga permisos remotos (`user@'%'` no solo `user@'localhost'`)
 - Verificar contraseña en DATABASE_URL
 
 ### ❌ Error: "Connection timeout"
 
 **Solución**:
+
 - Agregar parámetros de timeout a la URL:
+
 ```
 DATABASE_URL="mysql://user:pass@host:3306/db?connect_timeout=60&pool_timeout=30"
 ```
@@ -230,7 +247,9 @@ DATABASE_URL="mysql://user:pass@host:3306/db?connect_timeout=60&pool_timeout=30"
 ### ❌ Error: "Too many connections"
 
 **Solución**:
+
 - Agregar connection limit a la URL:
+
 ```
 DATABASE_URL="mysql://user:pass@host:3306/db?connection_limit=5"
 ```
@@ -242,6 +261,7 @@ DATABASE_URL="mysql://user:pass@host:3306/db?connection_limit=5"
 **⚠️ MUY IMPORTANTE**: Las credenciales en `conexion.php` están expuestas en este documento.
 
 Después del deploy, considera:
+
 ```sql
 -- Cambiar contraseña de MySQL
 ALTER USER 'transpo1_credenciales'@'%' IDENTIFIED BY 'NUEVA_CONTRASEÑA_SEGURA';
@@ -249,6 +269,7 @@ FLUSH PRIVILEGES;
 ```
 
 Y actualizar en Vercel:
+
 ```
 DATABASE_URL="mysql://transpo1_credenciales:NUEVA_CONTRASEÑA_SEGURA@host:3306/db"
 ```
@@ -256,6 +277,7 @@ DATABASE_URL="mysql://transpo1_credenciales:NUEVA_CONTRASEÑA_SEGURA@host:3306/d
 ### 2. Restringir IPs (Recomendado)
 
 En lugar de `@'%'`, usar IPs específicas de Vercel:
+
 ```sql
 -- Ver IPs de Vercel en: https://vercel.com/docs/concepts/edge-network/regions
 CREATE USER 'transpo1_credenciales'@'76.76.21.0/24' IDENTIFIED BY 'password';
@@ -282,6 +304,7 @@ Vercel incluye analytics automáticos en el dashboard.
 ## 🔄 Actualizar el Deploy
 
 ### Redeploy automático:
+
 ```bash
 git add .
 git commit -m "Actualización"
@@ -289,6 +312,7 @@ git push
 ```
 
 ### Redeploy manual:
+
 ```bash
 vercel --prod
 ```

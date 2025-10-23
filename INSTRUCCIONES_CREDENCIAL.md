@@ -3,11 +3,13 @@
 ## ✅ Lo que se implementó:
 
 ### **Backend:**
+
 1. ✅ Modelo `tokens_acceso` en Prisma schema
 2. ✅ API `/api/habilitaciones/[id]/generar-token-credencial` (POST/GET)
 3. ✅ API `/api/credencial/verificar?token=xxx` (GET)
 
 ### **Frontend:**
+
 4. ✅ Página pública `/credencial/[token]`
 5. ✅ Componente `CredencialCard` con diseño completo
 6. ✅ Página 404 personalizada
@@ -94,15 +96,15 @@ import { QrCode } from 'lucide-react'
 const handleGenerarCredencial = async () => {
   try {
     const res = await fetch(`/api/habilitaciones/${id}/generar-token-credencial`, {
-      method: 'POST'
+      method: 'POST',
     })
     const data = await res.json()
-    
+
     if (data.success) {
       // Copiar URL al portapapeles
       await navigator.clipboard.writeText(data.data.url)
       alert('✅ Credencial generada. URL copiada al portapapeles.')
-      
+
       // Opcional: abrir en nueva pestaña
       window.open(data.data.url, '_blank')
     }
@@ -112,7 +114,7 @@ const handleGenerarCredencial = async () => {
 }
 
 // Agregar botón:
-<Button onClick={handleGenerarCredencial} className="gap-2">
+;<Button onClick={handleGenerarCredencial} className="gap-2">
   <QrCode className="h-4 w-4" />
   Generar Credencial Digital
 </Button>
@@ -131,11 +133,14 @@ import nodemailer from 'nodemailer'
 
 export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   // 1. Generar token
-  const tokenRes = await fetch(`${process.env.NEXT_PUBLIC_APP_URL}/api/habilitaciones/${id}/generar-token-credencial`, {
-    method: 'POST'
-  })
+  const tokenRes = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/habilitaciones/${id}/generar-token-credencial`,
+    {
+      method: 'POST',
+    }
+  )
   const tokenData = await tokenRes.json()
-  
+
   // 2. Obtener email del titular
   const habilitacion = await prisma.habilitaciones_generales.findUnique({
     where: { id: parseInt(id) },
@@ -143,26 +148,26 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       habilitaciones_personas: {
         where: { rol: 'TITULAR' },
         include: { persona: true },
-        take: 1
-      }
-    }
+        take: 1,
+      },
+    },
   })
-  
+
   const email = habilitacion?.habilitaciones_personas[0]?.persona?.email
-  
+
   if (!email) {
     return NextResponse.json({ error: 'No se encontró email del titular' }, { status: 400 })
   }
-  
+
   // 3. Enviar email
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: process.env.GMAIL_USER,
-      pass: process.env.GMAIL_APP_PASSWORD
-    }
+      pass: process.env.GMAIL_APP_PASSWORD,
+    },
   })
-  
+
   await transporter.sendMail({
     from: `"Municipalidad de Lanús" <${process.env.GMAIL_USER}>`,
     to: email,
@@ -172,9 +177,9 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       <p>Su credencial de habilitación ya está disponible.</p>
       <p><a href="${tokenData.data.url}">Ver Credencial Digital</a></p>
       <p>Este enlace expira el: ${new Date(tokenData.data.fecha_expiracion).toLocaleDateString('es-AR')}</p>
-    `
+    `,
   })
-  
+
   return NextResponse.json({ success: true })
 }
 ```
@@ -184,6 +189,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 ## ✨ CARACTERÍSTICAS IMPLEMENTADAS
 
 ### **Credencial Digital incluye:**
+
 - ✅ Header institucional con logo
 - ✅ Badge de estado (Habilitado/En Trámite/No Habilitado)
 - ✅ Número de licencia destacado
@@ -201,6 +207,7 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 - ✅ CSS optimizado para impresión
 
 ### **Seguridad:**
+
 - ✅ Tokens únicos (UUID)
 - ✅ Expiración automática (90 días)
 - ✅ Validación de estado activo
@@ -233,22 +240,26 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
 ## 🐛 TROUBLESHOOTING
 
 ### Error: "Module not found: qrcode.react"
+
 ```bash
 npm install qrcode.react
 ```
 
 ### Error: "Cannot find module 'uuid'"
+
 ```bash
 npm install uuid @types/uuid
 ```
 
 ### Error en migración de Prisma
+
 ```bash
 # Si hay conflictos, usar:
 npx prisma db push --accept-data-loss
 ```
 
 ### Tokens no aparecen en la BD
+
 ```bash
 # Regenerar cliente Prisma:
 npx prisma generate
@@ -261,6 +272,7 @@ npm run dev
 ## 📞 Soporte
 
 Para dudas técnicas:
+
 - Revisar logs del servidor: `npm run dev`
 - Revisar consola del navegador (F12)
 - Verificar variables de entorno en `.env`

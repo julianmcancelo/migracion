@@ -29,11 +29,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Rutas públicas de turnos (no requieren autenticación)
-  const publicTurnosRoutes = [
-    '/turnos/confirmar/',
-    '/turnos/cancelar/',
-    '/turnos/reprogramar/'
-  ]
+  const publicTurnosRoutes = ['/turnos/confirmar/', '/turnos/cancelar/', '/turnos/reprogramar/']
   const isPublicTurnosRoute = publicTurnosRoutes.some(route => pathname.startsWith(route))
 
   // Proteger rutas que requieren autenticación (excepto rutas públicas de turnos)

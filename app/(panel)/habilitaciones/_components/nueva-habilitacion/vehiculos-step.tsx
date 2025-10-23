@@ -40,13 +40,13 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   // Procesar datos del OCR de cédula verde
   const handleOCRData = (data: any) => {
     console.log('Datos OCR Cédula recibidos:', data)
-    
+
     // Buscar el vehículo por dominio automáticamente
     if (data.dominio) {
       setBusqueda(data.dominio.toUpperCase())
       // El useEffect se encargará de buscar automáticamente
     }
-    
+
     // Cerrar OCR
     setShowOCR(false)
   }
@@ -55,18 +55,18 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   useEffect(() => {
     const cargarVehiculosAgregados = async () => {
       const vehiculosSinDatos = vehiculos.filter(v => !vehiculosCache.has(v.vehiculo_id))
-      
+
       if (vehiculosSinDatos.length === 0) return
 
       try {
-        const promesas = vehiculosSinDatos.map(async (v) => {
+        const promesas = vehiculosSinDatos.map(async v => {
           const response = await fetch(`/api/vehiculos/${v.vehiculo_id}`)
           const data = await response.json()
           return data.success ? data.data : null
         })
 
         const vehiculosData = await Promise.all(promesas)
-        
+
         const nuevoCache = new Map(vehiculosCache)
         vehiculosData.forEach((vehiculo, index) => {
           if (vehiculo) {
@@ -92,7 +92,9 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
 
       setBuscando(true)
       try {
-        const response = await fetch(`/api/vehiculos?buscar=${encodeURIComponent(busquedaDebounced)}`)
+        const response = await fetch(
+          `/api/vehiculos?buscar=${encodeURIComponent(busquedaDebounced)}`
+        )
         const data = await response.json()
         if (data.success) {
           setResultados(data.data)
@@ -126,7 +128,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
     setVehiculosCache(nuevoCache)
 
     onChange([...vehiculos, nuevoVehiculo])
-    
+
     // Resetear campos
     setVehiculoSeleccionado(null)
     setBusqueda('')
@@ -142,46 +144,46 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
     // Primero buscar en el caché
     const vehiculoCache = vehiculosCache.get(vehiculo_id)
     if (vehiculoCache) return vehiculoCache
-    
+
     // Luego en resultados actuales
     const vehiculo = resultados.find(v => v.id === vehiculo_id)
     if (vehiculo) return vehiculo
-    
+
     // Fallback si no se encuentra
-    return { 
+    return {
       id: vehiculo_id,
-      dominio: `Vehículo ${vehiculo_id}`, 
-      marca: '-', 
+      dominio: `Vehículo ${vehiculo_id}`,
+      marca: '-',
       modelo: '-',
-      ano: undefined
+      ano: undefined,
     } as Vehiculo
   }
 
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">
+        <h3 className="mb-4 text-lg font-semibold">
           Vehículos Vinculados <span className="text-red-500">*</span>
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="mb-4 text-sm text-gray-600">
           Agregue al menos un vehículo que estará vinculado a esta habilitación.
         </p>
       </div>
 
       {/* Formulario de búsqueda y agregar */}
-      <div className="bg-gray-50 p-4 rounded-lg border space-y-4">
+      <div className="space-y-4 rounded-lg border bg-gray-50 p-4">
         <h4 className="font-medium">Agregar Vehículo</h4>
-        
+
         {/* Botón OCR */}
         {!showOCR && (
-          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
-                <h5 className="font-semibold text-blue-900 text-sm flex items-center gap-2">
+                <h5 className="flex items-center gap-2 text-sm font-semibold text-blue-900">
                   <Scan className="h-4 w-4" />
                   ¿Tenés la Cédula Verde?
                 </h5>
-                <p className="text-xs text-blue-700 mt-1">
+                <p className="mt-1 text-xs text-blue-700">
                   Escaneá y autocompletamos los datos del vehículo
                 </p>
               </div>
@@ -192,7 +194,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                 size="sm"
                 className="border-blue-300 text-blue-700 hover:bg-blue-100"
               >
-                <Scan className="h-3 w-3 mr-1" />
+                <Scan className="mr-1 h-3 w-3" />
                 Escanear
               </Button>
             </div>
@@ -201,15 +203,15 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
 
         {/* Componente OCR */}
         {showOCR && (
-          <div className="border-2 border-blue-300 rounded-lg p-3 bg-blue-50">
-            <div className="flex justify-between items-center mb-2">
-              <h5 className="font-semibold text-blue-900 text-sm">Escanear Cédula Verde</h5>
+          <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-3">
+            <div className="mb-2 flex items-center justify-between">
+              <h5 className="text-sm font-semibold text-blue-900">Escanear Cédula Verde</h5>
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
                 onClick={() => setShowOCR(false)}
-                className="text-blue-700 h-6"
+                className="h-6 text-blue-700"
               >
                 Cerrar
               </Button>
@@ -221,32 +223,30 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
             />
           </div>
         )}
-        
+
         {/* Búsqueda */}
         <div className="space-y-2">
           <Label>Buscar por dominio, marca o modelo</Label>
           <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
               className="pl-9"
               value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
+              onChange={e => setBusqueda(e.target.value)}
               placeholder="Ingrese dominio, marca o modelo..."
             />
           </div>
-          
+
           {/* Resultados de búsqueda */}
           {busqueda.length >= 2 && (
-            <div className="bg-white border rounded-md max-h-48 overflow-y-auto">
+            <div className="max-h-48 overflow-y-auto rounded-md border bg-white">
               {buscando ? (
-                <div className="p-4 text-center text-sm text-gray-500">
-                  Buscando...
-                </div>
+                <div className="p-4 text-center text-sm text-gray-500">Buscando...</div>
               ) : resultados.length > 0 ? (
-                resultados.map((vehiculo) => (
+                resultados.map(vehiculo => (
                   <button
                     key={vehiculo.id}
-                    className="w-full text-left px-4 py-2 hover:bg-gray-50 transition-colors flex items-center gap-3"
+                    className="flex w-full items-center gap-3 px-4 py-2 text-left transition-colors hover:bg-gray-50"
                     onClick={() => {
                       setVehiculoSeleccionado(vehiculo)
                       setBusqueda(vehiculo.dominio)
@@ -254,7 +254,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                   >
                     <Car className="h-4 w-4 text-gray-400" />
                     <div>
-                      <div className="font-medium text-sm">{vehiculo.dominio}</div>
+                      <div className="text-sm font-medium">{vehiculo.dominio}</div>
                       <div className="text-xs text-gray-500">
                         {vehiculo.marca} {vehiculo.modelo} {vehiculo.ano && `(${vehiculo.ano})`}
                       </div>
@@ -271,24 +271,18 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
         </div>
 
         {/* Botón agregar */}
-        <Button
-          onClick={handleAgregarVehiculo}
-          disabled={!vehiculoSeleccionado}
-          className="w-full"
-        >
-          <Plus className="h-4 w-4 mr-2" />
+        <Button onClick={handleAgregarVehiculo} disabled={!vehiculoSeleccionado} className="w-full">
+          <Plus className="mr-2 h-4 w-4" />
           Agregar Vehículo
         </Button>
       </div>
 
       {/* Lista de vehículos agregados */}
       <div>
-        <h4 className="font-medium mb-3">
-          Vehículos Agregados ({vehiculos.length})
-        </h4>
-        
+        <h4 className="mb-3 font-medium">Vehículos Agregados ({vehiculos.length})</h4>
+
         {vehiculos.length === 0 ? (
-          <div className="text-center py-8 text-gray-500 border-2 border-dashed rounded-lg">
+          <div className="rounded-lg border-2 border-dashed py-8 text-center text-gray-500">
             No hay vehículos agregados aún
           </div>
         ) : (
@@ -298,19 +292,19 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
               return (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-white border rounded-lg hover:shadow-md transition-shadow"
+                  className="flex items-center justify-between rounded-lg border bg-white p-4 transition-shadow hover:shadow-md"
                 >
-                  <div className="flex items-center gap-3 flex-1">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <div className="flex flex-1 items-center gap-3">
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-green-100">
                       <Car className="h-6 w-6 text-green-600" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="font-bold text-gray-900 text-lg">{info.dominio}</div>
-                      <div className="text-sm text-gray-700 mt-1 font-medium">
+                    <div className="min-w-0 flex-1">
+                      <div className="text-lg font-bold text-gray-900">{info.dominio}</div>
+                      <div className="mt-1 text-sm font-medium text-gray-700">
                         {info.marca} {info.modelo} {info.ano && `(${info.ano})`}
                       </div>
-                      
-                      <div className="flex flex-col gap-1 mt-2 text-xs text-gray-600">
+
+                      <div className="mt-2 flex flex-col gap-1 text-xs text-gray-600">
                         {info.tipo && (
                           <div className="flex items-center gap-1">
                             <span className="font-medium">Tipo:</span> {info.tipo}
@@ -333,7 +327,8 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                         )}
                         {(info as any).Vencimiento_VTV && (
                           <div className="flex items-center gap-1">
-                            <span className="font-medium">VTV vence:</span> {new Date((info as any).Vencimiento_VTV).toLocaleDateString('es-AR')}
+                            <span className="font-medium">VTV vence:</span>{' '}
+                            {new Date((info as any).Vencimiento_VTV).toLocaleDateString('es-AR')}
                           </div>
                         )}
                         {(info as any).Aseguradora && (
@@ -345,11 +340,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                       </div>
                     </div>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => handleEliminarVehiculo(index)}
-                  >
+                  <Button variant="ghost" size="sm" onClick={() => handleEliminarVehiculo(index)}>
                     <Trash2 className="h-4 w-4 text-red-500" />
                   </Button>
                 </div>

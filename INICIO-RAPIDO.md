@@ -45,7 +45,7 @@ Si no tienes un usuario, puedes crear uno ejecutando este SQL:
 
 ```sql
 -- Contraseña: "admin123"
-INSERT INTO admin (nombre, email, password, rol) 
+INSERT INTO admin (nombre, email, password, rol)
 VALUES (
   'Administrador Prueba',
   'admin@lanus.gob.ar',

@@ -8,10 +8,7 @@ export const dynamic = 'force-dynamic'
  * GET /api/establecimientos/[id]?tipo=establecimiento|remiseria
  * Obtener un establecimiento o remisería específico por ID
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const session = await getSession()
     if (!session) {
@@ -21,7 +18,7 @@ export async function GET(
     const id = parseInt(params.id)
     const searchParams = request.nextUrl.searchParams
     const tipo = searchParams.get('tipo') || 'establecimiento'
-    
+
     if (isNaN(id)) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
@@ -35,7 +32,7 @@ export async function GET(
       if (establecimiento) {
         establecimiento = {
           ...establecimiento,
-          tipo_entidad: 'remiseria' as const
+          tipo_entidad: 'remiseria' as const,
         }
       }
     } else {
@@ -45,7 +42,7 @@ export async function GET(
       if (establecimiento) {
         establecimiento = {
           ...establecimiento,
-          tipo_entidad: 'establecimiento' as const
+          tipo_entidad: 'establecimiento' as const,
         }
       }
     }
@@ -58,7 +55,6 @@ export async function GET(
       success: true,
       data: establecimiento,
     })
-
   } catch (error: any) {
     console.error('Error al obtener establecimiento:', error)
     return NextResponse.json(

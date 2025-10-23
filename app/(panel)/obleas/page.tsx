@@ -1,13 +1,37 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Shield, Search, FileText, Download, Trash2, Edit, Plus, BarChart3, AlertCircle, CheckCircle, Clock, Filter, Calendar, Users, Settings, RefreshCw, Upload } from 'lucide-react'
+import {
+  Shield,
+  Search,
+  FileText,
+  Download,
+  Trash2,
+  Edit,
+  Plus,
+  BarChart3,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Filter,
+  Calendar,
+  Users,
+  Settings,
+  RefreshCw,
+  Upload,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
 import { ModalGestionOblea } from '@/components/obleas/modal-gestion-oblea'
 
@@ -71,16 +95,16 @@ export default function ObleasPage() {
   const [eliminandoOblea, setEliminandoOblea] = useState<number | null>(null)
   const [obleaSeleccionada, setObleaSeleccionada] = useState<Oblea | null>(null)
   const [showGestionModal, setShowGestionModal] = useState(false)
-  
+
   // Estados para filtros avanzados
   const [filtros, setFiltros] = useState({
     fechaDesde: '',
     fechaHasta: '',
     tipoTransporte: '',
-    notificado: ''
+    notificado: '',
   })
   const [mostrarFiltros, setMostrarFiltros] = useState(false)
-  
+
   // Estados para selección masiva
   const [obleasSeleccionadas, setObleasSeleccionadas] = useState<number[]>([])
   const [seleccionarTodas, setSeleccionarTodas] = useState(false)
@@ -101,11 +125,7 @@ export default function ObleasPage() {
   const cargarDatos = async () => {
     setLoading(true)
     try {
-      await Promise.all([
-        cargarObleas(),
-        cargarStats(),
-        cargarHabilitaciones()
-      ])
+      await Promise.all([cargarObleas(), cargarStats(), cargarHabilitaciones()])
     } catch (error) {
       console.error('Error al cargar datos:', error)
     } finally {
@@ -120,14 +140,14 @@ export default function ObleasPage() {
       const params = new URLSearchParams({
         limite: '50',
         busqueda: busqueda,
-        ...filtros
+        ...filtros,
       })
-      
+
       const response = await fetch(`/api/obleas?${params}`)
       const data = await response.json()
-      
+
       console.log('📊 Respuesta API obleas:', data)
-      
+
       if (data.success) {
         setObleas(data.data || [])
         console.log('✅ Obleas cargadas:', data.data?.length || 0)
@@ -143,7 +163,7 @@ export default function ObleasPage() {
     try {
       const response = await fetch('/api/obleas/stats')
       const data = await response.json()
-      
+
       if (data.success) {
         setStats(data.data)
       }
@@ -156,7 +176,7 @@ export default function ObleasPage() {
     try {
       const response = await fetch('/api/habilitaciones?estado=HABILITADO&limite=100')
       const data = await response.json()
-      
+
       if (data.success) {
         setHabilitaciones(data.data || [])
       }
@@ -171,11 +191,11 @@ export default function ObleasPage() {
     setEliminandoOblea(obleaId)
     try {
       const response = await fetch(`/api/obleas/${obleaId}`, {
-        method: 'DELETE'
+        method: 'DELETE',
       })
-      
+
       const data = await response.json()
-      
+
       if (data.success) {
         await cargarDatos() // Recargar todos los datos
         alert('Oblea eliminada exitosamente')
@@ -190,15 +210,17 @@ export default function ObleasPage() {
     }
   }
 
-  const obleasFiltradas = obleas.filter(oblea =>
-    oblea.nro_licencia?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    oblea.titular?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    oblea.vehiculo_dominio?.toLowerCase().includes(busqueda.toLowerCase())
+  const obleasFiltradas = obleas.filter(
+    oblea =>
+      oblea.nro_licencia?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      oblea.titular?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      oblea.vehiculo_dominio?.toLowerCase().includes(busqueda.toLowerCase())
   )
 
-  const habilitacionesFiltradas = habilitaciones.filter(hab =>
-    hab.nro_licencia?.toLowerCase().includes(busqueda.toLowerCase()) ||
-    hab.titular_principal?.toLowerCase().includes(busqueda.toLowerCase())
+  const habilitacionesFiltradas = habilitaciones.filter(
+    hab =>
+      hab.nro_licencia?.toLowerCase().includes(busqueda.toLowerCase()) ||
+      hab.titular_principal?.toLowerCase().includes(busqueda.toLowerCase())
   )
 
   const handleGestionarObleas = (hab: Habilitacion) => {
@@ -213,10 +235,8 @@ export default function ObleasPage() {
 
   // Funciones para selección masiva
   const toggleSeleccionOblea = (obleaId: number) => {
-    setObleasSeleccionadas(prev => 
-      prev.includes(obleaId) 
-        ? prev.filter(id => id !== obleaId)
-        : [...prev, obleaId]
+    setObleasSeleccionadas(prev =>
+      prev.includes(obleaId) ? prev.filter(id => id !== obleaId) : [...prev, obleaId]
     )
   }
 
@@ -232,7 +252,10 @@ export default function ObleasPage() {
   const ejecutarAccionMasiva = async () => {
     if (!accionMasiva || obleasSeleccionadas.length === 0) return
 
-    if (!confirm(`¿Estás seguro de aplicar "${accionMasiva}" a ${obleasSeleccionadas.length} obleas?`)) return
+    if (
+      !confirm(`¿Estás seguro de aplicar "${accionMasiva}" a ${obleasSeleccionadas.length} obleas?`)
+    )
+      return
 
     setProcesandoMasivo(true)
     try {
@@ -241,12 +264,12 @@ export default function ObleasPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           accion: accionMasiva,
-          obleas_ids: obleasSeleccionadas
-        })
+          obleas_ids: obleasSeleccionadas,
+        }),
       })
 
       const data = await response.json()
-      
+
       if (data.success) {
         await cargarDatos()
         setObleasSeleccionadas([])
@@ -268,11 +291,11 @@ export default function ObleasPage() {
       const params = new URLSearchParams({
         formato,
         busqueda: busqueda,
-        ...filtros
+        ...filtros,
       })
-      
+
       const response = await fetch(`/api/obleas/export?${params}`)
-      
+
       if (formato === 'csv') {
         const blob = await response.blob()
         const url = window.URL.createObjectURL(blob)
@@ -302,7 +325,7 @@ export default function ObleasPage() {
       fechaDesde: '',
       fechaHasta: '',
       tipoTransporte: '',
-      notificado: ''
+      notificado: '',
     })
     setBusqueda('')
   }
@@ -310,12 +333,12 @@ export default function ObleasPage() {
   const getEstadoBadge = (notificado: string) => {
     return notificado === 'si' ? (
       <Badge className="bg-green-100 text-green-800">
-        <CheckCircle className="h-3 w-3 mr-1" />
+        <CheckCircle className="mr-1 h-3 w-3" />
         Notificada
       </Badge>
     ) : (
       <Badge className="bg-yellow-100 text-yellow-800">
-        <Clock className="h-3 w-3 mr-1" />
+        <Clock className="mr-1 h-3 w-3" />
         Pendiente
       </Badge>
     )
@@ -326,13 +349,11 @@ export default function ObleasPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-2 bg-orange-100 rounded-lg">
+          <div className="rounded-lg bg-orange-100 p-2">
             <Shield className="h-6 w-6 text-orange-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Gestión de Obleas
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Gestión de Obleas</h1>
             <p className="text-gray-600">
               Generar certificados de entrega de obleas para habilitaciones activas
             </p>
@@ -341,15 +362,15 @@ export default function ObleasPage() {
       </div>
 
       {/* Información importante */}
-      <Card className="p-4 bg-orange-50 border-orange-200">
+      <Card className="border-orange-200 bg-orange-50 p-4">
         <div className="flex items-start gap-3">
-          <Shield className="h-5 w-5 text-orange-600 mt-0.5" />
+          <Shield className="mt-0.5 h-5 w-5 text-orange-600" />
           <div>
-            <h3 className="font-semibold text-orange-900 mb-2">
-              ℹ️ Información sobre Obleas
-            </h3>
-            <div className="text-sm text-orange-800 space-y-1">
-              <p>• Solo habilitaciones con estado <strong>HABILITADO</strong> pueden generar obleas</p>
+            <h3 className="mb-2 font-semibold text-orange-900">ℹ️ Información sobre Obleas</h3>
+            <div className="space-y-1 text-sm text-orange-800">
+              <p>
+                • Solo habilitaciones con estado <strong>HABILITADO</strong> pueden generar obleas
+              </p>
               <p>• El certificado PDF ocupa toda la hoja A4 para impresión profesional</p>
               <p>• Cada oblea queda registrada en el historial del sistema</p>
               <p>• El certificado debe ser firmado por el titular y el agente municipal</p>
@@ -362,35 +383,31 @@ export default function ObleasPage() {
       <div className="space-y-4">
         <div className="flex items-center gap-4">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
             <Input
               placeholder="Buscar por licencia, titular o dominio..."
               value={busqueda}
-              onChange={(e) => setBusqueda(e.target.value)}
+              onChange={e => setBusqueda(e.target.value)}
               className="pl-10"
             />
           </div>
-          <Button 
-            onClick={() => setMostrarFiltros(!mostrarFiltros)} 
+          <Button
+            onClick={() => setMostrarFiltros(!mostrarFiltros)}
             variant="outline"
             className="flex items-center gap-2"
           >
             <Filter className="h-4 w-4" />
             Filtros
           </Button>
-          <Button 
-            onClick={() => exportarObleas('csv')} 
+          <Button
+            onClick={() => exportarObleas('csv')}
             variant="outline"
             className="flex items-center gap-2"
           >
             <Download className="h-4 w-4" />
             Exportar
           </Button>
-          <Button 
-            onClick={cargarDatos} 
-            variant="outline"
-            className="flex items-center gap-2"
-          >
+          <Button onClick={cargarDatos} variant="outline" className="flex items-center gap-2">
             <RefreshCw className="h-4 w-4" />
             Actualizar
           </Button>
@@ -398,27 +415,32 @@ export default function ObleasPage() {
 
         {/* Panel de filtros avanzados */}
         {mostrarFiltros && (
-          <Card className="p-4 bg-gray-50">
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <Card className="bg-gray-50 p-4">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Fecha Desde</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Fecha Desde</label>
                 <Input
                   type="date"
                   value={filtros.fechaDesde}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, fechaDesde: e.target.value }))}
+                  onChange={e => setFiltros(prev => ({ ...prev, fechaDesde: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Fecha Hasta</label>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Fecha Hasta</label>
                 <Input
                   type="date"
                   value={filtros.fechaHasta}
-                  onChange={(e) => setFiltros(prev => ({ ...prev, fechaHasta: e.target.value }))}
+                  onChange={e => setFiltros(prev => ({ ...prev, fechaHasta: e.target.value }))}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Tipo Transporte</label>
-                <Select value={filtros.tipoTransporte} onValueChange={(value) => setFiltros(prev => ({ ...prev, tipoTransporte: value }))}>
+                <label className="mb-1 block text-sm font-medium text-gray-700">
+                  Tipo Transporte
+                </label>
+                <Select
+                  value={filtros.tipoTransporte}
+                  onValueChange={value => setFiltros(prev => ({ ...prev, tipoTransporte: value }))}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
@@ -430,8 +452,11 @@ export default function ObleasPage() {
                 </Select>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-700 mb-1 block">Estado</label>
-                <Select value={filtros.notificado} onValueChange={(value) => setFiltros(prev => ({ ...prev, notificado: value }))}>
+                <label className="mb-1 block text-sm font-medium text-gray-700">Estado</label>
+                <Select
+                  value={filtros.notificado}
+                  onValueChange={value => setFiltros(prev => ({ ...prev, notificado: value }))}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Todos" />
                   </SelectTrigger>
@@ -443,7 +468,7 @@ export default function ObleasPage() {
                 </Select>
               </div>
             </div>
-            <div className="flex items-center gap-2 mt-4">
+            <div className="mt-4 flex items-center gap-2">
               <Button onClick={aplicarFiltros} className="flex items-center gap-2">
                 <Filter className="h-4 w-4" />
                 Aplicar Filtros
@@ -457,7 +482,7 @@ export default function ObleasPage() {
 
         {/* Barra de acciones masivas */}
         {obleasSeleccionadas.length > 0 && (
-          <Card className="p-4 bg-blue-50 border-blue-200">
+          <Card className="border-blue-200 bg-blue-50 p-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium text-blue-900">
@@ -475,23 +500,23 @@ export default function ObleasPage() {
                 </Select>
               </div>
               <div className="flex items-center gap-2">
-                <Button 
-                  onClick={ejecutarAccionMasiva} 
+                <Button
+                  onClick={ejecutarAccionMasiva}
                   disabled={!accionMasiva || procesandoMasivo}
                   className="flex items-center gap-2"
                 >
                   {procesandoMasivo ? (
-                    <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                    <div className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
                   ) : (
                     <Settings className="h-4 w-4" />
                   )}
                   Ejecutar
                 </Button>
-                <Button 
+                <Button
                   onClick={() => {
                     setObleasSeleccionadas([])
                     setSeleccionarTodas(false)
-                  }} 
+                  }}
                   variant="outline"
                 >
                   Cancelar
@@ -504,10 +529,10 @@ export default function ObleasPage() {
 
       {/* Estadísticas */}
       {stats && (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
+              <div className="rounded-lg bg-blue-100 p-2">
                 <Shield className="h-5 w-5 text-blue-600" />
               </div>
               <div>
@@ -516,10 +541,10 @@ export default function ObleasPage() {
               </div>
             </div>
           </Card>
-          
+
           <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-green-100 rounded-lg">
+              <div className="rounded-lg bg-green-100 p-2">
                 <CheckCircle className="h-5 w-5 text-green-600" />
               </div>
               <div>
@@ -531,7 +556,7 @@ export default function ObleasPage() {
 
           <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-yellow-100 rounded-lg">
+              <div className="rounded-lg bg-yellow-100 p-2">
                 <Clock className="h-5 w-5 text-yellow-600" />
               </div>
               <div>
@@ -543,12 +568,14 @@ export default function ObleasPage() {
 
           <Card className="p-4">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-red-100 rounded-lg">
+              <div className="rounded-lg bg-red-100 p-2">
                 <AlertCircle className="h-5 w-5 text-red-600" />
               </div>
               <div>
                 <p className="text-sm text-gray-600">Sin Oblea</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.totales.habilitaciones_sin_oblea}</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {stats.totales.habilitaciones_sin_oblea}
+                </p>
               </div>
             </div>
           </Card>
@@ -576,65 +603,62 @@ export default function ObleasPage() {
         <TabsContent value="generar">
           <Card>
             <div className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
                 Habilitaciones Disponibles para Obleas
               </h2>
-              
+
               {loading ? (
                 <div className="space-y-4">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-16 bg-gray-100 animate-pulse rounded-lg" />
+                    <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
                   ))}
                 </div>
               ) : habilitacionesFiltradas.length === 0 ? (
-                <div className="text-center py-12">
-                  <Shield className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <div className="py-12 text-center">
+                  <Shield className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
                     No se encontraron habilitaciones
                   </h3>
                   <p className="text-gray-500">
-                    {busqueda ? 'Intenta con otro término de búsqueda' : 'No hay habilitaciones HABILITADAS disponibles'}
+                    {busqueda
+                      ? 'Intenta con otro término de búsqueda'
+                      : 'No hay habilitaciones HABILITADAS disponibles'}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {habilitacionesFiltradas.map((hab) => (
+                  {habilitacionesFiltradas.map(hab => (
                     <div
                       key={hab.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="p-2 bg-orange-100 rounded-lg">
+                        <div className="rounded-lg bg-orange-100 p-2">
                           <Shield className="h-5 w-5 text-orange-600" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-3 mb-1">
-                            <h3 className="font-semibold text-gray-900">
-                              {hab.nro_licencia}
-                            </h3>
-                            <Badge className="bg-green-600 text-white">
-                              HABILITADO
-                            </Badge>
-                            <Badge variant="outline">
-                              {hab.tipo_transporte}
-                            </Badge>
+                          <div className="mb-1 flex items-center gap-3">
+                            <h3 className="font-semibold text-gray-900">{hab.nro_licencia}</h3>
+                            <Badge className="bg-green-600 text-white">HABILITADO</Badge>
+                            <Badge variant="outline">{hab.tipo_transporte}</Badge>
                           </div>
                           <p className="text-sm text-gray-600">
                             Titular: {hab.titular_principal || 'N/A'}
                           </p>
                           {hab.vigencia_fin && (
                             <p className="text-xs text-gray-500">
-                              Vigencia hasta: {new Date(hab.vigencia_fin).toLocaleDateString('es-AR')}
+                              Vigencia hasta:{' '}
+                              {new Date(hab.vigencia_fin).toLocaleDateString('es-AR')}
                             </p>
                           )}
                         </div>
                       </div>
-                      
+
                       <Button
                         onClick={() => handleGestionarObleas(hab)}
-                        className="bg-orange-600 hover:bg-orange-700 text-white"
+                        className="bg-orange-600 text-white hover:bg-orange-700"
                       >
-                        <Shield className="h-4 w-4 mr-2" />
+                        <Shield className="mr-2 h-4 w-4" />
                         Gestionar Obleas
                       </Button>
                     </div>
@@ -649,48 +673,44 @@ export default function ObleasPage() {
         <TabsContent value="administrar">
           <Card>
             <div className="p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+              <h2 className="mb-4 text-lg font-semibold text-gray-900">
                 Obleas Registradas en el Sistema
               </h2>
-              
+
               {loading ? (
                 <div className="space-y-4">
                   {[...Array(5)].map((_, i) => (
-                    <div key={i} className="h-20 bg-gray-100 animate-pulse rounded-lg" />
+                    <div key={i} className="h-20 animate-pulse rounded-lg bg-gray-100" />
                   ))}
                 </div>
               ) : obleasFiltradas.length === 0 ? (
-                <div className="text-center py-12">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <div className="py-12 text-center">
+                  <FileText className="mx-auto mb-4 h-12 w-12 text-gray-400" />
+                  <h3 className="mb-2 text-lg font-semibold text-gray-900">
                     No se encontraron obleas
                   </h3>
                   <p className="text-gray-500">
-                    {busqueda ? 'Intenta con otro término de búsqueda' : 'No hay obleas registradas en el sistema'}
+                    {busqueda
+                      ? 'Intenta con otro término de búsqueda'
+                      : 'No hay obleas registradas en el sistema'}
                   </p>
                 </div>
               ) : (
                 <div className="space-y-3">
-                  {obleasFiltradas.map((oblea) => (
+                  {obleasFiltradas.map(oblea => (
                     <div
                       key={oblea.id}
-                      className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
+                      className="flex items-center justify-between rounded-lg border border-gray-200 p-4 hover:bg-gray-50"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="p-2 bg-blue-100 rounded-lg">
+                        <div className="rounded-lg bg-blue-100 p-2">
                           <Shield className="h-5 w-5 text-blue-600" />
                         </div>
                         <div>
-                          <div className="flex items-center gap-3 mb-1">
-                            <h3 className="font-semibold text-gray-900">
-                              Oblea #{oblea.id}
-                            </h3>
-                            <Badge variant="outline">
-                              {oblea.nro_licencia}
-                            </Badge>
-                            <Badge variant="outline">
-                              {oblea.tipo_transporte}
-                            </Badge>
+                          <div className="mb-1 flex items-center gap-3">
+                            <h3 className="font-semibold text-gray-900">Oblea #{oblea.id}</h3>
+                            <Badge variant="outline">{oblea.nro_licencia}</Badge>
+                            <Badge variant="outline">{oblea.tipo_transporte}</Badge>
                             {getEstadoBadge(oblea.notificado)}
                           </div>
                           <p className="text-sm text-gray-600">
@@ -701,7 +721,7 @@ export default function ObleasPage() {
                           </p>
                         </div>
                       </div>
-                      
+
                       <div className="flex items-center gap-2">
                         <a
                           href={`/api/obleas/${oblea.id}/pdf-historico`}
@@ -712,9 +732,9 @@ export default function ObleasPage() {
                           <Button
                             variant="outline"
                             size="sm"
-                            className="bg-red-50 hover:bg-red-100 text-red-600"
+                            className="bg-red-50 text-red-600 hover:bg-red-100"
                           >
-                            <FileText className="h-4 w-4 mr-1" />
+                            <FileText className="mr-1 h-4 w-4" />
                             PDF
                           </Button>
                         </a>
@@ -724,20 +744,20 @@ export default function ObleasPage() {
                           size="sm"
                           className="bg-blue-50 hover:bg-blue-100"
                         >
-                          <Settings className="h-4 w-4 mr-1" />
+                          <Settings className="mr-1 h-4 w-4" />
                           Gestionar
                         </Button>
                         <Button
                           onClick={() => eliminarOblea(oblea.id)}
                           variant="outline"
                           size="sm"
-                          className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                          className="text-red-600 hover:bg-red-50 hover:text-red-700"
                           disabled={eliminandoOblea === oblea.id}
                         >
                           {eliminandoOblea === oblea.id ? (
-                            <div className="animate-spin h-4 w-4 border-2 border-red-600 border-t-transparent rounded-full" />
+                            <div className="h-4 w-4 animate-spin rounded-full border-2 border-red-600 border-t-transparent" />
                           ) : (
-                            <Trash2 className="h-4 w-4 mr-1" />
+                            <Trash2 className="mr-1 h-4 w-4" />
                           )}
                           Eliminar
                         </Button>
@@ -756,14 +776,15 @@ export default function ObleasPage() {
             {stats && (
               <>
                 <Card className="p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    Obleas Recientes
-                  </h2>
+                  <h2 className="mb-4 text-lg font-semibold text-gray-900">Obleas Recientes</h2>
                   <div className="space-y-3">
-                    {stats.recientes.map((oblea) => (
-                      <div key={oblea.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                    {stats.recientes.map(oblea => (
+                      <div
+                        key={oblea.id}
+                        className="flex items-center justify-between rounded-lg bg-gray-50 p-3"
+                      >
                         <div>
-                          <div className="flex items-center gap-2 mb-1">
+                          <div className="mb-1 flex items-center gap-2">
                             <span className="font-medium">Oblea #{oblea.id}</span>
                             <Badge variant="outline">{oblea.nro_licencia}</Badge>
                             <Badge variant="outline">{oblea.tipo_transporte}</Badge>
@@ -779,25 +800,33 @@ export default function ObleasPage() {
                 </Card>
 
                 <Card className="p-6">
-                  <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                    Resumen del Sistema
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-blue-900 mb-2">Total de Obleas</h3>
-                      <p className="text-2xl font-bold text-blue-600">{stats.totales.total_obleas}</p>
+                  <h2 className="mb-4 text-lg font-semibold text-gray-900">Resumen del Sistema</h2>
+                  <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                    <div className="rounded-lg bg-blue-50 p-4">
+                      <h3 className="mb-2 font-semibold text-blue-900">Total de Obleas</h3>
+                      <p className="text-2xl font-bold text-blue-600">
+                        {stats.totales.total_obleas}
+                      </p>
                     </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-green-900 mb-2">Obleas Notificadas</h3>
-                      <p className="text-2xl font-bold text-green-600">{stats.totales.notificadas}</p>
+                    <div className="rounded-lg bg-green-50 p-4">
+                      <h3 className="mb-2 font-semibold text-green-900">Obleas Notificadas</h3>
+                      <p className="text-2xl font-bold text-green-600">
+                        {stats.totales.notificadas}
+                      </p>
                     </div>
-                    <div className="bg-yellow-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-yellow-900 mb-2">Pendientes de Notificar</h3>
-                      <p className="text-2xl font-bold text-yellow-600">{stats.totales.no_notificadas}</p>
+                    <div className="rounded-lg bg-yellow-50 p-4">
+                      <h3 className="mb-2 font-semibold text-yellow-900">
+                        Pendientes de Notificar
+                      </h3>
+                      <p className="text-2xl font-bold text-yellow-600">
+                        {stats.totales.no_notificadas}
+                      </p>
                     </div>
-                    <div className="bg-red-50 p-4 rounded-lg">
-                      <h3 className="font-semibold text-red-900 mb-2">Habilitaciones sin Oblea</h3>
-                      <p className="text-2xl font-bold text-red-600">{stats.totales.habilitaciones_sin_oblea}</p>
+                    <div className="rounded-lg bg-red-50 p-4">
+                      <h3 className="mb-2 font-semibold text-red-900">Habilitaciones sin Oblea</h3>
+                      <p className="text-2xl font-bold text-red-600">
+                        {stats.totales.habilitaciones_sin_oblea}
+                      </p>
                     </div>
                   </div>
                 </Card>

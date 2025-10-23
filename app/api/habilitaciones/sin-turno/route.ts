@@ -13,27 +13,27 @@ export async function GET() {
     const habilitaciones = await prisma.habilitaciones_generales.findMany({
       where: {
         estado: 'EN_TRAMITE',
-        is_deleted: false
+        is_deleted: false,
       },
       include: {
         habilitaciones_personas: {
           include: {
-            persona: true
-          }
+            persona: true,
+          },
         },
         habilitaciones_vehiculos: {
           include: {
-            vehiculo: true
-          }
-        }
-      }
+            vehiculo: true,
+          },
+        },
+      },
     })
 
     // Obtener IDs de habilitaciones que ya tienen o tuvieron turno (cualquier estado)
     const turnosExistentes = await prisma.turnos.findMany({
       select: {
-        habilitacion_id: true
-      }
+        habilitacion_id: true,
+      },
     })
 
     const idsConTurno = new Set(turnosExistentes.map(t => t.habilitacion_id))
@@ -55,14 +55,14 @@ export async function GET() {
           titular_dni: persona?.dni || null,
           vehiculo_patente: vehiculo?.dominio || null,
           vehiculo_marca: vehiculo?.marca || null,
-          vehiculo_modelo: vehiculo?.modelo || null
+          vehiculo_modelo: vehiculo?.modelo || null,
         }
       })
 
     return NextResponse.json({
       success: true,
       data: sinTurno,
-      count: sinTurno.length
+      count: sinTurno.length,
     })
   } catch (error) {
     console.error('Error al obtener habilitaciones sin turno:', error)

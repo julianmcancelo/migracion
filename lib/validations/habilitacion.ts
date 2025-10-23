@@ -31,21 +31,21 @@ export const habilitacionSchema = z.object({
     required_error: 'El tipo de transporte es requerido',
   }),
   estado: z.enum(['HABILITADO', 'NO_HABILITADO', 'EN_TRAMITE', 'INICIADO']).default('INICIADO'),
-  
+
   // Fechas
   anio: z.number().int().min(2020).max(2100).optional(),
   vigencia_inicio: z.string().optional(), // ISO date string
   vigencia_fin: z.string().optional(),
-  
+
   // Números y referencias
   nro_licencia: z.string().min(1, 'El número de licencia es requerido').max(20),
   expte: z.string().min(1, 'El número de expediente es requerido').max(50),
   resolucion: z.string().max(50).optional(),
-  
+
   // Otros datos
   observaciones: z.string().optional(),
   oblea_colocada: z.boolean().default(false),
-  
+
   // Relaciones
   personas: z.array(personaHabilitacionSchema).min(1, 'Debe agregar al menos una persona'),
   vehiculos: z.array(vehiculoHabilitacionSchema).min(1, 'Debe agregar al menos un vehículo'),

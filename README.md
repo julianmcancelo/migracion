@@ -86,7 +86,7 @@ Puedes crear un usuario de prueba ejecutando este SQL en tu base de datos:
 
 ```sql
 -- La contraseña es: "password123"
-INSERT INTO admin (nombre, email, password, rol, legajo) 
+INSERT INTO admin (nombre, email, password, rol, legajo)
 VALUES (
   'Usuario Prueba',
   'prueba@lanus.gob.ar',
@@ -99,10 +99,10 @@ VALUES (
 Para generar el hash de una contraseña, puedes usar este código Node.js:
 
 ```javascript
-const bcrypt = require('bcryptjs');
-const password = 'password123';
-const hash = bcrypt.hashSync(password, 10);
-console.log(hash);
+const bcrypt = require('bcryptjs')
+const password = 'password123'
+const hash = bcrypt.hashSync(password, 10)
+console.log(hash)
 ```
 
 ## 📁 Estructura del Proyecto
@@ -170,6 +170,7 @@ migracion/
 ## 📊 Comparación PHP vs Next.js
 
 ### Sistema Actual (PHP)
+
 ```php
 // login.php
 $stmt = $pdo->prepare("SELECT * FROM admin WHERE email = ?");
@@ -182,6 +183,7 @@ if ($user && password_verify($password, $user['password'])) {
 ```
 
 ### Sistema Nuevo (Next.js)
+
 ```typescript
 // app/api/auth/login/route.ts
 const user = await prisma.admin.findUnique({ where: { email } });
@@ -205,6 +207,7 @@ Si obtienes un error de conexión, verifica:
 ### Error "Module not found"
 
 Ejecuta:
+
 ```bash
 npm install
 npm run prisma:generate
@@ -213,6 +216,7 @@ npm run prisma:generate
 ### Puerto 3000 en uso
 
 Cambia el puerto:
+
 ```bash
 npm run dev -- -p 3001
 ```
@@ -243,4 +247,3 @@ Municipio de Lanús © 2025
 ---
 
 **¿Preguntas?** Este es un prototipo funcional. Puedes expandirlo módulo por módulo según tus necesidades.
-

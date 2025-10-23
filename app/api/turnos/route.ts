@@ -88,7 +88,7 @@ export async function GET(request: Request) {
       habilitacion: {
         id: turno.habilitacion_id,
         nro_licencia: turno.nro_licencia || 'N/A',
-        tipo_transporte: turno.tipo_transporte || 'N/A'
+        tipo_transporte: turno.tipo_transporte || 'N/A',
       },
       titular_nombre: turno.titular_nombre || 'Sin datos',
       titular_dni: turno.titular_dni || '',
@@ -96,21 +96,17 @@ export async function GET(request: Request) {
       titular_telefono: turno.titular_telefono || '',
       vehiculo_patente: turno.vehiculo_patente || 'Sin patente',
       vehiculo_marca: turno.vehiculo_marca || '',
-      vehiculo_modelo: turno.vehiculo_modelo || ''
+      vehiculo_modelo: turno.vehiculo_modelo || '',
     }))
 
     return NextResponse.json({
       success: true,
       data: turnosFormateados,
-      total: turnosFormateados.length
+      total: turnosFormateados.length,
     })
-
   } catch (error) {
     console.error('Error al obtener turnos:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al obtener turnos' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al obtener turnos' }, { status: 500 })
   }
 }
 
@@ -139,7 +135,7 @@ export async function POST(request: Request) {
 
     // Verificar que la habilitación existe
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
-      where: { id: Number(habilitacion_id) }
+      where: { id: Number(habilitacion_id) },
     })
 
     if (!habilitacion) {
@@ -163,8 +159,8 @@ export async function POST(request: Request) {
         hora: new Date(`1970-01-01T${hora}:00`),
         fecha_hora: fechaHora,
         observaciones: observaciones || null,
-        estado: 'PENDIENTE'
-      }
+        estado: 'PENDIENTE',
+      },
     })
 
     // Obtener datos del titular para enviar email
@@ -172,12 +168,12 @@ export async function POST(request: Request) {
     const habPersona: any = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: Number(habilitacion_id),
-        rol: 'TITULAR'
+        rol: 'TITULAR',
       },
       // @ts-ignore
       include: {
-        persona: true
-      }
+        persona: true,
+      },
     })
 
     // Enviar email de confirmación si tiene email
@@ -188,27 +184,30 @@ export async function POST(request: Request) {
         const habVehiculo: any = await prisma.habilitaciones_vehiculos.findFirst({
           where: { habilitacion_id: Number(habilitacion_id) },
           // @ts-ignore
-          include: { vehiculo: true }
+          include: { vehiculo: true },
         })
 
-        await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/turnos/enviar-email`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            turno_id: turno.id,
-            email: habPersona.persona.email,
-            nombre: habPersona.persona.nombre,
-            dni: habPersona.persona.dni,
-            telefono: habPersona.persona.telefono,
-            nro_licencia: habilitacion.nro_licencia,
-            fecha: fecha,
-            hora: hora,
-            tipo_transporte: habilitacion.tipo_transporte,
-            vehiculo_patente: habVehiculo?.vehiculo?.dominio,
-            vehiculo_marca: habVehiculo?.vehiculo?.marca,
-            vehiculo_modelo: habVehiculo?.vehiculo?.modelo
-          })
-        })
+        await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/turnos/enviar-email`,
+          {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              turno_id: turno.id,
+              email: habPersona.persona.email,
+              nombre: habPersona.persona.nombre,
+              dni: habPersona.persona.dni,
+              telefono: habPersona.persona.telefono,
+              nro_licencia: habilitacion.nro_licencia,
+              fecha: fecha,
+              hora: hora,
+              tipo_transporte: habilitacion.tipo_transporte,
+              vehiculo_patente: habVehiculo?.vehiculo?.dominio,
+              vehiculo_marca: habVehiculo?.vehiculo?.marca,
+              vehiculo_modelo: habVehiculo?.vehiculo?.modelo,
+            }),
+          }
+        )
         console.log('Email de confirmación enviado a:', habPersona.persona.email)
       } catch (emailError) {
         console.error('Error al enviar email, pero turno creado:', emailError)
@@ -216,17 +215,16 @@ export async function POST(request: Request) {
       }
     }
 
-    return NextResponse.json({
-      success: true,
-      data: turno,
-      email_enviado: !!habPersona?.persona?.email
-    }, { status: 201 })
-
+    return NextResponse.json(
+      {
+        success: true,
+        data: turno,
+        email_enviado: !!habPersona?.persona?.email,
+      },
+      { status: 201 }
+    )
   } catch (error) {
     console.error('Error al crear turno:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al crear turno' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al crear turno' }, { status: 500 })
   }
 }

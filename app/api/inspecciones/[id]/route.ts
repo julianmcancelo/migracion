@@ -7,16 +7,13 @@ export const dynamic = 'force-dynamic'
  * GET /api/inspecciones/[id]
  * Obtiene una inspección por ID con datos de habilitación
  */
-export async function GET(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const inspeccionId = parseInt(params.id)
 
     const inspeccion = await prisma.inspecciones.findUnique({
-      where: { id: inspeccionId }
+      where: { id: inspeccionId },
     })
 
     if (!inspeccion) {
@@ -31,8 +28,8 @@ export async function GET(
       where: { id: inspeccion.habilitacion_id },
       select: {
         nro_licencia: true,
-        tipo_transporte: true
-      }
+        tipo_transporte: true,
+      },
     })
 
     // Obtener titular
@@ -40,7 +37,7 @@ export async function GET(
     const habPersona = await prisma.habilitaciones_personas.findFirst({
       where: {
         habilitacion_id: inspeccion.habilitacion_id,
-        rol: 'TITULAR'
+        rol: 'TITULAR',
       },
       // @ts-ignore
       include: {
@@ -48,17 +45,17 @@ export async function GET(
           select: {
             nombre: true,
             dni: true,
-            email: true
-          }
-        }
-      }
+            email: true,
+          },
+        },
+      },
     })
 
     // Obtener vehículo
     // @ts-ignore
     const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
       where: {
-        habilitacion_id: inspeccion.habilitacion_id
+        habilitacion_id: inspeccion.habilitacion_id,
       },
       // @ts-ignore
       include: {
@@ -66,10 +63,10 @@ export async function GET(
           select: {
             dominio: true,
             marca: true,
-            modelo: true
-          }
-        }
-      }
+            modelo: true,
+          },
+        },
+      },
     })
 
     return NextResponse.json({
@@ -79,11 +76,10 @@ export async function GET(
         habilitacion: {
           ...habilitacion,
           habilitaciones_personas: habPersona ? [habPersona] : [],
-          habilitaciones_vehiculos: habVehiculo ? [habVehiculo] : []
-        }
-      }
+          habilitaciones_vehiculos: habVehiculo ? [habVehiculo] : [],
+        },
+      },
     })
-
   } catch (error) {
     console.error('Error al obtener inspección:', error)
     return NextResponse.json(
@@ -97,10 +93,7 @@ export async function GET(
  * PATCH /api/inspecciones/[id]
  * Actualiza una inspección existente
  */
-export async function PATCH(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const inspeccionId = parseInt(params.id)
@@ -110,7 +103,7 @@ export async function PATCH(
 
     // Verificar que la inspección existe
     const inspeccion = await prisma.inspecciones.findUnique({
-      where: { id: inspeccionId }
+      where: { id: inspeccionId },
     })
 
     if (!inspeccion) {
@@ -126,8 +119,8 @@ export async function PATCH(
       data: {
         nombre_inspector: nombre_inspector || inspeccion.nombre_inspector,
         resultado: resultado || inspeccion.resultado,
-        fecha_inspeccion: new Date() // Actualizar fecha al momento de completar
-      }
+        fecha_inspeccion: new Date(), // Actualizar fecha al momento de completar
+      },
     })
 
     // Guardar items del checklist
@@ -140,8 +133,8 @@ export async function PATCH(
               item_id: item.nombre.substring(0, 50), // Limitar longitud
               nombre_item: item.nombre,
               estado: item.estado,
-              observacion: item.observacion || null
-            }
+              observacion: item.observacion || null,
+            },
           })
         }
       }
@@ -155,17 +148,16 @@ export async function PATCH(
           item_id: 'observaciones_generales',
           nombre_item: 'Observaciones Generales',
           estado: 'INFO',
-          observacion: observaciones.trim()
-        }
+          observacion: observaciones.trim(),
+        },
       })
     }
 
     return NextResponse.json({
       success: true,
       data: inspeccionActualizada,
-      message: 'Inspección actualizada exitosamente'
+      message: 'Inspección actualizada exitosamente',
     })
-
   } catch (error) {
     console.error('Error al actualizar inspección:', error)
     return NextResponse.json(

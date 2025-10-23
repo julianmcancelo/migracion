@@ -8,10 +8,7 @@ export const dynamic = 'force-dynamic'
  * POST /api/turnos/[id]/reenviar-notificacion
  * Reenvía la notificación por email de un turno
  */
-export async function POST(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const turnoId = parseInt(params.id)
@@ -26,38 +23,35 @@ export async function POST(
             tipo_transporte: true,
             habilitaciones_personas: {
               where: {
-                rol: 'TITULAR'
+                rol: 'TITULAR',
               },
               select: {
                 persona: {
                   select: {
                     nombre: true,
-                    email: true
-                  }
-                }
+                    email: true,
+                  },
+                },
               },
-              take: 1
+              take: 1,
             },
             habilitaciones_vehiculos: {
               select: {
                 vehiculo: {
                   select: {
-                    dominio: true
-                  }
-                }
+                    dominio: true,
+                  },
+                },
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     })
 
     if (!turno) {
-      return NextResponse.json(
-        { success: false, error: 'Turno no encontrado' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Turno no encontrado' }, { status: 404 })
     }
 
     const titular = turno.habilitacion?.habilitaciones_personas?.[0]?.persona
@@ -75,20 +69,20 @@ export async function POST(
       service: 'gmail',
       auth: {
         user: process.env.GMAIL_USER,
-        pass: process.env.GMAIL_APP_PASSWORD
-      }
+        pass: process.env.GMAIL_APP_PASSWORD,
+      },
     })
 
     const fechaFormateada = new Date(turno.fecha).toLocaleDateString('es-AR', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
 
     const horaFormateada = new Date(`1970-01-01T${turno.hora}`).toLocaleTimeString('es-AR', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     })
 
     // Enviar email
@@ -185,20 +179,19 @@ export async function POST(
     </div>
   </div>
 </body>
-</html>`
+</html>`,
     })
 
     // Actualizar flag de recordatorio enviado
     await prisma.turnos.update({
       where: { id: turnoId },
-      data: { recordatorio_enviado: true }
+      data: { recordatorio_enviado: true },
     })
 
     return NextResponse.json({
       success: true,
-      message: 'Notificación reenviada exitosamente'
+      message: 'Notificación reenviada exitosamente',
     })
-
   } catch (error) {
     console.error('Error al reenviar notificación:', error)
     return NextResponse.json(

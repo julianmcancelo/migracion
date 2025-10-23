@@ -11,11 +11,11 @@ export default function OCRDemoPage() {
   const [cedulaData, setCedulaData] = useState<any>(null)
 
   return (
-    <div className="container mx-auto p-6 max-w-4xl">
+    <div className="container mx-auto max-w-4xl p-6">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="p-2 bg-purple-100 rounded-lg">
+        <div className="mb-2 flex items-center gap-3">
+          <div className="rounded-lg bg-purple-100 p-2">
             <Sparkles className="h-6 w-6 text-purple-600" />
           </div>
           <h1 className="text-3xl font-bold text-gray-900">OCR con IA</h1>
@@ -36,7 +36,7 @@ export default function OCRDemoPage() {
         <TabsContent value="dni" className="space-y-4">
           <OCRScanner
             type="dni"
-            onDataExtracted={(data) => {
+            onDataExtracted={data => {
               console.log('Datos DNI extraídos:', data)
               setDniData(data)
             }}
@@ -45,10 +45,8 @@ export default function OCRDemoPage() {
           {/* Mostrar JSON completo */}
           {dniData && (
             <Card className="p-4">
-              <h3 className="font-semibold mb-3 text-gray-900">
-                📋 Datos extraídos (JSON):
-              </h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono">
+              <h3 className="mb-3 font-semibold text-gray-900">📋 Datos extraídos (JSON):</h3>
+              <pre className="overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-sm text-green-400">
                 {JSON.stringify(dniData, null, 2)}
               </pre>
             </Card>
@@ -59,7 +57,7 @@ export default function OCRDemoPage() {
         <TabsContent value="cedula" className="space-y-4">
           <OCRScanner
             type="cedula"
-            onDataExtracted={(data) => {
+            onDataExtracted={data => {
               console.log('Datos Cédula extraídos:', data)
               setCedulaData(data)
             }}
@@ -68,10 +66,8 @@ export default function OCRDemoPage() {
           {/* Mostrar JSON completo */}
           {cedulaData && (
             <Card className="p-4">
-              <h3 className="font-semibold mb-3 text-gray-900">
-                📋 Datos extraídos (JSON):
-              </h3>
-              <pre className="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto text-sm font-mono">
+              <h3 className="mb-3 font-semibold text-gray-900">📋 Datos extraídos (JSON):</h3>
+              <pre className="overflow-x-auto rounded-lg bg-gray-900 p-4 font-mono text-sm text-green-400">
                 {JSON.stringify(cedulaData, null, 2)}
               </pre>
             </Card>
@@ -80,24 +76,22 @@ export default function OCRDemoPage() {
       </Tabs>
 
       {/* Info adicional */}
-      <Card className="mt-8 p-6 bg-gradient-to-r from-purple-50 to-blue-50 border-purple-200">
-        <h3 className="font-bold text-lg mb-3 text-purple-900">
-          🚀 Cómo usar esta funcionalidad:
-        </h3>
+      <Card className="mt-8 border-purple-200 bg-gradient-to-r from-purple-50 to-blue-50 p-6">
+        <h3 className="mb-3 text-lg font-bold text-purple-900">🚀 Cómo usar esta funcionalidad:</h3>
         <div className="space-y-2 text-sm text-purple-800">
           <p>
-            <strong>1. En formularios de personas:</strong> Los usuarios podrán escanear el DNI y 
+            <strong>1. En formularios de personas:</strong> Los usuarios podrán escanear el DNI y
             los campos se llenarán automáticamente.
           </p>
           <p>
-            <strong>2. En formularios de vehículos:</strong> Escanear la cédula verde/azul para 
+            <strong>2. En formularios de vehículos:</strong> Escanear la cédula verde/azul para
             cargar todos los datos del vehículo instantáneamente.
           </p>
           <p>
             <strong>3. Validación:</strong> Los datos extraídos pueden compararse con bases de datos
             oficiales para detectar fraudes.
           </p>
-          <p className="mt-4 pt-4 border-t border-purple-200">
+          <p className="mt-4 border-t border-purple-200 pt-4">
             <strong>⚡ Próximamente:</strong> OCR de pólizas de seguro, VTV, y otros documentos.
           </p>
         </div>

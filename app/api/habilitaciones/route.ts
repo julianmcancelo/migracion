@@ -9,7 +9,7 @@ export const dynamic = 'force-dynamic'
 /**
  * GET /api/habilitaciones
  * Obtiene lista de habilitaciones con filtros y paginación
- * 
+ *
  * Query params:
  * - tipo: 'Escolar' | 'Remis' | 'Demo'
  * - buscar: término de búsqueda (licencia, expediente, titular)
@@ -22,10 +22,7 @@ export async function GET(request: NextRequest) {
     // Verificar autenticación
     const session = await getSession()
     if (!session) {
-      return NextResponse.json(
-        { error: 'No autenticado' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
     // Obtener parámetros de la URL
@@ -37,22 +34,17 @@ export async function GET(request: NextRequest) {
     const ordenarParam = searchParams.get('ordenar') || 'id_desc'
 
     // Validar tipo de transporte según rol
-    const tiposPermitidos = session.rol === 'demo' 
-      ? ['Demo'] 
-      : ['Escolar', 'Remis']
+    const tiposPermitidos = session.rol === 'demo' ? ['Demo'] : ['Escolar', 'Remis']
 
     if (!tiposPermitidos.includes(tipo)) {
-      return NextResponse.json(
-        { error: 'Tipo de transporte no permitido' },
-        { status: 403 }
-      )
+      return NextResponse.json({ error: 'Tipo de transporte no permitido' }, { status: 403 })
     }
 
     // Configurar ordenamiento
     const ordenamientos: Record<string, any> = {
-      'id_desc': { id: 'desc' },
-      'licencia_asc': { nro_licencia: 'asc' },
-      'licencia_desc': { nro_licencia: 'desc' },
+      id_desc: { id: 'desc' },
+      licencia_asc: { nro_licencia: 'asc' },
+      licencia_desc: { nro_licencia: 'desc' },
     }
     const orderBy = ordenamientos[ordenarParam] || ordenamientos['id_desc']
 
@@ -64,10 +56,7 @@ export async function GET(request: NextRequest) {
 
     // Agregar búsqueda si existe
     if (buscar) {
-      where.OR = [
-        { nro_licencia: { contains: buscar } },
-        { expte: { contains: buscar } },
-      ]
+      where.OR = [{ nro_licencia: { contains: buscar } }, { expte: { contains: buscar } }]
     }
 
     // Calcular offset
@@ -109,9 +98,7 @@ export async function GET(request: NextRequest) {
     // Formatear datos con relaciones
     const habilitacionesFormateadas = habilitaciones.map((hab: any) => {
       // Obtener titular principal (con manejo seguro)
-      const titular = hab.habilitaciones_personas?.find(
-        (hp: any) => hp.rol && hp.rol === 'TITULAR'
-      )
+      const titular = hab.habilitaciones_personas?.find((hp: any) => hp.rol && hp.rol === 'TITULAR')
 
       return {
         id: hab.id,
@@ -124,42 +111,45 @@ export async function GET(request: NextRequest) {
         expte: hab.expte,
         observaciones: hab.observaciones,
         titular_principal: titular?.persona?.nombre || null,
-        personas: hab.habilitaciones_personas?.map((hp: any) => ({
-          id: hp.id,
-          nombre: hp.persona?.nombre,
-          genero: hp.persona?.genero,
-          dni: hp.persona?.dni,
-          cuit: hp.persona?.cuit,
-          telefono: hp.persona?.telefono,
-          email: hp.persona?.email,
-          foto_url: hp.persona?.foto_url,
-          domicilio_calle: hp.persona?.domicilio_calle,
-          domicilio_nro: hp.persona?.domicilio_nro,
-          domicilio_localidad: hp.persona?.domicilio_localidad,
-          rol: hp.rol,
-          licencia_categoria: hp.licencia_categoria,
-        })) || [],
-        vehiculos: hab.habilitaciones_vehiculos?.map((hv: any) => ({
-          id: hv.id,
-          dominio: hv.vehiculo?.dominio,
-          marca: hv.vehiculo?.marca,
-          modelo: hv.vehiculo?.modelo,
-          tipo: hv.vehiculo?.tipo,
-          chasis: hv.vehiculo?.chasis,
-          ano: hv.vehiculo?.ano,
-          motor: hv.vehiculo?.motor,
-          asientos: hv.vehiculo?.asientos,
-          inscripcion_inicial: hv.vehiculo?.inscripcion_inicial,
-          Aseguradora: hv.vehiculo?.Aseguradora,
-          poliza: hv.vehiculo?.poliza,
-          Vencimiento_Poliza: hv.vehiculo?.Vencimiento_Poliza,
-          Vencimiento_VTV: hv.vehiculo?.Vencimiento_VTV,
-        })) || [],
-        establecimientos: hab.habilitaciones_establecimientos?.map((he: any) => ({
-          id: he.id,
-          nombre: 'Pendiente', // TODO: Obtener de tablas relacionadas
-          tipo: he.tipo,
-        })) || [],
+        personas:
+          hab.habilitaciones_personas?.map((hp: any) => ({
+            id: hp.id,
+            nombre: hp.persona?.nombre,
+            genero: hp.persona?.genero,
+            dni: hp.persona?.dni,
+            cuit: hp.persona?.cuit,
+            telefono: hp.persona?.telefono,
+            email: hp.persona?.email,
+            foto_url: hp.persona?.foto_url,
+            domicilio_calle: hp.persona?.domicilio_calle,
+            domicilio_nro: hp.persona?.domicilio_nro,
+            domicilio_localidad: hp.persona?.domicilio_localidad,
+            rol: hp.rol,
+            licencia_categoria: hp.licencia_categoria,
+          })) || [],
+        vehiculos:
+          hab.habilitaciones_vehiculos?.map((hv: any) => ({
+            id: hv.id,
+            dominio: hv.vehiculo?.dominio,
+            marca: hv.vehiculo?.marca,
+            modelo: hv.vehiculo?.modelo,
+            tipo: hv.vehiculo?.tipo,
+            chasis: hv.vehiculo?.chasis,
+            ano: hv.vehiculo?.ano,
+            motor: hv.vehiculo?.motor,
+            asientos: hv.vehiculo?.asientos,
+            inscripcion_inicial: hv.vehiculo?.inscripcion_inicial,
+            Aseguradora: hv.vehiculo?.Aseguradora,
+            poliza: hv.vehiculo?.poliza,
+            Vencimiento_Poliza: hv.vehiculo?.Vencimiento_Poliza,
+            Vencimiento_VTV: hv.vehiculo?.Vencimiento_VTV,
+          })) || [],
+        establecimientos:
+          hab.habilitaciones_establecimientos?.map((he: any) => ({
+            id: he.id,
+            nombre: 'Pendiente', // TODO: Obtener de tablas relacionadas
+            tipo: he.tipo,
+          })) || [],
         tiene_resolucion: hab.habilitaciones_documentos?.length > 0,
         resolucion_doc_id: hab.habilitaciones_documentos?.[0]?.id || null,
       }
@@ -175,14 +165,13 @@ export async function GET(request: NextRequest) {
         total_paginas: Math.ceil(total / limite),
       },
     })
-
   } catch (error: any) {
     console.error('Error al obtener habilitaciones:', error)
     return NextResponse.json(
-      { 
+      {
         error: 'Error al obtener habilitaciones',
         details: error.message,
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
       },
       { status: 500 }
     )
@@ -192,7 +181,7 @@ export async function GET(request: NextRequest) {
 /**
  * POST /api/habilitaciones
  * Crea una nueva habilitación con sus relaciones
- * 
+ *
  * Body:
  * - Datos de la habilitación (ver habilitacionSchema)
  * - personas: array de personas vinculadas
@@ -204,10 +193,7 @@ export async function POST(request: NextRequest) {
     // Verificar autenticación
     const session = await getSession()
     if (!session) {
-      return NextResponse.json(
-        { error: 'No autenticado' },
-        { status: 401 }
-      )
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
     }
 
     // Verificar permisos (solo admin puede crear)
@@ -224,9 +210,9 @@ export async function POST(request: NextRequest) {
 
     if (!validacion.success) {
       return NextResponse.json(
-        { 
+        {
           error: 'Datos inválidos',
-          detalles: validacion.error.errors 
+          detalles: validacion.error.errors,
         },
         { status: 400 }
       )
@@ -235,7 +221,7 @@ export async function POST(request: NextRequest) {
     const data = validacion.data
 
     // Crear habilitación con transacción
-    const nuevaHabilitacion = await prisma.$transaction(async (tx) => {
+    const nuevaHabilitacion = await prisma.$transaction(async tx => {
       // 1. Crear la habilitación
       const habilitacion = await tx.habilitaciones_generales.create({
         data: {
@@ -257,7 +243,7 @@ export async function POST(request: NextRequest) {
       // 2. Vincular personas
       if (data.personas && data.personas.length > 0) {
         await tx.habilitaciones_personas.createMany({
-          data: data.personas.map((p) => ({
+          data: data.personas.map(p => ({
             habilitacion_id: habilitacion.id,
             persona_id: p.persona_id,
             rol: p.rol,
@@ -269,7 +255,7 @@ export async function POST(request: NextRequest) {
       // 3. Vincular vehículos
       if (data.vehiculos && data.vehiculos.length > 0) {
         await tx.habilitaciones_vehiculos.createMany({
-          data: data.vehiculos.map((v) => ({
+          data: data.vehiculos.map(v => ({
             habilitacion_id: habilitacion.id,
             vehiculo_id: v.vehiculo_id,
           })),
@@ -279,7 +265,7 @@ export async function POST(request: NextRequest) {
       // 4. Vincular establecimientos (opcional)
       if (data.establecimientos && data.establecimientos.length > 0) {
         await tx.habilitaciones_establecimientos.createMany({
-          data: data.establecimientos.map((e) => ({
+          data: data.establecimientos.map(e => ({
             habilitacion_id: habilitacion.id,
             establecimiento_id: e.establecimiento_id,
             tipo: e.tipo,
@@ -312,7 +298,6 @@ export async function POST(request: NextRequest) {
       },
       { status: 201 }
     )
-
   } catch (error: any) {
     console.error('Error al crear habilitación:', error)
     return NextResponse.json(

@@ -1,11 +1,23 @@
 'use client'
 
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { UserPlus, Loader2, Scan } from 'lucide-react'
 import { CrearPersonaInput } from '@/lib/validations/persona'
 import { OCRScanner } from '@/components/ocr-scanner'
@@ -21,16 +33,16 @@ interface RegistrarPersonaDialogProps {
  * Dialog para registrar una nueva persona
  * Se muestra cuando no se encuentra la persona en la búsqueda
  */
-export function RegistrarPersonaDialog({ 
-  open, 
-  onOpenChange, 
+export function RegistrarPersonaDialog({
+  open,
+  onOpenChange,
   onPersonaCreada,
-  dniInicial = ''
+  dniInicial = '',
 }: RegistrarPersonaDialogProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showOCR, setShowOCR] = useState(false)
-  
+
   const [formData, setFormData] = useState<CrearPersonaInput>({
     nombre: '',
     dni: dniInicial,
@@ -46,7 +58,7 @@ export function RegistrarPersonaDialog({
   // Procesar datos del OCR y llenar formulario
   const handleOCRData = (data: any) => {
     console.log('Datos OCR recibidos:', data)
-    
+
     // Actualizar form con datos del DNI
     if (data.nombre) {
       setFormData(prev => ({ ...prev, nombre: data.nombre }))
@@ -61,7 +73,7 @@ export function RegistrarPersonaDialog({
       const genero = data.sexo === 'M' ? 'Masculino' : data.sexo === 'F' ? 'Femenino' : 'Otro'
       setFormData(prev => ({ ...prev, genero }))
     }
-    
+
     // Procesar domicilio si viene completo
     if (data.domicilio) {
       // Intentar separar calle y número del domicilio
@@ -70,13 +82,13 @@ export function RegistrarPersonaDialog({
         setFormData(prev => ({
           ...prev,
           domicilio_calle: partes[0].trim(),
-          domicilio_nro: partes[1].trim()
+          domicilio_nro: partes[1].trim(),
         }))
       } else {
         setFormData(prev => ({ ...prev, domicilio_calle: data.domicilio }))
       }
     }
-    
+
     // Cerrar OCR
     setShowOCR(false)
   }
@@ -106,7 +118,7 @@ export function RegistrarPersonaDialog({
 
       // Notificar éxito y pasar la persona creada
       onPersonaCreada(data.data)
-      
+
       // Resetear formulario
       setFormData({
         nombre: '',
@@ -119,7 +131,7 @@ export function RegistrarPersonaDialog({
         domicilio_nro: '',
         domicilio_localidad: 'LANUS',
       })
-      
+
       onOpenChange(false)
     } catch (err: any) {
       setError(err.message)
@@ -130,7 +142,7 @@ export function RegistrarPersonaDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <UserPlus className="h-5 w-5" />
@@ -140,21 +152,21 @@ export function RegistrarPersonaDialog({
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+            <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
               {error}
             </div>
           )}
 
           {/* Botón para activar OCR */}
           {!showOCR && (
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                  <h4 className="flex items-center gap-2 font-semibold text-blue-900">
                     <Scan className="h-4 w-4" />
                     ¿Tenés el DNI a mano?
                   </h4>
-                  <p className="text-sm text-blue-700 mt-1">
+                  <p className="mt-1 text-sm text-blue-700">
                     Escaneá el DNI y llenamos los datos automáticamente con IA
                   </p>
                 </div>
@@ -164,7 +176,7 @@ export function RegistrarPersonaDialog({
                   variant="outline"
                   className="border-blue-300 text-blue-700 hover:bg-blue-100"
                 >
-                  <Scan className="h-4 w-4 mr-2" />
+                  <Scan className="mr-2 h-4 w-4" />
                   Escanear DNI
                 </Button>
               </div>
@@ -173,8 +185,8 @@ export function RegistrarPersonaDialog({
 
           {/* Componente OCR */}
           {showOCR && (
-            <div className="border-2 border-blue-300 rounded-lg p-4 bg-blue-50">
-              <div className="flex justify-between items-center mb-3">
+            <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-4">
+              <div className="mb-3 flex items-center justify-between">
                 <h4 className="font-semibold text-blue-900">Escanear DNI con IA</h4>
                 <Button
                   type="button"
@@ -203,7 +215,7 @@ export function RegistrarPersonaDialog({
               <Input
                 id="nombre"
                 value={formData.nombre}
-                onChange={(e) => handleChange('nombre', e.target.value)}
+                onChange={e => handleChange('nombre', e.target.value)}
                 placeholder="Ej: Juan Pérez"
                 required
                 disabled={loading}
@@ -217,7 +229,7 @@ export function RegistrarPersonaDialog({
               <Input
                 id="dni"
                 value={formData.dni}
-                onChange={(e) => handleChange('dni', e.target.value)}
+                onChange={e => handleChange('dni', e.target.value)}
                 placeholder="Ej: 12345678"
                 required
                 disabled={loading}
@@ -230,7 +242,7 @@ export function RegistrarPersonaDialog({
               </Label>
               <Select
                 value={formData.genero}
-                onValueChange={(value) => handleChange('genero', value)}
+                onValueChange={value => handleChange('genero', value)}
                 disabled={loading}
               >
                 <SelectTrigger id="genero">
@@ -247,14 +259,14 @@ export function RegistrarPersonaDialog({
 
           {/* Contacto */}
           <div className="border-t pt-4">
-            <h4 className="font-medium mb-3">Datos de Contacto</h4>
+            <h4 className="mb-3 font-medium">Datos de Contacto</h4>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label htmlFor="cuit">CUIT</Label>
                 <Input
                   id="cuit"
                   value={formData.cuit}
-                  onChange={(e) => handleChange('cuit', e.target.value)}
+                  onChange={e => handleChange('cuit', e.target.value)}
                   placeholder="Ej: 20-12345678-9"
                   disabled={loading}
                 />
@@ -265,7 +277,7 @@ export function RegistrarPersonaDialog({
                 <Input
                   id="telefono"
                   value={formData.telefono}
-                  onChange={(e) => handleChange('telefono', e.target.value)}
+                  onChange={e => handleChange('telefono', e.target.value)}
                   placeholder="Ej: 1158365467"
                   disabled={loading}
                 />
@@ -277,7 +289,7 @@ export function RegistrarPersonaDialog({
                   id="email"
                   type="email"
                   value={formData.email}
-                  onChange={(e) => handleChange('email', e.target.value)}
+                  onChange={e => handleChange('email', e.target.value)}
                   placeholder="Ej: persona@email.com"
                   disabled={loading}
                 />
@@ -287,14 +299,14 @@ export function RegistrarPersonaDialog({
 
           {/* Domicilio */}
           <div className="border-t pt-4">
-            <h4 className="font-medium mb-3">Domicilio</h4>
+            <h4 className="mb-3 font-medium">Domicilio</h4>
             <div className="grid gap-4 sm:grid-cols-3">
               <div className="space-y-2 sm:col-span-2">
                 <Label htmlFor="domicilio_calle">Calle</Label>
                 <Input
                   id="domicilio_calle"
                   value={formData.domicilio_calle}
-                  onChange={(e) => handleChange('domicilio_calle', e.target.value)}
+                  onChange={e => handleChange('domicilio_calle', e.target.value)}
                   placeholder="Ej: Av. Hipólito Yrigoyen"
                   disabled={loading}
                 />
@@ -305,7 +317,7 @@ export function RegistrarPersonaDialog({
                 <Input
                   id="domicilio_nro"
                   value={formData.domicilio_nro}
-                  onChange={(e) => handleChange('domicilio_nro', e.target.value)}
+                  onChange={e => handleChange('domicilio_nro', e.target.value)}
                   placeholder="Ej: 3471"
                   disabled={loading}
                 />
@@ -316,7 +328,7 @@ export function RegistrarPersonaDialog({
                 <Input
                   id="domicilio_localidad"
                   value={formData.domicilio_localidad}
-                  onChange={(e) => handleChange('domicilio_localidad', e.target.value)}
+                  onChange={e => handleChange('domicilio_localidad', e.target.value)}
                   placeholder="Ej: Lanús"
                   disabled={loading}
                 />
@@ -336,12 +348,12 @@ export function RegistrarPersonaDialog({
             <Button type="submit" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Registrando...
                 </>
               ) : (
                 <>
-                  <UserPlus className="h-4 w-4 mr-2" />
+                  <UserPlus className="mr-2 h-4 w-4" />
                   Registrar Persona
                 </>
               )}

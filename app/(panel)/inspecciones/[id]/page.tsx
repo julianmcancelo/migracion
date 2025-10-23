@@ -23,7 +23,7 @@ const ITEMS_CHECKLIST = [
   'Cabezales o apoya Cabeza en todos los asientos',
   'Espacios Libres',
   'Pintura (Carroceria baja y capot naranja Nº 1054 IRAM - carroceria alta techo y parantes Color blanco)',
-  'Leyenda de Escolares o Niños Tamaño minimo: 0,20 mts'
+  'Leyenda de Escolares o Niños Tamaño minimo: 0,20 mts',
 ]
 
 interface ItemChecklist {
@@ -65,11 +65,13 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
   const [loading, setLoading] = useState(true)
   const [guardando, setGuardando] = useState(false)
   const [inspeccion, setInspeccion] = useState<Inspeccion | null>(null)
-  
+
   const [nombreInspector, setNombreInspector] = useState('')
-  const [resultado, setResultado] = useState<'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CONDICIONAL'>('PENDIENTE')
+  const [resultado, setResultado] = useState<
+    'PENDIENTE' | 'APROBADO' | 'RECHAZADO' | 'CONDICIONAL'
+  >('PENDIENTE')
   const [observaciones, setObservaciones] = useState('')
-  
+
   // Estado para checklist de items
   const [items, setItems] = useState<Record<number, ItemChecklist>>(() => {
     const initial: Record<number, ItemChecklist> = {}
@@ -87,7 +89,7 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
     try {
       const response = await fetch(`/api/inspecciones/${params.id}`)
       const data = await response.json()
-      
+
       if (data.success && data.data) {
         const insp = data.data
         setInspeccion(insp)
@@ -106,14 +108,14 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
   const setItemEstado = (index: number, estado: 'BIEN' | 'REGULAR' | 'MAL') => {
     setItems(prev => ({
       ...prev,
-      [index]: { ...prev[index], estado }
+      [index]: { ...prev[index], estado },
     }))
   }
 
   const setItemObservacion = (index: number, observacion: string) => {
     setItems(prev => ({
       ...prev,
-      [index]: { ...prev[index], observacion }
+      [index]: { ...prev[index], observacion },
     }))
   }
 
@@ -137,7 +139,7 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
       const itemsChecklist = ITEMS_CHECKLIST.map((nombre, index) => ({
         nombre,
         estado: items[index].estado,
-        observacion: items[index].observacion
+        observacion: items[index].observacion,
       })).filter(item => item.estado !== null) // Solo enviar items con estado
 
       const response = await fetch(`/api/inspecciones/${params.id}`, {
@@ -147,8 +149,8 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
           nombre_inspector: nombreInspector.trim(),
           resultado,
           observaciones: observaciones.trim(),
-          items: itemsChecklist
-        })
+          items: itemsChecklist,
+        }),
       })
 
       const data = await response.json()
@@ -169,7 +171,7 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
 
   if (loading) {
     return (
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto px-4 py-8">
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
           <span className="ml-3 text-gray-600">Cargando inspección...</span>
@@ -180,13 +182,13 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
 
   if (!inspeccion) {
     return (
-      <div className="container mx-auto py-8 px-4">
-        <div className="text-center py-20">
-          <XCircle className="h-16 w-16 text-red-500 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Inspección no encontrada</h2>
+      <div className="container mx-auto px-4 py-8">
+        <div className="py-20 text-center">
+          <XCircle className="mx-auto mb-4 h-16 w-16 text-red-500" />
+          <h2 className="mb-2 text-2xl font-bold text-gray-900">Inspección no encontrada</h2>
           <Link href="/inspecciones">
             <Button variant="outline" className="mt-4">
-              <ArrowLeft className="h-4 w-4 mr-2" />
+              <ArrowLeft className="mr-2 h-4 w-4" />
               Volver a inspecciones
             </Button>
           </Link>
@@ -199,62 +201,63 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
   const vehiculo = inspeccion.habilitacion?.habilitaciones_vehiculos?.[0]?.vehiculo
 
   return (
-    <div className="container mx-auto py-8 px-4 max-w-4xl">
+    <div className="container mx-auto max-w-4xl px-4 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3 mb-2">
+          <div className="mb-2 flex items-center gap-3">
             <Link href="/inspecciones">
               <Button variant="ghost" size="sm">
-                <ArrowLeft className="h-4 w-4 mr-2" />
+                <ArrowLeft className="mr-2 h-4 w-4" />
                 Volver
               </Button>
             </Link>
-            <h1 className="text-2xl font-bold text-gray-900">
-              Completar Inspección
-            </h1>
+            <h1 className="text-2xl font-bold text-gray-900">Completar Inspección</h1>
           </div>
           <p className="text-sm text-gray-600">
-            Licencia N° <span className="font-mono font-bold text-blue-600">{inspeccion.nro_licencia}</span>
+            Licencia N°{' '}
+            <span className="font-mono font-bold text-blue-600">{inspeccion.nro_licencia}</span>
           </p>
         </div>
       </div>
 
       {/* Información de la habilitación */}
-      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-        <h3 className="font-semibold text-blue-900 mb-3">Información del Trámite</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+      <div className="mb-6 rounded-lg border border-blue-200 bg-blue-50 p-4">
+        <h3 className="mb-3 font-semibold text-blue-900">Información del Trámite</h3>
+        <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
           <div>
-            <span className="text-blue-700 font-medium">Fecha inspección:</span>
+            <span className="font-medium text-blue-700">Fecha inspección:</span>
             <span className="ml-2 text-blue-900">
               {new Date(inspeccion.fecha_inspeccion).toLocaleDateString('es-AR')}
             </span>
           </div>
           <div>
-            <span className="text-blue-700 font-medium">Tipo:</span>
+            <span className="font-medium text-blue-700">Tipo:</span>
             <span className="ml-2 text-blue-900">{inspeccion.tipo_transporte || 'N/A'}</span>
           </div>
           {titular && (
             <>
               <div>
-                <span className="text-blue-700 font-medium">Titular:</span>
+                <span className="font-medium text-blue-700">Titular:</span>
                 <span className="ml-2 text-blue-900">{titular.nombre}</span>
               </div>
               <div>
-                <span className="text-blue-700 font-medium">DNI:</span>
-                <span className="ml-2 text-blue-900 font-mono">{titular.dni}</span>
+                <span className="font-medium text-blue-700">DNI:</span>
+                <span className="ml-2 font-mono text-blue-900">{titular.dni}</span>
               </div>
             </>
           )}
           {vehiculo && (
             <>
               <div>
-                <span className="text-blue-700 font-medium">Vehículo:</span>
-                <span className="ml-2 text-blue-900 font-mono font-bold">{vehiculo.dominio}</span>
+                <span className="font-medium text-blue-700">Vehículo:</span>
+                <span className="ml-2 font-mono font-bold text-blue-900">{vehiculo.dominio}</span>
               </div>
               <div>
-                <span className="text-blue-700 font-medium">Marca/Modelo:</span>
-                <span className="ml-2 text-blue-900">{vehiculo.marca} {vehiculo.modelo}</span>
+                <span className="font-medium text-blue-700">Marca/Modelo:</span>
+                <span className="ml-2 text-blue-900">
+                  {vehiculo.marca} {vehiculo.modelo}
+                </span>
               </div>
             </>
           )}
@@ -262,7 +265,7 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
       </div>
 
       {/* Formulario */}
-      <form onSubmit={handleGuardar} className="bg-white border rounded-lg p-6 space-y-6">
+      <form onSubmit={handleGuardar} className="space-y-6 rounded-lg border bg-white p-6">
         <div>
           <Label htmlFor="inspector" className="text-base font-semibold">
             Nombre del Inspector <span className="text-red-500">*</span>
@@ -270,7 +273,7 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
           <Input
             id="inspector"
             value={nombreInspector}
-            onChange={(e) => setNombreInspector(e.target.value)}
+            onChange={e => setNombreInspector(e.target.value)}
             placeholder="Ej: Juan Pérez"
             required
             className="mt-2"
@@ -278,21 +281,25 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
         </div>
 
         <div>
-          <Label className="text-base font-semibold mb-3 block">
+          <Label className="mb-3 block text-base font-semibold">
             Resultado de la Inspección <span className="text-red-500">*</span>
           </Label>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 gap-3 md:grid-cols-3">
             <button
               type="button"
               onClick={() => setResultado('APROBADO')}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              className={`rounded-lg border-2 p-4 transition-all ${
                 resultado === 'APROBADO'
                   ? 'border-green-500 bg-green-50 ring-2 ring-green-500'
                   : 'border-gray-200 hover:border-green-300 hover:bg-green-50'
               }`}
             >
-              <CheckCircle className={`h-8 w-8 mx-auto mb-2 ${resultado === 'APROBADO' ? 'text-green-600' : 'text-gray-400'}`} />
-              <span className={`font-semibold ${resultado === 'APROBADO' ? 'text-green-900' : 'text-gray-700'}`}>
+              <CheckCircle
+                className={`mx-auto mb-2 h-8 w-8 ${resultado === 'APROBADO' ? 'text-green-600' : 'text-gray-400'}`}
+              />
+              <span
+                className={`font-semibold ${resultado === 'APROBADO' ? 'text-green-900' : 'text-gray-700'}`}
+              >
                 APROBADO
               </span>
             </button>
@@ -300,14 +307,18 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
             <button
               type="button"
               onClick={() => setResultado('CONDICIONAL')}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              className={`rounded-lg border-2 p-4 transition-all ${
                 resultado === 'CONDICIONAL'
                   ? 'border-yellow-500 bg-yellow-50 ring-2 ring-yellow-500'
                   : 'border-gray-200 hover:border-yellow-300 hover:bg-yellow-50'
               }`}
             >
-              <AlertCircle className={`h-8 w-8 mx-auto mb-2 ${resultado === 'CONDICIONAL' ? 'text-yellow-600' : 'text-gray-400'}`} />
-              <span className={`font-semibold ${resultado === 'CONDICIONAL' ? 'text-yellow-900' : 'text-gray-700'}`}>
+              <AlertCircle
+                className={`mx-auto mb-2 h-8 w-8 ${resultado === 'CONDICIONAL' ? 'text-yellow-600' : 'text-gray-400'}`}
+              />
+              <span
+                className={`font-semibold ${resultado === 'CONDICIONAL' ? 'text-yellow-900' : 'text-gray-700'}`}
+              >
                 CONDICIONAL
               </span>
             </button>
@@ -315,14 +326,18 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
             <button
               type="button"
               onClick={() => setResultado('RECHAZADO')}
-              className={`p-4 rounded-lg border-2 transition-all ${
+              className={`rounded-lg border-2 p-4 transition-all ${
                 resultado === 'RECHAZADO'
                   ? 'border-red-500 bg-red-50 ring-2 ring-red-500'
                   : 'border-gray-200 hover:border-red-300 hover:bg-red-50'
               }`}
             >
-              <XCircle className={`h-8 w-8 mx-auto mb-2 ${resultado === 'RECHAZADO' ? 'text-red-600' : 'text-gray-400'}`} />
-              <span className={`font-semibold ${resultado === 'RECHAZADO' ? 'text-red-900' : 'text-gray-700'}`}>
+              <XCircle
+                className={`mx-auto mb-2 h-8 w-8 ${resultado === 'RECHAZADO' ? 'text-red-600' : 'text-gray-400'}`}
+              />
+              <span
+                className={`font-semibold ${resultado === 'RECHAZADO' ? 'text-red-900' : 'text-gray-700'}`}
+              >
                 RECHAZADO
               </span>
             </button>
@@ -331,58 +346,58 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
 
         {/* Checklist detallado */}
         <div className="border-t pt-6">
-          <h3 className="text-lg font-bold text-red-600 mb-4 text-center">
+          <h3 className="mb-4 text-center text-lg font-bold text-red-600">
             DETALLES Y OBSERVACIONES DEL VEHÍCULO
           </h3>
-          
-          <div className="overflow-x-auto border rounded-lg">
+
+          <div className="overflow-x-auto rounded-lg border">
             <table className="w-full text-sm">
-              <thead className="bg-gray-100 border-b">
+              <thead className="border-b bg-gray-100">
                 <tr>
-                  <th className="text-left p-3 font-semibold border-r">Descripción</th>
-                  <th className="text-center p-3 font-semibold border-r w-24">Bien</th>
-                  <th className="text-center p-3 font-semibold border-r w-24">Regular</th>
-                  <th className="text-center p-3 font-semibold border-r w-24">Mal</th>
-                  <th className="text-left p-3 font-semibold w-48">Observaciones</th>
+                  <th className="border-r p-3 text-left font-semibold">Descripción</th>
+                  <th className="w-24 border-r p-3 text-center font-semibold">Bien</th>
+                  <th className="w-24 border-r p-3 text-center font-semibold">Regular</th>
+                  <th className="w-24 border-r p-3 text-center font-semibold">Mal</th>
+                  <th className="w-48 p-3 text-left font-semibold">Observaciones</th>
                 </tr>
               </thead>
               <tbody>
                 {ITEMS_CHECKLIST.map((item, index) => (
                   <tr key={index} className="border-b hover:bg-gray-50">
-                    <td className="p-3 border-r text-xs">{item}</td>
-                    <td className="p-3 border-r text-center">
+                    <td className="border-r p-3 text-xs">{item}</td>
+                    <td className="border-r p-3 text-center">
                       <input
                         type="radio"
                         name={`item-${index}`}
                         checked={items[index].estado === 'BIEN'}
                         onChange={() => setItemEstado(index, 'BIEN')}
-                        className="w-4 h-4 text-green-600 cursor-pointer"
+                        className="h-4 w-4 cursor-pointer text-green-600"
                       />
                     </td>
-                    <td className="p-3 border-r text-center bg-pink-50">
+                    <td className="border-r bg-pink-50 p-3 text-center">
                       <input
                         type="radio"
                         name={`item-${index}`}
                         checked={items[index].estado === 'REGULAR'}
                         onChange={() => setItemEstado(index, 'REGULAR')}
-                        className="w-4 h-4 text-yellow-600 cursor-pointer"
+                        className="h-4 w-4 cursor-pointer text-yellow-600"
                       />
                     </td>
-                    <td className="p-3 border-r text-center">
+                    <td className="border-r p-3 text-center">
                       <input
                         type="radio"
                         name={`item-${index}`}
                         checked={items[index].estado === 'MAL'}
                         onChange={() => setItemEstado(index, 'MAL')}
-                        className="w-4 h-4 text-red-600 cursor-pointer"
+                        className="h-4 w-4 cursor-pointer text-red-600"
                       />
                     </td>
                     <td className="p-2">
                       <Input
                         value={items[index].observacion}
-                        onChange={(e) => setItemObservacion(index, e.target.value)}
+                        onChange={e => setItemObservacion(index, e.target.value)}
                         placeholder="Detalles..."
-                        className="text-xs h-8"
+                        className="h-8 text-xs"
                       />
                     </td>
                   </tr>
@@ -399,17 +414,17 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
           <Textarea
             id="observaciones"
             value={observaciones}
-            onChange={(e) => setObservaciones(e.target.value)}
+            onChange={e => setObservaciones(e.target.value)}
             placeholder="Observaciones adicionales sobre la inspección completa..."
             rows={3}
             className="mt-2"
           />
-          <p className="text-xs text-gray-500 mt-1">
+          <p className="mt-1 text-xs text-gray-500">
             Opcional - Comentarios adicionales que no correspondan a los items anteriores
           </p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-4 border-t">
+        <div className="flex justify-end gap-3 border-t pt-4">
           <Link href="/inspecciones">
             <Button type="button" variant="outline" disabled={guardando}>
               Cancelar
@@ -422,12 +437,12 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
           >
             {guardando ? (
               <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                 Guardando...
               </>
             ) : (
               <>
-                <Save className="h-4 w-4 mr-2" />
+                <Save className="mr-2 h-4 w-4" />
                 Guardar Inspección
               </>
             )}

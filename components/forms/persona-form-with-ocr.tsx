@@ -28,12 +28,12 @@ interface PersonaFormWithOCRProps {
   disabled?: boolean
 }
 
-export function PersonaFormWithOCR({ 
-  rol, 
-  onPersonaCompleta, 
-  onCancelar, 
+export function PersonaFormWithOCR({
+  rol,
+  onPersonaCompleta,
+  onCancelar,
   personaInicial,
-  disabled = false 
+  disabled = false,
 }: PersonaFormWithOCRProps) {
   const [mostrarOCR, setMostrarOCR] = useState(false)
   const [persona, setPersona] = useState<PersonaData>({
@@ -49,41 +49,41 @@ export function PersonaFormWithOCR({
     telefono: '',
     email: '',
     foto_url: '',
-    ...personaInicial
+    ...personaInicial,
   })
 
   const [errores, setErrores] = useState<Record<string, string>>({})
 
   const handleDatosOCR = (datosExtraidos: any) => {
     console.log('Datos del OCR:', datosExtraidos)
-    
+
     // Mapear datos del OCR al formulario
     const nuevaPersona = { ...persona }
-    
+
     if (datosExtraidos.dni) {
       nuevaPersona.dni = datosExtraidos.dni
     }
-    
+
     if (datosExtraidos.nombre) {
       nuevaPersona.nombre = datosExtraidos.nombre
     }
-    
+
     if (datosExtraidos.apellido) {
       nuevaPersona.apellido = datosExtraidos.apellido
     }
-    
+
     if (datosExtraidos.fechaNacimiento) {
       nuevaPersona.fecha_nacimiento = datosExtraidos.fechaNacimiento
     }
-    
+
     if (datosExtraidos.sexo) {
       nuevaPersona.genero = datosExtraidos.sexo
     }
-    
+
     if (datosExtraidos.nacionalidad) {
       nuevaPersona.nacionalidad = datosExtraidos.nacionalidad
     }
-    
+
     if (datosExtraidos.domicilio) {
       // Intentar separar calle y número del domicilio
       const domicilioPartes = datosExtraidos.domicilio.match(/^(.+?)\s+(\d+.*?)$/)
@@ -97,7 +97,7 @@ export function PersonaFormWithOCR({
 
     setPersona(nuevaPersona)
     setMostrarOCR(false)
-    
+
     // Limpiar errores de campos que se llenaron
     const nuevosErrores = { ...errores }
     Object.keys(datosExtraidos).forEach(key => {
@@ -110,7 +110,7 @@ export function PersonaFormWithOCR({
 
   const handleInputChange = (field: keyof PersonaData, value: string) => {
     setPersona(prev => ({ ...prev, [field]: value }))
-    
+
     // Limpiar error del campo
     if (errores[field]) {
       setErrores(prev => ({ ...prev, [field]: '' }))
@@ -152,7 +152,7 @@ export function PersonaFormWithOCR({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (validarFormulario()) {
       onPersonaCompleta(persona)
     }
@@ -160,49 +160,55 @@ export function PersonaFormWithOCR({
 
   const getRolIcon = () => {
     switch (rol) {
-      case 'TITULAR': return '👤'
-      case 'CONDUCTOR': return '🚗'
-      case 'CELADOR': return '👥'
-      default: return '👤'
+      case 'TITULAR':
+        return '👤'
+      case 'CONDUCTOR':
+        return '🚗'
+      case 'CELADOR':
+        return '👥'
+      default:
+        return '👤'
     }
   }
 
   const getRolColor = () => {
     switch (rol) {
-      case 'TITULAR': return 'bg-blue-500'
-      case 'CONDUCTOR': return 'bg-green-500'
-      case 'CELADOR': return 'bg-purple-500'
-      default: return 'bg-gray-500'
+      case 'TITULAR':
+        return 'bg-blue-500'
+      case 'CONDUCTOR':
+        return 'bg-green-500'
+      case 'CELADOR':
+        return 'bg-purple-500'
+      default:
+        return 'bg-gray-500'
     }
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
+    <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="mb-6 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className={`w-12 h-12 ${getRolColor()} rounded-full flex items-center justify-center text-white text-xl`}>
+          <div
+            className={`h-12 w-12 ${getRolColor()} flex items-center justify-center rounded-full text-xl text-white`}
+          >
             {getRolIcon()}
           </div>
           <div>
-            <h3 className="text-xl font-bold text-gray-900">
-              Datos del {rol.toLowerCase()}
-            </h3>
-            <p className="text-sm text-gray-600">
-              Complete la información de la persona
-            </p>
+            <h3 className="text-xl font-bold text-gray-900">Datos del {rol.toLowerCase()}</h3>
+            <p className="text-sm text-gray-600">Complete la información de la persona</p>
           </div>
         </div>
-        
+
         <div className="flex gap-2">
           <Button
             type="button"
             onClick={() => setMostrarOCR(!mostrarOCR)}
             variant="outline"
-            className="bg-purple-50 hover:bg-purple-100 text-purple-700 border-purple-200"
+            className="border-purple-200 bg-purple-50 text-purple-700 hover:bg-purple-100"
             disabled={disabled}
           >
-            <Scan className="h-4 w-4 mr-2" />
+            <Scan className="mr-2 h-4 w-4" />
             {mostrarOCR ? 'Ocultar OCR' : 'Escanear DNI'}
           </Button>
         </div>
@@ -210,13 +216,11 @@ export function PersonaFormWithOCR({
 
       {/* OCR Section */}
       {mostrarOCR && (
-        <div className="mb-6 p-4 bg-purple-50 border border-purple-200 rounded-lg">
-          <h4 className="font-semibold text-purple-800 mb-3">
-            📷 Escanear DNI con OCR
-          </h4>
+        <div className="mb-6 rounded-lg border border-purple-200 bg-purple-50 p-4">
+          <h4 className="mb-3 font-semibold text-purple-800">📷 Escanear DNI con OCR</h4>
           <DNIUploader
             onDatosExtraidos={handleDatosOCR}
-            onError={(error) => console.error('Error OCR:', error)}
+            onError={error => console.error('Error OCR:', error)}
             disabled={disabled}
           />
         </div>
@@ -225,33 +229,29 @@ export function PersonaFormWithOCR({
       {/* Formulario */}
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Datos personales */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              DNI *
-            </label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">DNI *</label>
             <input
               type="text"
               value={persona.dni}
-              onChange={(e) => handleInputChange('dni', e.target.value.replace(/\D/g, ''))}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              onChange={e => handleInputChange('dni', e.target.value.replace(/\D/g, ''))}
+              className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                 errores.dni ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="12345678"
               maxLength={8}
               disabled={disabled}
             />
-            {errores.dni && <p className="text-red-500 text-xs mt-1">{errores.dni}</p>}
+            {errores.dni && <p className="mt-1 text-xs text-red-500">{errores.dni}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Género *
-            </label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Género *</label>
             <select
               value={persona.genero}
-              onChange={(e) => handleInputChange('genero', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              onChange={e => handleInputChange('genero', e.target.value)}
+              className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                 errores.genero ? 'border-red-500' : 'border-gray-300'
               }`}
               disabled={disabled}
@@ -260,68 +260,64 @@ export function PersonaFormWithOCR({
               <option value="MASCULINO">Masculino</option>
               <option value="FEMENINO">Femenino</option>
             </select>
-            {errores.genero && <p className="text-red-500 text-xs mt-1">{errores.genero}</p>}
+            {errores.genero && <p className="mt-1 text-xs text-red-500">{errores.genero}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nombre *
-            </label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Nombre *</label>
             <input
               type="text"
               value={persona.nombre}
-              onChange={(e) => handleInputChange('nombre', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              onChange={e => handleInputChange('nombre', e.target.value)}
+              className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                 errores.nombre ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Juan Carlos"
               disabled={disabled}
             />
-            {errores.nombre && <p className="text-red-500 text-xs mt-1">{errores.nombre}</p>}
+            {errores.nombre && <p className="mt-1 text-xs text-red-500">{errores.nombre}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Apellido *
-            </label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Apellido *</label>
             <input
               type="text"
               value={persona.apellido}
-              onChange={(e) => handleInputChange('apellido', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              onChange={e => handleInputChange('apellido', e.target.value)}
+              className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                 errores.apellido ? 'border-red-500' : 'border-gray-300'
               }`}
               placeholder="Pérez González"
               disabled={disabled}
             />
-            {errores.apellido && <p className="text-red-500 text-xs mt-1">{errores.apellido}</p>}
+            {errores.apellido && <p className="mt-1 text-xs text-red-500">{errores.apellido}</p>}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
               Fecha de Nacimiento *
             </label>
             <input
               type="date"
               value={persona.fecha_nacimiento}
-              onChange={(e) => handleInputChange('fecha_nacimiento', e.target.value)}
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+              onChange={e => handleInputChange('fecha_nacimiento', e.target.value)}
+              className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                 errores.fecha_nacimiento ? 'border-red-500' : 'border-gray-300'
               }`}
               disabled={disabled}
             />
-            {errores.fecha_nacimiento && <p className="text-red-500 text-xs mt-1">{errores.fecha_nacimiento}</p>}
+            {errores.fecha_nacimiento && (
+              <p className="mt-1 text-xs text-red-500">{errores.fecha_nacimiento}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nacionalidad
-            </label>
+            <label className="mb-2 block text-sm font-semibold text-gray-700">Nacionalidad</label>
             <input
               type="text"
               value={persona.nacionalidad}
-              onChange={(e) => handleInputChange('nacionalidad', e.target.value)}
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              onChange={e => handleInputChange('nacionalidad', e.target.value)}
+              className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
               placeholder="Argentina"
               disabled={disabled}
             />
@@ -330,43 +326,37 @@ export function PersonaFormWithOCR({
 
         {/* Domicilio */}
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-800 border-b pb-2">📍 Domicilio</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <h4 className="border-b pb-2 font-semibold text-gray-800">📍 Domicilio</h4>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             <div className="md:col-span-2">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Calle
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">Calle</label>
               <input
                 type="text"
                 value={persona.domicilio_calle}
-                onChange={(e) => handleInputChange('domicilio_calle', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => handleInputChange('domicilio_calle', e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 placeholder="Av. Hipólito Yrigoyen"
                 disabled={disabled}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Número
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">Número</label>
               <input
                 type="text"
                 value={persona.domicilio_nro}
-                onChange={(e) => handleInputChange('domicilio_nro', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => handleInputChange('domicilio_nro', e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 placeholder="1234"
                 disabled={disabled}
               />
             </div>
             <div className="md:col-span-3">
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Localidad
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">Localidad</label>
               <input
                 type="text"
                 value={persona.domicilio_localidad}
-                onChange={(e) => handleInputChange('domicilio_localidad', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => handleInputChange('domicilio_localidad', e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 placeholder="Lanús"
                 disabled={disabled}
               />
@@ -376,59 +366,46 @@ export function PersonaFormWithOCR({
 
         {/* Contacto */}
         <div className="space-y-4">
-          <h4 className="font-semibold text-gray-800 border-b pb-2">📞 Contacto</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <h4 className="border-b pb-2 font-semibold text-gray-800">📞 Contacto</h4>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Teléfono
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">Teléfono</label>
               <input
                 type="tel"
                 value={persona.telefono}
-                onChange={(e) => handleInputChange('telefono', e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                onChange={e => handleInputChange('telefono', e.target.value)}
+                className="w-full rounded-lg border border-gray-300 px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500"
                 placeholder="11-1234-5678"
                 disabled={disabled}
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Email
-              </label>
+              <label className="mb-2 block text-sm font-semibold text-gray-700">Email</label>
               <input
                 type="email"
                 value={persona.email}
-                onChange={(e) => handleInputChange('email', e.target.value)}
-                className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent ${
+                onChange={e => handleInputChange('email', e.target.value)}
+                className={`w-full rounded-lg border px-4 py-2 focus:border-transparent focus:ring-2 focus:ring-blue-500 ${
                   errores.email ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="ejemplo@email.com"
                 disabled={disabled}
               />
-              {errores.email && <p className="text-red-500 text-xs mt-1">{errores.email}</p>}
+              {errores.email && <p className="mt-1 text-xs text-red-500">{errores.email}</p>}
             </div>
           </div>
         </div>
 
         {/* Botones */}
-        <div className="flex gap-3 pt-6 border-t">
+        <div className="flex gap-3 border-t pt-6">
           {onCancelar && (
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onCancelar}
-              disabled={disabled}
-            >
-              <X className="h-4 w-4 mr-2" />
+            <Button type="button" variant="outline" onClick={onCancelar} disabled={disabled}>
+              <X className="mr-2 h-4 w-4" />
               Cancelar
             </Button>
           )}
-          <Button
-            type="submit"
-            className="bg-blue-600 hover:bg-blue-700"
-            disabled={disabled}
-          >
-            <Save className="h-4 w-4 mr-2" />
+          <Button type="submit" className="bg-blue-600 hover:bg-blue-700" disabled={disabled}>
+            <Save className="mr-2 h-4 w-4" />
             Guardar {rol.toLowerCase()}
           </Button>
         </div>

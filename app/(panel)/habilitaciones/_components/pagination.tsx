@@ -23,16 +23,9 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
     const range = 2 // Páginas antes y después de la actual
 
     for (let i = 1; i <= totalPages; i++) {
-      if (
-        i === 1 ||
-        i === totalPages ||
-        (i >= currentPage - range && i <= currentPage + range)
-      ) {
+      if (i === 1 || i === totalPages || (i >= currentPage - range && i <= currentPage + range)) {
         pages.push(i)
-      } else if (
-        i === currentPage - range - 1 ||
-        i === currentPage + range + 1
-      ) {
+      } else if (i === currentPage - range - 1 || i === currentPage + range + 1) {
         pages.push('...')
       }
     }
@@ -41,7 +34,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
   }
 
   return (
-    <nav className="flex items-center justify-between border-t border-gray-200 px-4 sm:px-0 pt-4">
+    <nav className="flex items-center justify-between border-t border-gray-200 px-4 pt-4 sm:px-0">
       {/* Botón Anterior */}
       <div className="flex w-0 flex-1">
         <Button
@@ -56,7 +49,7 @@ export function Pagination({ currentPage, totalPages, onPageChange }: Pagination
       </div>
 
       {/* Números de página */}
-      <div className="hidden md:flex gap-2">
+      <div className="hidden gap-2 md:flex">
         {getPageNumbers().map((page, index) => {
           if (page === '...') {
             return (

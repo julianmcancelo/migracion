@@ -7,18 +7,12 @@ export const dynamic = 'force-dynamic'
  * POST /api/obleas/[id]/regenerar-pdf
  * Regenera el PDF de una oblea específica del historial
  */
-export async function POST(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
+export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
   try {
     const obleaId = parseInt(params.id)
 
     if (isNaN(obleaId)) {
-      return NextResponse.json(
-        { success: false, error: 'ID de oblea inválido' },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: 'ID de oblea inválido' }, { status: 400 })
     }
 
     // Obtener la oblea con toda su información relacionada
@@ -30,26 +24,23 @@ export async function POST(
             habilitaciones_personas: {
               where: { rol: 'TITULAR' },
               include: {
-                persona: true
+                persona: true,
               },
-              take: 1
+              take: 1,
             },
             habilitaciones_vehiculos: {
               include: {
-                vehiculo: true
+                vehiculo: true,
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     })
 
     if (!oblea) {
-      return NextResponse.json(
-        { success: false, error: 'Oblea no encontrada' },
-        { status: 404 }
-      )
+      return NextResponse.json({ success: false, error: 'Oblea no encontrada' }, { status: 404 })
     }
 
     const habilitacion = oblea.habilitaciones_generales
@@ -70,16 +61,15 @@ export async function POST(
     return NextResponse.json({
       success: true,
       pdfUrl,
-      message: 'PDF listo para generar'
+      message: 'PDF listo para generar',
     })
-
   } catch (error: any) {
     console.error('Error al regenerar PDF:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al regenerar PDF',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

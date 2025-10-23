@@ -8,10 +8,7 @@ export const dynamic = 'force-dynamic'
  * POST /api/habilitaciones/[id]/generar-token-credencial
  * Genera un token de acceso público para la credencial digital
  */
-export async function POST(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const habilitacionId = parseInt(params.id)
@@ -23,8 +20,8 @@ export async function POST(
         id: true,
         nro_licencia: true,
         estado: true,
-        vigencia_fin: true
-      }
+        vigencia_fin: true,
+      },
     })
 
     if (!habilitacion) {
@@ -43,7 +40,7 @@ export async function POST(
 
     // Generar token único
     const token = uuidv4()
-    
+
     // La fecha de expiración del token es la misma que la vigencia de la habilitación
     const fechaExpiracion = new Date(habilitacion.vigencia_fin)
 
@@ -52,8 +49,8 @@ export async function POST(
       data: {
         token,
         habilitacion_id: habilitacionId,
-        fecha_expiracion: fechaExpiracion
-      }
+        fecha_expiracion: fechaExpiracion,
+      },
     })
 
     // Construir URL de la credencial
@@ -68,11 +65,10 @@ export async function POST(
         fecha_expiracion: tokenCreado.fecha_expiracion,
         habilitacion: {
           id: habilitacion.id,
-          nro_licencia: habilitacion.nro_licencia
-        }
-      }
+          nro_licencia: habilitacion.nro_licencia,
+        },
+      },
     })
-
   } catch (error) {
     console.error('Error al generar token:', error)
     return NextResponse.json(
@@ -86,10 +82,7 @@ export async function POST(
  * GET /api/habilitaciones/[id]/generar-token-credencial
  * Obtiene tokens activos de una habilitación
  */
-export async function GET(
-  request: Request,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const habilitacionId = parseInt(params.id)
@@ -98,32 +91,28 @@ export async function GET(
       where: {
         habilitacion_id: habilitacionId,
         fecha_expiracion: {
-          gte: new Date() // Solo tokens no expirados
-        }
+          gte: new Date(), // Solo tokens no expirados
+        },
       },
       orderBy: {
-        creado_en: 'desc'
+        creado_en: 'desc',
       },
-      take: 5 // Últimos 5 tokens
+      take: 5, // Últimos 5 tokens
     })
 
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
-    
+
     const tokensConUrl = tokens.map(t => ({
       ...t,
-      url: `${baseUrl}/credencial/${t.token}`
+      url: `${baseUrl}/credencial/${t.token}`,
     }))
 
     return NextResponse.json({
       success: true,
-      data: tokensConUrl
+      data: tokensConUrl,
     })
-
   } catch (error) {
     console.error('Error al obtener tokens:', error)
-    return NextResponse.json(
-      { success: false, error: 'Error al obtener tokens' },
-      { status: 500 }
-    )
+    return NextResponse.json({ success: false, error: 'Error al obtener tokens' }, { status: 500 })
   }
 }

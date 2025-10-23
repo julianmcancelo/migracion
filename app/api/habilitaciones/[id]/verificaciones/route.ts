@@ -7,17 +7,14 @@ export const dynamic = 'force-dynamic'
  * GET /api/habilitaciones/[id]/verificaciones
  * Obtiene el historial de verificaciones de una habilitación
  */
-export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
-) {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const { id } = params
 
     // Obtener número de licencia de la habilitación
     const habilitacion = await prisma.habilitaciones_generales.findUnique({
       where: { id: Number(id) },
-      select: { nro_licencia: true }
+      select: { nro_licencia: true },
     })
 
     if (!habilitacion) {
@@ -29,16 +26,16 @@ export async function GET(
 
     const verificaciones = await prisma.verificaciones_historial.findMany({
       where: {
-        nro_licencia: habilitacion.nro_licencia || ''
+        nro_licencia: habilitacion.nro_licencia || '',
       },
       orderBy: {
-        fecha: 'desc'
-      }
+        fecha: 'desc',
+      },
     })
 
     return NextResponse.json({
       success: true,
-      data: verificaciones
+      data: verificaciones,
     })
   } catch (error) {
     console.error('Error al obtener verificaciones:', error)

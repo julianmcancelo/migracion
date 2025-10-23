@@ -2,7 +2,13 @@
 
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { HabilitacionFormData } from '@/lib/validations/habilitacion'
 
 interface DatosBasicosStepProps {
@@ -17,8 +23,8 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-semibold mb-4">Información General</h3>
-        
+        <h3 className="mb-4 text-lg font-semibold">Información General</h3>
+
         {/* Tipo de Transporte */}
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
@@ -27,7 +33,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
             </Label>
             <Select
               value={data.tipo_transporte}
-              onValueChange={(value) => onChange({ tipo_transporte: value as any })}
+              onValueChange={value => onChange({ tipo_transporte: value as any })}
             >
               <SelectTrigger>
                 <SelectValue placeholder="Seleccione tipo" />
@@ -42,10 +48,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
           {/* Estado */}
           <div className="space-y-2">
             <Label htmlFor="estado">Estado</Label>
-            <Select
-              value={data.estado}
-              onValueChange={(value) => onChange({ estado: value as any })}
-            >
+            <Select value={data.estado} onValueChange={value => onChange({ estado: value as any })}>
               <SelectTrigger>
                 <SelectValue placeholder="Seleccione estado" />
               </SelectTrigger>
@@ -62,7 +65,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
 
       {/* Números y Referencias */}
       <div>
-        <h4 className="font-medium mb-3">Números y Referencias</h4>
+        <h4 className="mb-3 font-medium">Números y Referencias</h4>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="nro_licencia">
@@ -71,7 +74,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
             <Input
               id="nro_licencia"
               value={data.nro_licencia || ''}
-              onChange={(e) => onChange({ nro_licencia: e.target.value })}
+              onChange={e => onChange({ nro_licencia: e.target.value })}
               placeholder="Ej: 2024-001"
               maxLength={20}
             />
@@ -84,7 +87,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
             <Input
               id="expte"
               value={data.expte || ''}
-              onChange={(e) => onChange({ expte: e.target.value })}
+              onChange={e => onChange({ expte: e.target.value })}
               placeholder="Ej: EXP-2024-12345"
               maxLength={50}
             />
@@ -95,7 +98,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
             <Input
               id="resolucion"
               value={data.resolucion || ''}
-              onChange={(e) => onChange({ resolucion: e.target.value })}
+              onChange={e => onChange({ resolucion: e.target.value })}
               placeholder="Ej: RES-2024-001"
               maxLength={50}
             />
@@ -107,7 +110,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
               id="anio"
               type="number"
               value={data.anio || new Date().getFullYear()}
-              onChange={(e) => onChange({ anio: parseInt(e.target.value) })}
+              onChange={e => onChange({ anio: parseInt(e.target.value) })}
               min={2020}
               max={2100}
             />
@@ -117,7 +120,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
 
       {/* Vigencia */}
       <div>
-        <h4 className="font-medium mb-3">Vigencia</h4>
+        <h4 className="mb-3 font-medium">Vigencia</h4>
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="vigencia_inicio">Fecha de Inicio</Label>
@@ -125,7 +128,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
               id="vigencia_inicio"
               type="date"
               value={data.vigencia_inicio || ''}
-              onChange={(e) => onChange({ vigencia_inicio: e.target.value })}
+              onChange={e => onChange({ vigencia_inicio: e.target.value })}
             />
           </div>
 
@@ -135,7 +138,7 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
               id="vigencia_fin"
               type="date"
               value={data.vigencia_fin || ''}
-              onChange={(e) => onChange({ vigencia_fin: e.target.value })}
+              onChange={e => onChange({ vigencia_fin: e.target.value })}
             />
           </div>
         </div>
@@ -146,9 +149,9 @@ export function DatosBasicosStep({ data, onChange }: DatosBasicosStepProps) {
         <Label htmlFor="observaciones">Observaciones</Label>
         <textarea
           id="observaciones"
-          className="w-full min-h-[100px] px-3 py-2 text-sm border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="min-h-[100px] w-full rounded-md border px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
           value={data.observaciones || ''}
-          onChange={(e) => onChange({ observaciones: e.target.value })}
+          onChange={e => onChange({ observaciones: e.target.value })}
           placeholder="Notas adicionales o comentarios..."
         />
       </div>

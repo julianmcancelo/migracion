@@ -1,6 +1,6 @@
 /**
  * Configuración de base de datos optimizada para Vercel
- * 
+ *
  * Vercel Serverless Functions tienen algunas limitaciones:
  * - Timeout de 10s (hobby) o 60s (pro)
  * - No mantiene conexiones persistentes
@@ -12,9 +12,7 @@ import { PrismaClient } from '@prisma/client'
 // Configuración de Prisma optimizada para Vercel
 const prismaClientSingleton = () => {
   return new PrismaClient({
-    log: process.env.NODE_ENV === 'development' 
-      ? ['query', 'error', 'warn'] 
-      : ['error'],
+    log: process.env.NODE_ENV === 'development' ? ['query', 'error', 'warn'] : ['error'],
     datasources: {
       db: {
         url: process.env.DATABASE_URL,
@@ -53,10 +51,10 @@ export async function testDatabaseConnection() {
     return { success: true, message: 'Conexión exitosa a MySQL' }
   } catch (error) {
     console.error('Error conectando a la base de datos:', error)
-    return { 
-      success: false, 
+    return {
+      success: false,
       message: 'Error de conexión a MySQL',
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     }
   }
 }

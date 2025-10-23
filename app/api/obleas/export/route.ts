@@ -19,15 +19,15 @@ export async function GET(request: NextRequest) {
 
     // Construir condiciones de búsqueda (misma lógica que la API principal)
     const whereConditions: any = {}
-    
+
     if (busqueda) {
       whereConditions.OR = [
         {
           habilitaciones_generales: {
             nro_licencia: {
-              contains: busqueda
-            }
-          }
+              contains: busqueda,
+            },
+          },
         },
         {
           habilitaciones_generales: {
@@ -35,12 +35,12 @@ export async function GET(request: NextRequest) {
               some: {
                 persona: {
                   nombre: {
-                    contains: busqueda
-                  }
-                }
-              }
-            }
-          }
+                    contains: busqueda,
+                  },
+                },
+              },
+            },
+          },
         },
         {
           habilitaciones_generales: {
@@ -48,13 +48,13 @@ export async function GET(request: NextRequest) {
               some: {
                 vehiculo: {
                   dominio: {
-                    contains: busqueda
-                  }
-                }
-              }
-            }
-          }
-        }
+                    contains: busqueda,
+                  },
+                },
+              },
+            },
+          },
+        },
       ]
     }
 
@@ -73,7 +73,7 @@ export async function GET(request: NextRequest) {
     if (tipoTransporte) {
       whereConditions.habilitaciones_generales = {
         ...whereConditions.habilitaciones_generales,
-        tipo_transporte: tipoTransporte
+        tipo_transporte: tipoTransporte,
       }
     }
 
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
     const obleas = await prisma.oblea_historial.findMany({
       where: whereConditions,
       orderBy: {
-        fecha_solicitud: 'desc'
+        fecha_solicitud: 'desc',
       },
       include: {
         habilitaciones_generales: {
@@ -96,11 +96,11 @@ export async function GET(request: NextRequest) {
                 persona: {
                   select: {
                     nombre: true,
-                    dni: true
-                  }
-                }
+                    dni: true,
+                  },
+                },
               },
-              take: 1
+              take: 1,
             },
             habilitaciones_vehiculos: {
               include: {
@@ -108,15 +108,15 @@ export async function GET(request: NextRequest) {
                   select: {
                     dominio: true,
                     marca: true,
-                    modelo: true
-                  }
-                }
+                    modelo: true,
+                  },
+                },
               },
-              take: 1
-            }
-          }
-        }
-      }
+              take: 1,
+            },
+          },
+        },
+      },
     })
 
     // Formatear datos para export
@@ -125,15 +125,19 @@ export async function GET(request: NextRequest) {
       'Número Licencia': oblea.habilitaciones_generales?.nro_licencia || 'N/A',
       'Tipo Transporte': oblea.habilitaciones_generales?.tipo_transporte || 'N/A',
       'Estado Habilitación': oblea.habilitaciones_generales?.estado || 'N/A',
-      'Titular': oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.nombre || 'N/A',
-      'DNI Titular': oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.dni || 'N/A',
-      'Dominio Vehículo': oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.dominio || 'N/A',
-      'Marca Vehículo': oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.marca || 'N/A',
-      'Modelo Vehículo': oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.modelo || 'N/A',
+      Titular: oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.nombre || 'N/A',
+      'DNI Titular':
+        oblea.habilitaciones_generales?.habilitaciones_personas[0]?.persona?.dni || 'N/A',
+      'Dominio Vehículo':
+        oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.dominio || 'N/A',
+      'Marca Vehículo':
+        oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.marca || 'N/A',
+      'Modelo Vehículo':
+        oblea.habilitaciones_generales?.habilitaciones_vehiculos[0]?.vehiculo?.modelo || 'N/A',
       'Fecha Solicitud': oblea.fecha_solicitud?.toLocaleDateString('es-AR') || 'N/A',
       'Hora Solicitud': oblea.hora_solicitud?.toLocaleTimeString('es-AR') || 'N/A',
       'Estado Notificación': oblea.notificado === 'si' ? 'Notificada' : 'Pendiente',
-      'Fecha Creación': oblea.creado_en?.toLocaleDateString('es-AR') || 'N/A'
+      'Fecha Creación': oblea.creado_en?.toLocaleDateString('es-AR') || 'N/A',
     }))
 
     if (formato === 'csv') {
@@ -141,18 +145,18 @@ export async function GET(request: NextRequest) {
       const headers = Object.keys(datosExport[0] || {})
       const csvContent = [
         headers.join(','),
-        ...datosExport.map(row => 
+        ...datosExport.map(row =>
           headers.map(header => `"${row[header as keyof typeof row] || ''}"`).join(',')
-        )
+        ),
       ].join('\n')
 
       const fechaActual = new Date().toISOString().split('T')[0]
-      
+
       return new NextResponse(csvContent, {
         headers: {
           'Content-Type': 'text/csv; charset=utf-8',
-          'Content-Disposition': `attachment; filename="obleas_export_${fechaActual}.csv"`
-        }
+          'Content-Disposition': `attachment; filename="obleas_export_${fechaActual}.csv"`,
+        },
       })
     }
 
@@ -161,16 +165,15 @@ export async function GET(request: NextRequest) {
       success: true,
       data: datosExport,
       total: datosExport.length,
-      fecha_export: new Date().toISOString()
+      fecha_export: new Date().toISOString(),
     })
-
   } catch (error: any) {
     console.error('Error al exportar obleas:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al exportar obleas',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

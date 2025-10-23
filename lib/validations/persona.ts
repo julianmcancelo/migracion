@@ -7,7 +7,7 @@ export const crearPersonaSchema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido').max(100, 'Máximo 100 caracteres'),
   dni: z.string().min(7, 'DNI inválido').max(20, 'DNI inválido'),
   genero: z.enum(['Masculino', 'Femenino', 'Otro'], {
-    errorMap: () => ({ message: 'Seleccione un género' })
+    errorMap: () => ({ message: 'Seleccione un género' }),
   }),
   cuit: z.string().optional(),
   telefono: z.string().optional(),

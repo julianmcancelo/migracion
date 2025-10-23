@@ -1,12 +1,7 @@
 'use client'
 
 import { Car } from 'lucide-react'
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 
 interface Vehiculo {
@@ -44,8 +39,18 @@ const formatearFecha = (fecha: Date | null | string) => {
 export function VehiculoModal({ vehiculo, open, onClose }: VehiculoModalProps) {
   if (!vehiculo) return null
 
-  const InfoRow = ({ label, value, highlight = false }: { label: string; value: any; highlight?: boolean }) => (
-    <div className={`flex items-center justify-between p-3 rounded-lg ${highlight ? 'bg-indigo-50 border border-indigo-200' : 'border'}`}>
+  const InfoRow = ({
+    label,
+    value,
+    highlight = false,
+  }: {
+    label: string
+    value: any
+    highlight?: boolean
+  }) => (
+    <div
+      className={`flex items-center justify-between rounded-lg p-3 ${highlight ? 'border border-indigo-200 bg-indigo-50' : 'border'}`}
+    >
       <span className="text-sm font-medium text-gray-600">{label}</span>
       <span className={`font-semibold ${highlight ? 'text-indigo-900' : ''}`}>
         {value || 'No especificado'}
@@ -55,7 +60,7 @@ export function VehiculoModal({ vehiculo, open, onClose }: VehiculoModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Car className="h-6 w-6" />
@@ -66,11 +71,11 @@ export function VehiculoModal({ vehiculo, open, onClose }: VehiculoModalProps) {
         <div className="space-y-3">
           {/* Identificación */}
           <div className="space-y-2">
-            <h3 className="font-semibold text-gray-700 flex items-center gap-2">
+            <h3 className="flex items-center gap-2 font-semibold text-gray-700">
               📋 Identificación
             </h3>
-            <div className="flex items-center justify-center p-4 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg">
-              <span className="text-3xl font-bold text-white tracking-wider">
+            <div className="flex items-center justify-center rounded-lg bg-gradient-to-r from-indigo-500 to-purple-600 p-4">
+              <span className="text-3xl font-bold tracking-wider text-white">
                 {vehiculo.dominio || 'SIN DOMINIO'}
               </span>
             </div>
@@ -79,7 +84,7 @@ export function VehiculoModal({ vehiculo, open, onClose }: VehiculoModalProps) {
 
           {/* Especificaciones */}
           <div className="space-y-2">
-            <h3 className="font-semibold text-gray-700 flex items-center gap-2 mt-4">
+            <h3 className="mt-4 flex items-center gap-2 font-semibold text-gray-700">
               🔧 Especificaciones
             </h3>
             <InfoRow label="Marca" value={vehiculo.marca} />
@@ -88,29 +93,38 @@ export function VehiculoModal({ vehiculo, open, onClose }: VehiculoModalProps) {
             <InfoRow label="Chasis" value={vehiculo.chasis} />
             <InfoRow label="Motor" value={vehiculo.motor} />
             <InfoRow label="Asientos" value={vehiculo.asientos} />
-            <InfoRow label="Inscripción Inicial" value={formatearFecha(vehiculo.inscripcion_inicial)} />
+            <InfoRow
+              label="Inscripción Inicial"
+              value={formatearFecha(vehiculo.inscripcion_inicial)}
+            />
           </div>
 
           {/* Seguros */}
           <div className="space-y-2">
-            <h3 className="font-semibold text-gray-700 flex items-center gap-2 mt-4">
-              🛡️ Seguros
-            </h3>
+            <h3 className="mt-4 flex items-center gap-2 font-semibold text-gray-700">🛡️ Seguros</h3>
             <InfoRow label="Aseguradora" value={vehiculo.Aseguradora} />
             <InfoRow label="Póliza" value={vehiculo.poliza} />
-            <InfoRow label="Vencimiento Póliza" value={formatearFecha(vehiculo.Vencimiento_Poliza)} highlight={true} />
+            <InfoRow
+              label="Vencimiento Póliza"
+              value={formatearFecha(vehiculo.Vencimiento_Poliza)}
+              highlight={true}
+            />
           </div>
 
           {/* VTV */}
           <div className="space-y-2">
-            <h3 className="font-semibold text-gray-700 flex items-center gap-2 mt-4">
+            <h3 className="mt-4 flex items-center gap-2 font-semibold text-gray-700">
               ✅ Verificación Técnica
             </h3>
-            <InfoRow label="Vencimiento VTV" value={formatearFecha(vehiculo.Vencimiento_VTV)} highlight={true} />
+            <InfoRow
+              label="Vencimiento VTV"
+              value={formatearFecha(vehiculo.Vencimiento_VTV)}
+              highlight={true}
+            />
           </div>
 
           {/* Info adicional */}
-          <div className="mt-4 p-3 bg-gray-100 border rounded-lg">
+          <div className="mt-4 rounded-lg border bg-gray-100 p-3">
             <p className="text-xs text-gray-600">
               <strong>ID:</strong> {vehiculo.id}
             </p>

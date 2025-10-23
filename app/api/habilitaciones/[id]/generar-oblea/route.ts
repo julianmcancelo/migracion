@@ -7,10 +7,7 @@ export const dynamic = 'force-dynamic'
  * POST /api/habilitaciones/[id]/generar-oblea
  * Genera certificado de entrega de oblea para una habilitación
  */
-export async function POST(
-  request: NextRequest,
-  context: { params: Promise<{ id: string }> }
-) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   try {
     const params = await context.params
     const habilitacionId = parseInt(params.id)
@@ -25,11 +22,11 @@ export async function POST(
             persona: {
               select: {
                 nombre: true,
-                dni: true
-              }
-            }
+                dni: true,
+              },
+            },
           },
-          take: 1
+          take: 1,
         },
         habilitaciones_vehiculos: {
           include: {
@@ -37,13 +34,13 @@ export async function POST(
               select: {
                 dominio: true,
                 marca: true,
-                modelo: true
-              }
-            }
+                modelo: true,
+              },
+            },
           },
-          take: 1
-        }
-      }
+          take: 1,
+        },
+      },
     })
 
     if (!habilitacion) {
@@ -66,8 +63,8 @@ export async function POST(
         habilitacion_id: habilitacionId,
         fecha_solicitud: new Date(),
         hora_solicitud: new Date(),
-        notificado: 'si'
-      }
+        notificado: 'si',
+      },
     })
 
     // Preparar datos para el certificado
@@ -76,13 +73,23 @@ export async function POST(
 
     // Formatear fechas
     const fechaHoy = new Date().toLocaleDateString('es-AR')
-    
+
     let vigenciaMesAno = 'N/A'
     if (habilitacion.vigencia_fin) {
       const fechaVigencia = new Date(habilitacion.vigencia_fin)
       const meses = [
-        'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-        'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+        'Enero',
+        'Febrero',
+        'Marzo',
+        'Abril',
+        'Mayo',
+        'Junio',
+        'Julio',
+        'Agosto',
+        'Septiembre',
+        'Octubre',
+        'Noviembre',
+        'Diciembre',
       ]
       const mesEspanol = meses[fechaVigencia.getMonth()]
       vigenciaMesAno = `${mesEspanol} de ${fechaVigencia.getFullYear()}`
@@ -102,33 +109,32 @@ export async function POST(
         expte: habilitacion.expte,
         resolucion: habilitacion.resolucion,
         vigencia_desde: vigenciaDesde,
-        vigencia_mes_ano: vigenciaMesAno
+        vigencia_mes_ano: vigenciaMesAno,
       },
       titular: {
         nombre: titular?.nombre || 'N/A',
-        dni: titular?.dni || 'N/A'
+        dni: titular?.dni || 'N/A',
       },
       vehiculo: {
         dominio: vehiculo?.dominio || 'N/A',
         marca: vehiculo?.marca || 'N/A',
-        modelo: vehiculo?.modelo || 'N/A'
+        modelo: vehiculo?.modelo || 'N/A',
       },
-      fecha_emision: fechaHoy
+      fecha_emision: fechaHoy,
     }
 
     return NextResponse.json({
       success: true,
       data: datosOblea,
-      message: 'Certificado de oblea generado exitosamente'
+      message: 'Certificado de oblea generado exitosamente',
     })
-
   } catch (error: any) {
     console.error('Error al generar oblea:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al generar certificado de oblea',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

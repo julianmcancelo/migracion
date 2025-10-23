@@ -3,6 +3,7 @@
 ## 📋 ESTADO ACTUAL DEL FLUJO
 
 ### 1️⃣ CREACIÓN DE HABILITACIÓN
+
 **Página:** `/habilitaciones/nueva`
 **Estado:** ✅ IMPLEMENTADO
 
@@ -30,6 +31,7 @@ Estado inicial: "EN_TRAMITE"
 ---
 
 ### 2️⃣ ASIGNACIÓN DE TURNO
+
 **Página:** `/habilitaciones` → `/turnos`
 **Estado:** ✅ IMPLEMENTADO (RECIÉN AGREGADO)
 
@@ -61,6 +63,7 @@ Envía notificación al titular
 ---
 
 ### 3️⃣ CONFIRMACIÓN DE TURNO (TITULAR)
+
 **Página:** Link público por email
 **Estado:** ✅ IMPLEMENTADO
 
@@ -99,6 +102,7 @@ Envía email de confirmación
 ---
 
 ### 4️⃣ REALIZACIÓN DE INSPECCIÓN
+
 **Página:** `/inspecciones` → `/inspecciones/[id]`
 **Estado:** ✅ IMPLEMENTADO
 
@@ -141,6 +145,7 @@ Vuelve a lista de inspecciones
 ---
 
 ### 5️⃣ GESTIÓN DE HABILITACIÓN
+
 **Página:** `/habilitaciones`
 **Estado:** ✅ IMPLEMENTADO
 
@@ -184,6 +189,7 @@ Menú de opciones (⋮):
 ## 🔗 CONEXIONES DEL FLUJO
 
 ### ✅ BIEN CONECTADO:
+
 1. **Habilitación → Turno** ✅
    - Botón "Asignar Turno" redirige correctamente
    - Licencia se precarga en modal
@@ -234,15 +240,19 @@ Menú de opciones (⋮):
 ## ⚠️ PUNTOS A VERIFICAR
 
 ### 1. ¿Inspección se enlaza correctamente con Habilitación?
+
 **Verificar:** `inspecciones.habilitacion_id` → `habilitaciones_generales.id`
 
 ### 2. ¿Turno se enlaza correctamente con Habilitación?
+
 **Verificar:** `turnos.habilitacion_id` → `habilitaciones_generales.id`
 
 ### 3. ¿Inspector puede ver SOLO las inspecciones de turnos confirmados?
+
 **Verificar:** Lista en `/inspecciones` muestra solo las creadas
 
 ### 4. ¿Email de confirmación incluye toda la info?
+
 **Verificar:** Email incluye fecha, hora, dirección
 
 ---
@@ -250,21 +260,20 @@ Menú de opciones (⋮):
 ## 🚨 FALTANTES IDENTIFICADOS
 
 ### ❌ NO IMPLEMENTADO (Pero no crítico):
+
 1. **Subida de documentos** - Planificado pero no implementado
 2. **Generación de PDF** - Botón existe pero no funciona
 3. **Ver Resolución** - Botón existe pero no funciona
 4. **Sistema de obleas** - Estructura existe pero sin UI
 
 ### ⚠️ POSIBLES MEJORAS:
+
 1. **Notificación de inspección completada**
    - Avisar al titular cuando se completa inspección
-   
 2. **Dashboard para titular**
    - Ver estado de su trámite en tiempo real
-   
 3. **Cambio automático de estado**
    - `EN_TRAMITE` → `HABILITADA` cuando inspección APROBADA
-   
 4. **Validación de vencimientos**
    - Alertas automáticas de habilitaciones por vencer
 
@@ -275,6 +284,7 @@ Menú de opciones (⋮):
 ### FLUJO PRINCIPAL: ✅ COMPLETO Y FUNCIONAL
 
 El sistema tiene implementado el flujo completo desde:
+
 - ✅ Creación de habilitación
 - ✅ Asignación de turno
 - ✅ Confirmación de turno (público)
@@ -283,6 +293,7 @@ El sistema tiene implementado el flujo completo desde:
 - ✅ Visualización de historial
 
 ### LO QUE FALTA ES SECUNDARIO:
+
 - Documentos (planificado)
 - PDFs (no crítico)
 - Obleas (estructura lista)

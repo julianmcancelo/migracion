@@ -23,7 +23,7 @@ export default function ConfirmarTurnoPage() {
     try {
       const response = await fetch(`/api/turnos/${params.id}/confirmar-publico`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       })
 
       const data = await response.json()
@@ -42,9 +42,9 @@ export default function ConfirmarTurnoPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="text-center">
-          <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+          <Loader2 className="mx-auto mb-4 h-12 w-12 animate-spin text-blue-600" />
           <p className="text-gray-600">Confirmando su turno...</p>
         </div>
       </div>
@@ -53,13 +53,13 @@ export default function ConfirmarTurnoPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
-        <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+      <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-red-50 to-red-100 p-4">
+        <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-red-100">
             <span className="text-3xl">❌</span>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">Error</h1>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h1 className="mb-2 text-2xl font-bold text-gray-900">Error</h1>
+          <p className="mb-6 text-gray-600">{error}</p>
           <Button onClick={() => router.push('/turnos')} className="w-full">
             Volver a Turnos
           </Button>
@@ -69,23 +69,25 @@ export default function ConfirmarTurnoPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 to-green-100 p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full text-center">
-        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-green-100 p-4">
+      <div className="w-full max-w-md rounded-2xl bg-white p-8 text-center shadow-xl">
+        <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-100">
           <CheckCircle className="h-10 w-10 text-green-600" />
         </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">
-          ¡Turno Confirmado!
-        </h1>
-        <p className="text-gray-600 mb-6">
+        <h1 className="mb-2 text-2xl font-bold text-gray-900">¡Turno Confirmado!</h1>
+        <p className="mb-6 text-gray-600">
           Su turno ha sido confirmado exitosamente. Le esperamos en la fecha y hora acordada.
         </p>
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
+        <div className="mb-6 rounded-lg border border-green-200 bg-green-50 p-4">
           <p className="text-sm text-green-800">
-            <strong>Recuerde:</strong> Presentarse con 15 minutos de anticipación con toda la documentación en regla.
+            <strong>Recuerde:</strong> Presentarse con 15 minutos de anticipación con toda la
+            documentación en regla.
           </p>
         </div>
-        <Button onClick={() => router.push('/turnos')} className="w-full bg-green-600 hover:bg-green-700">
+        <Button
+          onClick={() => router.push('/turnos')}
+          className="w-full bg-green-600 hover:bg-green-700"
+        >
           Ver Mis Turnos
         </Button>
       </div>

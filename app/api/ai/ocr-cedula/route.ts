@@ -9,7 +9,7 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData()
     const imageFile = formData.get('image') as File
-    
+
     if (!imageFile) {
       return NextResponse.json(
         { success: false, error: 'No se proporcionó imagen' },
@@ -63,9 +63,9 @@ Si no puedes leer algún campo, usa null. Si la imagen no es una cédula válida
       {
         inlineData: {
           data: base64Image,
-          mimeType: imageFile.type
-        }
-      }
+          mimeType: imageFile.type,
+        },
+      },
     ])
 
     const responseText = result.response.text()
@@ -78,39 +78,35 @@ Si no puedes leer algún campo, usa null. Si la imagen no es una cédula válida
         .replace(/```json\n?/g, '')
         .replace(/```\n?/g, '')
         .trim()
-      
+
       data = JSON.parse(cleanText)
     } catch (parseError) {
       console.error('Error al parsear JSON:', parseError)
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'No se pudo interpretar la respuesta de Gemini',
-          rawResponse: responseText
+          rawResponse: responseText,
         },
         { status: 500 }
       )
     }
 
     if (data.error) {
-      return NextResponse.json(
-        { success: false, error: data.error },
-        { status: 400 }
-      )
+      return NextResponse.json({ success: false, error: data.error }, { status: 400 })
     }
 
     return NextResponse.json({
       success: true,
-      data: data
+      data: data,
     })
-
   } catch (error: any) {
     console.error('Error en OCR Cédula:', error)
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Error al procesar la imagen',
-        details: error.message 
+        details: error.message,
       },
       { status: 500 }
     )

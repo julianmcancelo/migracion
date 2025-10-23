@@ -4,7 +4,7 @@ Guía para trabajar con el proyecto tanto en local como en Vercel.
 
 ## 📋 Requisitos
 
-- Node.js 18+ 
+- Node.js 18+
 - npm o yarn
 - Acceso a la base de datos MySQL
 
@@ -38,6 +38,7 @@ npm run setup
 ```
 
 Este comando:
+
 - ✅ Verifica que existe `.env`
 - ✅ Limpia cache de Prisma
 - ✅ Regenera Prisma Client con relaciones
@@ -90,6 +91,7 @@ npm run test:db
 **Causa:** El servidor dev está usando archivos de Prisma
 
 **Solución:**
+
 ```bash
 # 1. Detener servidor (Ctrl+C)
 # 2. Limpiar y regenerar
@@ -103,6 +105,7 @@ npm run dev
 **Causa:** Ya hay un servidor corriendo en puerto 3000
 
 **Solución:**
+
 ```bash
 # Windows
 netstat -ano | findstr :3000
@@ -115,6 +118,7 @@ PORT=3001 npm run dev
 ### Error: Relaciones de Prisma no funcionan
 
 **Solución:**
+
 ```bash
 npm run dev:clean
 ```
@@ -126,6 +130,7 @@ npm run dev:clean
 ### Automático (Recomendado)
 
 1. Hacer commit de cambios:
+
 ```bash
 git add .
 git commit -m "tu mensaje"
@@ -147,6 +152,7 @@ npm run vercel:deploy
 ## 📊 Variables de Entorno
 
 ### Local (.env)
+
 ```env
 DATABASE_URL="mysql://user:pass@localhost:3306/dbname"
 JWT_SECRET="local-secret-key"
@@ -154,6 +160,7 @@ NEXT_PUBLIC_APP_URL="http://localhost:3000"
 ```
 
 ### Vercel (Configurado en Dashboard)
+
 ```env
 DATABASE_URL="mysql://user:pass@167.250.5.55:3306/transpo1_credenciales"
 JWT_SECRET="production-secret-key"
@@ -234,16 +241,19 @@ git push
 ## 📝 Logs y Debugging
 
 ### Ver Logs Locales
+
 - **Terminal:** Logs de servidor Next.js
 - **Navegador (F12):** Consola de JavaScript
 - **Network (F12):** Requests/responses de API
 
 ### Ver Logs en Vercel
+
 1. Dashboard → Tu proyecto
 2. Deployments → Click en deployment
 3. Ver "Function Logs" y "Build Logs"
 
 ### Ruta de Debug
+
 - Local: http://localhost:3000/api/habilitaciones/debug
 - Remoto: https://migracionnext.vercel.app/api/habilitaciones/debug
 

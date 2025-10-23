@@ -6,15 +6,15 @@ Este proyecto está **100% listo** para deployar en Vercel con conexión a tu My
 
 ### 📦 Archivos de Configuración Creados
 
-| Archivo | Descripción |
-|---------|-------------|
-| `vercel.json` | Configuración de deployment para Vercel |
-| `.env.production.example` | Template de variables de entorno para producción |
-| `lib/db-config.ts` | Cliente Prisma optimizado para Serverless |
-| `app/api/health/route.ts` | Endpoint de health check |
-| `scripts/test-db-connection.js` | Script para probar conexión MySQL |
-| `DEPLOY-VERCEL.md` | Guía completa de deployment (LEER!) |
-| `QUICK-START-VERCEL.md` | Guía rápida de 5 minutos |
+| Archivo                         | Descripción                                      |
+| ------------------------------- | ------------------------------------------------ |
+| `vercel.json`                   | Configuración de deployment para Vercel          |
+| `.env.production.example`       | Template de variables de entorno para producción |
+| `lib/db-config.ts`              | Cliente Prisma optimizado para Serverless        |
+| `app/api/health/route.ts`       | Endpoint de health check                         |
+| `scripts/test-db-connection.js` | Script para probar conexión MySQL                |
+| `DEPLOY-VERCEL.md`              | Guía completa de deployment (LEER!)              |
+| `QUICK-START-VERCEL.md`         | Guía rápida de 5 minutos                         |
 
 ### 🔧 Scripts Disponibles
 
@@ -82,6 +82,7 @@ Prisma Schema:
 ### 🎯 Endpoints de API
 
 #### 1. Health Check
+
 ```bash
 GET /api/health
 
@@ -101,6 +102,7 @@ Response:
 ```
 
 #### 2. Login
+
 ```bash
 POST /api/auth/login
 Content-Type: application/json
@@ -124,6 +126,7 @@ Response:
 ```
 
 #### 3. Logout
+
 ```bash
 POST /api/auth/logout
 
@@ -135,6 +138,7 @@ Response:
 ```
 
 #### 4. Obtener Sesión
+
 ```bash
 GET /api/auth/session
 
@@ -157,7 +161,7 @@ Response:
 ✅ **Middleware de protección** de rutas  
 ✅ **Validación de datos** con Zod  
 ✅ **CSRF protection** integrado en Next.js  
-✅ **Variables de entorno** para secretos  
+✅ **Variables de entorno** para secretos
 
 ### 📊 Optimizaciones para Vercel
 
@@ -165,16 +169,18 @@ Response:
 ✅ **Singleton pattern** para evitar múltiples conexiones  
 ✅ **Timeout handling** para Serverless Functions  
 ✅ **Build optimizado** con tree-shaking  
-✅ **Edge-ready** para despliegue global  
+✅ **Edge-ready** para despliegue global
 
 ---
 
 ## 🚀 Cómo Deployar
 
 ### Opción 1: Rápida (5 minutos)
+
 Lee: `QUICK-START-VERCEL.md`
 
 ### Opción 2: Completa (con detalles)
+
 Lee: `DEPLOY-VERCEL.md`
 
 ### Opción 3: CLI Rápida
@@ -197,21 +203,25 @@ vercel --prod
 ## ⚡ Testing Local Antes de Deploy
 
 ### 1. Probar conexión a MySQL:
+
 ```bash
 npm run test:db
 ```
 
 ### 2. Iniciar servidor local:
+
 ```bash
 npm run dev
 ```
 
 ### 3. Probar health check:
+
 ```
 http://localhost:3000/api/health
 ```
 
 ### 4. Probar login:
+
 ```
 http://localhost:3000/login
 ```
@@ -237,15 +247,18 @@ Antes de deployar a Vercel, verifica:
 ### Problemas Comunes:
 
 **"Can't connect to MySQL"**
+
 - Verifica que MySQL acepte conexiones remotas
 - Cambia `localhost` por IP pública
 - Verifica firewall y puerto 3306
 
 **"PrismaClient is unable to run in Vercel"**
+
 - Asegúrate que `postinstall` script esté en package.json
 - Verifica que build command sea: `prisma generate && next build`
 
 **"Access denied for user"**
+
 - Crea usuario con acceso remoto: `user@'%'`
 - Verifica contraseña en DATABASE_URL
 
@@ -276,6 +289,7 @@ Tu backend está configurado y listo para Vercel. El siguiente paso es:
 ---
 
 **Documentación adicional:**
+
 - Vercel Docs: https://vercel.com/docs
 - Prisma + Vercel: https://www.prisma.io/docs/guides/deployment/deployment-guides/deploying-to-vercel
 - Next.js Deployment: https://nextjs.org/docs/deployment

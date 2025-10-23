@@ -77,11 +77,13 @@ vercel --prod
 Genera un JWT_SECRET seguro:
 
 **Windows PowerShell:**
+
 ```powershell
 [Convert]::ToBase64String((1..32 | ForEach-Object { Get-Random -Maximum 256 }))
 ```
 
 **Mac/Linux:**
+
 ```bash
 openssl rand -base64 32
 ```
@@ -94,6 +96,7 @@ Cuando termine el deploy:
 
 1. Abre: `https://tu-proyecto.vercel.app/api/health`
 2. Deberías ver:
+
    ```json
    {
      "status": "healthy",
@@ -114,11 +117,13 @@ Tu DATABASE_URL actual usa `localhost`, que NO funcionará en Vercel.
 ### Opciones:
 
 **A) cPanel / Hosting Compartido:**
+
 - Ve a: `MySQL® Databases` → `Remote MySQL®`
 - Agrega: `0.0.0.0/0` (todas las IPs)
 - Usa como host: el dominio de tu servidor (ej: `servidor123.tuhost.com`)
 
 **B) Servidor Propio/VPS:**
+
 ```bash
 # 1. Editar MySQL config
 sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
@@ -145,6 +150,7 @@ sudo ufw allow 3306/tcp
 ```
 
 **C) Base de datos en la Nube:**
+
 - Usar el endpoint proporcionado (AWS RDS, DigitalOcean, etc.)
 
 ---
@@ -154,6 +160,7 @@ sudo ufw allow 3306/tcp
 ### ❌ "Can't connect to MySQL"
 
 **Solución:**
+
 1. Verifica que MySQL acepte conexiones remotas
 2. Cambia `localhost` por IP pública o dominio
 3. Verifica que el puerto 3306 esté abierto
@@ -161,6 +168,7 @@ sudo ufw allow 3306/tcp
 ### ❌ "Access denied"
 
 **Solución:**
+
 ```sql
 -- Verificar usuario
 SELECT User, Host FROM mysql.user WHERE User='transpo1_credenciales';
@@ -173,6 +181,7 @@ GRANT ALL PRIVILEGES ON transpo1_credenciales.* TO 'transpo1_credenciales'@'%';
 ### ❌ Health check muestra "unhealthy"
 
 **Solución:**
+
 1. Ve a Vercel → Tu proyecto → Functions → Ver logs
 2. Busca el error específico
 3. Verifica las variables de entorno
