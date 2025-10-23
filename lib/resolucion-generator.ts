@@ -62,10 +62,14 @@ export async function generarResolucion(
     // Crear instancia de PizZip
     const zip = new PizZip(content)
     
-    // Crear instancia de Docxtemplater
+    // Crear instancia de Docxtemplater con delimitadores personalizados
     const doc = new Docxtemplater(zip, {
       paragraphLoop: true,
       linebreaks: true,
+      delimiters: {
+        start: '${',
+        end: '}'
+      }
     })
     
     // Asignar valores a los placeholders

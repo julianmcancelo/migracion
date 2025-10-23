@@ -106,6 +106,10 @@ export async function GET(request: Request, context: { params: Promise<{ id: str
     const doc = new Docxtemplater(zip, {
       paragraphLoop: true,
       linebreaks: true,
+      delimiters: {
+        start: '${',
+        end: '}'
+      }
     })
 
     // Lógica de género

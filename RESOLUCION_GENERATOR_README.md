@@ -53,44 +53,46 @@ migracion/
 
 ## 🔧 Placeholders en las Plantillas
 
-Las plantillas deben contener estos placeholders (entre llaves):
+Las plantillas deben contener estos placeholders (con sintaxis ${...}):
+
+⚠️ **IMPORTANTE:** Los placeholders deben usar `${nombre}` (con signo de dólar)
 
 ### **Datos Generales:**
 ```
-{fecha_larga} → "23 de octubre de 2024"
-{resolucion_nro} → "0012/24"
-{expediente_nro} → "4061-12345/2025"
-{licencia_nro} → "068-0152"
+${fecha_larga} → "23 de octubre de 2024"
+${resolucion_nro} → "0012/24"
+${expediente_nro} → "4061-12345/2025"
+${licencia_nro} → "068-0152"
 ```
 
 ### **Datos del Titular:**
 ```
-{tratamiento} → "el Señor" / "la Señora"
-{propiedad_de} → "del Señor" / "de la Señora"
-{domiciliada} → "domiciliado" / "domiciliada"
-{titular_nombre} → "BARBARA AGUSTINA GONZALO"
-{titular_dni} → "34.506.563"
-{titular_domicilio_calle} → "Av. Hipólito Yrigoyen 3351"
-{titular_domicilio_localidad} → "Lanús Oeste"
+${tratamiento} → "el Señor" / "la Señora"
+${propiedad_de} → "del Señor" / "de la Señora"
+${domiciliada} → "domiciliado" / "domiciliada"
+${titular_nombre} → "BARBARA AGUSTINA GONZALO"
+${titular_dni} → "34.506.563"
+${titular_domicilio_calle} → "Av. Hipólito Yrigoyen 3351"
+${titular_domicilio_localidad} → "Lanús Oeste"
 ```
 
 ### **Datos del Vehículo:**
 ```
-{vehiculo_marca} → "MERCEDES BENZ"
-{vehiculo_modelo} → "BMO 390 VERSION 1315L/52 CA"
-{vehiculo_anho} → "2007"
-{vehiculo_dominio} → "HZD711"
-{vehiculo_tipo} → "MICRO ÓMNIBUS"
-{vehiculo_inscripcion_inicial} → "01/01/2007"
-{vehiculo_motor} → "123456789"
+${vehiculo_marca} → "MERCEDES BENZ"
+${vehiculo_modelo} → "BMO 390 VERSION 1315L/52 CA"
+${vehiculo_anho} → "2007"
+${vehiculo_dominio} → "HZD711"
+${vehiculo_tipo} → "MICRO ÓMNIBUS"
+${vehiculo_inscripcion_inicial} → "01/01/2007"
+${vehiculo_motor} → "123456789"
 ```
 
 ### **Datos de Remisería** (solo para remis):
 ```
-{expte_remiseria} → "EXP-REM-2024-123"
-{cuenta_remiseria} → "CUENTA-456"
-{nombre_remiseria} → "Remisería San Martín"
-{domicilio_remiseria} → "Av. San Martín 1234, Lanús"
+${expte_remiseria} → "EXP-REM-2024-123"
+${cuenta_remiseria} → "CUENTA-456"
+${nombre_remiseria} → "Remisería San Martín"
+${domicilio_remiseria} → "Av. San Martín 1234, Lanús"
 ```
 
 ---
