@@ -14,10 +14,14 @@ import { CreditCard, Key, X, Loader2, FileText, CheckCircle, Phone, Mail, MapPin
  */
 export default function Home() {
   const [isFinderOpen, setIsFinderOpen] = useState(false)
+  const [isRequirementsOpen, setIsRequirementsOpen] = useState(false)
   const [dni, setDni] = useState('')
   const [email, setEmail] = useState('')
+  const [requirementsEmail, setRequirementsEmail] = useState('')
   const [loading, setLoading] = useState(false)
+  const [sendingEmail, setSendingEmail] = useState(false)
   const [error, setError] = useState('')
+  const [emailSuccess, setEmailSuccess] = useState('')
 
   const handleFindCredential = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,6 +67,56 @@ export default function Home() {
     setError('')
     setDni('')
     setEmail('')
+  }
+
+  const openRequirements = () => {
+    setIsRequirementsOpen(true)
+    setEmailSuccess('')
+    setRequirementsEmail('')
+  }
+
+  const handleSendRequirements = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setEmailSuccess('')
+    
+    if (!requirementsEmail.trim()) {
+      setEmailSuccess('Por favor, ingresa tu email.')
+      return
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(requirementsEmail)) {
+      setEmailSuccess('El formato del email no es válido.')
+      return
+    }
+
+    setSendingEmail(true)
+
+    try {
+      const response = await fetch('/api/requisitos/enviar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: requirementsEmail.trim(),
+        }),
+      })
+
+      const data = await response.json()
+
+      if (response.ok && data.success) {
+        setEmailSuccess('✅ Requisitos enviados exitosamente. Revisá tu casilla de email.')
+        setRequirementsEmail('')
+      } else {
+        setEmailSuccess(data.error || 'Error al enviar el email.')
+      }
+    } catch (err) {
+      console.error('Error al enviar requisitos:', err)
+      setEmailSuccess('Ocurrió un error. Por favor, intenta nuevamente.')
+    } finally {
+      setSendingEmail(false)
+    }
   }
 
   return (
