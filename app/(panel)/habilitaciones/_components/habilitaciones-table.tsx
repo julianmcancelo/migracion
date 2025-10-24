@@ -183,29 +183,29 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const getEstadoBadge = (estado: string | null) => {
     const estados: Record<string, { className: string; label: string }> = {
       HABILITADO: {
-        className: 'bg-green-600 text-white border-green-700',
+        className: 'bg-green-100 text-green-700 border-green-200',
         label: 'Habilitado',
       },
       EN_TRAMITE: {
-        className: 'bg-yellow-500 text-white border-yellow-600',
+        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
         label: 'En Trámite',
       },
       NO_HABILITADO: {
-        className: 'bg-red-600 text-white border-red-700',
+        className: 'bg-red-100 text-red-700 border-red-200',
         label: 'No Habilitado',
       },
       INICIADO: {
-        className: 'bg-blue-600 text-white border-blue-700',
+        className: 'bg-blue-100 text-blue-700 border-blue-200',
         label: 'Iniciado',
       },
     }
 
     const config = estados[estado || ''] || {
-      className: 'bg-gray-400 text-white border-gray-500',
+      className: 'bg-slate-100 text-slate-700 border-slate-200',
       label: estado || 'N/A',
     }
     return (
-      <Badge className={`${config.className} border px-2.5 py-0.5 text-xs font-medium uppercase`}>
+      <Badge className={`${config.className} border text-xs font-medium`}>
         {config.label}
       </Badge>
     )
@@ -220,21 +220,21 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
     if (diasRestantes < 0) {
       return (
-        <Badge variant="destructive" className="text-xs">
+        <Badge className="bg-red-100 text-red-700 border border-red-200 text-xs">
           Vencida
         </Badge>
       )
     } else if (diasRestantes <= 30) {
-      return <Badge className="bg-orange-500 text-xs text-white">{diasRestantes} días</Badge>
+      return <Badge className="bg-orange-100 text-orange-700 border border-orange-200 text-xs">{diasRestantes}d</Badge>
     }
     return null
   }
 
   if (loading) {
     return (
-      <div className="space-y-4">
+      <div className="space-y-2">
         {[...Array(5)].map((_, i) => (
-          <div key={i} className="h-16 animate-pulse rounded-lg bg-gray-100" />
+          <div key={i} className="h-16 animate-pulse rounded-lg bg-slate-100" />
         ))}
       </div>
     )
@@ -242,59 +242,59 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
   if (habilitaciones.length === 0) {
     return (
-      <div className="py-12 text-center">
-        <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-          <FileText className="h-6 w-6 text-gray-400" />
+      <div className="py-8 text-center">
+        <div className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-100">
+          <FileText className="h-6 w-6 text-slate-400" />
         </div>
-        <h3 className="mb-2 text-lg font-semibold text-gray-900">
+        <h3 className="mb-1 text-sm font-semibold text-slate-900">
           No se encontraron habilitaciones
         </h3>
-        <p className="text-gray-500">Intenta con otro término de búsqueda o revisa los filtros</p>
+        <p className="text-xs text-slate-500">Intenta con otro término de búsqueda</p>
       </div>
     )
   }
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-1">
       {habilitaciones.map(hab => {
         const isExpanded = expandedRows.has(hab.id)
 
         return (
           <div
             key={hab.id}
-            className="border border-gray-300 bg-white transition-colors hover:bg-gray-50"
+            className="border rounded-lg bg-white hover:border-slate-300 transition-colors"
           >
             {/* Fila principal */}
-            <div className="flex items-center gap-4 p-4">
+            <div className="flex items-center gap-3 p-3">
               {/* Botón expandir */}
               <button
                 onClick={() => toggleRow(hab.id)}
-                className="shrink-0 p-1 transition-colors hover:bg-gray-200"
+                className="shrink-0 p-1 hover:bg-slate-100 rounded transition-colors"
               >
                 <ChevronRight
                   className={cn(
-                    'h-4 w-4 text-gray-600 transition-transform',
+                    'h-4 w-4 text-slate-400 transition-transform',
                     isExpanded && 'rotate-90'
                   )}
                 />
               </button>
 
               {/* Licencia y Expediente */}
-              <div className="w-40 min-w-0 flex-shrink-0">
-                <div className="truncate text-sm font-semibold text-gray-900">
+              <div className="w-32 min-w-0 flex-shrink-0">
+                <div className="truncate text-sm font-semibold text-slate-900">
                   {hab.nro_licencia || 'N/A'}
                 </div>
-                <div className="truncate text-xs text-gray-500">Exp: {hab.expte || 'N/A'}</div>
+                <div className="truncate text-xs text-slate-500">{hab.expte || 'Sin exp.'}</div>
               </div>
 
               {/* Titular */}
               <div className="min-w-0 flex-1">
-                <div className="truncate text-sm font-medium text-gray-900">
+                <div className="truncate text-sm font-medium text-slate-900">
                   {hab.titular_principal || (
-                    <span className="italic text-gray-500">Sin asignar</span>
+                    <span className="italic text-slate-400">Sin asignar</span>
                   )}
                 </div>
-                <div className="mt-0.5 text-xs text-gray-500">
+                <div className="truncate text-xs text-slate-500">
                   {hab.tipo_transporte || 'Sin tipo'}
                 </div>
               </div>
@@ -303,12 +303,11 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
               <div className="flex-shrink-0">{getEstadoBadge(hab.estado)}</div>
 
               {/* Vigencia */}
-              <div className="w-32 flex-shrink-0">
-                <div className="mb-0.5 text-xs text-gray-500">Vence</div>
-                <div className="text-sm font-semibold text-gray-900">
+              <div className="w-28 flex-shrink-0 text-right">
+                <div className="text-sm font-medium text-slate-900">
                   {hab.vigencia_fin ? formatearFecha(hab.vigencia_fin) : 'N/A'}
                 </div>
-                <div className="mt-1">{getEstadoVigencia(hab.vigencia_fin)}</div>
+                <div className="mt-0.5">{getEstadoVigencia(hab.vigencia_fin)}</div>
               </div>
 
               {/* Menú de acciones */}
@@ -390,7 +389,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
 
             {/* Detalles expandibles */}
             {isExpanded && (
-              <div className="space-y-3 border-t bg-gray-50 p-4">
+              <div className="space-y-3 border-t bg-slate-50 p-3">
                 {/* Personas */}
                 {hab.personas.length > 0 && (
                   <div>
