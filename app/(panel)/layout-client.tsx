@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
 import ChatIAGlobal from '@/components/chat-ia-global'
+import { ToastProvider } from '@/components/ui/toast-notifications'
 
 interface PanelLayoutClientProps {
   children: React.ReactNode
@@ -48,28 +49,30 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-gray-50">
-      {/* Sidebar */}
-      <Sidebar
-        collapsed={sidebarCollapsed}
-        onToggle={handleToggleCollapsed}
-        mobileOpen={mobileOpen}
-        onMobileClose={handleMobileClose}
-      />
+    <ToastProvider>
+      <div className="flex h-screen overflow-hidden bg-gray-50">
+        {/* Sidebar */}
+        <Sidebar
+          collapsed={sidebarCollapsed}
+          onToggle={handleToggleCollapsed}
+          mobileOpen={mobileOpen}
+          onMobileClose={handleMobileClose}
+        />
 
-      {/* Contenido principal */}
-      <div className="flex flex-1 flex-col overflow-hidden">
-        <Header user={user} onMenuClick={handleMobileOpen} />
+        {/* Contenido principal */}
+        <div className="flex flex-1 flex-col overflow-hidden">
+          <Header user={user} onMenuClick={handleMobileOpen} />
 
-        <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
-          <div className="container mx-auto max-w-[1600px] px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-8">
-            {children}
-          </div>
-        </main>
+          <main className="flex-1 overflow-y-auto bg-gradient-to-br from-slate-50 via-blue-50/30 to-indigo-50/30">
+            <div className="container mx-auto max-w-[1600px] px-3 py-4 sm:px-4 sm:py-6 lg:px-6 lg:py-8">
+              {children}
+            </div>
+          </main>
+        </div>
+
+        {/* Chat IA Global - Disponible en toda la aplicación */}
+        <ChatIAGlobal />
       </div>
-
-      {/* Chat IA Global - Disponible en toda la aplicación */}
-      <ChatIAGlobal />
-    </div>
+    </ToastProvider>
   )
 }

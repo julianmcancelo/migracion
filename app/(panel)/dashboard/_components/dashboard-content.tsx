@@ -22,6 +22,8 @@ import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { RegistroPersonaRapidoDialog } from './registro-persona-rapido-dialog'
 import { RegistroVehiculoRapidoDialog } from './registro-vehiculo-rapido-dialog'
+import { OnboardingTour, useOnboardingTour, mainTourSteps } from '@/components/ui/onboarding-tour'
+import { useToast } from '@/components/ui/toast-notifications'
 
 interface Stats {
   kpis: {
@@ -93,6 +95,10 @@ export function DashboardContent() {
   const [reenviando, setReenviando] = useState<number | null>(null)
   const [showRegistroPersona, setShowRegistroPersona] = useState(false)
   const [showRegistroVehiculo, setShowRegistroVehiculo] = useState(false)
+  
+  // Tour de bienvenida
+  const { hasSeenTour, completeTour } = useOnboardingTour('dashboard')
+  const toast = useToast()
 
   useEffect(() => {
     async function cargarDatos() {
