@@ -192,19 +192,24 @@ export async function POST(request: Request, { params }: { params: { id: string 
         <html>
         <head>
           <style>
-            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: #2563eb; color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-            .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-            .resultado { font-size: 24px; font-weight: bold; margin: 20px 0; padding: 15px; border-radius: 8px; text-align: center; }
+            body { font-family: Arial, sans-serif; line-height: 1.4; color: #333; margin: 0; padding: 0; }
+            .container { max-width: 600px; margin: 0 auto; padding: 12px; }
+            .header { background: #2563eb; color: white; padding: 16px 20px; text-align: center; border-radius: 6px 6px 0 0; }
+            .header h1 { margin: 0 0 6px 0; font-size: 20px; }
+            .header p { margin: 0; font-size: 13px; opacity: 0.9; }
+            .content { background: #f9fafb; padding: 16px 20px; border-radius: 0 0 6px 6px; }
+            .content > p { margin: 8px 0; font-size: 14px; }
+            .resultado { font-size: 18px; font-weight: bold; margin: 12px 0; padding: 10px; border-radius: 6px; text-align: center; }
             .resultado.aprobada { background: #d1fae5; color: #065f46; }
             .resultado.rechazada { background: #fee2e2; color: #991b1b; }
             .resultado.condicional { background: #fef3c7; color: #92400e; }
             .resultado.pendiente { background: #e0e7ff; color: #3730a3; }
-            .info { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; }
-            .info-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #e5e7eb; }
-            .label { font-weight: bold; color: #6b7280; }
-            .footer { text-align: center; color: #6b7280; font-size: 12px; margin-top: 30px; }
+            .info { background: white; padding: 12px 16px; border-radius: 6px; margin: 12px 0; border: 1px solid #e5e7eb; }
+            .info-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #f3f4f6; font-size: 14px; }
+            .info-row:last-child { border-bottom: none; }
+            .label { font-weight: 600; color: #6b7280; }
+            .footer { text-align: center; color: #9ca3af; font-size: 11px; margin-top: 16px; padding: 12px; }
+            .footer p { margin: 4px 0; }
           </style>
         </head>
         <body>
@@ -215,7 +220,6 @@ export async function POST(request: Request, { params }: { params: { id: string 
             </div>
             <div class="content">
               <p>Estimado/a <strong>${nombreTitular}</strong>,</p>
-              
               <p>Le enviamos el informe de la inspección técnica vehicular realizada.</p>
               
               <div class="resultado ${resultadoTexto.toLowerCase()}">
@@ -253,12 +257,12 @@ export async function POST(request: Request, { params }: { params: { id: string 
               
               ${
                 resultadoTexto === 'RECHAZADA'
-                  ? '<p style="color: #991b1b;"><strong>Nota:</strong> Su vehículo no ha aprobado la inspección. Por favor, realice las correcciones necesarias y solicite una nueva inspección.</p>'
+                  ? '<p style="color: #991b1b; margin: 10px 0; font-size: 13px;"><strong>Nota:</strong> Su vehículo no ha aprobado la inspección. Por favor, realice las correcciones necesarias y solicite una nueva inspección.</p>'
                   : resultadoTexto === 'CONDICIONAL'
-                    ? '<p style="color: #92400e;"><strong>Nota:</strong> Su vehículo ha obtenido una aprobación condicional. Revise las observaciones en el informe adjunto.</p>'
+                    ? '<p style="color: #92400e; margin: 10px 0; font-size: 13px;"><strong>Nota:</strong> Su vehículo ha obtenido una aprobación condicional. Revise las observaciones en el informe adjunto.</p>'
                     : resultadoTexto === 'APROBADA'
-                      ? '<p style="color: #065f46;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>'
-                      : '<p style="color: #3730a3;"><strong>Nota:</strong> La inspección está pendiente de resolución final.</p>'
+                      ? '<p style="color: #065f46; margin: 10px 0; font-size: 13px;"><strong>¡Felicitaciones!</strong> Su vehículo ha aprobado la inspección técnica.</p>'
+                      : '<p style="color: #3730a3; margin: 10px 0; font-size: 13px;"><strong>Nota:</strong> La inspección está pendiente de resolución final.</p>'
               }
             </div>
             <div class="footer">
