@@ -491,11 +491,11 @@ export default function Home() {
                         <h4 className="text-lg font-bold text-slate-800">Escaneá con tu celular</h4>
                       </div>
                       <p className="text-sm text-slate-600 mb-3">
-                        Escaneá este código QR con la cámara de tu celular para acceder a la versión móvil. 
-                        Podrás usar tu cuenta de Google automáticamente.
+                        Escaneá este código QR con la cámara de tu celular para acceder rápidamente desde tu móvil. 
+                        Solo necesitás ingresar tu email.
                       </p>
                       <div className="inline-flex items-center gap-2 bg-white/60 px-3 py-1.5 rounded-full text-xs text-slate-600">
-                        ✨ Detecta tu cuenta de Google
+                        📱 Optimizado para celular
                       </div>
                     </div>
                   </div>

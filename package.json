@@ -41,6 +41,7 @@
     "docxtemplater": "^3.66.7",
     "dotenv": "^16.6.1",
     "file-saver": "^2.0.5",
+    "firebase": "^12.4.0",
     "jose": "^5.9.6",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",
