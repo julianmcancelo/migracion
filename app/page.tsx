@@ -182,112 +182,29 @@ export default function Home() {
           </Card>
         </div>
 
-        {/* Sección de Requisitos */}
+        {/* Botón de Requisitos */}
         <div className="mt-24">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl font-extrabold text-slate-800 mb-3">
-              Documentación Requerida
-            </h2>
-            <p className="text-lg text-slate-600">
-              Conocé qué documentos necesitás para tramitar tu habilitación
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Transporte Escolar */}
-            <Card className="animate-fade-in-up bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 p-8 hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-blue-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800">Transporte Escolar</h3>
+          <Card className="bg-gradient-to-br from-orange-50 via-orange-50 to-amber-50 border-2 border-orange-200 p-12 shadow-xl">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-orange-500 text-white w-20 h-20 rounded-2xl flex items-center justify-center mb-6 shadow-lg">
+                <FileText className="h-10 w-10" />
               </div>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">DNI del titular</p>
-                    <p className="text-sm text-slate-500">Original y fotocopia</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Cédula verde del vehículo</p>
-                    <p className="text-sm text-slate-500">A nombre del titular</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Seguro vigente</p>
-                    <p className="text-sm text-slate-500">Póliza contra terceros completos</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">VTV vigente</p>
-                    <p className="text-sm text-slate-500">Verificación técnica vehicular</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Certificado de antecedentes</p>
-                    <p className="text-sm text-slate-500">Del titular y conductores</p>
-                  </div>
-                </li>
-              </ul>
-            </Card>
-
-            {/* Remis */}
-            <Card className="animate-fade-in-up animation-delay-200 bg-gradient-to-br from-green-50 to-white border-2 border-green-100 p-8 hover:shadow-xl transition-shadow">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-green-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
-                  <FileText className="h-6 w-6" />
-                </div>
-                <h3 className="text-2xl font-bold text-slate-800">Remis</h3>
-              </div>
-              <ul className="space-y-4">
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">DNI y licencia de conducir</p>
-                    <p className="text-sm text-slate-500">Del titular y todos los choferes</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Título del vehículo</p>
-                    <p className="text-sm text-slate-500">Original y copia certificada</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Certificado de antecedentes</p>
-                    <p className="text-sm text-slate-500">Para todos los conductores</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Seguro y VTV</p>
-                    <p className="text-sm text-slate-500">Vigentes y actualizados</p>
-                  </div>
-                </li>
-                <li className="flex items-start gap-3">
-                  <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <div>
-                    <p className="font-semibold text-slate-700">Libre deuda municipal</p>
-                    <p className="text-sm text-slate-500">Actualizado</p>
-                  </div>
-                </li>
-              </ul>
-            </Card>
-          </div>
+              <h2 className="text-4xl font-extrabold text-slate-800 mb-4">
+                ¿Qué documentos necesitás?
+              </h2>
+              <p className="text-lg text-slate-600 mb-8 max-w-2xl">
+                Conocé todos los requisitos y documentación necesaria para tramitar tu habilitación de transporte. Podés consultarlos y recibir el listado completo por email.
+              </p>
+              <Button
+                onClick={openRequirements}
+                size="lg"
+                className="bg-gradient-to-r from-orange-500 to-amber-600 hover:from-orange-600 hover:to-amber-700 text-white font-semibold shadow-lg hover:shadow-xl transition-all transform hover:scale-105"
+              >
+                <FileText className="mr-2 h-5 w-5" />
+                Ver Requisitos Completos
+              </Button>
+            </div>
+          </Card>
         </div>
 
         {/* Información de Contacto */}
@@ -414,6 +331,197 @@ export default function Home() {
                   </Button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Modal de Requisitos */}
+        {isRequirementsOpen && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto"
+            onClick={() => setIsRequirementsOpen(false)}
+          >
+            <div 
+              className="bg-white rounded-2xl shadow-xl w-full max-w-4xl p-8 my-8 max-h-[90vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex justify-between items-start mb-6">
+                <div>
+                  <h3 className="text-3xl font-bold text-gray-800 mb-2">Documentación Requerida</h3>
+                  <p className="text-sm text-gray-500">
+                    Listado completo de requisitos para cada tipo de habilitación
+                  </p>
+                </div>
+                <button
+                  onClick={() => setIsRequirementsOpen(false)}
+                  className="text-gray-400 hover:text-gray-600 transition-colors"
+                >
+                  <X className="h-6 w-6" />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {/* Transporte Escolar */}
+                <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-blue-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
+                      <FileText className="h-6 w-6" />
+                    </div>
+                    <h4 className="text-xl font-bold text-slate-800">Transporte Escolar</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">DNI del titular</p>
+                        <p className="text-xs text-slate-500">Original y fotocopia</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Cédula verde del vehículo</p>
+                        <p className="text-xs text-slate-500">A nombre del titular</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Seguro vigente</p>
+                        <p className="text-xs text-slate-500">Póliza contra terceros completos</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">VTV vigente</p>
+                        <p className="text-xs text-slate-500">Verificación técnica vehicular</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Certificado de antecedentes</p>
+                        <p className="text-xs text-slate-500">Del titular y conductores</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Habilitación municipal del conductor</p>
+                        <p className="text-xs text-slate-500">Licencia profesional vigente</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+
+                {/* Remis */}
+                <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <div className="bg-green-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
+                      <FileText className="h-6 w-6" />
+                    </div>
+                    <h4 className="text-xl font-bold text-slate-800">Remis</h4>
+                  </div>
+                  <ul className="space-y-3">
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">DNI y licencia de conducir</p>
+                        <p className="text-xs text-slate-500">Del titular y todos los choferes</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Título del vehículo</p>
+                        <p className="text-xs text-slate-500">Original y copia certificada</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Certificado de antecedentes</p>
+                        <p className="text-xs text-slate-500">Para todos los conductores</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Seguro y VTV</p>
+                        <p className="text-xs text-slate-500">Vigentes y actualizados</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Libre deuda municipal</p>
+                        <p className="text-xs text-slate-500">Actualizado</p>
+                      </div>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="font-semibold text-slate-700 text-sm">Certificado de aptitud psicofísica</p>
+                        <p className="text-xs text-slate-500">De todos los conductores</p>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Formulario de Email */}
+              <div className="border-t pt-6">
+                <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
+                  <div className="flex items-center gap-3 mb-4">
+                    <Mail className="h-6 w-6 text-blue-600" />
+                    <h4 className="text-lg font-bold text-slate-800">Recibir requisitos por email</h4>
+                  </div>
+                  <p className="text-sm text-slate-600 mb-4">
+                    Ingresá tu correo electrónico y te enviaremos el listado completo de requisitos para que tengas toda la información a mano.
+                  </p>
+                  
+                  <form onSubmit={handleSendRequirements} className="space-y-4">
+                    {emailSuccess && (
+                      <div className={`px-4 py-3 rounded-lg text-sm ${
+                        emailSuccess.includes('✅') 
+                          ? 'bg-green-100 border border-green-300 text-green-700' 
+                          : 'bg-red-100 border border-red-300 text-red-700'
+                      }`}>
+                        {emailSuccess}
+                      </div>
+                    )}
+
+                    <div className="flex gap-3">
+                      <Input
+                        type="email"
+                        value={requirementsEmail}
+                        onChange={(e) => setRequirementsEmail(e.target.value)}
+                        placeholder="tu-correo@ejemplo.com"
+                        className="flex-1"
+                        disabled={sendingEmail}
+                      />
+                      <Button
+                        type="submit"
+                        disabled={sendingEmail}
+                        className="bg-blue-600 hover:bg-blue-700"
+                      >
+                        {sendingEmail ? (
+                          <>
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                            Enviando...
+                          </>
+                        ) : (
+                          <>
+                            <Mail className="mr-2 h-4 w-4" />
+                            Enviar
+                          </>
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </div>
+              </div>
             </div>
           </div>
         )}
