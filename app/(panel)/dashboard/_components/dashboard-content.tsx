@@ -233,22 +233,43 @@ export function DashboardContent() {
       )}
 
       <div className="space-y-4 sm:space-y-6">
-        {/* Header */}
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">Panel de Control</h1>
-          <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Información crítica y alertas del sistema</p>
+        {/* Welcome Header Section - Inspired by landing page */}
+        <div className="animate-fade-in-up">
+          <div className="relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-blue-50 p-6 shadow-lg sm:p-8">
+            {/* Decorative background pattern */}
+            <div className="absolute inset-0 opacity-5" style={{
+              backgroundImage: 'radial-gradient(#3b82f6 1px, transparent 0)',
+              backgroundSize: '20px 20px'
+            }}></div>
+            
+            <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-4">
+                <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-blue-500 shadow-md">
+                  <svg className="h-8 w-8 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                  </svg>
+                </div>
+                <div>
+                  <h1 className="text-2xl font-extrabold tracking-tight text-slate-800 sm:text-3xl lg:text-4xl">
+                    Panel de Control
+                  </h1>
+                  <p className="mt-1 text-sm text-slate-600 sm:mt-2 sm:text-base">
+                    Gestión de Transporte - Municipio de Lanús
+                  </p>
+                </div>
+              </div>
+              <Badge className="w-fit bg-blue-500 px-4 py-2 text-sm text-white shadow-md">
+                <Clock className="mr-2 inline h-4 w-4" />
+                Actualizado ahora
+              </Badge>
+            </div>
+          </div>
         </div>
-        <Badge className="w-fit bg-blue-100 px-3 py-1.5 text-xs text-blue-700 sm:px-4 sm:py-2 sm:text-sm">
-          <Clock className="mr-1.5 inline h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
-          Actualizado ahora
-        </Badge>
-      </div>
 
       {/* ALERTAS CRÍTICAS - Primera sección */}
       <div className="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
         {/* Alerta: Habilitaciones Vencidas */}
-        <Card className="relative overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 to-white transition-shadow hover:shadow-lg">
+        <Card className="animate-fade-in-up animation-delay-200 relative overflow-hidden border-2 border-red-200 bg-gradient-to-br from-red-50 to-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
           <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-red-500/5 sm:h-32 sm:w-32"></div>
           <div className="relative p-4 sm:p-6">
             <div className="mb-2 flex items-start justify-between sm:mb-3">
@@ -275,7 +296,7 @@ export function DashboardContent() {
         </Card>
 
         {/* Alerta: Por Vencer (30 días) */}
-        <Card className="relative overflow-hidden border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white transition-shadow hover:shadow-lg">
+        <Card className="animate-fade-in-up animation-delay-400 relative overflow-hidden border-2 border-orange-200 bg-gradient-to-br from-orange-50 to-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg">
           <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-orange-500/5 sm:h-32 sm:w-32"></div>
           <div className="relative p-4 sm:p-6">
             <div className="mb-2 flex items-start justify-between sm:mb-3">
@@ -298,7 +319,7 @@ export function DashboardContent() {
         </Card>
 
         {/* Inspecciones Confirmadas - Placeholder por ahora */}
-        <Card className="relative overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50 to-white transition-shadow hover:shadow-lg">
+        <Card className="animate-fade-in-up relative overflow-hidden border-2 border-green-200 bg-gradient-to-br from-green-50 to-white transition-all duration-300 hover:-translate-y-2 hover:shadow-lg" style={{animationDelay: '0.6s'}}>
           <div className="absolute right-0 top-0 h-24 w-24 rounded-bl-full bg-green-500/5 sm:h-32 sm:w-32"></div>
           <div className="relative p-4 sm:p-6">
             <div className="mb-2 flex items-start justify-between sm:mb-3">
