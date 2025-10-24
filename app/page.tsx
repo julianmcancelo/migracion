@@ -386,7 +386,7 @@ export default function Home() {
                     <p className="text-[10px]"><strong>12.</strong> Cédula Azul a nombre del Chofer (de corresponder)</p>
                     <p className="text-[10px]"><strong>13.</strong> Fotos color: unidad completa (delantera, trasera y laterales)</p>
                     <p className="text-[10px]"><strong>14.</strong> Colores reglamentarios: NARANJA (N°1054 IRAM) en carrocería baja y BLANCO en carrocería alta</p>
-                    <p className="text-[10px]"><strong>15.</strong> Leyenda "TRANSPORTE ESCOLAR" visible (letra ≥20cm, color negro)</p>
+                    <p className="text-[10px]"><strong>15.</strong> Leyenda &quot;TRANSPORTE ESCOLAR&quot; visible (letra ≥20cm, color negro)</p>
                     <p className="text-[10px]"><strong>16.</strong> Psicotécnico (Titular, chofer y celador/a)</p>
                     <p className="text-[10px]"><strong>17.</strong> 02 Informes de Dominio</p>
                     <p className="text-[10px]"><strong>18.</strong> Último pago de patente (ARBA)</p>
