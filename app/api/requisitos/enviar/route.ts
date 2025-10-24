@@ -86,14 +86,35 @@ export async function POST(request: NextRequest) {
               <h2 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #3b82f6;">
                 Transporte Escolar
               </h2>
-              <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
-                <li style="margin: 6px 0;">DNI del titular (original y copia)</li>
-                <li style="margin: 6px 0;">Cédula verde del vehículo</li>
-                <li style="margin: 6px 0;">Seguro vigente</li>
-                <li style="margin: 6px 0;">VTV vigente</li>
-                <li style="margin: 6px 0;">Certificado de antecedentes</li>
-                <li style="margin: 6px 0;">Habilitación municipal del conductor</li>
-              </ul>
+              <p style="margin: 0 0 12px 0; padding: 8px; background: #eff6ff; border-left: 3px solid #3b82f6; font-size: 12px; color: #1e40af;">
+                <strong>Importante:</strong> La unidad debe estar radicada en Provincia de Buenos Aires
+              </p>
+              <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 13px; line-height: 1.6;">
+                <li style="margin: 4px 0;">Título y Cédula verde a nombre del solicitante</li>
+                <li style="margin: 4px 0;">Póliza de Seguro categoría transporte escolar con cobertura terceros transportados y no transportados + último recibo de pago</li>
+                <li style="margin: 4px 0;">Certificación de escuela donde presta servicios con datos identificatorios</li>
+                <li style="margin: 4px 0;">VTV como Transporte Escolar con su ANEXO (especificando categoría de Transporte y capacidad de asientos total)</li>
+                <li style="margin: 4px 0;">Certificado de desinfección sanitaria</li>
+                <li style="margin: 4px 0;">DNI (Titular, Chofer y Celador/a)</li>
+                <li style="margin: 4px 0;">Libreta Sanitaria correspondiente al PARTIDO DE LANUS (Titular, Chofer y Celador/a)</li>
+                <li style="margin: 4px 0;">Licencia de Conducir con categoría Transporte Escolar (Titular - Chofer)</li>
+                <li style="margin: 4px 0;">Certificado de Antecedentes Penales (Titular, Chofer y Celador/a)</li>
+                <li style="margin: 4px 0;">Certificado de Domicilio (Titular, Chofer y Celador/a)</li>
+                <li style="margin: 4px 0;">Constancia de CUIT o CUIL (Titular, chofer y celador/a)</li>
+                <li style="margin: 4px 0;">Cédula Azul a nombre del Chofer declarado (de corresponder)</li>
+                <li style="margin: 4px 0;">Fotos color de la unidad: trasera, delantera y ambos laterales</li>
+                <li style="margin: 4px 0;">Colores reglamentarios: NARANJA Nº 1054 (Normas IRAM) en Carrocería BAJA y BLANCO en Carrocería ALTA</li>
+                <li style="margin: 4px 0;">Leyenda "TRANSPORTE ESCOLAR" bien visible desde el exterior (letra de trazo no menor de 20 cm, color negro)</li>
+                <li style="margin: 4px 0;">Psicotécnico (Titular, chofer y celador/a)</li>
+                <li style="margin: 4px 0;">02 (dos) Informes de Dominio</li>
+                <li style="margin: 4px 0;">Último pago de patente de automotor (ARBA)</li>
+                <li style="margin: 4px 0;">Constancia de Inscripción de la AFIP</li>
+                <li style="margin: 4px 0;">Certificados de Deudores Alimentarios</li>
+                <li style="margin: 4px 0;">En caso de ser PERSONA JURIDICA o EMPRESA UNILATERAL: presentar Estatuto o Contrato Social</li>
+              </ol>
+              <p style="margin: 12px 0 0 0; padding: 8px; background: #fef3c7; border-left: 3px solid #f59e0b; font-size: 12px; color: #92400e;">
+                <strong>Para renovación:</strong> Adjuntar fotocopia de la Resolución correspondiente al año anterior
+              </p>
             </div>
             
             <!-- Remis -->
@@ -101,14 +122,33 @@ export async function POST(request: NextRequest) {
               <h2 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #10b981;">
                 Remis
               </h2>
-              <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
-                <li style="margin: 6px 0;">DNI y licencia de conducir (titular y choferes)</li>
-                <li style="margin: 6px 0;">Título del vehículo</li>
-                <li style="margin: 6px 0;">Certificado de antecedentes</li>
-                <li style="margin: 6px 0;">Seguro y VTV vigentes</li>
-                <li style="margin: 6px 0;">Libre deuda municipal</li>
-                <li style="margin: 6px 0;">Certificado de aptitud psicofísica</li>
-              </ul>
+              <ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 13px; line-height: 1.6;">
+                <li style="margin: 4px 0;">Solicitud de presentación de expediente ANEXO I</li>
+                <li style="margin: 4px 0;">Título y Cédula Verde a nombre del solicitante</li>
+                <li style="margin: 4px 0;">Póliza de Seguro con la categoría de Remis con cobertura hacia terceros transportados y no transportados, y último recibo de pago</li>
+                <li style="margin: 4px 0;">Verificación Técnica Vehicular (VTV) como Remis - Transporte Público de Pasajeros hasta 9 personas</li>
+                <li style="margin: 4px 0;">Planilla de Desinfección Sanitaria (Empresa Habilitada Nº 1928 Ministerio de Asuntos Agrarios Pcia. de Buenos Aires - Email: Tecmatasara@yahoo.com.ar)</li>
+                <li style="margin: 4px 0;">DNI (Titular y Chofer si lo tuviera)</li>
+                <li style="margin: 4px 0;">Libreta Sanitaria correspondiente al Partido de Lanús (de quien preste el servicio)</li>
+                <li style="margin: 4px 0;">Licencia de Conducir con la categoría habilitante de Remis D.1 (Titular y Chofer si lo tuviera)</li>
+                <li style="margin: 4px 0;">Constancia de CUIL o CUIT (Titular y Chofer si lo tuviera)</li>
+                <li style="margin: 4px 0;">Certificados de Antecedentes Penales (Titular y Chofer si lo tuviera)</li>
+                <li style="margin: 4px 0;">Certificado de Declaración Jurada de Domicilio (Titular y Chofer si lo tuviera)</li>
+                <li style="margin: 4px 0;">Certificado de la Agencia (HABILITADA EN EL PARTIDO DE LANÚS) donde se llevará a cabo la explotación del Servicio de Remis, consignando los datos identificatorios de la misma</li>
+                <li style="margin: 4px 0;">Certificado de GNC (ENERGAS)</li>
+                <li style="margin: 4px 0;">Último pago de patente de automotor (ARBA o AGIP)</li>
+                <li style="margin: 4px 0;">Constancia de inscripción de AFIP</li>
+                <li style="margin: 4px 0;">Certificado de Deudores Alimentarios</li>
+              </ol>
+              <p style="margin: 12px 0 0 0; padding: 8px; background: #fef3c7; border-left: 3px solid #f59e0b; font-size: 12px; color: #92400e;">
+                <strong>Para renovación:</strong> Presentar Resolución del año anterior
+              </p>
+              <p style="margin: 8px 0 0 0; padding: 8px; background: #fee2e2; border-left: 3px solid #dc2626; font-size: 12px; color: #991b1b;">
+                <strong>Antigüedad máxima:</strong> La unidad a habilitar o renovar no debe exceder los 15 años de antigüedad desde la fecha de su fabricación
+              </p>
+              <p style="margin: 8px 0 0 0; padding: 8px; background: #dbeafe; border-left: 3px solid #2563eb; font-size: 12px; color: #1e40af;">
+                <strong>Inspección Técnica:</strong> El turno de la Dirección General de Movilidad y Transporte será otorgado oportunamente
+              </p>
             </div>
             
             <!-- Contacto -->

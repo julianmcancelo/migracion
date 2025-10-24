@@ -363,111 +363,69 @@ export default function Home() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                 {/* Transporte Escolar */}
-                <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-to-br from-blue-50 to-white border-2 border-blue-100 rounded-xl p-6 max-h-[500px] overflow-y-auto">
+                  <div className="flex items-center gap-3 mb-4 sticky top-0 bg-gradient-to-br from-blue-50 to-white pb-2">
                     <div className="bg-blue-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
                       <FileText className="h-6 w-6" />
                     </div>
                     <h4 className="text-xl font-bold text-slate-800">Transporte Escolar</h4>
                   </div>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">DNI del titular</p>
-                        <p className="text-xs text-slate-500">Original y fotocopia</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Cédula verde del vehículo</p>
-                        <p className="text-xs text-slate-500">A nombre del titular</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Seguro vigente</p>
-                        <p className="text-xs text-slate-500">Póliza contra terceros completos</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">VTV vigente</p>
-                        <p className="text-xs text-slate-500">Verificación técnica vehicular</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Certificado de antecedentes</p>
-                        <p className="text-xs text-slate-500">Del titular y conductores</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Habilitación municipal del conductor</p>
-                        <p className="text-xs text-slate-500">Licencia profesional vigente</p>
-                      </div>
-                    </li>
-                  </ul>
+                  <div className="space-y-2 text-xs">
+                    <p className="text-[10px] text-slate-600 mb-3">✓ Unidad radicada en Provincia de Buenos Aires</p>
+                    <p className="text-[10px]"><strong>1.</strong> Título y Cédula verde a nombre del solicitante</p>
+                    <p className="text-[10px]"><strong>2.</strong> Póliza de Seguro categoría transporte escolar con cobertura terceros transportados y no transportados + último recibo</p>
+                    <p className="text-[10px]"><strong>3.</strong> Certificación de escuela donde presta servicios</p>
+                    <p className="text-[10px]"><strong>4.</strong> VTV como Transporte Escolar con ANEXO (categoría y capacidad de asientos)</p>
+                    <p className="text-[10px]"><strong>5.</strong> Certificado de desinfección sanitaria</p>
+                    <p className="text-[10px]"><strong>6.</strong> DNI (Titular, Chofer y Celador/a)</p>
+                    <p className="text-[10px]"><strong>7.</strong> Libreta Sanitaria del Partido de Lanús (Titular, Chofer y Celador/a)</p>
+                    <p className="text-[10px]"><strong>8.</strong> Licencia de Conducir con categoría Transporte Escolar (Titular - Chofer)</p>
+                    <p className="text-[10px]"><strong>9.</strong> Certificado de Antecedentes Penales (Titular, Chofer y Celador/a)</p>
+                    <p className="text-[10px]"><strong>10.</strong> Certificado de Domicilio (Titular, Chofer y Celador/a)</p>
+                    <p className="text-[10px]"><strong>11.</strong> Constancia de CUIT o CUIL (Titular, chofer y celador/a)</p>
+                    <p className="text-[10px]"><strong>12.</strong> Cédula Azul a nombre del Chofer (de corresponder)</p>
+                    <p className="text-[10px]"><strong>13.</strong> Fotos color: unidad completa (delantera, trasera y laterales)</p>
+                    <p className="text-[10px]"><strong>14.</strong> Colores reglamentarios: NARANJA (N°1054 IRAM) en carrocería baja y BLANCO en carrocería alta</p>
+                    <p className="text-[10px]"><strong>15.</strong> Leyenda "TRANSPORTE ESCOLAR" visible (letra ≥20cm, color negro)</p>
+                    <p className="text-[10px]"><strong>16.</strong> Psicotécnico (Titular, chofer y celador/a)</p>
+                    <p className="text-[10px]"><strong>17.</strong> 02 Informes de Dominio</p>
+                    <p className="text-[10px]"><strong>18.</strong> Último pago de patente (ARBA)</p>
+                    <p className="text-[10px]"><strong>19.</strong> Constancia de Inscripción AFIP</p>
+                    <p className="text-[10px]"><strong>20.</strong> Certificados de Deudores Alimentarios</p>
+                    <p className="text-[10px]"><strong>21.</strong> Si es Persona Jurídica/Empresa: Estatuto o Contrato Social</p>
+                    <p className="text-[10px] text-amber-700 mt-2"><strong>Renovación:</strong> Adjuntar fotocopia de la Resolución del año anterior</p>
+                  </div>
                 </div>
 
                 {/* Remis */}
-                <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-xl p-6">
-                  <div className="flex items-center gap-3 mb-4">
+                <div className="bg-gradient-to-br from-green-50 to-white border-2 border-green-100 rounded-xl p-6 max-h-[500px] overflow-y-auto">
+                  <div className="flex items-center gap-3 mb-4 sticky top-0 bg-gradient-to-br from-green-50 to-white pb-2">
                     <div className="bg-green-500 text-white w-12 h-12 rounded-lg flex items-center justify-center">
                       <FileText className="h-6 w-6" />
                     </div>
                     <h4 className="text-xl font-bold text-slate-800">Remis</h4>
                   </div>
-                  <ul className="space-y-3">
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">DNI y licencia de conducir</p>
-                        <p className="text-xs text-slate-500">Del titular y todos los choferes</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Título del vehículo</p>
-                        <p className="text-xs text-slate-500">Original y copia certificada</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Certificado de antecedentes</p>
-                        <p className="text-xs text-slate-500">Para todos los conductores</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Seguro y VTV</p>
-                        <p className="text-xs text-slate-500">Vigentes y actualizados</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Libre deuda municipal</p>
-                        <p className="text-xs text-slate-500">Actualizado</p>
-                      </div>
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <CheckCircle className="h-5 w-5 text-green-500 mt-0.5 flex-shrink-0" />
-                      <div>
-                        <p className="font-semibold text-slate-700 text-sm">Certificado de aptitud psicofísica</p>
-                        <p className="text-xs text-slate-500">De todos los conductores</p>
-                      </div>
-                    </li>
-                  </ul>
+                  <div className="space-y-2 text-xs">
+                    <p className="text-[10px]"><strong>1.</strong> Solicitud de presentación de expediente ANEXO I</p>
+                    <p className="text-[10px]"><strong>2.</strong> Título y Cédula Verde a nombre del solicitante</p>
+                    <p className="text-[10px]"><strong>3.</strong> Póliza de Seguro categoría Remis con cobertura terceros transportados y no transportados + último recibo</p>
+                    <p className="text-[10px]"><strong>4.</strong> VTV como Remis - Transporte Público de Pasajeros (hasta 9 personas)</p>
+                    <p className="text-[10px]"><strong>5.</strong> Planilla de Desinfección Sanitaria (Empresa Habilitada N° 1928 - Email: Tecmatasara@yahoo.com.ar)</p>
+                    <p className="text-[10px]"><strong>6.</strong> DNI (Titular y Chofer si lo tuviera)</p>
+                    <p className="text-[10px]"><strong>7.</strong> Libreta Sanitaria del Partido de Lanús (de quien preste el servicio)</p>
+                    <p className="text-[10px]"><strong>8.</strong> Licencia de Conducir con categoría habilitante Remis D.1 (Titular y Chofer)</p>
+                    <p className="text-[10px]"><strong>9.</strong> Constancia de CUIL o CUIT (Titular y Chofer si lo tuviera)</p>
+                    <p className="text-[10px]"><strong>10.</strong> Certificados de Antecedentes Penales (Titular y Chofer si lo tuviera)</p>
+                    <p className="text-[10px]"><strong>11.</strong> Certificado de Declaración Jurada de Domicilio (Titular y Chofer)</p>
+                    <p className="text-[10px]"><strong>12.</strong> Certificado de la Agencia HABILITADA EN LANÚS donde se explotará el Servicio</p>
+                    <p className="text-[10px]"><strong>13.</strong> Certificado de GNC (ENERGAS)</p>
+                    <p className="text-[10px]"><strong>14.</strong> Último pago de patente (ARBA o AGIP)</p>
+                    <p className="text-[10px]"><strong>15.</strong> Constancia de inscripción de AFIP</p>
+                    <p className="text-[10px]"><strong>16.</strong> Certificado de Deudores Alimentarios</p>
+                    <p className="text-[10px] text-amber-700 mt-2"><strong>Renovación:</strong> Presentar Resolución del año anterior</p>
+                    <p className="text-[10px] text-red-700 mt-1"><strong>Antigüedad:</strong> La unidad no debe exceder 15 años desde fabricación</p>
+                    <p className="text-[10px] text-blue-700 mt-1"><strong>Inspección:</strong> Turno de Inspección Técnica será otorgado por la Dirección General de Movilidad y Transporte</p>
+                  </div>
                 </div>
               </div>
 
