@@ -6,7 +6,8 @@ import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { CreditCard, Key, X, Loader2, FileText, CheckCircle, Phone, Mail, MapPin } from 'lucide-react'
+import { CreditCard, Key, X, Loader2, FileText, CheckCircle, Phone, Mail, MapPin, QrCode } from 'lucide-react'
+import { QRCodeSVG } from 'qrcode.react'
 
 /**
  * Landing Page - Municipio de Lanús
@@ -470,15 +471,46 @@ export default function Home() {
                 </div>
               </div>
 
+              {/* QR Code Section */}
+              <div className="border-t pt-6">
+                <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6 mb-6">
+                  <div className="flex flex-col md:flex-row items-center gap-6">
+                    <div className="flex-shrink-0">
+                      <div className="bg-white p-4 rounded-xl shadow-md">
+                        <QRCodeSVG
+                          value={`${typeof window !== 'undefined' ? window.location.origin : ''}/requisitos`}
+                          size={160}
+                          level="H"
+                          includeMargin={true}
+                        />
+                      </div>
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                      <div className="flex items-center gap-2 justify-center md:justify-start mb-3">
+                        <QrCode className="h-6 w-6 text-purple-600" />
+                        <h4 className="text-lg font-bold text-slate-800">Escaneá con tu celular</h4>
+                      </div>
+                      <p className="text-sm text-slate-600 mb-3">
+                        Escaneá este código QR con la cámara de tu celular para acceder a la versión móvil. 
+                        Podrás usar tu cuenta de Google automáticamente.
+                      </p>
+                      <div className="inline-flex items-center gap-2 bg-white/60 px-3 py-1.5 rounded-full text-xs text-slate-600">
+                        ✨ Detecta tu cuenta de Google
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
               {/* Formulario de Email */}
               <div className="border-t pt-6">
                 <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl p-6">
                   <div className="flex items-center gap-3 mb-4">
                     <Mail className="h-6 w-6 text-blue-600" />
-                    <h4 className="text-lg font-bold text-slate-800">Recibir requisitos por email</h4>
+                    <h4 className="text-lg font-bold text-slate-800">O ingresá tu email directamente</h4>
                   </div>
                   <p className="text-sm text-slate-600 mb-4">
-                    Ingresá tu correo electrónico y te enviaremos el listado completo de requisitos para que tengas toda la información a mano.
+                    Te enviaremos el listado completo de requisitos a tu casilla de correo.
                   </p>
                   
                   <form onSubmit={handleSendRequirements} className="space-y-4">

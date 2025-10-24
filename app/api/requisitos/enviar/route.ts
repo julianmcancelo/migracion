@@ -56,77 +56,80 @@ export async function POST(request: NextRequest) {
       // Continuar aunque falle el guardado
     }
 
-    // Preparar el contenido del email
+    // Preparar el contenido del email (versión minimalista)
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="es">
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Requisitos para Habilitaciones de Transporte</title>
+        <title>Requisitos - Municipio de Lanús</title>
       </head>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; text-align: center; border-radius: 10px 10px 0 0;">
-          <h1 style="color: white; margin: 0;">Municipio de Lanús</h1>
-          <p style="color: #f0f0f0; margin: 10px 0 0 0;">Dirección General de Movilidad y Transporte</p>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #1f2937; max-width: 600px; margin: 0 auto; padding: 20px; background: #f9fafb;">
+        
+        <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <div style="background: #2563eb; padding: 24px; text-align: center;">
+            <h1 style="color: white; margin: 0; font-size: 20px; font-weight: 600;">Municipio de Lanús</h1>
+            <p style="color: #dbeafe; margin: 4px 0 0 0; font-size: 14px;">Requisitos para Habilitaciones</p>
+          </div>
+          
+          <!-- Content -->
+          <div style="padding: 32px 24px;">
+            
+            <p style="margin: 0 0 24px 0; color: #4b5563;">Hola,</p>
+            <p style="margin: 0 0 24px 0; color: #4b5563;">Aquí tenés el listado de documentos necesarios:</p>
+            
+            <!-- Transporte Escolar -->
+            <div style="margin-bottom: 24px;">
+              <h2 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #3b82f6;">
+                Transporte Escolar
+              </h2>
+              <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
+                <li style="margin: 6px 0;">DNI del titular (original y copia)</li>
+                <li style="margin: 6px 0;">Cédula verde del vehículo</li>
+                <li style="margin: 6px 0;">Seguro vigente</li>
+                <li style="margin: 6px 0;">VTV vigente</li>
+                <li style="margin: 6px 0;">Certificado de antecedentes</li>
+                <li style="margin: 6px 0;">Habilitación municipal del conductor</li>
+              </ul>
+            </div>
+            
+            <!-- Remis -->
+            <div style="margin-bottom: 24px;">
+              <h2 style="color: #1f2937; font-size: 16px; font-weight: 600; margin: 0 0 12px 0; padding-bottom: 8px; border-bottom: 2px solid #10b981;">
+                Remis
+              </h2>
+              <ul style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px;">
+                <li style="margin: 6px 0;">DNI y licencia de conducir (titular y choferes)</li>
+                <li style="margin: 6px 0;">Título del vehículo</li>
+                <li style="margin: 6px 0;">Certificado de antecedentes</li>
+                <li style="margin: 6px 0;">Seguro y VTV vigentes</li>
+                <li style="margin: 6px 0;">Libre deuda municipal</li>
+                <li style="margin: 6px 0;">Certificado de aptitud psicofísica</li>
+              </ul>
+            </div>
+            
+            <!-- Contacto -->
+            <div style="background: #f3f4f6; padding: 16px; border-radius: 8px; margin-top: 24px;">
+              <p style="margin: 0 0 8px 0; font-size: 14px; color: #6b7280;"><strong>Contacto:</strong></p>
+              <p style="margin: 4px 0; font-size: 14px; color: #4b5563;">📞 4357-5100 int. 7137</p>
+              <p style="margin: 4px 0; font-size: 14px; color: #4b5563;">📍 Quindimil 857, Lanús</p>
+              <p style="margin: 4px 0; font-size: 14px; color: #4b5563;">🕐 Lun-Vie 8:00-14:00</p>
+            </div>
+            
+          </div>
+          
+          <!-- Footer -->
+          <div style="background: #f9fafb; padding: 16px 24px; text-align: center; border-top: 1px solid #e5e7eb;">
+            <p style="margin: 0; font-size: 12px; color: #9ca3af;">
+              © 2025 Municipio de Lanús
+            </p>
+          </div>
+          
         </div>
         
-        <div style="background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px;">
-          <h2 style="color: #667eea; margin-top: 0;">Documentación Requerida para Habilitaciones</h2>
-          <p>Estimado/a,</p>
-          <p>A continuación encontrarás el listado completo de requisitos para tramitar tu habilitación de transporte:</p>
-          
-          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3b82f6;">
-            <h3 style="color: #3b82f6; margin-top: 0;">📘 Transporte Escolar</h3>
-            <ul style="list-style: none; padding-left: 0;">
-              <li style="margin: 10px 0;">✅ <strong>DNI del titular</strong> - Original y fotocopia</li>
-              <li style="margin: 10px 0;">✅ <strong>Cédula verde del vehículo</strong> - A nombre del titular</li>
-              <li style="margin: 10px 0;">✅ <strong>Seguro vigente</strong> - Póliza contra terceros completos</li>
-              <li style="margin: 10px 0;">✅ <strong>VTV vigente</strong> - Verificación técnica vehicular</li>
-              <li style="margin: 10px 0;">✅ <strong>Certificado de antecedentes</strong> - Del titular y conductores</li>
-              <li style="margin: 10px 0;">✅ <strong>Habilitación municipal del conductor</strong> - Licencia profesional vigente</li>
-            </ul>
-          </div>
-          
-          <div style="background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
-            <h3 style="color: #10b981; margin-top: 0;">🚗 Remis</h3>
-            <ul style="list-style: none; padding-left: 0;">
-              <li style="margin: 10px 0;">✅ <strong>DNI y licencia de conducir</strong> - Del titular y todos los choferes</li>
-              <li style="margin: 10px 0;">✅ <strong>Título del vehículo</strong> - Original y copia certificada</li>
-              <li style="margin: 10px 0;">✅ <strong>Certificado de antecedentes</strong> - Para todos los conductores</li>
-              <li style="margin: 10px 0;">✅ <strong>Seguro y VTV</strong> - Vigentes y actualizados</li>
-              <li style="margin: 10px 0;">✅ <strong>Libre deuda municipal</strong> - Actualizado</li>
-              <li style="margin: 10px 0;">✅ <strong>Certificado de aptitud psicofísica</strong> - De todos los conductores</li>
-            </ul>
-          </div>
-          
-          <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #ffc107;">
-            <h4 style="color: #856404; margin-top: 0;">⚠️ Importante</h4>
-            <p style="margin: 5px 0; color: #856404;">Todos los documentos deben estar vigentes al momento de la presentación. Te recomendamos verificar las fechas de vencimiento antes de iniciar el trámite.</p>
-          </div>
-          
-          <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <h4 style="color: #1976d2; margin-top: 0;">📞 Información de Contacto</h4>
-            <p style="margin: 5px 0;"><strong>Teléfono:</strong> 4357-5100 int. 7137</p>
-            <p style="margin: 5px 0;"><strong>Email:</strong> transportepublicolanus@gmail.com</p>
-            <p style="margin: 5px 0;"><strong>Dirección:</strong> Intendente Manuel Quindimil 857 (esq. Jujuy) - Lanús</p>
-            <p style="margin: 5px 0;"><strong>Horario:</strong> Lunes a Viernes 8:00 - 14:00 hs</p>
-          </div>
-          
-          <p style="text-align: center; margin-top: 30px;">
-            <a href="${process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000'}" 
-               style="background: #667eea; color: white; padding: 12px 30px; text-decoration: none; border-radius: 5px; display: inline-block;">
-              Ir al Portal de Gestión
-            </a>
-          </p>
-          
-          <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;" />
-          
-          <p style="font-size: 12px; color: #666; text-align: center;">
-            Este correo fue enviado desde el sistema de Gestión de Transporte del Municipio de Lanús.<br />
-            © 2025 Municipio de Lanús - Todos los derechos reservados
-          </p>
-        </div>
       </body>
       </html>
     `
