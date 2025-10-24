@@ -284,10 +284,10 @@ export default function TurnosPage() {
 
   const getEstadoBadge = (estado: string) => {
     const badges = {
-      PENDIENTE: 'bg-yellow-100 text-yellow-800 border-yellow-300',
-      CONFIRMADO: 'bg-blue-100 text-blue-800 border-blue-300',
-      FINALIZADO: 'bg-green-100 text-green-800 border-green-300',
-      CANCELADO: 'bg-red-100 text-red-800 border-red-300',
+      PENDIENTE: 'bg-gradient-to-r from-yellow-100 to-amber-100 text-yellow-800 border-yellow-300 shadow-sm',
+      CONFIRMADO: 'bg-gradient-to-r from-blue-100 to-indigo-100 text-blue-800 border-blue-300 shadow-sm',
+      FINALIZADO: 'bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 border-green-300 shadow-sm',
+      CANCELADO: 'bg-gradient-to-r from-red-100 to-rose-100 text-red-800 border-red-300 shadow-sm',
     }
     return badges[estado as keyof typeof badges] || badges.PENDIENTE
   }
@@ -322,25 +322,30 @@ export default function TurnosPage() {
 
   return (
     <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900 sm:gap-3 sm:text-3xl lg:text-4xl">
-            <Calendar className="h-6 w-6 text-blue-600 sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
-            Gestión de Turnos
-          </h1>
-          <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Agenda de turnos para inspecciones vehiculares</p>
-        </div>
+      {/* Header Premium */}
+      <div className="relative overflow-hidden rounded-2xl border border-blue-200 bg-gradient-to-br from-blue-50 via-white to-indigo-50 p-6 shadow-lg">
+        <div className="absolute right-0 top-0 h-32 w-32 -translate-y-1/2 translate-x-1/2 transform rounded-full bg-blue-400/10 blur-3xl"></div>
+        <div className="relative flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <h1 className="flex items-center gap-2 text-2xl font-bold text-gray-900 sm:gap-3 sm:text-3xl lg:text-4xl">
+              <div className="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2 shadow-lg">
+                <Calendar className="h-6 w-6 text-white sm:h-7 sm:w-7 lg:h-8 lg:w-8" />
+              </div>
+              Gestión de Turnos
+            </h1>
+            <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Agenda de turnos para inspecciones vehiculares</p>
+          </div>
 
-        <Button onClick={abrirModalNuevo} className="w-full bg-blue-600 text-sm hover:bg-blue-700 sm:w-auto sm:text-base">
-          <Plus className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-          Nuevo Turno
-        </Button>
+          <Button onClick={abrirModalNuevo} className="group w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-sm shadow-lg shadow-blue-500/30 transition-all hover:scale-105 hover:shadow-xl hover:shadow-blue-500/50 sm:w-auto sm:text-base">
+            <Plus className="mr-2 h-4 w-4 transition-transform group-hover:rotate-90 sm:h-5 sm:w-5" />
+            Nuevo Turno
+          </Button>
+        </div>
       </div>
 
       {/* Habilitaciones sin turno */}
       {habilitacionesSinTurno.length > 0 && (
-        <div className="rounded-xl border-2 border-orange-300 bg-gradient-to-r from-orange-50 to-red-50 p-4 sm:p-6">
+        <div className="animate-in fade-in slide-in-from-top-4 rounded-2xl border-2 border-orange-300 bg-gradient-to-br from-orange-50 via-orange-50 to-red-50 p-4 shadow-xl sm:p-6">
           <div className="mb-3 flex items-start gap-2 sm:mb-4 sm:items-center sm:gap-3">
             <AlertCircle className="h-5 w-5 flex-shrink-0 text-orange-600 sm:h-6 sm:w-6" />
             <div>
@@ -358,7 +363,7 @@ export default function TurnosPage() {
             {habilitacionesSinTurno.map((hab: any) => (
               <div
                 key={hab.id}
-                className="rounded-lg border border-orange-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4"
+                className="group rounded-xl border-2 border-orange-200 bg-white p-3 shadow-md transition-all hover:scale-105 hover:border-orange-400 hover:shadow-2xl sm:p-4"
               >
                 <div className="mb-3 flex items-start justify-between">
                   <div>
@@ -391,7 +396,7 @@ export default function TurnosPage() {
                     setModalAbierto(true)
                   }}
                   size="sm"
-                  className="w-full bg-orange-600 text-white hover:bg-orange-700"
+                  className="w-full bg-gradient-to-r from-orange-600 to-red-600 text-white shadow-md transition-all hover:scale-105 hover:shadow-lg"
                 >
                   <Plus className="mr-1 h-4 w-4" />
                   Asignar Turno
@@ -404,13 +409,13 @@ export default function TurnosPage() {
 
       {/* Filtros */}
       {/* Panel de Filtros y Búsqueda */}
-      <div className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="mb-6 overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
         {/* Header del panel */}
-        <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 to-indigo-50 px-6 py-4">
+        <div className="border-b border-gray-200 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <Filter className="h-5 w-5 text-blue-600" />
+              <div className="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 shadow-md">
+                <Filter className="h-5 w-5 text-white" />
               </div>
               <div>
                 <h3 className="text-lg font-bold text-gray-900">Filtros de Búsqueda</h3>
@@ -538,7 +543,7 @@ export default function TurnosPage() {
 
       {/* Estadísticas */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
-        <div className="rounded-xl border border-yellow-200 bg-yellow-50 p-3 transition-shadow hover:shadow-md sm:p-4">
+        <div className="group rounded-2xl border-2 border-yellow-200 bg-gradient-to-br from-yellow-50 to-amber-50 p-3 shadow-lg transition-all hover:scale-105 hover:border-yellow-300 hover:shadow-2xl sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-yellow-700 sm:text-sm">Pendientes</p>
@@ -546,11 +551,13 @@ export default function TurnosPage() {
                 {turnosFiltrados.filter(t => t.estado === 'PENDIENTE').length}
               </p>
             </div>
-            <Clock className="h-6 w-6 text-yellow-600 sm:h-8 sm:w-8" />
+            <div className="rounded-xl bg-yellow-100 p-2 transition-transform group-hover:scale-110">
+              <Clock className="h-6 w-6 text-yellow-600 sm:h-8 sm:w-8" />
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 transition-shadow hover:shadow-md sm:p-4">
+        <div className="group rounded-2xl border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-3 shadow-lg transition-all hover:scale-105 hover:border-blue-300 hover:shadow-2xl sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-blue-700 sm:text-sm">Confirmados</p>
@@ -558,11 +565,13 @@ export default function TurnosPage() {
                 {turnosFiltrados.filter(t => t.estado === 'CONFIRMADO').length}
               </p>
             </div>
-            <AlertCircle className="h-6 w-6 text-blue-600 sm:h-8 sm:w-8" />
+            <div className="rounded-xl bg-blue-100 p-2 transition-transform group-hover:scale-110">
+              <AlertCircle className="h-6 w-6 text-blue-600 sm:h-8 sm:w-8" />
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-green-200 bg-green-50 p-3 transition-shadow hover:shadow-md sm:p-4">
+        <div className="group rounded-2xl border-2 border-green-200 bg-gradient-to-br from-green-50 to-emerald-50 p-3 shadow-lg transition-all hover:scale-105 hover:border-green-300 hover:shadow-2xl sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-green-700 sm:text-sm">Finalizados</p>
@@ -570,11 +579,13 @@ export default function TurnosPage() {
                 {turnosFiltrados.filter(t => t.estado === 'FINALIZADO').length}
               </p>
             </div>
-            <CheckCircle className="h-6 w-6 text-green-600 sm:h-8 sm:w-8" />
+            <div className="rounded-xl bg-green-100 p-2 transition-transform group-hover:scale-110">
+              <CheckCircle className="h-6 w-6 text-green-600 sm:h-8 sm:w-8" />
+            </div>
           </div>
         </div>
 
-        <div className="rounded-xl border border-red-200 bg-red-50 p-3 transition-shadow hover:shadow-md sm:p-4">
+        <div className="group rounded-2xl border-2 border-red-200 bg-gradient-to-br from-red-50 to-rose-50 p-3 shadow-lg transition-all hover:scale-105 hover:border-red-300 hover:shadow-2xl sm:p-4">
           <div className="flex items-center justify-between">
             <div>
               <p className="text-xs font-medium text-red-700 sm:text-sm">Cancelados</p>
@@ -582,18 +593,20 @@ export default function TurnosPage() {
                 {turnosFiltrados.filter(t => t.estado === 'CANCELADO').length}
               </p>
             </div>
-            <XCircle className="h-6 w-6 text-red-600 sm:h-8 sm:w-8" />
+            <div className="rounded-xl bg-red-100 p-2 transition-transform group-hover:scale-110">
+              <XCircle className="h-6 w-6 text-red-600 sm:h-8 sm:w-8" />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Barra de acciones en lote */}
       {seleccionados.length > 0 && (
-        <div className="mb-4 overflow-hidden rounded-xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 to-indigo-50 shadow-md">
+        <div className="animate-in fade-in slide-in-from-top-4 mb-4 overflow-hidden rounded-2xl border-2 border-blue-300 bg-gradient-to-r from-blue-50 via-indigo-50 to-blue-50 shadow-xl">
           <div className="flex items-center justify-between p-4">
             <div className="flex items-center gap-4">
-              <div className="rounded-lg bg-blue-100 p-2">
-                <ListChecks className="h-5 w-5 text-blue-600" />
+              <div className="rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 p-2.5 shadow-md">
+                <ListChecks className="h-5 w-5 text-white" />
               </div>
               <div>
                 <p className="text-sm font-medium text-gray-600">Selección Múltiple Activa</p>
@@ -628,7 +641,7 @@ export default function TurnosPage() {
       )}
 
       {/* Lista de Turnos */}
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl">
         {loading ? (
           <div className="p-8 text-center text-sm text-gray-500 sm:p-12 sm:text-base">Cargando turnos...</div>
         ) : turnosFiltrados.length === 0 ? (
@@ -636,7 +649,7 @@ export default function TurnosPage() {
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full min-w-[800px]">
-              <thead className="border-b border-gray-200 bg-gray-50">
+              <thead className="border-b-2 border-gray-200 bg-gradient-to-r from-gray-50 via-blue-50 to-gray-50">
                 <tr>
                   <th className="w-10 px-3 py-3 text-center sm:w-12 sm:px-4 sm:py-4">
                     <input
@@ -668,7 +681,7 @@ export default function TurnosPage() {
               </thead>
               <tbody className="divide-y divide-gray-200">
                 {turnosFiltrados.map(turno => (
-                  <tr key={turno.id} className="transition-colors hover:bg-gray-50">
+                  <tr key={turno.id} className="transition-all hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 hover:shadow-sm">
                     <td className="px-3 py-3 text-center sm:px-4 sm:py-4">
                       <input
                         type="checkbox"
