@@ -168,45 +168,45 @@ export function RegistroVehiculoRapidoDialog({
     <Dialog open={open} onOpenChange={handleClose}>
       <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <Car className="h-5 w-5" />
-            Registro Rápido de Vehículo
+          <DialogTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
+            <Car className="h-5 w-5 text-blue-600" />
+            Registro de Vehículo
           </DialogTitle>
         </DialogHeader>
 
         {vehiculoCreado ? (
-          <div className="rounded-lg border-2 border-green-500 bg-green-50 p-8 text-center">
-            <div className="mb-4 text-6xl text-green-600">✅</div>
-            <h3 className="mb-3 text-xl font-bold text-green-900">¡Vehículo Registrado!</h3>
-            <div className="space-y-1">
-              <p className="text-lg font-semibold text-green-700">{vehiculoCreado.dominio}</p>
-              <p className="text-green-600">
+          <div className="rounded-lg border border-green-200 bg-green-50 p-6 text-center">
+            <div className="mb-3 text-5xl text-green-600">✅</div>
+            <h3 className="mb-2 text-lg font-bold text-green-900">Vehículo Registrado</h3>
+            <div className="space-y-0.5">
+              <p className="font-semibold text-green-700">{vehiculoCreado.dominio}</p>
+              <p className="text-sm text-green-600">
                 {vehiculoCreado.marca} {vehiculoCreado.modelo}
               </p>
               {vehiculoCreado.ano && (
-                <p className="text-sm text-green-600">Año: {vehiculoCreado.ano}</p>
+                <p className="text-xs text-green-600">Año: {vehiculoCreado.ano}</p>
               )}
             </div>
           </div>
         ) : (
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-3">
             {error && (
-              <div className="rounded border border-red-200 bg-red-50 px-4 py-3 text-red-700">
+              <div className="rounded border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
                 {error}
               </div>
             )}
 
             {/* Botón OCR */}
             {!showOCR && (
-              <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
+              <div className="rounded-lg border bg-blue-50 p-3">
                 <div className="flex items-center justify-between">
                   <div>
                     <h4 className="flex items-center gap-2 text-sm font-semibold text-blue-900">
                       <Scan className="h-4 w-4" />
                       ¿Tenés la Cédula Verde?
                     </h4>
-                    <p className="mt-1 text-xs text-blue-700">
-                      Escaneá y autocompletamos los datos
+                    <p className="mt-0.5 text-xs text-blue-700">
+                      Escanea y autocompletamos los datos
                     </p>
                   </div>
                   <Button
@@ -214,7 +214,6 @@ export function RegistroVehiculoRapidoDialog({
                     onClick={() => setShowOCR(true)}
                     variant="outline"
                     size="sm"
-                    className="border-blue-300 text-blue-700 hover:bg-blue-100"
                   >
                     <Scan className="mr-1 h-3 w-3" />
                     Escanear

@@ -242,62 +242,60 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
   return (
     <>
       <Dialog open={open} onOpenChange={onClose}>
-        <DialogContent className="max-w-[96vw] w-[96vw] max-h-[96vh] overflow-hidden p-0">
-          {/* Header Mejorado con Gradiente */}
-          <DialogHeader className="bg-gradient-to-r from-blue-600 via-blue-700 to-indigo-800 text-white px-8 py-6 border-b-4 border-blue-900 shadow-lg">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden p-0">
+          {/* Header Minimalista */}
+          <DialogHeader className="border-b bg-white px-6 py-4">
             <div className="flex items-center justify-between">
               <div>
-                <DialogTitle className="text-3xl font-bold flex items-center gap-3">
-                  <FileCheck className="h-9 w-9 text-white drop-shadow-lg" />
+                <DialogTitle className="text-xl font-bold text-slate-900 flex items-center gap-2">
+                  <FileCheck className="h-5 w-5 text-blue-600" />
                   Licencia N° {habilitacion?.nro_licencia || 'S/N'}
                 </DialogTitle>
-                <p className="mt-2 text-blue-50 text-sm font-medium">
-                  📄 Información detallada y registro completo de actividad
+                <p className="text-sm text-slate-600 mt-1">
+                  Información detallada de la habilitación
                 </p>
               </div>
-              <div className="flex gap-3">
+              <div className="flex gap-2">
                 <Button 
-                  variant="outline" 
-                  size="lg"
+                  variant="outline"
+                  size="sm"
                   onClick={handleDescargarConstancia}
-                  className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
                 >
-                  <Download className="mr-2 h-5 w-5" />
-                  Descargar Constancia
+                  <Download className="mr-2 h-4 w-4" />
+                  Constancia
                 </Button>
                 <Button 
-                  variant="outline" 
-                  size="lg"
+                  variant="outline"
+                  size="sm"
                   onClick={handleDescargarResolucion}
-                  className="bg-white text-blue-700 hover:bg-blue-50 border-2 border-white font-semibold shadow-md"
                 >
-                  <Download className="mr-2 h-5 w-5" />
-                  Descargar Resolución
+                  <Download className="mr-2 h-4 w-4" />
+                  Resolución
                 </Button>
               </div>
             </div>
           </DialogHeader>
 
           {/* Contenido scrolleable */}
-          <div className="overflow-y-auto bg-gradient-to-br from-slate-50 to-blue-50 p-6" style={{ maxHeight: 'calc(96vh - 120px)' }}>
+          <div className="overflow-y-auto bg-slate-50 p-6" style={{ maxHeight: 'calc(90vh - 80px)' }}>
             {loading ? (
               <div className="flex items-center justify-center py-12">
                 <div className="text-center">
-                  <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-blue-600"></div>
-                  <p className="text-gray-600 font-medium">Cargando información completa...</p>
+                  <div className="mx-auto mb-3 h-10 w-10 animate-spin rounded-full border-b-2 border-blue-600"></div>
+                  <p className="text-sm text-slate-600">Cargando información...</p>
                 </div>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {/* Datos de la Habilitación */}
-                <div className="rounded-xl border-2 border-blue-200 bg-white shadow-lg">
-                  <div className="border-b bg-gray-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <FileCheck className="h-5 w-5 text-blue-600" />
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <FileCheck className="h-4 w-4 text-blue-600" />
                       Datos de la Habilitación
                     </h3>
                   </div>
-                  <div className="space-y-4 p-4">
+                  <div className="space-y-3 p-4">
                     <div className="grid grid-cols-2 gap-4">
                       <div>
                         <p className="mb-1 text-xs text-gray-500">Estado</p>
@@ -317,12 +315,12 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                     </div>
 
                     {/* Tipo de Habilitación con botón de editar */}
-                    <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <p className="text-xs font-medium text-blue-700">Tipo de Habilitación</p>
+                    <div className="rounded-lg border bg-slate-50 p-3">
+                      <div className="flex items-center justify-between mb-1">
+                        <p className="text-xs text-slate-600">Tipo de Habilitación</p>
                         <Button
                           size="sm"
-                          variant="outline"
+                          variant="ghost"
                           onClick={() => setModalCambiarTipoOpen(true)}
                           className="h-7 text-xs"
                         >
@@ -330,7 +328,7 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                           Cambiar
                         </Button>
                       </div>
-                      <p className="text-lg font-bold text-blue-900">
+                      <p className="text-sm font-semibold text-slate-900">
                         {hab.tipo || 'Sin especificar'}
                       </p>
                     </div>
@@ -357,49 +355,46 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Personas Asociadas */}
-                <div className="rounded-xl border-2 border-green-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <User className="h-5 w-5 text-green-600" />
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <User className="h-4 w-4 text-green-600" />
                       Personas Asociadas
                     </h3>
                   </div>
-                  <div className="space-y-3 p-4">
+                  <div className="space-y-2 p-4">
                     {hab.habilitaciones_personas?.map((rel: any, idx: number) => (
-                      <div key={idx} className="rounded-lg bg-gray-50 p-3">
-                        <div className="mb-2 flex items-start justify-between">
+                      <div key={idx} className="rounded-lg border bg-slate-50 p-3">
+                        <div className="flex items-start justify-between">
                           <div>
-                            <p className="font-bold uppercase text-gray-900">
+                            <p className="font-semibold text-slate-900 text-sm">
                               {rel.persona?.nombre || rel.nombre || 'Nombre no disponible'}
                             </p>
-                            <Badge variant="outline" className="mt-1">
-                              {rel.rol || 'ROL NO ESPECIFICADO'}
-                            </Badge>
+                            <p className="text-xs text-slate-600 mt-0.5">
+                              DNI: {rel.persona?.dni || rel.dni || 'No disponible'}
+                            </p>
+                            {rel.licencia_categoria && (
+                              <p className="text-xs text-slate-600">Licencia: {rel.licencia_categoria}</p>
+                            )}
                           </div>
+                          <Badge variant="outline" className="text-xs">
+                            {rel.rol || 'ROL NO ESPECIFICADO'}
+                          </Badge>
                         </div>
-                        <p className="text-sm text-gray-600">
-                          <span className="font-medium">DNI:</span>{' '}
-                          {rel.persona?.dni || rel.dni || 'No disponible'}
-                        </p>
-                        {rel.licencia_categoria && (
-                          <p className="text-sm text-gray-600">
-                            <span className="font-medium">Licencia:</span> {rel.licencia_categoria}
-                          </p>
-                        )}
                       </div>
                     )) || (
-                      <p className="py-4 text-center text-sm text-gray-500">
+                      <p className="py-4 text-center text-sm text-slate-500">
                         No hay personas asociadas
                       </p>
                     )}
                   </div>
                 </div>
 
-                {/* Vehículo Asociado */}
-                <div className="rounded-xl border-2 border-orange-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-orange-50 to-amber-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <Car className="h-5 w-5 text-orange-600" />
+                {/* Vehículo */}
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <Car className="h-4 w-4 text-orange-600" />
                       Vehículo Asociado
                     </h3>
                   </div>
@@ -507,11 +502,11 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Colocación de Obleas */}
-                <div className="rounded-xl border-2 border-purple-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-purple-50 to-violet-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <Shield className="h-5 w-5 text-purple-600" />
-                      Historial de Colocación de Obleas
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <Shield className="h-4 w-4 text-purple-600" />
+                      Historial de Obleas
                     </h3>
                   </div>
                   <div className="p-4">
@@ -548,14 +543,14 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Verificaciones */}
-                <div className="rounded-xl border-2 border-teal-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-teal-50 to-cyan-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <CheckCircle className="h-5 w-5 text-teal-600" />
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <CheckCircle className="h-4 w-4 text-teal-600" />
                       Historial de Verificaciones
                     </h3>
                   </div>
-                  <div className="space-y-3 p-4">
+                  <div className="space-y-2 p-4">
                     {hab.verificaciones?.length > 0 ? (
                       hab.verificaciones.map((verif: any, idx: number) => (
                         <div
@@ -596,10 +591,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Inspecciones */}
-                <div className="rounded-xl border-2 border-indigo-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-indigo-50 to-blue-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <ClipboardList className="h-5 w-5 text-indigo-600" />
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <ClipboardList className="h-4 w-4 text-indigo-600" />
                       Historial de Inspecciones
                     </h3>
                   </div>
@@ -652,10 +647,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
                 </div>
 
                 {/* Historial de Novedades */}
-                <div className="rounded-xl border-2 border-pink-200 bg-white shadow-lg">
-                  <div className="border-b bg-gradient-to-r from-pink-50 to-rose-50 px-4 py-3">
-                    <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                      <History className="h-5 w-5 text-pink-600" />
+                <div className="rounded-lg border bg-white">
+                  <div className="border-b px-4 py-3">
+                    <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                      <History className="h-4 w-4 text-pink-600" />
                       Historial de Novedades
                     </h3>
                   </div>
@@ -666,10 +661,10 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
 
                 {/* Observaciones */}
                 {hab.observaciones && (
-                  <div className="rounded-xl border-2 border-amber-200 bg-white shadow-lg">
-                    <div className="border-b bg-gradient-to-r from-amber-50 to-yellow-50 px-4 py-3">
-                      <h3 className="flex items-center gap-2 font-semibold text-gray-900">
-                        <FileText className="h-5 w-5 text-amber-600" />
+                  <div className="rounded-lg border bg-white">
+                    <div className="border-b px-4 py-3">
+                      <h3 className="flex items-center gap-2 text-sm font-semibold text-slate-900">
+                        <FileText className="h-4 w-4 text-amber-600" />
                         Observaciones
                       </h3>
                     </div>
@@ -691,11 +686,11 @@ export function DetalleModal({ habilitacion, open, onClose }: DetalleModalProps)
         open={!!verificacionSeleccionada}
         onOpenChange={() => setVerificacionSeleccionada(null)}
       >
-        <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl font-bold">
-              <CheckCircle className="h-6 w-6 text-blue-600" />
-              Detalle de Verificación Técnica
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
+              <CheckCircle className="h-5 w-5 text-blue-600" />
+              Detalle de Verificación
             </DialogTitle>
           </DialogHeader>
 

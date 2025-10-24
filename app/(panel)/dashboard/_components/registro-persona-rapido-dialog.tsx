@@ -43,33 +43,33 @@ export function RegistroPersonaRapidoDialog({
       <Dialog open={open && !mostrarFormulario} onOpenChange={handleClose}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <UserPlus className="h-5 w-5" />
-              Registro Rápido de Persona
+            <DialogTitle className="flex items-center gap-2 text-lg font-bold text-slate-900">
+              <UserPlus className="h-5 w-5 text-blue-600" />
+              Registro de Persona
             </DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-6 py-4">
+          <div className="space-y-4 py-4">
             {personaCreada ? (
-              <div className="rounded-lg border-2 border-green-500 bg-green-50 p-6 text-center">
-                <div className="mb-3 text-5xl text-green-600">✅</div>
-                <h3 className="mb-2 text-lg font-bold text-green-900">¡Persona Registrada!</h3>
-                <p className="mb-1 text-green-700">{personaCreada.nombre}</p>
-                <p className="text-sm text-green-600">DNI: {personaCreada.dni}</p>
+              <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-center">
+                <div className="mb-2 text-4xl text-green-600">✅</div>
+                <h3 className="mb-1 font-semibold text-green-900">Persona Registrada</h3>
+                <p className="text-sm text-green-700">{personaCreada.nombre}</p>
+                <p className="text-xs text-green-600">DNI: {personaCreada.dni}</p>
               </div>
             ) : (
               <>
                 <div className="text-center">
-                  <div className="mb-4 text-6xl">👤</div>
-                  <h3 className="mb-2 font-semibold text-gray-900">Registrar Nueva Persona</h3>
-                  <p className="text-sm text-gray-600">
-                    Podrás usar el escáner de DNI con IA para llenar los datos automáticamente
+                  <div className="mb-3 text-5xl">👤</div>
+                  <h3 className="mb-1 font-semibold text-slate-900">Registrar Nueva Persona</h3>
+                  <p className="text-sm text-slate-600">
+                    Escanea el DNI con IA o ingresa los datos manualmente
                   </p>
                 </div>
 
-                <div className="space-y-3">
-                  <Button onClick={() => setMostrarFormulario(true)} className="w-full" size="lg">
-                    <UserPlus className="mr-2 h-5 w-5" />
+                <div className="space-y-2">
+                  <Button onClick={() => setMostrarFormulario(true)} className="w-full">
+                    <UserPlus className="mr-2 h-4 w-4" />
                     Comenzar Registro
                   </Button>
 
