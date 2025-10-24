@@ -136,17 +136,26 @@ export function DashboardContent() {
       const data = await res.json()
 
       if (data.success) {
-        alert('✅ Notificación enviada exitosamente')
+        toast.success(
+          '¡Notificación enviada!',
+          'El recordatorio se envió correctamente por email al titular del turno.'
+        )
         // Actualizar el estado del turno
         setTurnos(prev =>
           prev.map(t => (t.id === turnoId ? { ...t, recordatorio_enviado: true } : t))
         )
       } else {
-        alert('❌ Error al enviar notificación: ' + data.error)
+        toast.error(
+          'Error al enviar',
+          data.error || 'No se pudo enviar la notificación. Intenta nuevamente.'
+        )
       }
     } catch (error) {
       console.error('Error:', error)
-      alert('❌ Error al enviar notificación')
+      toast.error(
+        'Error de conexión',
+        'No se pudo conectar con el servidor. Verifica tu conexión e intenta nuevamente.'
+      )
     } finally {
       setReenviando(null)
     }
@@ -212,9 +221,20 @@ export function DashboardContent() {
   }
 
   return (
-    <div className="space-y-4 sm:space-y-6">
-      {/* Header */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+    <>
+      {/* Tour de Bienvenida - Solo se muestra la primera vez */}
+      {!hasSeenTour && (
+        <OnboardingTour
+          steps={mainTourSteps}
+          onComplete={completeTour}
+          onSkip={completeTour}
+          autoStart={true}
+        />
+      )}
+
+      <div className="space-y-4 sm:space-y-6">
+        {/* Header */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl lg:text-4xl">Panel de Control</h1>
           <p className="mt-1 text-sm text-gray-600 sm:mt-2 sm:text-base">Información crítica y alertas del sistema</p>
@@ -594,5 +614,6 @@ export function DashboardContent() {
         onOpenChange={setShowRegistroVehiculo}
       />
     </div>
+    </>
   )
 }
