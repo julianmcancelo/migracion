@@ -132,13 +132,13 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-blue-500" />
-                  <a href="tel:+541142257300" className="font-medium text-blue-600 hover:text-blue-700">
-                    (011) 4225-7300
+                  <a href="tel:43575100" className="font-medium text-blue-600 hover:text-blue-700">
+                    4357-5100 int. 7137
                   </a>
                 </div>
                 <div className="flex items-start gap-3">
                   <MapPin className="mt-1 h-5 w-5 flex-shrink-0 text-blue-500" />
-                  <span className="text-gray-700">29 de Septiembre 3901, Lanús Oeste</span>
+                  <span className="text-gray-700">Intendente Manuel Quindimil 857 (esq. Jujuy), Lanús</span>
                 </div>
               </div>
             </Card>
@@ -169,8 +169,8 @@ export default function Home() {
                 </div>
                 <div className="flex items-center gap-3">
                   <Mail className="h-5 w-5 text-orange-500" />
-                  <a href="mailto:inspecciones@lanus.gob.ar" className="font-medium text-orange-600 hover:text-orange-700">
-                    inspecciones@lanus.gob.ar
+                  <a href="mailto:transportepublicolanus@gmail.com" className="font-medium text-orange-600 hover:text-orange-700">
+                    transportepublicolanus@gmail.com
                   </a>
                 </div>
               </div>
@@ -368,10 +368,10 @@ export default function Home() {
                 </div>
                 <h4 className="text-lg font-bold">Dirección</h4>
               </div>
-              <p className="mb-2 text-gray-700">29 de Septiembre 3901</p>
-              <p className="mb-4 text-gray-700">Lanús Oeste, Buenos Aires</p>
+              <p className="mb-2 text-gray-700">Intendente Manuel Quindimil 857</p>
+              <p className="mb-4 text-gray-700">(esquina Jujuy) - Lanús, Buenos Aires</p>
               <a
-                href="https://maps.google.com/?q=29+de+Septiembre+3901,+Lanus+Oeste"
+                href="https://maps.google.com/?q=Intendente+Manuel+Quindimil+857,+Lanus"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center text-blue-600 hover:text-blue-700"
@@ -390,21 +390,18 @@ export default function Home() {
               </div>
               <div className="space-y-2">
                 <p className="text-gray-700">
-                  <span className="font-medium">Mesa de Entrada:</span>{' '}
-                  <a href="tel:+541142257300" className="text-blue-600 hover:text-blue-700">
-                    (011) 4225-7300
+                  <span className="font-medium">Teléfono:</span>{' '}
+                  <a href="tel:43575100" className="text-blue-600 hover:text-blue-700">
+                    4357-5100 int. 7137
                   </a>
                 </p>
                 <p className="text-gray-700">
-                  <span className="font-medium">Inspecciones:</span>{' '}
-                  <a href="tel:+541142257301" className="text-blue-600 hover:text-blue-700">
-                    (011) 4225-7301
-                  </a>
+                  <span className="font-medium">Horario:</span> Lunes a Viernes 8:00 - 16:00 hs
                 </p>
                 <p className="text-gray-700">
                   <span className="font-medium">Email:</span>{' '}
-                  <a href="mailto:transporte@lanus.gob.ar" className="text-blue-600 hover:text-blue-700">
-                    transporte@lanus.gob.ar
+                  <a href="mailto:transportepublicolanus@gmail.com" className="text-blue-600 hover:text-blue-700">
+                    transportepublicolanus@gmail.com
                   </a>
                 </p>
               </div>
@@ -421,7 +418,7 @@ export default function Home() {
             alt="Municipio de Lanús"
             className="mx-auto mb-6 h-16 w-auto opacity-90"
           />
-          <p className="mb-2 font-medium">Municipio de Lanús - Secretaría de Transporte</p>
+          <p className="mb-2 font-medium">Municipio de Lanús - Dirección General de Movilidad y Transporte</p>
           <p className="text-sm text-blue-100">© 2025 Todos los derechos reservados</p>
           <div className="mt-6 flex items-center justify-center gap-6">
             <Link href="/login" className="text-sm text-blue-100 transition-colors hover:text-white">
