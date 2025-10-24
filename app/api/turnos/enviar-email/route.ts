@@ -118,37 +118,29 @@ export async function POST(request: Request) {
       margin-bottom: 20px;
       line-height: 1.6;
     }
-    .info-card { 
-      background: #f8f9fa;
-      border: 2px solid #dee2e6;
-      padding: 18px;
-      margin: 20px 0;
-    }
-    .info-card-title {
-      font-size: 13px;
+    .section-title {
+      font-size: 14px;
       font-weight: 700;
-      color: #495057;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-bottom: 12px;
-      padding-bottom: 8px;
-      border-bottom: 2px solid #dee2e6;
+      color: #2c3e50;
+      margin: 20px 0 12px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #2563EB;
     }
     .info-row { 
       display: flex; 
       padding: 8px 0;
-      border-bottom: 1px solid #e9ecef;
+      border-bottom: 1px solid #e5e7eb;
       align-items: center;
     }
     .info-row:last-child { border-bottom: none; }
     .info-label { 
       font-weight: 600;
-      color: #495057;
+      color: #4a5568;
       min-width: 140px;
       font-size: 13px;
     }
     .info-value { 
-      color: #2c3e50;
+      color: #1a202c;
       font-weight: 600;
       font-size: 14px;
       flex: 1;
@@ -156,18 +148,18 @@ export async function POST(request: Request) {
     .buttons-container { 
       text-align: center; 
       margin: 25px 0;
-      padding: 18px;
-      background: #f8f9fa;
-      border: 1px solid #dee2e6;
+      padding: 15px 0;
+      border-top: 1px solid #dee2e6;
+      border-bottom: 1px solid #dee2e6;
     }
     .button { 
       display: inline-block;
-      padding: 12px 24px;
+      padding: 10px 20px;
       color: white;
       text-decoration: none;
       margin: 6px 4px;
       font-weight: 600;
-      font-size: 13px;
+      font-size: 12px;
       border: none;
     }
     .button-confirm { 
@@ -179,53 +171,45 @@ export async function POST(request: Request) {
     .button-reschedule { 
       background: #7c3aed;
     }
-    .requirements-box { 
-      background: #fff9db;
-      border: 2px solid #fbbf24;
-      padding: 18px;
-      margin: 20px 0;
-    }
     .requirements-title { 
-      color: #92400e;
+      color: #2c3e50;
       font-size: 14px;
       font-weight: 700;
-      margin-bottom: 12px;
-      text-transform: uppercase;
+      margin: 20px 0 12px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #f59e0b;
     }
     .requirement-item {
-      margin: 10px 0;
-      padding: 12px;
-      background: white;
-      border-left: 3px solid #fbbf24;
+      padding: 8px 0;
+      border-bottom: 1px solid #f3f4f6;
+    }
+    .requirement-item:last-child {
+      border-bottom: none;
     }
     .requirement-item-title {
       font-size: 13px;
-      color: #78350f;
-      font-weight: 700;
-      margin-bottom: 4px;
+      color: #2c3e50;
+      font-weight: 600;
+      margin-bottom: 2px;
     }
     .requirement-item-desc {
       font-size: 12px;
-      color: #92400e;
+      color: #6b7280;
     }
-    .contact-box { 
-      background: #f8f9fa;
-      padding: 18px;
-      margin-top: 20px;
-      border: 1px solid #dee2e6;
-    }
-    .contact-box h4 { 
-      margin: 0 0 12px 0;
+    .contact-title { 
+      margin: 20px 0 12px 0;
       color: #2c3e50;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
+      padding-bottom: 6px;
+      border-bottom: 2px solid #2563EB;
     }
-    .contact-box p { 
+    .contact-info { 
       margin: 6px 0;
       color: #4a5568;
       font-size: 13px;
     }
-    .contact-box a { 
+    .contact-info a { 
       color: #2563EB;
       text-decoration: none;
       font-weight: 600;
@@ -263,60 +247,54 @@ export async function POST(request: Request) {
       </p>
       
       <!-- Datos del Turno -->
-      <div class="info-card">
-        <div class="info-card-title">📅 Fecha y Hora del Turno</div>
-        <div class="info-row">
-          <span class="info-label">Fecha:</span>
-          <span class="info-value">${fechaFormateada}</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Hora:</span>
-          <span class="info-value">${hora} hs</span>
-        </div>
+      <div class="section-title">FECHA Y HORA DEL TURNO</div>
+      <div class="info-row">
+        <span class="info-label">Fecha:</span>
+        <span class="info-value">${fechaFormateada}</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Hora:</span>
+        <span class="info-value">${hora} hs</span>
       </div>
 
       <!-- Datos del Vehículo -->
-      <div class="info-card">
-        <div class="info-card-title">🚗 Datos del Vehículo</div>
-        <div class="info-row">
-          <span class="info-label">N° de Licencia:</span>
-          <span class="info-value" style="font-family: monospace;">${nro_licencia}</span>
-        </div>
-        ${
-          vehiculo_patente
-            ? `<div class="info-row">
-          <span class="info-label">Dominio/Patente:</span>
-          <span class="info-value" style="font-family: monospace;">${vehiculo_patente}</span>
-        </div>`
-            : ''
-        }
-        ${
-          vehiculo_marca || vehiculo_modelo
-            ? `<div class="info-row">
-          <span class="info-label">Vehículo:</span>
-          <span class="info-value">${vehiculo_marca || ''} ${vehiculo_modelo || ''}</span>
-        </div>`
-            : ''
-        }
+      <div class="section-title">DATOS DEL VEHÍCULO</div>
+      <div class="info-row">
+        <span class="info-label">N° de Licencia:</span>
+        <span class="info-value" style="font-family: monospace;">${nro_licencia}</span>
       </div>
+      ${
+        vehiculo_patente
+          ? `<div class="info-row">
+        <span class="info-label">Dominio/Patente:</span>
+        <span class="info-value" style="font-family: monospace;">${vehiculo_patente}</span>
+      </div>`
+          : ''
+      }
+      ${
+        vehiculo_marca || vehiculo_modelo
+          ? `<div class="info-row">
+        <span class="info-label">Vehículo:</span>
+        <span class="info-value">${vehiculo_marca || ''} ${vehiculo_modelo || ''}</span>
+      </div>`
+          : ''
+      }
 
       <!-- Lugar de Inspección -->
-      <div class="info-card">
-        <div class="info-card-title">📍 Lugar de la Inspección</div>
-        <div class="info-row">
-          <span class="info-label">Dirección:</span>
-          <span class="info-value">Intendente Manuel Quindimil 857 (esq. Jujuy)</span>
-        </div>
-        <div class="info-row">
-          <span class="info-label">Localidad:</span>
-          <span class="info-value">Lanús, Buenos Aires</span>
-        </div>
+      <div class="section-title">LUGAR DE LA INSPECCIÓN</div>
+      <div class="info-row">
+        <span class="info-label">Dirección:</span>
+        <span class="info-value">Intendente Manuel Quindimil 857 (esq. Jujuy)</span>
+      </div>
+      <div class="info-row">
+        <span class="info-label">Localidad:</span>
+        <span class="info-value">Lanús, Buenos Aires</span>
       </div>
       
       <div class="divider"></div>
       
       <div class="buttons-container">
-        <p style="margin-bottom: 12px; color: #4a5568; font-size: 13px; font-weight: 600;">
+        <p style="margin-bottom: 10px; color: #4a5568; font-size: 12px; font-weight: 600;">
           Gestione su turno:
         </p>
         <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/confirmar/${turno_id || 'ID'}" class="button button-confirm">
@@ -330,38 +308,31 @@ export async function POST(request: Request) {
         </a>
       </div>
       
-      <div class="divider"></div>
-      
       <!-- Documentación Requerida -->
-      <div class="requirements-box">
-        <div class="requirements-title">⚠️ Documentación Obligatoria</div>
-        <div class="requirement-item">
-          <div class="requirement-item-title">DNI del Titular</div>
-          <div class="requirement-item-desc">Documento Nacional de Identidad vigente</div>
-        </div>
-        <div class="requirement-item">
-          <div class="requirement-item-title">Cédula Verde del Vehículo</div>
-          <div class="requirement-item-desc">Título de propiedad del automotor</div>
-        </div>
-        <div class="requirement-item">
-          <div class="requirement-item-title">Puntualidad</div>
-          <div class="requirement-item-desc">Presentarse con 15 minutos de anticipación</div>
-        </div>
+      <div class="requirements-title">DOCUMENTACIÓN OBLIGATORIA</div>
+      <div class="requirement-item">
+        <div class="requirement-item-title">DNI del Titular</div>
+        <div class="requirement-item-desc">Documento Nacional de Identidad vigente</div>
+      </div>
+      <div class="requirement-item">
+        <div class="requirement-item-title">Cédula Verde del Vehículo</div>
+        <div class="requirement-item-desc">Título de propiedad del automotor</div>
+      </div>
+      <div class="requirement-item">
+        <div class="requirement-item-title">Puntualidad</div>
+        <div class="requirement-item-desc">Presentarse con 15 minutos de anticipación</div>
       </div>
       
-      <div class="contact-box">
-        <h4>Consultas y Asistencia</h4>
-        <p><strong>Dirección General de Movilidad y Transporte</strong></p>
-        <p>Municipalidad de Lanús</p>
-        <div style="margin: 12px 0; padding: 12px; background: white; border: 1px solid #dee2e6;">
-          <p style="margin: 4px 0;"><strong>Teléfono:</strong> 4357-5100 interno 7137</p>
-          <p style="margin: 4px 0;"><strong>Email:</strong> <a href="mailto:transportepublicolanus@gmail.com">transportepublicolanus@gmail.com</a></p>
-          <p style="margin: 4px 0;"><strong>Web:</strong> <a href="https://www.lanus.gob.ar">www.lanus.gob.ar</a></p>
-        </div>
-        <p style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #dee2e6; font-size: 12px;">
-          <strong>Horario de atención:</strong> Lunes a Viernes de 8:00 a 16:00 hs
-        </p>
-      </div>
+      <!-- Contacto -->
+      <div class="contact-title">CONSULTAS Y ASISTENCIA</div>
+      <p class="contact-info"><strong>Dirección General de Movilidad y Transporte</strong></p>
+      <p class="contact-info">Municipalidad de Lanús</p>
+      <p class="contact-info"><strong>Teléfono:</strong> 4357-5100 interno 7137</p>
+      <p class="contact-info"><strong>Email:</strong> <a href="mailto:transportepublicolanus@gmail.com">transportepublicolanus@gmail.com</a></p>
+      <p class="contact-info"><strong>Web:</strong> <a href="https://www.lanus.gob.ar">www.lanus.gob.ar</a></p>
+      <p class="contact-info" style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; font-size: 12px;">
+        <strong>Horario de atención:</strong> Lunes a Viernes de 8:00 a 16:00 hs
+      </p>
     </div>
     
     <div class="footer">
