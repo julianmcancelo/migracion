@@ -154,9 +154,9 @@ export async function POST(request: Request) {
         
         <div style="text-align: center; margin: 20px 0;">
           <p style="margin-bottom: 10px;"><strong>Gestione su turno:</strong></p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/confirmar/${turno_id || 'ID'}" class="btn">Confirmar</a>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/reprogramar/${turno_id || 'ID'}" class="btn">Reprogramar</a>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/cancelar/${turno_id || 'ID'}" class="btn" style="background: #dc2626;">Cancelar</a>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://lanus.digital'}/turnos-publico/confirmar/${turno_id || 'ID'}" class="btn">Confirmar</a>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://lanus.digital'}/turnos-publico/reprogramar/${turno_id || 'ID'}" class="btn">Reprogramar</a>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://lanus.digital'}/turnos-publico/cancelar/${turno_id || 'ID'}" class="btn" style="background: #dc2626;">Cancelar</a>
         </div>
         
         <h3>Documentación Obligatoria</h3>

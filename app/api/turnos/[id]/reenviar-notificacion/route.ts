@@ -137,8 +137,8 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
         
         <div style="text-align: center; margin: 20px 0;">
           <p style="margin-bottom: 10px;"><strong>Gestione su turno:</strong></p>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/confirmar/${turno.id}" class="btn">Confirmar</a>
-          <a href="${process.env.NEXT_PUBLIC_APP_URL}/turnos-publico/cancelar/${turno.id}" class="btn" style="background: #dc2626;">Cancelar</a>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://lanus.digital'}/turnos-publico/confirmar/${turno.id}" class="btn">Confirmar</a>
+          <a href="${process.env.NEXT_PUBLIC_APP_URL || 'https://lanus.digital'}/turnos-publico/cancelar/${turno.id}" class="btn" style="background: #dc2626;">Cancelar</a>
         </div>
         
         <h3>Documentación Obligatoria</h3>

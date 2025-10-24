@@ -29,7 +29,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Rutas públicas de turnos (no requieren autenticación)
-  const publicTurnosRoutes = ['/turnos/confirmar/', '/turnos/cancelar/', '/turnos/reprogramar/']
+  const publicTurnosRoutes = ['/turnos/confirmar/', '/turnos/cancelar/', '/turnos/reprogramar/', '/turnos-publico/']
   const isPublicTurnosRoute = publicTurnosRoutes.some(route => pathname.startsWith(route))
 
   // Proteger rutas que requieren autenticación (excepto rutas públicas de turnos)
@@ -59,11 +59,12 @@ export const config = {
      * - api/turnos/.../confirmar-publico (confirmación pública)
      * - api/turnos/.../cancelar-publico (cancelación pública)
      * - api/turnos/.../reprogramar-publico (reprogramación pública)
+     * - turnos-publico (páginas públicas de gestión de turnos)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      * - public folder
      */
-    '/((?!api/auth|api/turnos/.*/confirmar-publico|api/turnos/.*/cancelar-publico|api/turnos/.*/reprogramar-publico|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
+    '/((?!api/auth|api/turnos/.*/confirmar-publico|api/turnos/.*/cancelar-publico|api/turnos/.*/reprogramar-publico|turnos-publico|_next/static|_next/image|favicon.ico|.*\\.png$|.*\\.jpg$).*)',
   ],
 }
