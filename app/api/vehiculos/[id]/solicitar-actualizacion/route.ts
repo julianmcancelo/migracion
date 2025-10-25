@@ -77,6 +77,9 @@ export async function POST(
     }
 
     // TODO: Integrar con servicio de email (SendGrid, Resend, Nodemailer, etc.)
+    // Configuración del email respondible
+    // FROM: transportepublicolanus@gmail.com
+    // REPLY-TO: transportepublicolanus@gmail.com
     // Por ahora, solo registramos en consola
     const notificacionData = {
       titular: {

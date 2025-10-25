@@ -68,7 +68,9 @@ export function PreviewEmailModal({
             </Button>
           </div>
           <div className="mt-2 space-y-1 text-sm text-gray-600">
+            <p><strong>De:</strong> Transporte Lanús (transportepublicolanus@gmail.com)</p>
             <p><strong>Para:</strong> {titular.nombre} ({titular.email})</p>
+            <p><strong>Responder a:</strong> transportepublicolanus@gmail.com</p>
             <p><strong>Asunto:</strong> Actualización de documentación - Vehículo {vehiculo.dominio}</p>
           </div>
         </DialogHeader>
@@ -170,7 +172,7 @@ export function PreviewEmailModal({
                     <div className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-blue-100 text-xs font-semibold text-blue-600">
                       2
                     </div>
-                    <p className="text-sm text-gray-700">Escanear los documentos en PDF o imagen clara</p>
+                    <p className="text-sm text-gray-700">Escanear los documentos en PDF o imagen clara (máx. 10MB por archivo)</p>
                   </div>
                   
                   <div className="flex gap-3">
@@ -178,17 +180,30 @@ export function PreviewEmailModal({
                       3
                     </div>
                     <div className="flex-1">
-                      <p className="text-sm text-gray-700 mb-2">Enviar por email a:</p>
-                      <a 
-                        href={`mailto:movilidadytransporte@lanus.gob.ar?subject=Actualización Documentación - Vehículo ${vehiculo.dominio}`}
-                        className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-                      >
-                        <Mail className="h-4 w-4" />
-                        movilidadytransporte@lanus.gob.ar
-                      </a>
-                      <p className="mt-2 text-xs text-gray-500">
-                        Asunto: Actualización Documentación - Vehículo {vehiculo.dominio}
-                      </p>
+                      <p className="text-sm font-medium text-gray-900 mb-3">Responder a este email adjuntando los documentos:</p>
+                      <div className="rounded-lg border-2 border-blue-200 bg-blue-50 p-4">
+                        <div className="mb-2 flex items-center gap-2">
+                          <Mail className="h-5 w-5 text-blue-600" />
+                          <span className="font-semibold text-blue-900">Responder al email</span>
+                        </div>
+                        <p className="mb-3 text-sm text-blue-800">
+                          Use el botón "Responder" de su cliente de correo y adjunte los documentos actualizados.
+                        </p>
+                        <div className="rounded bg-white p-3">
+                          <p className="mb-1 text-xs font-medium text-gray-600">Documentos a adjuntar:</p>
+                          <ul className="space-y-1 text-xs text-gray-700">
+                            {documentosVencidos.map((doc, idx) => (
+                              <li key={idx} className="flex items-center gap-2">
+                                <span className="text-blue-600">•</span>
+                                {doc.tipo === 'VTV' ? 'Certificado VTV vigente' : 'Póliza de seguro vigente'} (PDF o imagen)
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                        <p className="mt-3 text-xs text-blue-700">
+                          💡 <strong>Tip:</strong> Mantenga el asunto del email sin modificar para una gestión más rápida.
+                        </p>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -207,8 +222,8 @@ export function PreviewEmailModal({
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
                     <span className="w-20 text-gray-500">Email:</span>
-                    <a href="mailto:movilidadytransporte@lanus.gob.ar" className="font-medium text-blue-600 hover:underline">
-                      movilidadytransporte@lanus.gob.ar
+                    <a href="mailto:transportepublicolanus@gmail.com" className="font-medium text-blue-600 hover:underline">
+                      transportepublicolanus@gmail.com
                     </a>
                   </div>
                   <div className="flex items-center gap-2 text-gray-600">
