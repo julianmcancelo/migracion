@@ -1,10 +1,12 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Car, Plus, Search, Edit, Trash2 } from 'lucide-react'
+import { Car, Plus, Search, Eye, AlertTriangle, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import ModalRegistrarVehiculo from './_components/modal-registrar-vehiculo'
+import { DetalleVehiculoModal } from './_components/detalle-vehiculo-modal'
+import { CompletarDatosModal } from './_components/completar-datos-modal'
 import {
   Table,
   TableBody,
@@ -24,6 +26,8 @@ interface Vehiculo {
   chasis: string | null
   motor: string | null
   asientos: number | null
+  Vencimiento_VTV?: string | null
+  Vencimiento_Poliza?: string | null
 }
 
 /**
@@ -36,6 +40,11 @@ export default function VehiculosPage() {
   const [busqueda, setBusqueda] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [modalRegistroOpen, setModalRegistroOpen] = useState(false)
+  const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState<number | null>(null)
+  const [modalDetalleOpen, setModalDetalleOpen] = useState(false)
+  const [filtroProblemas, setFiltroProblemas] = useState<'todos' | 'con_problemas' | 'sin_datos'>('todos')
+  const [vehiculoParaCompletar, setVehiculoParaCompletar] = useState<Vehiculo | null>(null)
+  const [modalCompletarOpen, setModalCompletarOpen] = useState(false)
 
   useEffect(() => {
     cargarVehiculos()
@@ -80,9 +89,37 @@ export default function VehiculosPage() {
     }
   }
 
-  const vehiculosFiltrados = busqueda.trim()
-    ? vehiculos
-    : vehiculos
+  // Función para detectar problemas en un vehículo
+  const tieneProblemas = (vehiculo: Vehiculo) => {
+    const hoy = new Date()
+    const vtvVencida = vehiculo.Vencimiento_VTV ? new Date(vehiculo.Vencimiento_VTV) < hoy : false
+    const polizaVencida = vehiculo.Vencimiento_Poliza ? new Date(vehiculo.Vencimiento_Poliza) < hoy : false
+    return vtvVencida || polizaVencida
+  }
+
+  const tieneDatosFaltantes = (vehiculo: Vehiculo) => {
+    return !vehiculo.marca || !vehiculo.modelo || !vehiculo.ano || 
+           !vehiculo.Vencimiento_VTV || !vehiculo.Vencimiento_Poliza
+  }
+
+  // Aplicar filtros
+  let vehiculosFiltrados = vehiculos
+
+  // Filtro por búsqueda
+  if (busqueda.trim()) {
+    vehiculosFiltrados = vehiculosFiltrados
+  }
+
+  // Filtro por problemas
+  if (filtroProblemas === 'con_problemas') {
+    vehiculosFiltrados = vehiculosFiltrados.filter(tieneProblemas)
+  } else if (filtroProblemas === 'sin_datos') {
+    vehiculosFiltrados = vehiculosFiltrados.filter(tieneDatosFaltantes)
+  }
+
+  // Calcular contadores
+  const vehiculosConProblemas = vehiculos.filter(tieneProblemas).length
+  const vehiculosSinDatos = vehiculos.filter(tieneDatosFaltantes).length
 
   return (
     <div className="space-y-4 sm:space-y-6">
@@ -103,33 +140,73 @@ export default function VehiculosPage() {
         </Button>
       </div>
 
-      {/* Búsqueda */}
-      <div className="flex flex-col gap-2 sm:flex-row">
-        <Input
-          placeholder="Buscar por dominio, marca..."
-          value={busqueda}
-          onChange={(e) => setBusqueda(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && buscarVehiculos()}
-          className="w-full sm:max-w-md"
-        />
-        <div className="flex gap-2">
-          <Button onClick={buscarVehiculos} disabled={loading} className="flex-1 sm:flex-none">
-            <Search className="mr-2 h-4 w-4" />
-            Buscar
-          </Button>
-          {busqueda && (
-            <Button
-              variant="outline"
-              onClick={() => {
-                setBusqueda('')
-                cargarVehiculos()
-              }}
-              className="flex-1 sm:flex-none"
-            >
-              Limpiar
+      {/* Búsqueda y Filtros */}
+      <div className="space-y-3">
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Input
+            placeholder="Buscar por dominio, marca..."
+            value={busqueda}
+            onChange={(e) => setBusqueda(e.target.value)}
+            onKeyDown={(e) => e.key === 'Enter' && buscarVehiculos()}
+            className="w-full sm:max-w-md"
+          />
+          <div className="flex gap-2">
+            <Button onClick={buscarVehiculos} disabled={loading} className="flex-1 sm:flex-none">
+              <Search className="mr-2 h-4 w-4" />
+              Buscar
             </Button>
-          )}
+            {busqueda && (
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setBusqueda('')
+                  cargarVehiculos()
+                }}
+                className="flex-1 sm:flex-none"
+              >
+                Limpiar
+              </Button>
+            )}
+          </div>
         </div>
+
+        {/* Filtros discretos */}
+        {(vehiculosConProblemas > 0 || vehiculosSinDatos > 0) && (
+          <div className="flex flex-wrap gap-2">
+            <Button
+              variant={filtroProblemas === 'todos' ? 'default' : 'outline'}
+              size="sm"
+              onClick={() => setFiltroProblemas('todos')}
+              className="text-xs"
+            >
+              Todos ({vehiculos.length})
+            </Button>
+            
+            {vehiculosConProblemas > 0 && (
+              <Button
+                variant={filtroProblemas === 'con_problemas' ? 'destructive' : 'outline'}
+                size="sm"
+                onClick={() => setFiltroProblemas('con_problemas')}
+                className="text-xs"
+              >
+                <AlertTriangle className="mr-1 h-3 w-3" />
+                Doc. Vencida ({vehiculosConProblemas})
+              </Button>
+            )}
+            
+            {vehiculosSinDatos > 0 && (
+              <Button
+                variant={filtroProblemas === 'sin_datos' ? 'secondary' : 'outline'}
+                size="sm"
+                onClick={() => setFiltroProblemas('sin_datos')}
+                className="text-xs"
+              >
+                <FileText className="mr-1 h-3 w-3" />
+                Datos Faltantes ({vehiculosSinDatos})
+              </Button>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Error */}
@@ -185,22 +262,35 @@ export default function VehiculosPage() {
                       {vehiculo.motor ? vehiculo.motor.substring(0, 10) + '...' : '-'}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-1 sm:gap-2">
+                      <div className="flex justify-end gap-1">
+                        {/* Botón Completar Datos (solo si filtro activo) */}
+                        {filtroProblemas === 'sin_datos' && tieneDatosFaltantes(vehiculo) && (
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => {
+                              setVehiculoParaCompletar(vehiculo)
+                              setModalCompletarOpen(true)
+                            }}
+                            className="h-7 px-2 text-orange-600 hover:bg-orange-50 hover:text-orange-700 sm:h-8 sm:px-3"
+                          >
+                            <FileText className="h-3 w-3 sm:mr-1 sm:h-4 sm:w-4" />
+                            <span className="hidden sm:inline text-xs">Completar</span>
+                          </Button>
+                        )}
+                        
+                        {/* Botón Ver Detalle */}
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => alert('Editar vehículo próximamente')}
-                          className="h-7 px-2 sm:h-8 sm:px-3"
+                          onClick={() => {
+                            setVehiculoSeleccionado(vehiculo.id)
+                            setModalDetalleOpen(true)
+                          }}
+                          className="h-7 px-2 text-blue-600 hover:bg-blue-50 hover:text-blue-700 sm:h-8 sm:px-3"
                         >
-                          <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={() => alert('Eliminar vehículo próximamente')}
-                          className="h-7 px-2 sm:h-8 sm:px-3"
-                        >
-                          <Trash2 className="h-3 w-3 text-red-600 sm:h-4 sm:w-4" />
+                          <Eye className="h-3 w-3 sm:mr-2 sm:h-4 sm:w-4" />
+                          <span className="hidden sm:inline">Ver</span>
                         </Button>
                       </div>
                     </TableCell>
@@ -214,9 +304,24 @@ export default function VehiculosPage() {
 
       {/* Stats */}
       <div className="rounded-lg border border-blue-200 bg-blue-50 p-3 sm:p-4">
-        <p className="text-xs text-gray-700 sm:text-sm">
-          📊 Total de vehículos: <strong>{vehiculosFiltrados.length}</strong>
-        </p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-xs text-gray-700 sm:text-sm">
+            📊 {filtroProblemas === 'todos' ? 'Total de vehículos' : 
+                filtroProblemas === 'con_problemas' ? 'Vehículos con documentación vencida' :
+                'Vehículos con datos faltantes'}: <strong>{vehiculosFiltrados.length}</strong>
+            {filtroProblemas !== 'todos' && ` de ${vehiculos.length}`}
+          </p>
+          {filtroProblemas !== 'todos' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setFiltroProblemas('todos')}
+              className="text-xs text-blue-700 hover:text-blue-900"
+            >
+              Ver todos
+            </Button>
+          )}
+        </div>
       </div>
 
       {/* Modal de Registro */}
@@ -225,6 +330,24 @@ export default function VehiculosPage() {
         onOpenChange={setModalRegistroOpen}
         onRegistroExitoso={() => {
           cargarVehiculos()
+        }}
+      />
+
+      {/* Modal de Detalle */}
+      <DetalleVehiculoModal
+        vehiculoId={vehiculoSeleccionado}
+        open={modalDetalleOpen}
+        onOpenChange={setModalDetalleOpen}
+      />
+
+      {/* Modal de Completar Datos */}
+      <CompletarDatosModal
+        vehiculo={vehiculoParaCompletar}
+        open={modalCompletarOpen}
+        onOpenChange={setModalCompletarOpen}
+        onGuardado={() => {
+          cargarVehiculos()
+          setModalCompletarOpen(false)
         }}
       />
     </div>

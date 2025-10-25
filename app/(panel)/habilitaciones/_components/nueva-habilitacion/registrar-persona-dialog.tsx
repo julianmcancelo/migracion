@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -18,9 +18,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
-import { UserPlus, Loader2, Scan } from 'lucide-react'
+import { UserPlus, Loader2, Scan, Sparkles } from 'lucide-react'
 import { CrearPersonaInput } from '@/lib/validations/persona'
 import { OCRScanner } from '@/components/ocr-scanner'
+import { generarCUIL } from '@/lib/cuil-generator'
 
 interface RegistrarPersonaDialogProps {
   open: boolean
@@ -54,6 +55,16 @@ export function RegistrarPersonaDialog({
     domicilio_nro: '',
     domicilio_localidad: 'LANUS',
   })
+
+  // Generar CUIL automáticamente cuando cambia DNI o género
+  useEffect(() => {
+    if (formData.dni && formData.genero) {
+      const cuilGenerado = generarCUIL(formData.dni, formData.genero)
+      if (cuilGenerado && cuilGenerado !== formData.cuit) {
+        setFormData(prev => ({ ...prev, cuit: cuilGenerado }))
+      }
+    }
+  }, [formData.dni, formData.genero])
 
   // Procesar datos del OCR y llenar formulario
   const handleOCRData = (data: any) => {
@@ -262,13 +273,22 @@ export function RegistrarPersonaDialog({
             <h4 className="mb-3 font-medium">Datos de Contacto</h4>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-2">
-                <Label htmlFor="cuit">CUIT</Label>
+                <Label htmlFor="cuit" className="flex items-center gap-2">
+                  CUIL/CUIT
+                  {formData.cuit && (
+                    <span className="flex items-center gap-1 text-xs text-green-600">
+                      <Sparkles className="h-3 w-3" />
+                      Generado automáticamente
+                    </span>
+                  )}
+                </Label>
                 <Input
                   id="cuit"
                   value={formData.cuit}
                   onChange={e => handleChange('cuit', e.target.value)}
-                  placeholder="Ej: 20-12345678-9"
+                  placeholder="Se genera automático con DNI y género"
                   disabled={loading}
+                  className={formData.cuit ? 'border-green-300 bg-green-50' : ''}
                 />
               </div>
 
