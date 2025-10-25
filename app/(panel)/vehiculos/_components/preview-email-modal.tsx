@@ -50,7 +50,7 @@ export function PreviewEmailModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden p-0">
+      <DialogContent className="max-w-3xl max-h-[95vh] flex flex-col p-0">
         {/* Header */}
         <DialogHeader className="border-b bg-gray-50 px-6 py-4">
           <div className="flex items-center justify-between">
@@ -76,7 +76,7 @@ export function PreviewEmailModal({
         </DialogHeader>
 
         {/* Vista Previa del Email */}
-        <div className="overflow-y-auto p-6" style={{ maxHeight: 'calc(90vh - 200px)' }}>
+        <div className="flex-1 overflow-y-auto p-6">
           {/* Simulación del email - Diseño Minimalista con Logo */}
           <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
             {/* Header Minimalista con Logo */}
@@ -245,8 +245,8 @@ export function PreviewEmailModal({
           </div>
         </div>
 
-        {/* Footer con Acciones */}
-        <DialogFooter className="border-t bg-gray-50 px-6 py-4">
+        {/* Footer con Acciones - Siempre Visible */}
+        <DialogFooter className="flex-shrink-0 border-t bg-gray-50 px-6 py-4">
           <div className="flex w-full flex-col gap-3 sm:flex-row sm:justify-between">
             <Button
               variant="outline"
