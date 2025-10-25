@@ -247,6 +247,21 @@ export async function POST(
 
     console.log('✅ Email enviado correctamente a:', titular.email)
 
+    // TODO: Descomentar después de ejecutar 'npx prisma generate' y migración SQL
+    // Registrar notificación en base de datos
+    // await prisma.notificaciones_vehiculos.create({
+    //   data: {
+    //     vehiculo_id: vehiculoId,
+    //     persona_id: titular.id,
+    //     tipo: 'documentos_vencidos',
+    //     documentos_notificados: JSON.stringify(documentosVencidos),
+    //     email_destinatario: titular.email,
+    //     enviado_por: session.userId
+    //   }
+    // })
+
+    // console.log('📝 Notificación registrada en base de datos')
+
     return NextResponse.json({
       success: true,
       message: 'Email enviado correctamente',

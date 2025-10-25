@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 })
     }
 
-    // Obtener vehículo con todas sus relaciones
+    // Obtener vehículo con todas sus relaciones y notificaciones
     const vehiculo = await prisma.vehiculos.findUnique({
       where: { id },
       include: {
@@ -42,6 +42,13 @@ export async function GET(request: NextRequest, context: { params: Promise<{ id:
             }
           }
         }
+        // TODO: Descomentar después de ejecutar 'npx prisma generate'
+        // notificaciones_vehiculos: {
+        //   orderBy: {
+        //     fecha_envio: 'desc'
+        //   },
+        //   take: 5 // Últimas 5 notificaciones
+        // }
       }
     })
 

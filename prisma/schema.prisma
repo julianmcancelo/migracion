@@ -210,6 +210,24 @@ model notificaciones {
   tipo        String   @default("informativo") @db.VarChar(50)
 }
 
+model notificaciones_vehiculos {
+  id                     Int       @id @default(autoincrement())
+  vehiculo_id            Int
+  persona_id             Int
+  tipo                   String    @db.VarChar(50)
+  documentos_notificados String?   @db.Text
+  email_destinatario     String    @db.VarChar(255)
+  fecha_envio            DateTime  @default(now()) @db.DateTime(0)
+  enviado_por            Int
+  
+  vehiculo               vehiculos @relation(fields: [vehiculo_id], references: [id], onDelete: Cascade)
+  persona                personas  @relation(fields: [persona_id], references: [id], onDelete: Cascade)
+  
+  @@index([vehiculo_id])
+  @@index([persona_id])
+  @@index([fecha_envio])
+}
+
 model oblea_historial {
   id                       Int                         @id @default(autoincrement()) @db.UnsignedInt
   habilitacion_id          Int                         @db.UnsignedInt
@@ -258,7 +276,8 @@ model personas {
   domicilio           Int
   
   // Relaciones
-  habilitaciones_personas habilitaciones_personas[]
+  habilitaciones_personas  habilitaciones_personas[]
+  notificaciones_vehiculos notificaciones_vehiculos[]
 }
 
 model remiserias {
@@ -336,7 +355,8 @@ model vehiculos {
   Vencimiento_VTV     DateTime? @db.Date
   
   // Relaciones
-  habilitaciones_vehiculos habilitaciones_vehiculos[]
+  habilitaciones_vehiculos   habilitaciones_vehiculos[]
+  notificaciones_vehiculos   notificaciones_vehiculos[]
 }
 
 model verificaciones_historial {
