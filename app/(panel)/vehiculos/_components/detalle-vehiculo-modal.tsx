@@ -23,6 +23,8 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PreviewEmailModal } from './preview-email-modal'
+import { SuccessNotificationDialog } from './success-notification-dialog'
+import { ErrorNotificationDialog } from './error-notification-dialog'
 
 interface DetalleVehiculoModalProps {
   vehiculoId: number | null
@@ -44,6 +46,12 @@ export function DetalleVehiculoModal({
   const [enviandoNotificacion, setEnviandoNotificacion] = useState(false)
   const [showPreviewEmail, setShowPreviewEmail] = useState(false)
   const [documentosParaNotificar, setDocumentosParaNotificar] = useState<any[]>([])
+  
+  // Estados para dialogs de resultado
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false)
+  const [showErrorDialog, setShowErrorDialog] = useState(false)
+  const [resultData, setResultData] = useState<any>(null)
+  const [errorMessage, setErrorMessage] = useState('')
 
   useEffect(() => {
     if (open && vehiculoId) {
@@ -128,15 +136,19 @@ export function DetalleVehiculoModal({
 
       setShowPreviewEmail(false)
       
-      alert(
-        `✅ Notificación enviada correctamente\n\n` +
-        `Titular: ${data.data.titular.nombre}\n` +
-        `Email: ${data.data.titular.email}\n\n` +
-        `Se solicitó actualizar:\n` +
-        documentosParaNotificar.map(d => `• ${d.tipo}`).join('\n')
-      )
+      // Guardar datos para el dialog de éxito
+      setResultData({
+        titular: data.data.titular,
+        vehiculo: vehiculo.dominio,
+        documentos: documentosParaNotificar.map(d => d.tipo)
+      })
+      
+      // Mostrar dialog de éxito
+      setShowSuccessDialog(true)
     } catch (error: any) {
-      alert(`❌ Error: ${error.message}`)
+      // Mostrar dialog de error
+      setErrorMessage(error.message || 'Error desconocido')
+      setShowErrorDialog(true)
     } finally {
       setEnviandoNotificacion(false)
     }
@@ -432,6 +444,24 @@ export function DetalleVehiculoModal({
           />
         )
       })()}
+
+      {/* Dialog de Éxito */}
+      {resultData && (
+        <SuccessNotificationDialog
+          open={showSuccessDialog}
+          onOpenChange={setShowSuccessDialog}
+          titular={resultData.titular}
+          vehiculo={resultData.vehiculo}
+          documentos={resultData.documentos}
+        />
+      )}
+
+      {/* Dialog de Error */}
+      <ErrorNotificationDialog
+        open={showErrorDialog}
+        onOpenChange={setShowErrorDialog}
+        error={errorMessage}
+      />
     </Dialog>
   )
 }
