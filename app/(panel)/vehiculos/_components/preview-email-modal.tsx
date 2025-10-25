@@ -187,7 +187,7 @@ export function PreviewEmailModal({
                           <span className="font-semibold text-blue-900">Responder al email</span>
                         </div>
                         <p className="mb-3 text-sm text-blue-800">
-                          Use el botón "Responder" de su cliente de correo y adjunte los documentos actualizados.
+                          Use el botón &ldquo;Responder&rdquo; de su cliente de correo y adjunte los documentos actualizados.
                         </p>
                         <div className="rounded bg-white p-3">
                           <p className="mb-1 text-xs font-medium text-gray-600">Documentos a adjuntar:</p>
