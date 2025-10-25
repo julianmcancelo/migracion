@@ -130,20 +130,23 @@ export function PreviewEmailModal({
                   <ol className="list-decimal space-y-2 pl-5 text-sm text-blue-800">
                     <li>Renovar la documentación vencida</li>
                     <li>Escanear los documentos actualizados en PDF o imagen clara</li>
-                    <li>Enviarlos por email a: <strong>documentacion@transportelanus.com.ar</strong></li>
-                    <li>En el asunto mencionar: <strong>Vehículo {vehiculo.dominio}</strong></li>
+                    <li>Enviarlos por email a: <strong>movilidadytransporte@lanus.gob.ar</strong></li>
+                    <li>En el asunto mencionar: <strong>Actualización Documentación - Vehículo {vehiculo.dominio}</strong></li>
                   </ol>
                 </div>
               </div>
 
               <div className="rounded-lg bg-gray-100 p-4 text-center">
-                <p className="mb-3 text-sm text-gray-700">
-                  Para cualquier consulta, puede comunicarse con nosotros:
+                <p className="mb-3 font-semibold text-sm text-gray-800">
+                  Dirección Gral. de Movilidad y Transporte
+                </p>
+                <p className="mb-2 text-sm text-gray-700">
+                  Municipio de Lanús
                 </p>
                 <div className="space-y-1 text-sm text-gray-600">
-                  <p>📧 Email: transporte@lanus.gob.ar</p>
-                  <p>📞 Teléfono: (011) XXXX-XXXX</p>
-                  <p>🏢 Dirección: [Dirección de la Municipalidad]</p>
+                  <p>📧 Email: <a href="mailto:movilidadytransporte@lanus.gob.ar" className="text-blue-600 hover:underline">movilidadytransporte@lanus.gob.ar</a></p>
+                  <p>📞 Teléfono: 4357-5100 Int. 7137</p>
+                  <p>🌐 Web: <a href="https://www.lanus.gob.ar" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">www.lanus.gob.ar</a></p>
                 </div>
               </div>
             </div>

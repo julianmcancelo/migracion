@@ -314,11 +314,11 @@ Actualización de documentación - Vehículo ABC123
     <ol>
       <li>Renovar la documentación vencida</li>
       <li>Escanear los documentos actualizados</li>
-      <li>Enviarlos por email a: documentacion@transportelanus.com.ar</li>
+      <li>Enviarlos por email a: movilidadytransporte@lanus.gob.ar</li>
     </ol>
     
     <p style="margin: 30px 0;">
-      <a href="mailto:documentacion@transportelanus.com.ar?subject=Actualización Vehículo ABC123" class="button">
+      <a href="mailto:movilidadytransporte@lanus.gob.ar?subject=Actualización Documentación - Vehículo ABC123" class="button">
         📧 Enviar Documentación
       </a>
     </p>
@@ -326,8 +326,10 @@ Actualización de documentación - Vehículo ABC123
     <hr>
     
     <p style="color: #666; font-size: 12px;">
-      Este es un mensaje automático del Sistema de Transporte de Lanús.<br>
-      Para consultas: transporte@lanus.gob.ar | Tel: (011) XXXX-XXXX
+      <strong>Dirección Gral. de Movilidad y Transporte</strong><br>
+      Municipio de Lanús<br>
+      Email: movilidadytransporte@lanus.gob.ar | Tel: 4357-5100 Int. 7137<br>
+      Web: www.lanus.gob.ar
     </p>
   </div>
 </body>
