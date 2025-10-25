@@ -113,6 +113,9 @@ export async function PATCH(
         marca: body.marca || undefined,
         modelo: body.modelo || undefined,
         ano: body.ano || undefined,
+        tipo: body.tipo || undefined,
+        chasis: body.chasis || undefined,
+        motor: body.motor || undefined,
         Vencimiento_VTV: body.Vencimiento_VTV || undefined,
         Vencimiento_Poliza: body.Vencimiento_Poliza || undefined,
       }

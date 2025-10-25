@@ -54,13 +54,26 @@ export async function POST(
       return NextResponse.json({ error: 'Vehículo no encontrado' }, { status: 404 })
     }
 
-    // Obtener titular principal
-    const titular = vehiculo.habilitaciones_vehiculos[0]?.habilitacion
-      ?.habilitaciones_personas[0]?.persona
+    // Buscar titular en todas las habilitaciones activas
+    let titular = null
+    
+    for (const habVeh of vehiculo.habilitaciones_vehiculos) {
+      const titularPersona = habVeh.habilitacion?.habilitaciones_personas?.find(
+        hp => hp.rol === 'TITULAR'
+      )?.persona
+      
+      if (titularPersona) {
+        titular = titularPersona
+        break
+      }
+    }
 
     if (!titular) {
       return NextResponse.json(
-        { error: 'No se encontró titular para este vehículo' },
+        { 
+          error: 'No se encontró titular para este vehículo',
+          detalle: 'El vehículo no tiene una persona con rol TITULAR en ninguna habilitación activa'
+        },
         { status: 404 }
       )
     }

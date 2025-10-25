@@ -335,7 +335,10 @@ export function DetalleVehiculoModal({
 
               <div className="space-y-3">
                 {vehiculo.habilitaciones_vehiculos.map((hv: any) => {
-                  const titular = hv.habilitacion?.habilitaciones_personas?.[0]?.persona
+                  // Buscar el titular (persona con rol TITULAR)
+                  const titular = hv.habilitacion?.habilitaciones_personas?.find(
+                    (hp: any) => hp.rol === 'TITULAR'
+                  )?.persona
                   
                   return (
                     <div
@@ -397,26 +400,38 @@ export function DetalleVehiculoModal({
       </DialogContent>
 
       {/* Modal de Vista Previa del Email */}
-      {vehiculo && (
-        <PreviewEmailModal
-          open={showPreviewEmail}
-          onOpenChange={setShowPreviewEmail}
-          onConfirm={confirmarEnvioNotificacion}
-          titular={{
-            nombre: vehiculo.habilitaciones_vehiculos?.[0]?.habilitacion
-              ?.habilitaciones_personas?.[0]?.persona?.nombre || 'Titular',
-            email: vehiculo.habilitaciones_vehiculos?.[0]?.habilitacion
-              ?.habilitaciones_personas?.[0]?.persona?.email || 'Sin email'
-          }}
+      {vehiculo && (() => {
+        // Buscar titular correctamente
+        let titular = null
+        for (const habVeh of vehiculo.habilitaciones_vehiculos || []) {
+          const titularPersona = habVeh.habilitacion?.habilitaciones_personas?.find(
+            (hp: any) => hp.rol === 'TITULAR'
+          )?.persona
+          if (titularPersona) {
+            titular = titularPersona
+            break
+          }
+        }
+
+        return (
+          <PreviewEmailModal
+            open={showPreviewEmail}
+            onOpenChange={setShowPreviewEmail}
+            onConfirm={confirmarEnvioNotificacion}
+            titular={{
+              nombre: titular?.nombre || 'Sin titular',
+              email: titular?.email || 'Sin email'
+            }}
           vehiculo={{
             dominio: vehiculo.dominio,
             marca: vehiculo.marca,
             modelo: vehiculo.modelo
           }}
-          documentosVencidos={documentosParaNotificar}
-          enviando={enviandoNotificacion}
-        />
-      )}
+            documentosVencidos={documentosParaNotificar}
+            enviando={enviandoNotificacion}
+          />
+        )
+      })()}
     </Dialog>
   )
 }

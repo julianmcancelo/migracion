@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AlertCircle, Save, X } from 'lucide-react'
+import { AlertCircle, Save, X, Upload, Camera, Sparkles } from 'lucide-react'
 
 interface CompletarDatosModalProps {
   open: boolean
@@ -39,10 +39,17 @@ export function CompletarDatosModal({
   onGuardado
 }: CompletarDatosModalProps) {
   const [guardando, setGuardando] = useState(false)
+  const [procesandoOCR, setProcesandoOCR] = useState(false)
+  const [imagenTitulo, setImagenTitulo] = useState<string | null>(null)
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  
   const [formData, setFormData] = useState({
     marca: '',
     modelo: '',
     ano: '',
+    tipo: '',
+    chasis: '',
+    motor: '',
     Vencimiento_VTV: '',
     Vencimiento_Poliza: ''
   })
@@ -54,6 +61,9 @@ export function CompletarDatosModal({
         marca: vehiculo.marca || '',
         modelo: vehiculo.modelo || '',
         ano: vehiculo.ano?.toString() || '',
+        tipo: '',
+        chasis: '',
+        motor: '',
         Vencimiento_VTV: vehiculo.Vencimiento_VTV 
           ? new Date(vehiculo.Vencimiento_VTV).toISOString().split('T')[0] 
           : '',
@@ -63,6 +73,58 @@ export function CompletarDatosModal({
       })
     }
   })
+
+  const procesarTitulo = async (file: File) => {
+    setProcesandoOCR(true)
+    
+    try {
+      const formDataOCR = new FormData()
+      formDataOCR.append('image', file)
+
+      const response = await fetch('/api/ai/ocr-titulo', {
+        method: 'POST',
+        body: formDataOCR
+      })
+
+      const data = await response.json()
+
+      if (data.success && data.data) {
+        // Auto-completar campos con datos del OCR
+        setFormData(prev => ({
+          ...prev,
+          marca: data.data.marca || prev.marca,
+          modelo: data.data.modelo || prev.modelo,
+          ano: data.data.año || prev.ano,
+          tipo: data.data.tipo || prev.tipo,
+          chasis: data.data.chasis || prev.chasis,
+          motor: data.data.motor || prev.motor,
+        }))
+
+        alert('✨ Datos del título cargados automáticamente')
+      } else {
+        throw new Error(data.error || 'No se pudieron extraer datos')
+      }
+    } catch (error: any) {
+      alert(`❌ Error al procesar título: ${error.message}`)
+    } finally {
+      setProcesandoOCR(false)
+    }
+  }
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    // Crear preview
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setImagenTitulo(reader.result as string)
+    }
+    reader.readAsDataURL(file)
+
+    // Procesar con OCR
+    await procesarTitulo(file)
+  }
 
   if (!vehiculo) return null
 
@@ -117,6 +179,47 @@ export function CompletarDatosModal({
         </DialogHeader>
 
         <div className="space-y-4 py-4">
+          {/* Botón OCR para título */}
+          <div className="rounded-lg border-2 border-dashed border-blue-200 bg-blue-50 p-4">
+            <div className="flex items-center gap-3">
+              <Camera className="h-8 w-8 text-blue-600" />
+              <div className="flex-1">
+                <p className="font-semibold text-blue-900">Carga Rápida con OCR</p>
+                <p className="text-sm text-blue-700">Sube una foto del título del vehículo para completar automáticamente</p>
+              </div>
+              <Button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={procesandoOCR || guardando}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                {procesandoOCR ? (
+                  <>
+                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                    Procesando...
+                  </>
+                ) : (
+                  <>
+                    <Upload className="mr-2 h-4 w-4" />
+                    Subir Título
+                  </>
+                )}
+              </Button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
+            </div>
+            {imagenTitulo && (
+              <div className="mt-3">
+                <img src={imagenTitulo} alt="Título" className="h-20 w-auto rounded border" />
+              </div>
+            )}
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
               <Label htmlFor="marca">
@@ -127,7 +230,7 @@ export function CompletarDatosModal({
                 value={formData.marca}
                 onChange={(e) => setFormData({ ...formData, marca: e.target.value })}
                 placeholder="Ej: Mercedes Benz"
-                disabled={guardando}
+                disabled={guardando || procesandoOCR}
                 className={!vehiculo.marca ? 'border-orange-300' : ''}
               />
             </div>
@@ -188,6 +291,48 @@ export function CompletarDatosModal({
               disabled={guardando}
               className={!vehiculo.Vencimiento_Poliza ? 'border-orange-300' : ''}
             />
+          </div>
+
+          {/* Campos adicionales */}
+          <div className="col-span-2 border-t pt-4">
+            <p className="mb-3 text-sm font-semibold text-gray-700">Datos Técnicos (Opcionales)</p>
+            
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="tipo">Tipo de Vehículo</Label>
+                <Input
+                  id="tipo"
+                  value={formData.tipo}
+                  onChange={(e) => setFormData({ ...formData, tipo: e.target.value })}
+                  placeholder="Ej: Automóvil, Camioneta, Minibus"
+                  disabled={guardando || procesandoOCR}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="chasis">Número de Chasis</Label>
+                <Input
+                  id="chasis"
+                  value={formData.chasis}
+                  onChange={(e) => setFormData({ ...formData, chasis: e.target.value.toUpperCase() })}
+                  placeholder="Ej: 8AC3B58Z4BE123456"
+                  disabled={guardando || procesandoOCR}
+                  className="font-mono"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="motor">Número de Motor</Label>
+                <Input
+                  id="motor"
+                  value={formData.motor}
+                  onChange={(e) => setFormData({ ...formData, motor: e.target.value.toUpperCase() })}
+                  placeholder="Ej: OM651XXXXXX"
+                  disabled={guardando || procesandoOCR}
+                  className="font-mono"
+                />
+              </div>
+            </div>
           </div>
         </div>
 
