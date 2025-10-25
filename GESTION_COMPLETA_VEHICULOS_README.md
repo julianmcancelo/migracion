@@ -61,7 +61,7 @@ Opción B: "Confirmar y Enviar" → Envía email
 │ │ ¿Cómo proceder?                    │ │
 │ │ 1. Renovar documentación           │ │
 │ │ 2. Escanear documentos             │ │
-│ │ 3. Enviar a: documentacion@...     │ │
+│ │ 3. Enviarlos por email a: movilidadytransporte@lanus.gob.ar.     │ │
 │ │                                     │ │
 │ └─────────────────────────────────────┘ │
 ├─────────────────────────────────────────┤
