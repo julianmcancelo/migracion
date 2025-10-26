@@ -1,7 +1,7 @@
 'use client'
 
 import { jsPDF } from 'jspdf'
-import 'jspdf-autotable'
+import autoTable from 'jspdf-autotable'
 
 interface DatosVerificacion {
   // Habilitación
@@ -182,7 +182,7 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
     ]
   })
 
-  ;(doc as any).autoTable({
+  autoTable(doc, {
     startY: yPos,
     head: [['Descripción', 'Bien', 'Regular', 'Mal', 'Observaciones']],
     body: tableData,
