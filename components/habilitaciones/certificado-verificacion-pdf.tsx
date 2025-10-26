@@ -51,12 +51,12 @@ const ITEMS_ESCOLAR = [
 
 function addField(doc: jsPDF, label: string, value: string, x: number, y: number) {
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(7)
+  doc.setFontSize(7.5)
   doc.setTextColor(80, 80, 80)
   doc.text(label, x, y)
   
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
   doc.setTextColor(0, 0, 0)
   const labelWidth = doc.getTextWidth(label)
   doc.text(value || 'N/A', x + labelWidth + 1.5, y)
@@ -79,18 +79,18 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   doc.rect(0, 0, pageWidth, 25, 'F')
 
   doc.setTextColor(255, 255, 255)
-  doc.setFontSize(14)
+  doc.setFontSize(15)
   doc.setFont('helvetica', 'bold')
   doc.text('CERTIFICADO DE VERIFICACIÓN VEHICULAR', pageWidth / 2, 10, { align: 'center' })
 
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
   doc.setFont('helvetica', 'normal')
   doc.text('Subsecretaria de Ordenamiento Urbano - Dirección Gral. de Movilidad y Transporte', pageWidth / 2, 16, { align: 'center' })
 
   // Fecha compacta
   const fecha = new Date().toLocaleDateString('es-AR')
   const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
-  doc.setFontSize(7)
+  doc.setFontSize(7.5)
   doc.text(`${fecha} - ${hora}`, pageWidth - margin, 21, { align: 'right' })
 
   let yPos = 32
@@ -113,13 +113,13 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   yPos += 8
 
   // --- TITULAR (Compacto) ---
-  doc.setFontSize(9)
+  doc.setFontSize(9.5)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
   doc.text('TITULAR', col1X, yPos)
   yPos += 4
 
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
   doc.setTextColor(0, 0, 0)
   doc.setFont('helvetica', 'normal')
   addField(doc, 'Nombre:', datos.titularNombre, col1X, yPos)
@@ -129,7 +129,7 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   yPos += 8
 
   // --- VEHÍCULO ---
-  doc.setFontSize(9)
+  doc.setFontSize(9.5)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
   doc.text('VEHÍCULO', col1X, yPos)
@@ -140,7 +140,7 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   }
   yPos += 4
 
-  doc.setFontSize(8)
+  doc.setFontSize(8.5)
   doc.setTextColor(0, 0, 0)
   doc.setFont('helvetica', 'normal')
   addField(doc, 'Dominio:', datos.dominio, col1X, yPos)
@@ -158,7 +158,7 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   yPos += 8
 
   // --- TABLA DE VERIFICACIÓN OPTIMIZADA ---
-  doc.setFontSize(10)
+  doc.setFontSize(10.5)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
   doc.text('DETALLES Y OBSERVACIONES DEL VEHÍCULO', pageWidth / 2, yPos, { align: 'center' })
@@ -186,24 +186,24 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
     headStyles: {
       fillColor: [139, 0, 0],
       textColor: [255, 255, 255],
-      fontSize: 7,
+      fontSize: 7.5,
       fontStyle: 'bold',
       halign: 'center',
       cellPadding: 1,
     },
     columnStyles: {
-      0: { cellWidth: 95, fontSize: 6.5 },
-      1: { cellWidth: 10, halign: 'center', fontSize: 7 },
-      2: { cellWidth: 10, halign: 'center', fontSize: 7 },
-      3: { cellWidth: 10, halign: 'center', fontSize: 7 },
-      4: { cellWidth: 61, fontSize: 6.5 },
+      0: { cellWidth: 95, fontSize: 7 },
+      1: { cellWidth: 10, halign: 'center', fontSize: 7.5 },
+      2: { cellWidth: 10, halign: 'center', fontSize: 7.5 },
+      3: { cellWidth: 10, halign: 'center', fontSize: 7.5 },
+      4: { cellWidth: 61, fontSize: 7 },
     },
     styles: {
-      fontSize: 6.5,
-      cellPadding: 0.8,
+      fontSize: 7,
+      cellPadding: 0.9,
       lineColor: [200, 200, 200],
       lineWidth: 0.1,
-      minCellHeight: 6,
+      minCellHeight: 6.2,
     },
     margin: { left: margin, right: margin },
     tableWidth: 'auto',
@@ -227,7 +227,7 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
 
   // Firma del Interesado
   doc.line(margin + 5, lineY, margin + 5 + lineWidth, lineY)
-  doc.setFontSize(7)
+  doc.setFontSize(7.5)
   doc.setFont('helvetica', 'normal')
   doc.setTextColor(60, 60, 60)
   doc.text('Firma del Interesado', margin + 5 + lineWidth / 2, lineY + 4, { align: 'center' })
