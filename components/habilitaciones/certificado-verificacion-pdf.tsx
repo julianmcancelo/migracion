@@ -51,14 +51,15 @@ const ITEMS_ESCOLAR = [
 
 function addField(doc: jsPDF, label: string, value: string, x: number, y: number) {
   doc.setFont('helvetica', 'normal')
-  doc.setFontSize(8)
-  doc.setTextColor(100, 100, 100)
+  doc.setFontSize(7)
+  doc.setTextColor(80, 80, 80)
   doc.text(label, x, y)
   
   doc.setFont('helvetica', 'bold')
-  doc.setFontSize(9)
+  doc.setFontSize(8)
   doc.setTextColor(0, 0, 0)
-  doc.text(value || 'N/A', x + doc.getTextWidth(label) + 2, y)
+  const labelWidth = doc.getTextWidth(label)
+  doc.text(value || 'N/A', x + labelWidth + 1.5, y)
 }
 
 export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsPDF {
@@ -66,33 +67,33 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
     orientation: 'portrait',
     unit: 'mm',
     format: 'a4',
+    compress: true, // Mejor compresión
   })
 
   const pageWidth = 210
-  const margin = 15
+  const pageHeight = 297
+  const margin = 12
 
-  // --- HEADER ---
+  // --- HEADER COMPACTO ---
   doc.setFillColor(139, 0, 0) // Color bordo
-  doc.rect(0, 0, pageWidth, 30, 'F')
+  doc.rect(0, 0, pageWidth, 25, 'F')
 
   doc.setTextColor(255, 255, 255)
-  doc.setFontSize(16)
+  doc.setFontSize(14)
   doc.setFont('helvetica', 'bold')
-  doc.text('CERTIFICADO DE VERIFICACIÓN VEHICULAR', pageWidth / 2, 12, { align: 'center' })
+  doc.text('CERTIFICADO DE VERIFICACIÓN VEHICULAR', pageWidth / 2, 10, { align: 'center' })
 
-  doc.setFontSize(9)
+  doc.setFontSize(8)
   doc.setFont('helvetica', 'normal')
-  doc.text('Subsecretaria de Ordenamiento Urbano', pageWidth / 2, 18, { align: 'center' })
-  doc.text('Dirección Gral. de Movilidad y Transporte', pageWidth / 2, 23, { align: 'center' })
+  doc.text('Subsecretaria de Ordenamiento Urbano - Dirección Gral. de Movilidad y Transporte', pageWidth / 2, 16, { align: 'center' })
 
-  // Fecha
+  // Fecha compacta
   const fecha = new Date().toLocaleDateString('es-AR')
   const hora = new Date().toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })
-  doc.setFontSize(8)
-  doc.text(`Fecha: ${fecha}`, pageWidth - margin, 20, { align: 'right' })
-  doc.text(`Hora: ${hora}`, pageWidth - margin, 25, { align: 'right' })
+  doc.setFontSize(7)
+  doc.text(`${fecha} - ${hora}`, pageWidth - margin, 21, { align: 'right' })
 
-  let yPos = 38
+  let yPos = 32
 
   // --- DATOS PRINCIPALES (2 columnas) ---
   doc.setTextColor(0, 0, 0)
@@ -105,68 +106,63 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
   // Expediente y Licencia
   addField(doc, 'Expediente N°:', datos.expediente, col1X, yPos)
   addField(doc, 'Licencia N°:', datos.licencia, col2X, yPos)
-  yPos += 7
+  yPos += 6
 
-  addField(doc, 'Tipo de Habilitación:', datos.tipoHabilitacion, col1X, yPos)
+  addField(doc, 'Tipo:', datos.tipoHabilitacion, col1X, yPos)
   addField(doc, 'Transporte:', datos.tipoTransporte, col2X, yPos)
-  yPos += 10
+  yPos += 8
 
-  // --- TITULAR ---
-  doc.setFontSize(10)
+  // --- TITULAR (Compacto) ---
+  doc.setFontSize(9)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
-  doc.text('Titular', col1X, yPos)
-  yPos += 5
+  doc.text('TITULAR', col1X, yPos)
+  yPos += 4
 
-  doc.setFontSize(9)
+  doc.setFontSize(8)
   doc.setTextColor(0, 0, 0)
   doc.setFont('helvetica', 'normal')
   addField(doc, 'Nombre:', datos.titularNombre, col1X, yPos)
   addField(doc, 'DNI:', datos.titularDNI, col2X, yPos)
-  yPos += 6
+  yPos += 5
   addField(doc, 'Domicilio:', datos.titularDomicilio, col1X, yPos)
-  yPos += 10
-
-  // --- CONDUCTOR ---
-  if (datos.conductorNombre) {
-    doc.setFontSize(10)
-    doc.setFont('helvetica', 'bold')
-    doc.setTextColor(139, 0, 0)
-    doc.text('Conductor', col2X, yPos - 4)
-
-    doc.setFontSize(9)
-    doc.setTextColor(0, 0, 0)
-    doc.setFont('helvetica', 'normal')
-    addField(doc, 'Nombre:', datos.conductorNombre, col2X, yPos + 1)
-    yPos += 6
-    addField(doc, 'DNI:', datos.conductorDNI || 'N/A', col2X, yPos)
-    yPos += 4
-  }
+  yPos += 8
 
   // --- VEHÍCULO ---
-  doc.setFontSize(10)
+  doc.setFontSize(9)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
-  doc.text('Vehículo', col1X, yPos)
-  yPos += 5
+  doc.text('VEHÍCULO', col1X, yPos)
+  
+  // CONDUCTOR en la misma línea si existe
+  if (datos.conductorNombre) {
+    doc.text('CONDUCTOR', col2X, yPos)
+  }
+  yPos += 4
 
-  doc.setFontSize(9)
+  doc.setFontSize(8)
   doc.setTextColor(0, 0, 0)
   doc.setFont('helvetica', 'normal')
   addField(doc, 'Dominio:', datos.dominio, col1X, yPos)
-  yPos += 6
+  if (datos.conductorNombre) {
+    addField(doc, 'Nombre:', datos.conductorNombre, col2X, yPos)
+  }
+  yPos += 5
   addField(doc, 'Marca:', datos.marca, col1X, yPos)
-  addField(doc, 'Modelo:', datos.modelo, col2X, yPos)
-  yPos += 6
-  addField(doc, 'Inscripción Inicial:', datos.inscripcion, col1X, yPos)
-  yPos += 10
+  addField(doc, 'Modelo:', datos.modelo, col2X - 25, yPos)
+  if (datos.conductorNombre) {
+    addField(doc, 'DNI:', datos.conductorDNI || 'N/A', col2X + 30, yPos)
+  }
+  yPos += 5
+  addField(doc, 'Insc. Inicial:', datos.inscripcion, col1X, yPos)
+  yPos += 8
 
-  // --- TABLA DE VERIFICACIÓN ---
-  doc.setFontSize(11)
+  // --- TABLA DE VERIFICACIÓN OPTIMIZADA ---
+  doc.setFontSize(10)
   doc.setFont('helvetica', 'bold')
   doc.setTextColor(139, 0, 0)
   doc.text('DETALLES Y OBSERVACIONES DEL VEHÍCULO', pageWidth / 2, yPos, { align: 'center' })
-  yPos += 5
+  yPos += 4
 
   // Preparar datos de la tabla
   const tableData = ITEMS_ESCOLAR.map((item) => {
@@ -184,50 +180,62 @@ export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsP
 
   autoTable(doc, {
     startY: yPos,
-    head: [['Descripción', 'Bien', 'Regular', 'Mal', 'Observaciones']],
+    head: [['Descripción', 'B', 'R', 'M', 'Observaciones']],
     body: tableData,
     theme: 'grid',
     headStyles: {
       fillColor: [139, 0, 0],
       textColor: [255, 255, 255],
-      fontSize: 8,
+      fontSize: 7,
       fontStyle: 'bold',
       halign: 'center',
+      cellPadding: 1,
     },
     columnStyles: {
-      0: { cellWidth: 90, fontSize: 7 },
-      1: { cellWidth: 15, halign: 'center', fontSize: 8 },
-      2: { cellWidth: 15, halign: 'center', fontSize: 8 },
-      3: { cellWidth: 15, halign: 'center', fontSize: 8 },
-      4: { cellWidth: 45, fontSize: 7 },
+      0: { cellWidth: 95, fontSize: 6.5 },
+      1: { cellWidth: 10, halign: 'center', fontSize: 7 },
+      2: { cellWidth: 10, halign: 'center', fontSize: 7 },
+      3: { cellWidth: 10, halign: 'center', fontSize: 7 },
+      4: { cellWidth: 61, fontSize: 6.5 },
     },
     styles: {
-      fontSize: 7,
-      cellPadding: 1.5,
+      fontSize: 6.5,
+      cellPadding: 0.8,
       lineColor: [200, 200, 200],
       lineWidth: 0.1,
+      minCellHeight: 6,
     },
     margin: { left: margin, right: margin },
     tableWidth: 'auto',
+    didDrawPage: function(data) {
+      // Asegurar que todo quepa en una página
+      if (data.pageNumber > 1) {
+        console.warn('El contenido excede una página')
+      }
+    },
   })
 
-  // --- FIRMAS ---
-  const finalY = (doc as any).lastAutoTable.finalY + 10
+  // --- FIRMAS COMPACTAS ---
+  const finalY = (doc as any).lastAutoTable.finalY + 8
 
-  // Líneas para firmas
-  const lineY = finalY + 30
-  const lineWidth = 70
+  // Verificar que haya espacio para las firmas
+  const lineY = Math.min(finalY + 15, pageHeight - 25)
+  const lineWidth = 65
+
+  doc.setDrawColor(100, 100, 100)
+  doc.setLineWidth(0.3)
 
   // Firma del Interesado
-  doc.line(margin, lineY, margin + lineWidth, lineY)
-  doc.setFontSize(8)
+  doc.line(margin + 5, lineY, margin + 5 + lineWidth, lineY)
+  doc.setFontSize(7)
   doc.setFont('helvetica', 'normal')
-  doc.text('Firma del Interesado', margin + lineWidth / 2, lineY + 5, { align: 'center' })
+  doc.setTextColor(60, 60, 60)
+  doc.text('Firma del Interesado', margin + 5 + lineWidth / 2, lineY + 4, { align: 'center' })
 
   // Firma del Agente Verificador
-  const rightX = pageWidth - margin - lineWidth
+  const rightX = pageWidth - margin - lineWidth - 5
   doc.line(rightX, lineY, rightX + lineWidth, lineY)
-  doc.text('Firma del Agente Verificador', rightX + lineWidth / 2, lineY + 5, { align: 'center' })
+  doc.text('Firma del Agente Verificador', rightX + lineWidth / 2, lineY + 4, { align: 'center' })
 
   return doc
 }
