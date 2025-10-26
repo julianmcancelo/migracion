@@ -16,6 +16,7 @@ import {
   Bot,
   RotateCw,
   UserCog,
+  ClipboardCheck,
 } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
@@ -144,6 +145,33 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
     } catch (error) {
       console.error('Error al descargar PDF:', error)
       alert(`❌ Error al descargar PDF: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDescargarCertificado = async (hab: any) => {
+    try {
+      const response = await fetch(`/api/habilitaciones/${hab.id}/certificado-verificacion`)
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Error al generar certificado')
+      }
+      
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `Certificado-Verificacion-${hab.nro_licencia || hab.id}.pdf`
+      document.body.appendChild(a)
+      a.click()
+      document.body.removeChild(a)
+      window.URL.revokeObjectURL(url)
+
+      alert('✅ Certificado de verificación descargado correctamente')
+    } catch (error) {
+      console.error('Error al descargar certificado:', error)
+      alert(`❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
     }
   }
 
@@ -375,6 +403,15 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <Download className="mr-2 h-4 w-4" />
                       Descargar PDF
                     </DropdownMenuItem>
+                    {hab.tipo_transporte === 'Escolar' && (
+                      <DropdownMenuItem
+                        onClick={() => handleDescargarCertificado(hab)}
+                        className="cursor-pointer"
+                      >
+                        <ClipboardCheck className="mr-2 h-4 w-4" />
+                        Certificado Verificación
+                      </DropdownMenuItem>
+                    )}
                     
                     <DropdownMenuSeparator />
                     
