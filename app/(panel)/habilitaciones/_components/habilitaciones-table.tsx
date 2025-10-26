@@ -29,6 +29,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -328,7 +332,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-52">
+                    {/* Acciones rápidas */}
                     <DropdownMenuItem
                       onClick={() => handleVerDetalle(hab)}
                       className="cursor-pointer"
@@ -340,44 +345,16 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <Edit className="mr-2 h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Documentos */}
                     <DropdownMenuItem
                       onClick={() => handleGenerarCredencial(hab)}
                       className="cursor-pointer"
                     >
                       <QrCode className="mr-2 h-4 w-4" />
                       Ver Credencial
-                    </DropdownMenuItem>
-                    {hab.estado === 'HABILITADO' && (
-                      <DropdownMenuItem
-                        onClick={() => handleGestionarObleas(hab)}
-                        className="cursor-pointer"
-                      >
-                        <Shield className="mr-2 h-4 w-4" />
-                        Gestionar Obleas
-                      </DropdownMenuItem>
-                    )}
-                    {hab.vehiculos && hab.vehiculos.length > 0 && (
-                      <DropdownMenuItem
-                        onClick={() => handleCambioMaterial(hab)}
-                        className="cursor-pointer"
-                      >
-                        <RefreshCcw className="mr-2 h-4 w-4" />
-                        Cambio de Material
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem
-                      onClick={() => handleChatIA(hab)}
-                      className="cursor-pointer"
-                    >
-                      <Bot className="mr-2 h-4 w-4" />
-                      Consultar con IA
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
-                      onClick={() => handleRenovar(hab)}
-                      className="cursor-pointer"
-                    >
-                      <RotateCw className="mr-2 h-4 w-4" />
-                      Renovar Habilitación
                     </DropdownMenuItem>
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
@@ -386,18 +363,66 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
-                      onClick={() => handleAsignarTurno(hab)}
-                      className="cursor-pointer"
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Asignar Turno
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
                       onClick={() => handleDescargarPDF(hab)}
                       className="cursor-pointer"
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Descargar PDF
+                    </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Submenú Gestión */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="cursor-pointer">
+                        <RefreshCcw className="mr-2 h-4 w-4" />
+                        <span>Gestión</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                          onClick={() => handleRenovar(hab)}
+                          className="cursor-pointer"
+                        >
+                          <RotateCw className="mr-2 h-4 w-4" />
+                          Renovar Habilitación
+                        </DropdownMenuItem>
+                        {hab.vehiculos && hab.vehiculos.length > 0 && (
+                          <DropdownMenuItem
+                            onClick={() => handleCambioMaterial(hab)}
+                            className="cursor-pointer"
+                          >
+                            <RefreshCcw className="mr-2 h-4 w-4" />
+                            Cambio de Material
+                          </DropdownMenuItem>
+                        )}
+                        {hab.estado === 'HABILITADO' && (
+                          <DropdownMenuItem
+                            onClick={() => handleGestionarObleas(hab)}
+                            className="cursor-pointer"
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            Gestionar Obleas
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => handleAsignarTurno(hab)}
+                          className="cursor-pointer"
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Asignar Turno
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Herramientas */}
+                    <DropdownMenuItem
+                      onClick={() => handleChatIA(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Bot className="mr-2 h-4 w-4" />
+                      Consultar con IA
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

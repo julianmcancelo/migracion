@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     // Construir filtro
     const where: any = {
-      usuarioId: session.userId,
+      usuario_id: session.userId,
     }
 
     if (soloNoLeidas) {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       ? await prisma.notificaciones.findMany({
           where,
           orderBy: {
-            fechaCreacion: 'desc',
+            fecha_creacion: 'desc',
           },
           take: limit,
         })
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     // Contar no leídas
     const noLeidas = await prisma.notificaciones.count({
       where: {
-        usuarioId: session.userId,
+        usuario_id: session.userId,
         leida: false,
       },
     })
