@@ -1,16 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getServerSession } from 'next-auth'
-import { authOptions } from '@/lib/auth'
-import { prisma } from '@/lib/prisma'
+import { getSession } from '@/lib/auth'
+import { prisma } from '@/lib/db'
 import { jsPDF } from 'jspdf'
 import 'jspdf-autotable'
+
+export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const session = await getServerSession(authOptions)
+    const session = await getSession()
     if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
@@ -40,16 +41,17 @@ export async function GET(
             remiseria: true,
           },
         },
-        inspecciones: {
-          include: {
-            inspeccion_detalles: true,
-            inspeccion_fotos: true,
-          },
-          orderBy: {
-            fecha_inspeccion: 'desc',
-          },
-          take: 1, // Solo la última inspección
-        },
+        // TODO: Descomentar cuando se cree la tabla inspecciones
+        // inspecciones: {
+        //   include: {
+        //     inspeccion_detalles: true,
+        //     inspeccion_fotos: true,
+        //   },
+        //   orderBy: {
+        //     fecha_inspeccion: 'desc',
+        //   },
+        //   take: 1,
+        // },
       },
     })
 
@@ -97,12 +99,13 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
   }
 
   const estado = habilitacion.estado || 'PENDIENTE'
-  const estadoColor = {
+  const estadoColorMap: Record<string, number[]> = {
     HABILITADO: colors.success,
     PENDIENTE: colors.warning,
     VENCIDO: [231, 76, 60],
     RECHAZADO: [231, 76, 60],
-  }[estado] || colors.gray
+  }
+  const estadoColor = estadoColorMap[estado] || colors.gray
 
   // Marca de agua (si está habilitado)
   if (estado === 'HABILITADO') {
@@ -327,10 +330,11 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
   }
 
   // --- INSPECCIÓN ---
+  // TODO: Descomentar cuando se cree la tabla inspecciones
+  /*
   if (habilitacion.inspecciones && habilitacion.inspecciones.length > 0) {
-    const inspeccion = habilitacion.inspecciones[0] // Última inspección
+    const inspeccion = habilitacion.inspecciones[0]
     
-    // Verificar si hay espacio suficiente, sino nueva página
     if (yPos > 220) {
       doc.addPage()
       yPos = 45
@@ -342,7 +346,6 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
     doc.text('Última Inspección Vehicular', 15, yPos)
     yPos += 8
 
-    // Info de la inspección
     doc.setFontSize(9)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
@@ -355,7 +358,6 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
     doc.text(`Inspector: ${inspeccion.nombre_inspector || 'N/A'}`, 110, yPos)
     yPos += 7
 
-    // Tabla de detalles
     if (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0) {
       const detallesData = inspeccion.inspeccion_detalles.map((detalle: any) => {
         const estadoIcon = {
@@ -377,28 +379,20 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
         head: [['', 'Item Verificado', 'Estado', 'Observación']],
         body: detallesData,
         theme: 'striped',
-        headStyles: {
-          fillColor: colors.primary,
-          fontSize: 9,
-          fontStyle: 'bold',
-        },
+        headStyles: { fillColor: colors.primary, fontSize: 9, fontStyle: 'bold' },
         columnStyles: {
           0: { cellWidth: 10, halign: 'center' },
           1: { cellWidth: 70 },
           2: { cellWidth: 25, halign: 'center' },
           3: { cellWidth: 65, fontSize: 8 },
         },
-        styles: {
-          fontSize: 8,
-          cellPadding: 2,
-        },
+        styles: { fontSize: 8, cellPadding: 2 },
         margin: { left: 15, right: 15 },
       })
 
       yPos = (doc as any).lastAutoTable.finalY + 8
     }
 
-    // Veredicto de la inspección
     if (inspeccion.veredicto) {
       const veredictoColors: any = {
         'APROBADO': colors.success,
@@ -408,11 +402,7 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
       
       const veredictoColor = veredictoColors[inspeccion.veredicto.toUpperCase()] || colors.gray
       
-      doc.setFillColor(
-        veredictoColor[0] as number,
-        veredictoColor[1] as number,
-        veredictoColor[2] as number
-      )
+      doc.setFillColor(veredictoColor[0], veredictoColor[1], veredictoColor[2])
       doc.setTextColor(255, 255, 255)
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(12)
@@ -421,6 +411,7 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
       yPos += 12
     }
   }
+  */
 
   // --- OBSERVACIONES ---
   if (habilitacion.observaciones) {
