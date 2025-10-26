@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Menu } from 'lucide-react'
+import { DropdownNotificaciones } from './dropdown-notificaciones'
 
 interface HeaderProps {
   user?: {
@@ -125,28 +126,10 @@ export function Header({ user, onMenuClick }: HeaderProps) {
 
           {/* Acciones de usuario */}
           <div className="flex items-center gap-1.5 sm:gap-2 lg:gap-3">
-            {/* Botón de notificaciones */}
-            <button
-              type="button"
-              className="relative hidden rounded-full bg-white p-2 text-gray-600 transition-colors hover:bg-gray-100 hover:text-gray-900 sm:block"
-            >
-              <span className="sr-only">Ver notificaciones</span>
-              <svg
-                className="h-5 w-5 sm:h-6 sm:w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                strokeWidth="1.5"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-                />
-              </svg>
-              {/* Badge de notificaciones pendientes */}
-              <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white"></span>
-            </button>
+            {/* Notificaciones funcionales */}
+            <div className="hidden sm:block">
+              <DropdownNotificaciones />
+            </div>
 
             {/* Menú de usuario */}
             <div className="relative">

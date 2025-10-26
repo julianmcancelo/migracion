@@ -16,6 +16,9 @@ model admin {
   rol       admin_rol? @default(lector)
   creado_en DateTime   @default(now()) @db.Timestamp(0)
   legajo    String?    @unique(map: "legajo") @db.VarChar(50)
+  
+  // Relaciones
+  notificaciones notificaciones[]
 }
 
 model establecimientos {
@@ -201,13 +204,24 @@ model inspecciones {
 }
 
 model notificaciones {
-  id          Int      @id @default(autoincrement())
-  dni_usuario String   @db.VarChar(20)
-  titulo      String   @db.VarChar(100)
-  texto       String   @db.Text
-  fecha       DateTime @default(now()) @db.DateTime(0)
-  leida       Boolean  @default(false)
-  tipo        String   @default("informativo") @db.VarChar(50)
+  id              Int       @id @default(autoincrement())
+  usuario_id      Int
+  tipo            String    @db.VarChar(50)
+  titulo          String    @db.VarChar(255)
+  mensaje         String    @db.Text
+  icono           String    @default("🔔") @db.VarChar(50)
+  url             String?   @db.VarChar(500)
+  leida           Boolean   @default(false)
+  fecha_creacion  DateTime  @default(now())
+  fecha_lectura   DateTime?
+  metadata        Json?
+  
+  // Relación con usuarios admin
+  usuario         admin     @relation(fields: [usuario_id], references: [id], onDelete: Cascade)
+  
+  @@index([usuario_id, leida], map: "idx_usuario_leida")
+  @@index([fecha_creacion], map: "idx_fecha_creacion")
+  @@index([tipo], map: "idx_tipo")
 }
 
 model notificaciones_vehiculos {
