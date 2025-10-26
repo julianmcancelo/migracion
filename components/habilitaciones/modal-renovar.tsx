@@ -14,6 +14,8 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { AlertCircle, CheckCircle, Loader2, RefreshCw, User, Car } from 'lucide-react'
+import { RenovarPersonaSelector } from './renovar-persona-selector'
+import { RenovarVehiculoSelector } from './renovar-vehiculo-selector'
 
 interface ModalRenovarProps {
   habilitacion: {
@@ -42,8 +44,8 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
   const [copiarVehiculo, setCopiarVehiculo] = useState(true)
   
   // Datos nuevos
-  const [nuevoTitular, setNuevoTitular] = useState({ nombre: '', apellido: '', dni: '' })
-  const [nuevoVehiculo, setNuevoVehiculo] = useState({ dominio: '', marca: '', modelo: '' })
+  const [nuevoTitular, setNuevoTitular] = useState<any>(null)
+  const [nuevoVehiculo, setNuevoVehiculo] = useState<any>(null)
 
   const handleRenovar = async () => {
     if (!nuevoExpediente.trim()) {
@@ -52,13 +54,13 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     }
     
     // Validar datos nuevos si no se copian
-    if (!copiarTitular && (!nuevoTitular.nombre || !nuevoTitular.apellido || !nuevoTitular.dni)) {
-      setError('Complete los datos del titular')
+    if (!copiarTitular && !nuevoTitular) {
+      setError('Seleccione o cree un titular')
       return
     }
     
-    if (!copiarVehiculo && (!nuevoVehiculo.dominio || !nuevoVehiculo.marca)) {
-      setError('Complete los datos del vehículo')
+    if (!copiarVehiculo && !nuevoVehiculo) {
+      setError('Seleccione o cree un vehículo')
       return
     }
 
@@ -125,8 +127,8 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     setSuccess(false)
     setCopiarTitular(true)
     setCopiarVehiculo(true)
-    setNuevoTitular({ nombre: '', apellido: '', dni: '' })
-    setNuevoVehiculo({ dominio: '', marca: '', modelo: '' })
+    setNuevoTitular(null)
+    setNuevoVehiculo(null)
     onOpenChange(false)
   }
 
@@ -186,8 +188,12 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
                   type="checkbox"
                   id="copiarTitular"
                   checked={copiarTitular}
-                  onChange={(e) => setCopiarTitular(e.target.checked)}
+                  onChange={(e) => {
+                    setCopiarTitular(e.target.checked)
+                    if (e.target.checked) setNuevoTitular(null)
+                  }}
                   className="h-4 w-4 rounded border-gray-300"
+                  disabled={loading}
                 />
                 <Label htmlFor="copiarTitular" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                   <User className="h-4 w-4" />
@@ -196,24 +202,10 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
               </div>
               
               {!copiarTitular && (
-                <div className="space-y-2 pl-6">
-                  <Input
-                    placeholder="Nombre *"
-                    value={nuevoTitular.nombre}
-                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, nombre: e.target.value })}
-                    disabled={loading}
-                  />
-                  <Input
-                    placeholder="Apellido *"
-                    value={nuevoTitular.apellido}
-                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, apellido: e.target.value })}
-                    disabled={loading}
-                  />
-                  <Input
-                    placeholder="DNI *"
-                    value={nuevoTitular.dni}
-                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, dni: e.target.value })}
-                    disabled={loading}
+                <div className="pl-6">
+                  <RenovarPersonaSelector 
+                    rol="TITULAR"
+                    onSelect={(persona) => setNuevoTitular(persona)}
                   />
                 </div>
               )}
@@ -226,8 +218,12 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
                   type="checkbox"
                   id="copiarVehiculo"
                   checked={copiarVehiculo}
-                  onChange={(e) => setCopiarVehiculo(e.target.checked)}
+                  onChange={(e) => {
+                    setCopiarVehiculo(e.target.checked)
+                    if (e.target.checked) setNuevoVehiculo(null)
+                  }}
                   className="h-4 w-4 rounded border-gray-300"
+                  disabled={loading}
                 />
                 <Label htmlFor="copiarVehiculo" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                   <Car className="h-4 w-4" />
@@ -236,25 +232,9 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
               </div>
               
               {!copiarVehiculo && (
-                <div className="space-y-2 pl-6">
-                  <Input
-                    placeholder="Dominio (Ej: ABC123) *"
-                    value={nuevoVehiculo.dominio}
-                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, dominio: e.target.value.toUpperCase() })}
-                    disabled={loading}
-                    maxLength={7}
-                  />
-                  <Input
-                    placeholder="Marca *"
-                    value={nuevoVehiculo.marca}
-                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
-                    disabled={loading}
-                  />
-                  <Input
-                    placeholder="Modelo"
-                    value={nuevoVehiculo.modelo}
-                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
-                    disabled={loading}
+                <div className="pl-6">
+                  <RenovarVehiculoSelector 
+                    onSelect={(vehiculo) => setNuevoVehiculo(vehiculo)}
                   />
                 </div>
               )}
