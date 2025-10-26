@@ -326,6 +326,102 @@ async function generarPDF(habilitacion: any): Promise<Buffer> {
     yPos = (doc as any).lastAutoTable.finalY + 10
   }
 
+  // --- INSPECCIÓN ---
+  if (habilitacion.inspecciones && habilitacion.inspecciones.length > 0) {
+    const inspeccion = habilitacion.inspecciones[0] // Última inspección
+    
+    // Verificar si hay espacio suficiente, sino nueva página
+    if (yPos > 220) {
+      doc.addPage()
+      yPos = 45
+    }
+
+    doc.setFontSize(12)
+    doc.setTextColor(colors.text[0], colors.text[1], colors.text[2])
+    doc.setFont('helvetica', 'bold')
+    doc.text('Última Inspección Vehicular', 15, yPos)
+    yPos += 8
+
+    // Info de la inspección
+    doc.setFontSize(9)
+    doc.setFont('helvetica', 'normal')
+    doc.setTextColor(colors.gray[0], colors.gray[1], colors.gray[2])
+    
+    const fechaInsp = inspeccion.fecha_inspeccion 
+      ? new Date(inspeccion.fecha_inspeccion).toLocaleString('es-AR')
+      : 'N/A'
+    
+    doc.text(`Fecha: ${fechaInsp}`, 15, yPos)
+    doc.text(`Inspector: ${inspeccion.nombre_inspector || 'N/A'}`, 110, yPos)
+    yPos += 7
+
+    // Tabla de detalles
+    if (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0) {
+      const detallesData = inspeccion.inspeccion_detalles.map((detalle: any) => {
+        const estadoIcon = {
+          'bien': '✓',
+          'regular': '◐',
+          'mal': '✗',
+        }[detalle.estado?.toLowerCase()] || '-'
+        
+        return [
+          estadoIcon,
+          detalle.nombre_item || 'N/A',
+          detalle.estado?.toUpperCase() || 'N/A',
+          detalle.observacion || '-',
+        ]
+      })
+
+      ;(doc as any).autoTable({
+        startY: yPos,
+        head: [['', 'Item Verificado', 'Estado', 'Observación']],
+        body: detallesData,
+        theme: 'striped',
+        headStyles: {
+          fillColor: colors.primary,
+          fontSize: 9,
+          fontStyle: 'bold',
+        },
+        columnStyles: {
+          0: { cellWidth: 10, halign: 'center' },
+          1: { cellWidth: 70 },
+          2: { cellWidth: 25, halign: 'center' },
+          3: { cellWidth: 65, fontSize: 8 },
+        },
+        styles: {
+          fontSize: 8,
+          cellPadding: 2,
+        },
+        margin: { left: 15, right: 15 },
+      })
+
+      yPos = (doc as any).lastAutoTable.finalY + 8
+    }
+
+    // Veredicto de la inspección
+    if (inspeccion.veredicto) {
+      const veredictoColors: any = {
+        'APROBADO': colors.success,
+        'CONDICIONAL': colors.warning,
+        'RECHAZADO': [231, 76, 60],
+      }
+      
+      const veredictoColor = veredictoColors[inspeccion.veredicto.toUpperCase()] || colors.gray
+      
+      doc.setFillColor(
+        veredictoColor[0] as number,
+        veredictoColor[1] as number,
+        veredictoColor[2] as number
+      )
+      doc.setTextColor(255, 255, 255)
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(12)
+      doc.rect(15, yPos - 4, 180, 10, 'F')
+      doc.text(`VEREDICTO: ${inspeccion.veredicto.toUpperCase()}`, 105, yPos + 2, { align: 'center' })
+      yPos += 12
+    }
+  }
+
   // --- OBSERVACIONES ---
   if (habilitacion.observaciones) {
     doc.setFontSize(12)
