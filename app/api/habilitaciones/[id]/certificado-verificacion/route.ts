@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
-import { generarCertificadoVerificacion } from '@/lib/certificado-verificacion-escolar'
 
 export const dynamic = 'force-dynamic'
 
@@ -101,20 +100,12 @@ export async function GET(
         : 'N/A',
     }
 
-    // Generar PDF
-    const pdfBuffer = await generarCertificadoVerificacion(datos)
-
-    // Retornar PDF
-    return new NextResponse(pdfBuffer, {
-      headers: {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="Certificado-Verificacion-${habilitacion.nro_licencia || habilitacion.id}.pdf"`,
-      },
-    })
+    // Retornar datos JSON (el PDF se genera en el cliente)
+    return NextResponse.json({ success: true, data: datos })
   } catch (error) {
-    console.error('Error al generar certificado:', error)
+    console.error('Error al obtener datos del certificado:', error)
     return NextResponse.json(
-      { error: 'Error al generar certificado' },
+      { error: 'Error al obtener datos del certificado' },
       { status: 500 }
     )
   }

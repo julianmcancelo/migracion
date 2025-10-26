@@ -72,14 +72,15 @@ He creado un sistema completo para generar **Certificados de Verificación Vehic
 
 ## 🎯 Archivos Creados
 
-### **1. `lib/certificado-verificacion-escolar.ts`**
-Función principal para generar el PDF:
+### **1. `components/habilitaciones/certificado-verificacion-pdf.tsx`**
+Componente cliente para generar el PDF:
 
 ```typescript
-export async function generarCertificadoVerificacion(datos: DatosVerificacion): Promise<Buffer>
+export function generarCertificadoVerificacionPDF(datos: DatosVerificacion): jsPDF
 ```
 
 **Características:**
+- Genera PDF en el **navegador** (no en el servidor)
 - Header con fondo bordo (color institucional)
 - Información organizada en 2 columnas
 - Tabla con 13 items predefinidos
@@ -88,10 +89,23 @@ export async function generarCertificadoVerificacion(datos: DatosVerificacion): 
 - Todo en 1 página A4
 
 ### **2. `app/api/habilitaciones/[id]/certificado-verificacion/route.ts`**
-Endpoint API para generar el certificado:
+Endpoint API para obtener datos del certificado:
 
 ```typescript
 GET /api/habilitaciones/[id]/certificado-verificacion
+```
+
+**Retorna:**
+```json
+{
+  "success": true,
+  "data": {
+    "expediente": "...",
+    "licencia": "...",
+    "titularNombre": "...",
+    // ... más datos
+  }
+}
 ```
 
 **Validaciones:**
@@ -111,6 +125,12 @@ Agregado condicionalmente para transporte escolar:
   </DropdownMenuItem>
 )}
 ```
+
+**Proceso:**
+1. Obtiene datos desde API (JSON)
+2. Importa dinámicamente la función de generación
+3. Genera PDF en el navegador
+4. Descarga automáticamente
 
 ---
 

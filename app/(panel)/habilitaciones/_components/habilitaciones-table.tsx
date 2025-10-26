@@ -151,22 +151,26 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleDescargarCertificado = async (hab: any) => {
     try {
+      // Obtener datos del certificado
       const response = await fetch(`/api/habilitaciones/${hab.id}/certificado-verificacion`)
       
       if (!response.ok) {
         const error = await response.json()
-        throw new Error(error.error || 'Error al generar certificado')
+        throw new Error(error.error || 'Error al obtener datos del certificado')
       }
       
-      const blob = await response.blob()
-      const url = window.URL.createObjectURL(blob)
-      const a = document.createElement('a')
-      a.href = url
-      a.download = `Certificado-Verificacion-${hab.nro_licencia || hab.id}.pdf`
-      document.body.appendChild(a)
-      a.click()
-      document.body.removeChild(a)
-      window.URL.revokeObjectURL(url)
+      const result = await response.json()
+      
+      if (!result.success || !result.data) {
+        throw new Error('No se pudieron obtener los datos del certificado')
+      }
+
+      // Generar PDF en el cliente
+      const { generarCertificadoVerificacionPDF } = await import('@/components/habilitaciones/certificado-verificacion-pdf')
+      const doc = generarCertificadoVerificacionPDF(result.data)
+      
+      // Descargar PDF
+      doc.save(`Certificado-Verificacion-${hab.nro_licencia || hab.id}.pdf`)
 
       alert('✅ Certificado de verificación descargado correctamente')
     } catch (error) {
