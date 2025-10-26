@@ -14,6 +14,7 @@ import {
   Shield,
   RefreshCcw,
   Bot,
+  RotateCw,
 } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
@@ -22,6 +23,7 @@ import { EditarHabilitacionDialog } from './editar-habilitacion-dialog'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
 import ModalCambioVehiculo from '@/components/habilitaciones/modal-cambio-vehiculo'
 import ChatIAHabilitacion from '@/components/habilitaciones/chat-ia-habilitacion'
+import { ModalRenovar } from '@/components/habilitaciones/modal-renovar'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -78,6 +80,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showObleasModal, setShowObleasModal] = useState(false)
   const [showCambioVehiculoModal, setShowCambioVehiculoModal] = useState(false)
   const [showChatIAModal, setShowChatIAModal] = useState(false)
+  const [showRenovarModal, setShowRenovarModal] = useState(false)
+  const [habilitacionRenovar, setHabilitacionRenovar] = useState<any>(null)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -172,6 +176,12 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const handleCambioMaterial = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowCambioVehiculoModal(true)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleRenovar = (hab: any) => {
+    setHabilitacionRenovar(hab)
+    setShowRenovarModal(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -362,6 +372,13 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <Bot className="mr-2 h-4 w-4" />
                       Consultar con IA
                     </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={() => handleRenovar(hab)}
+                      className="cursor-pointer"
+                    >
+                      <RotateCw className="mr-2 h-4 w-4" />
+                      Renovar Habilitación
+                    </DropdownMenuItem>
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
                         <FileText className="mr-2 h-4 w-4" />
@@ -535,6 +552,18 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
             setShowCambioVehiculoModal(false)
             // Refrescar la página para ver el nuevo vehículo
             router.refresh()
+          }}
+        />
+      )}
+
+      {/* Modal de Renovar */}
+      {habilitacionRenovar && (
+        <ModalRenovar
+          habilitacion={habilitacionRenovar}
+          open={showRenovarModal}
+          onOpenChange={(open) => {
+            setShowRenovarModal(open)
+            if (!open) setHabilitacionRenovar(null)
           }}
         />
       )}
