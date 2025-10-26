@@ -40,6 +40,16 @@ export async function GET(
             remiseria: true,
           },
         },
+        inspecciones: {
+          include: {
+            inspeccion_detalles: true,
+            inspeccion_fotos: true,
+          },
+          orderBy: {
+            fecha_inspeccion: 'desc',
+          },
+          take: 1, // Solo la última inspección
+        },
       },
     })
 
