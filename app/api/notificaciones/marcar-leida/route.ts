@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verificarSesion } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
 /**
@@ -8,8 +8,8 @@ import { prisma } from '@/lib/db'
  */
 export async function POST(request: NextRequest) {
   try {
-    const usuario = await verificarSesion()
-    if (!usuario) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       // Marcar todas como leídas
       const result = await prisma.notificaciones.updateMany({
         where: {
-          usuario_id: usuario.id,
+          usuario_id: session.userId,
           leida: false,
         },
         data: {
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         id: {
           in: body.ids,
         },
-        usuario_id: usuario.id,
+        usuario_id: session.userId,
         leida: false,
       },
       data: {

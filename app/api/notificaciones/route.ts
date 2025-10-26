@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verificarSesion } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
 /**
@@ -10,8 +10,8 @@ import { prisma } from '@/lib/db'
  */
 export async function GET(request: NextRequest) {
   try {
-    const usuario = await verificarSesion()
-    if (!usuario) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json(
         { error: 'No autorizado' },
         { status: 401 }
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
 
     // Construir filtro
     const where: any = {
-      usuario_id: usuario.id,
+      usuarioId: session.userId,
     }
 
     if (soloNoLeidas) {
@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
       ? await prisma.notificaciones.findMany({
           where,
           orderBy: {
-            fecha_creacion: 'desc',
+            fechaCreacion: 'desc',
           },
           take: limit,
         })
@@ -45,7 +45,7 @@ export async function GET(request: NextRequest) {
     // Contar no leídas
     const noLeidas = await prisma.notificaciones.count({
       where: {
-        usuario_id: usuario.id,
+        usuarioId: session.userId,
         leida: false,
       },
     })
