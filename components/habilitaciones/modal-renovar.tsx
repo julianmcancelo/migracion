@@ -13,7 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { AlertCircle, CheckCircle, Loader2, RefreshCw } from 'lucide-react'
+import { AlertCircle, CheckCircle, Loader2, RefreshCw, User, Car } from 'lucide-react'
 
 interface ModalRenovarProps {
   habilitacion: {
@@ -36,10 +36,29 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
   const [error, setError] = useState<string | null>(null)
   const [advertencias, setAdvertencias] = useState<string[]>([])
   const [success, setSuccess] = useState(false)
+  
+  // Checkboxes
+  const [copiarTitular, setCopiarTitular] = useState(true)
+  const [copiarVehiculo, setCopiarVehiculo] = useState(true)
+  
+  // Datos nuevos
+  const [nuevoTitular, setNuevoTitular] = useState({ nombre: '', apellido: '', dni: '' })
+  const [nuevoVehiculo, setNuevoVehiculo] = useState({ dominio: '', marca: '', modelo: '' })
 
   const handleRenovar = async () => {
     if (!nuevoExpediente.trim()) {
       setError('Debe ingresar el número de expediente')
+      return
+    }
+    
+    // Validar datos nuevos si no se copian
+    if (!copiarTitular && (!nuevoTitular.nombre || !nuevoTitular.apellido || !nuevoTitular.dni)) {
+      setError('Complete los datos del titular')
+      return
+    }
+    
+    if (!copiarVehiculo && (!nuevoVehiculo.dominio || !nuevoVehiculo.marca)) {
+      setError('Complete los datos del vehículo')
       return
     }
 
@@ -48,12 +67,24 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     setAdvertencias([])
 
     try {
+      const body: any = {
+        nuevoExpediente: nuevoExpediente.trim(),
+        copiarTitular,
+        copiarVehiculo,
+      }
+      
+      if (!copiarTitular) {
+        body.nuevoTitular = nuevoTitular
+      }
+      
+      if (!copiarVehiculo) {
+        body.nuevoVehiculo = nuevoVehiculo
+      }
+      
       const res = await fetch(`/api/habilitaciones/${habilitacion.id}/renovar`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          nuevoExpediente: nuevoExpediente.trim(),
-        }),
+        body: JSON.stringify(body),
       })
 
       const data = await res.json()
@@ -92,13 +123,14 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     setError(null)
     setAdvertencias([])
     setSuccess(false)
+    setCopiarTitular(true)
+    setCopiarVehiculo(true)
+    setNuevoTitular({ nombre: '', apellido: '', dni: '' })
+    setNuevoVehiculo({ dominio: '', marca: '', modelo: '' })
     onOpenChange(false)
   }
 
-  // Calcular nuevo número de licencia
-  const numeroBase = habilitacion.nro_licencia?.split('/')[0] || habilitacion.nro_licencia || '???'
   const añoActual = new Date().getFullYear()
-  const nuevaLicencia = `${numeroBase}/${añoActual}`
 
   return (
     <Dialog open={open} onOpenChange={handleCerrar}>
@@ -106,136 +138,153 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <RefreshCw className="h-5 w-5 text-blue-600" />
-            Renovar Habilitación
+            Renovar Habilitación {añoActual}
           </DialogTitle>
           <DialogDescription>
-            Crear una nueva habilitación para el año {añoActual} manteniendo los mismos datos
+            Renueva esta habilitación de forma simple
           </DialogDescription>
         </DialogHeader>
 
         {success ? (
           <div className="py-8 text-center">
             <CheckCircle className="mx-auto h-12 w-12 text-green-600" />
-            <h3 className="mt-4 text-lg font-semibold text-green-900">¡Renovación exitosa!</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Nueva licencia: <span className="font-semibold">{nuevaLicencia}</span>
-            </p>
-            <p className="mt-1 text-sm text-gray-600">Redirigiendo...</p>
-            {advertencias.length > 0 && (
-              <div className="mt-4 rounded-lg bg-yellow-50 p-3 text-left">
-                <p className="text-sm font-medium text-yellow-800">⚠️ Advertencias:</p>
-                <ul className="mt-2 space-y-1 text-xs text-yellow-700">
-                  {advertencias.map((adv, i) => (
-                    <li key={i}>• {adv}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            <h3 className="mt-4 text-lg font-semibold text-green-900">✅ ¡Listo!</h3>
+            <p className="mt-2 text-sm text-gray-600">Habilitación renovada exitosamente</p>
+            <p className="mt-1 text-sm text-gray-500">Redirigiendo...</p>
           </div>
         ) : (
           <div className="space-y-4 py-4">
-            {/* Info de la habilitación actual */}
-            <div className="rounded-lg bg-gray-50 p-4">
-              <h4 className="mb-2 text-sm font-medium text-gray-700">Habilitación Actual</h4>
-              <div className="space-y-1 text-sm">
-                <p>
-                  <span className="text-gray-600">Licencia:</span>{' '}
-                  <span className="font-semibold">{habilitacion.nro_licencia}</span>
-                </p>
-                <p>
-                  <span className="text-gray-600">Expediente:</span>{' '}
-                  <span className="font-semibold">{habilitacion.expte || 'N/A'}</span>
-                </p>
-                <p>
-                  <span className="text-gray-600">Tipo:</span>{' '}
-                  <span className="capitalize">{habilitacion.tipo_transporte || 'N/A'}</span>
-                </p>
-                {habilitacion.titular && (
-                  <p>
-                    <span className="text-gray-600">Titular:</span>{' '}
-                    <span>{habilitacion.titular}</span>
-                  </p>
-                )}
-                {habilitacion.vehiculo && (
-                  <p>
-                    <span className="text-gray-600">Vehículo:</span>{' '}
-                    <span>{habilitacion.vehiculo}</span>
-                  </p>
-                )}
-              </div>
-            </div>
-
-            {/* Nueva licencia */}
-            <div className="rounded-lg bg-blue-50 p-4">
-              <h4 className="mb-2 text-sm font-medium text-blue-700">Nueva Habilitación</h4>
-              <div className="space-y-1 text-sm">
-                <p>
-                  <span className="text-blue-600">Licencia:</span>{' '}
-                  <span className="font-semibold text-blue-900">{nuevaLicencia}</span>
-                </p>
-                <p>
-                  <span className="text-blue-600">Vigencia:</span>{' '}
-                  <span className="text-blue-900">
-                    01/01/{añoActual} - 31/12/{añoActual}
-                  </span>
-                </p>
-                <p className="text-xs text-blue-600">
-                  ℹ️ Se copiarán personas y vehículos de la habilitación actual
-                </p>
-              </div>
-            </div>
-
-            {/* Input nuevo expediente */}
-            <div className="space-y-2">
-              <Label htmlFor="expediente">
-                Nuevo Número de Expediente <span className="text-red-500">*</span>
-              </Label>
-              <Input
-                id="expediente"
-                placeholder="Ej: EXP-2025-0123"
-                value={nuevoExpediente}
-                onChange={(e) => setNuevoExpediente(e.target.value)}
-                disabled={loading}
-                className="font-mono"
-              />
-              <p className="text-xs text-gray-500">
-                El número de expediente es único para cada renovación anual
+            {/* Info simple */}
+            <div className="rounded-lg border bg-blue-50 p-3">
+              <p className="text-sm text-blue-900">
+                📋 <strong>Licencia:</strong> {habilitacion.nro_licencia}
+              </p>
+              <p className="mt-1 text-xs text-blue-700">
+                Se renovará para el año {añoActual}
               </p>
             </div>
 
-            {/* Advertencias */}
-            {advertencias.length > 0 && (
-              <div className="rounded-lg bg-yellow-50 border border-yellow-200 p-3">
-                <p className="text-sm font-medium text-yellow-800">⚠️ Documentos Vencidos:</p>
-                <ul className="mt-2 space-y-1 text-xs text-yellow-700">
-                  {advertencias.map((adv, i) => (
-                    <li key={i}>• {adv}</li>
-                  ))}
-                </ul>
-                <p className="mt-2 text-xs text-yellow-600">
-                  Se creará la renovación pero deberá actualizar estos documentos
-                </p>
+            {/* Expediente */}
+            <div>
+              <Label htmlFor="expediente" className="text-sm font-medium">
+                Nuevo Expediente <span className="text-red-500">*</span>
+              </Label>
+              <Input
+                id="expediente"
+                placeholder="EXP-2025-0123"
+                value={nuevoExpediente}
+                onChange={(e) => setNuevoExpediente(e.target.value)}
+                disabled={loading}
+                className="mt-1.5"
+              />
+            </div>
+            
+            {/* Titular */}
+            <div className="space-y-3 rounded-lg border p-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="copiarTitular"
+                  checked={copiarTitular}
+                  onChange={(e) => setCopiarTitular(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="copiarTitular" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                  <User className="h-4 w-4" />
+                  Mantener mismo titular
+                </Label>
               </div>
-            )}
+              
+              {!copiarTitular && (
+                <div className="space-y-2 pl-6">
+                  <Input
+                    placeholder="Nombre *"
+                    value={nuevoTitular.nombre}
+                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, nombre: e.target.value })}
+                    disabled={loading}
+                  />
+                  <Input
+                    placeholder="Apellido *"
+                    value={nuevoTitular.apellido}
+                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, apellido: e.target.value })}
+                    disabled={loading}
+                  />
+                  <Input
+                    placeholder="DNI *"
+                    value={nuevoTitular.dni}
+                    onChange={(e) => setNuevoTitular({ ...nuevoTitular, dni: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+              )}
+            </div>
+            
+            {/* Vehículo */}
+            <div className="space-y-3 rounded-lg border p-3">
+              <div className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="copiarVehiculo"
+                  checked={copiarVehiculo}
+                  onChange={(e) => setCopiarVehiculo(e.target.checked)}
+                  className="h-4 w-4 rounded border-gray-300"
+                />
+                <Label htmlFor="copiarVehiculo" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                  <Car className="h-4 w-4" />
+                  Mantener mismo vehículo
+                </Label>
+              </div>
+              
+              {!copiarVehiculo && (
+                <div className="space-y-2 pl-6">
+                  <Input
+                    placeholder="Dominio (Ej: ABC123) *"
+                    value={nuevoVehiculo.dominio}
+                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, dominio: e.target.value.toUpperCase() })}
+                    disabled={loading}
+                    maxLength={7}
+                  />
+                  <Input
+                    placeholder="Marca *"
+                    value={nuevoVehiculo.marca}
+                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, marca: e.target.value })}
+                    disabled={loading}
+                  />
+                  <Input
+                    placeholder="Modelo"
+                    value={nuevoVehiculo.modelo}
+                    onChange={(e) => setNuevoVehiculo({ ...nuevoVehiculo, modelo: e.target.value })}
+                    disabled={loading}
+                  />
+                </div>
+              )}
+            </div>
+
 
             {/* Error */}
             {error && (
-              <div className="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 p-3">
-                <AlertCircle className="h-4 w-4 text-red-600 flex-shrink-0 mt-0.5" />
-                <p className="text-sm text-red-700">{error}</p>
+              <div className="flex items-center gap-2 rounded-lg bg-red-50 p-3 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4" />
+                {error}
               </div>
             )}
           </div>
         )}
 
         {!success && (
-          <DialogFooter>
-            <Button variant="outline" onClick={handleCerrar} disabled={loading}>
+          <DialogFooter className="gap-2">
+            <Button variant="outline" onClick={handleCerrar} disabled={loading} className="flex-1 sm:flex-none">
               Cancelar
             </Button>
-            <Button onClick={handleRenovar} disabled={loading || !nuevoExpediente.trim()}>
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? 'Renovando...' : '🔄 Renovar Habilitación'}
+            <Button onClick={handleRenovar} disabled={loading || !nuevoExpediente.trim()} className="flex-1 sm:flex-none">
+              {loading ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Renovando...
+                </>
+              ) : (
+                '✅ Renovar'
+              )}
             </Button>
           </DialogFooter>
         )}

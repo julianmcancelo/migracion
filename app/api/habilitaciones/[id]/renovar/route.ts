@@ -7,7 +7,10 @@ import { notificarAdmins } from '@/lib/notificaciones'
  * POST - Renovar una habilitación para el año siguiente
  * Body: { 
  *   nuevoExpediente: string (requerido, nuevo número de expediente)
- *   cambiarDatos?: boolean (si true, permite editar datos en el siguiente paso)
+ *   copiarTitular?: boolean (default true)
+ *   copiarVehiculo?: boolean (default true)
+ *   nuevoTitular?: { nombre, apellido, dni, ... } (si copiarTitular = false)
+ *   nuevoVehiculo?: { dominio, marca, modelo, ... } (si copiarVehiculo = false)
  * }
  */
 export async function POST(
@@ -22,7 +25,13 @@ export async function POST(
 
     const habilitacionId = parseInt(params.id)
     const body = await request.json()
-    const { nuevoExpediente, cambiarDatos = false } = body
+    const { 
+      nuevoExpediente, 
+      copiarTitular = true, 
+      copiarVehiculo = true,
+      nuevoTitular,
+      nuevoVehiculo
+    } = body
 
     // Validar expediente
     if (!nuevoExpediente) {
@@ -65,23 +74,16 @@ export async function POST(
       )
     }
 
-    // 2. Validar documentos vigentes
-    const validacion = await validarDocumentosVigentes(habActual)
-    if (!validacion.ok && !cambiarDatos) {
-      return NextResponse.json(
-        {
-          error: 'Documentos vencidos',
-          faltantes: validacion.faltantes,
-          advertencia: true,
-        },
-        { status: 400 }
-      )
+    // 2. Validar documentos vigentes (solo si se copian datos)
+    let validacion = { ok: true, faltantes: [] as string[] }
+    if (copiarVehiculo) {
+      validacion = await validarDocumentosVigentes(habActual)
     }
 
-    // 3. Calcular nuevo año y número de licencia
+    // 3. Calcular nuevo año y número de licencia (SIN año en el número)
     const añoActual = new Date().getFullYear()
-    const numeroLicencia = habActual.nro_licencia?.split('/')[0] || habActual.nro_licencia
-    const nuevaLicencia = `${numeroLicencia}/${añoActual}`
+    const numeroLicencia = habActual.nro_licencia
+    const nuevaLicencia = numeroLicencia // Mantiene el mismo número sin cambios
 
     // 4. Crear nueva habilitación (renovación)
     const habNueva = await prisma.habilitaciones_generales.create({
@@ -104,9 +106,10 @@ export async function POST(
       },
     })
 
-    // 5. Copiar personas asociadas
-    if (habActual.habilitaciones_personas.length > 0) {
-      const personasData = habActual.habilitaciones_personas.map((hp) => ({
+    // 5. Titular: Copiar o crear nuevo
+    if (copiarTitular && habActual.habilitaciones_personas.length > 0) {
+      // Copiar personas existentes
+      const personasData = habActual.habilitaciones_personas.map((hp: any) => ({
         habilitacion_id: habNueva.id,
         persona_id: hp.persona_id,
         rol: hp.rol,
@@ -116,13 +119,37 @@ export async function POST(
       await prisma.habilitaciones_personas.createMany({
         data: personasData,
       })
+    } else if (!copiarTitular && nuevoTitular) {
+      // Crear nueva persona
+      const nuevaPersona = await prisma.personas.create({
+        data: {
+          nombre: nuevoTitular.nombre,
+          apellido: nuevoTitular.apellido,
+          dni: nuevoTitular.dni,
+          fecha_nacimiento: nuevoTitular.fecha_nacimiento || null,
+          domicilio: nuevoTitular.domicilio || null,
+          telefono: nuevoTitular.telefono || null,
+          email: nuevoTitular.email || null,
+        },
+      })
+
+      // Asociar a la habilitación
+      await prisma.habilitaciones_personas.create({
+        data: {
+          habilitacion_id: habNueva.id,
+          persona_id: nuevaPersona.id,
+          rol: 'TITULAR',
+          licencia_categoria: nuevoTitular.licencia_categoria || null,
+        },
+      })
     }
 
-    // 6. Copiar vehículos activos
-    if (habActual.habilitaciones_vehiculos.length > 0) {
+    // 6. Vehículo: Copiar o crear nuevo
+    if (copiarVehiculo && habActual.habilitaciones_vehiculos.length > 0) {
+      // Copiar vehículos existentes
       const vehiculosData = habActual.habilitaciones_vehiculos
-        .filter((hv) => hv.activo)
-        .map((hv) => ({
+        .filter((hv: any) => hv.activo)
+        .map((hv: any) => ({
           habilitacion_id: habNueva.id,
           vehiculo_id: hv.vehiculo_id,
           activo: true,
@@ -134,6 +161,31 @@ export async function POST(
           data: vehiculosData,
         })
       }
+    } else if (!copiarVehiculo && nuevoVehiculo) {
+      // Crear nuevo vehículo
+      const nuevoVeh = await prisma.vehiculos.create({
+        data: {
+          dominio: nuevoVehiculo.dominio,
+          marca: nuevoVehiculo.marca || null,
+          modelo: nuevoVehiculo.modelo || null,
+          anio: nuevoVehiculo.anio || null,
+          tipo: nuevoVehiculo.tipo || null,
+          chasis: nuevoVehiculo.chasis || null,
+          motor: nuevoVehiculo.motor || null,
+          Vencimiento_VTV: nuevoVehiculo.Vencimiento_VTV || null,
+          Vencimiento_Poliza: nuevoVehiculo.Vencimiento_Poliza || null,
+        },
+      })
+
+      // Asociar a la habilitación
+      await prisma.habilitaciones_vehiculos.create({
+        data: {
+          habilitacion_id: habNueva.id,
+          vehiculo_id: nuevoVeh.id,
+          activo: true,
+          fecha_alta: new Date(),
+        },
+      })
     }
 
     // 7. Marcar la habilitación anterior como renovada
