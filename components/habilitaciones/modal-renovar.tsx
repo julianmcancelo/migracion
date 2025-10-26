@@ -40,11 +40,13 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
   const [success, setSuccess] = useState(false)
   
   // Checkboxes
-  const [copiarTitular, setCopiarTitular] = useState(true)
+  const [copiarPersonas, setCopiarPersonas] = useState(true)
   const [copiarVehiculo, setCopiarVehiculo] = useState(true)
   
-  // Datos nuevos
+  // Datos nuevos personas
   const [nuevoTitular, setNuevoTitular] = useState<any>(null)
+  const [nuevoChofer, setNuevoChofer] = useState<any>(null)
+  const [nuevoCelador, setNuevoCelador] = useState<any>(null)
   const [nuevoVehiculo, setNuevoVehiculo] = useState<any>(null)
 
   const handleRenovar = async () => {
@@ -54,8 +56,8 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     }
     
     // Validar datos nuevos si no se copian
-    if (!copiarTitular && !nuevoTitular) {
-      setError('Seleccione o cree un titular')
+    if (!copiarPersonas && !nuevoTitular) {
+      setError('Al menos debe seleccionar o crear un titular')
       return
     }
     
@@ -71,12 +73,15 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     try {
       const body: any = {
         nuevoExpediente: nuevoExpediente.trim(),
-        copiarTitular,
+        copiarPersonas,
         copiarVehiculo,
       }
       
-      if (!copiarTitular) {
-        body.nuevoTitular = nuevoTitular
+      if (!copiarPersonas) {
+        body.personas = []
+        if (nuevoTitular) body.personas.push({ ...nuevoTitular, rol: 'TITULAR' })
+        if (nuevoChofer) body.personas.push({ ...nuevoChofer, rol: 'CHOFER' })
+        if (nuevoCelador) body.personas.push({ ...nuevoCelador, rol: 'CELADOR' })
       }
       
       if (!copiarVehiculo) {
@@ -125,9 +130,11 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
     setError(null)
     setAdvertencias([])
     setSuccess(false)
-    setCopiarTitular(true)
+    setCopiarPersonas(true)
     setCopiarVehiculo(true)
     setNuevoTitular(null)
+    setNuevoChofer(null)
+    setNuevoCelador(null)
     setNuevoVehiculo(null)
     onOpenChange(false)
   }
@@ -181,32 +188,58 @@ export function ModalRenovar({ habilitacion, open, onOpenChange }: ModalRenovarP
               />
             </div>
             
-            {/* Titular */}
+            {/* Personas */}
             <div className="space-y-3 rounded-lg border p-3">
               <div className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  id="copiarTitular"
-                  checked={copiarTitular}
+                  id="copiarPersonas"
+                  checked={copiarPersonas}
                   onChange={(e) => {
-                    setCopiarTitular(e.target.checked)
-                    if (e.target.checked) setNuevoTitular(null)
+                    setCopiarPersonas(e.target.checked)
+                    if (e.target.checked) {
+                      setNuevoTitular(null)
+                      setNuevoChofer(null)
+                      setNuevoCelador(null)
+                    }
                   }}
                   className="h-4 w-4 rounded border-gray-300"
                   disabled={loading}
                 />
-                <Label htmlFor="copiarTitular" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
+                <Label htmlFor="copiarPersonas" className="flex items-center gap-2 text-sm font-medium cursor-pointer">
                   <User className="h-4 w-4" />
-                  Mantener mismo titular
+                  Mantener mismas personas (titular, chofer, celador)
                 </Label>
               </div>
               
-              {!copiarTitular && (
-                <div className="pl-6">
-                  <RenovarPersonaSelector 
-                    rol="TITULAR"
-                    onSelect={(persona) => setNuevoTitular(persona)}
-                  />
+              {!copiarPersonas && (
+                <div className="space-y-3 pl-6">
+                  {/* Titular */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-700 mb-2">👤 Titular *</p>
+                    <RenovarPersonaSelector 
+                      rol="TITULAR"
+                      onSelect={(persona) => setNuevoTitular(persona)}
+                    />
+                  </div>
+                  
+                  {/* Chofer */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-700 mb-2">🚗 Chofer (opcional)</p>
+                    <RenovarPersonaSelector 
+                      rol="CHOFER"
+                      onSelect={(persona) => setNuevoChofer(persona)}
+                    />
+                  </div>
+                  
+                  {/* Celador */}
+                  <div>
+                    <p className="text-xs font-medium text-gray-700 mb-2">👨‍✈️ Celador/a (opcional)</p>
+                    <RenovarPersonaSelector 
+                      rol="CELADOR"
+                      onSelect={(persona) => setNuevoCelador(persona)}
+                    />
+                  </div>
                 </div>
               )}
             </div>

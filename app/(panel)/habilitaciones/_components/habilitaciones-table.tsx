@@ -15,6 +15,7 @@ import {
   RefreshCcw,
   Bot,
   RotateCw,
+  UserCog,
 } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
@@ -86,6 +87,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showChatIAModal, setShowChatIAModal] = useState(false)
   const [showRenovarModal, setShowRenovarModal] = useState(false)
   const [habilitacionRenovar, setHabilitacionRenovar] = useState<any>(null)
+  const [showCambioTitularModal, setShowCambioTitularModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -186,6 +188,10 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const handleRenovar = (hab: any) => {
     setHabilitacionRenovar(hab)
     setShowRenovarModal(true)
+  }
+
+  const handleCambioTitular = () => {
+    setShowCambioTitularModal(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -385,6 +391,13 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                         >
                           <RotateCw className="mr-2 h-4 w-4" />
                           Renovar Habilitación
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleCambioTitular}
+                          className="cursor-pointer"
+                        >
+                          <UserCog className="mr-2 h-4 w-4" />
+                          Cambio de Titular
                         </DropdownMenuItem>
                         {hab.vehiculos && hab.vehiculos.length > 0 && (
                           <DropdownMenuItem
@@ -591,6 +604,27 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
             if (!open) setHabilitacionRenovar(null)
           }}
         />
+      )}
+
+      {/* Modal Cambio de Titular - Próximamente */}
+      {showCambioTitularModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-2">🚧 Próximamente</h3>
+            <p className="text-gray-600 mb-4">
+              La funcionalidad de <strong>Cambio de Titular</strong> estará disponible muy pronto.
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Mientras tanto, puedes editar la habilitación o usar la renovación anual.
+            </p>
+            <button
+              onClick={() => setShowCambioTitularModal(false)}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Modal de Chat IA */}
