@@ -19,17 +19,20 @@ import {
   Clock,
   X,
   Mail,
-  Send
+  Send,
+  Edit
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { PreviewEmailModal } from './preview-email-modal'
 import { SuccessNotificationDialog } from './success-notification-dialog'
 import { ErrorNotificationDialog } from './error-notification-dialog'
+import { EditarVehiculoModal } from './editar-vehiculo-modal'
 
 interface DetalleVehiculoModalProps {
   vehiculoId: number | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  onVehiculoActualizado?: () => void
 }
 
 /**
@@ -40,6 +43,7 @@ export function DetalleVehiculoModal({
   vehiculoId,
   open,
   onOpenChange,
+  onVehiculoActualizado,
 }: DetalleVehiculoModalProps) {
   const [vehiculo, setVehiculo] = useState<any>(null)
   const [loading, setLoading] = useState(false)
@@ -52,6 +56,9 @@ export function DetalleVehiculoModal({
   const [showErrorDialog, setShowErrorDialog] = useState(false)
   const [resultData, setResultData] = useState<any>(null)
   const [errorMessage, setErrorMessage] = useState('')
+  
+  // Estado para modal de edición
+  const [showEditModal, setShowEditModal] = useState(false)
 
   useEffect(() => {
     if (open && vehiculoId) {
@@ -176,14 +183,24 @@ export function DetalleVehiculoModal({
       <DialogContent className="max-w-5xl max-h-[90vh] overflow-hidden p-0">
         {/* Header con gradiente */}
         <div className="relative bg-gradient-to-r from-blue-600 to-blue-800 px-8 py-6 text-white">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => onOpenChange(false)}
-            className="absolute right-4 top-4 text-white hover:bg-white/20"
-          >
-            <X className="h-5 w-5" />
-          </Button>
+          <div className="absolute right-4 top-4 flex gap-2">
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setShowEditModal(true)}
+              className="text-white hover:bg-white/20"
+            >
+              <Edit className="h-5 w-5" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => onOpenChange(false)}
+              className="text-white hover:bg-white/20"
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
           
           <DialogTitle className="flex items-center gap-3 text-3xl font-bold">
             <Car className="h-8 w-8" />
@@ -461,6 +478,19 @@ export function DetalleVehiculoModal({
         open={showErrorDialog}
         onOpenChange={setShowErrorDialog}
         error={errorMessage}
+      />
+
+      {/* Modal de Edición */}
+      <EditarVehiculoModal
+        vehiculo={vehiculo}
+        open={showEditModal}
+        onOpenChange={setShowEditModal}
+        onGuardado={() => {
+          cargarDetalles()
+          if (onVehiculoActualizado) {
+            onVehiculoActualizado()
+          }
+        }}
       />
     </Dialog>
   )

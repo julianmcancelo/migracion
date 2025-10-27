@@ -338,6 +338,7 @@ export default function VehiculosPage() {
         vehiculoId={vehiculoSeleccionado}
         open={modalDetalleOpen}
         onOpenChange={setModalDetalleOpen}
+        onVehiculoActualizado={cargarVehiculos}
       />
 
       {/* Modal de Completar Datos */}

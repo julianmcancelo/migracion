@@ -113,19 +113,26 @@ export async function PATCH(
 
     const body = await request.json()
 
+    // Preparar datos para actualización (solo campos que no sean undefined)
+    const updateData: any = {}
+    
+    if (body.marca !== undefined) updateData.marca = body.marca
+    if (body.modelo !== undefined) updateData.modelo = body.modelo
+    if (body.ano !== undefined) updateData.ano = body.ano
+    if (body.tipo !== undefined) updateData.tipo = body.tipo
+    if (body.chasis !== undefined) updateData.chasis = body.chasis
+    if (body.motor !== undefined) updateData.motor = body.motor
+    if (body.asientos !== undefined) updateData.asientos = body.asientos
+    if (body.inscripcion_inicial !== undefined) updateData.inscripcion_inicial = body.inscripcion_inicial
+    if (body.Aseguradora !== undefined) updateData.Aseguradora = body.Aseguradora
+    if (body.poliza !== undefined) updateData.poliza = body.poliza
+    if (body.Vencimiento_VTV !== undefined) updateData.Vencimiento_VTV = body.Vencimiento_VTV
+    if (body.Vencimiento_Poliza !== undefined) updateData.Vencimiento_Poliza = body.Vencimiento_Poliza
+
     // Actualizar vehículo
     const vehiculoActualizado = await prisma.vehiculos.update({
       where: { id },
-      data: {
-        marca: body.marca || undefined,
-        modelo: body.modelo || undefined,
-        ano: body.ano || undefined,
-        tipo: body.tipo || undefined,
-        chasis: body.chasis || undefined,
-        motor: body.motor || undefined,
-        Vencimiento_VTV: body.Vencimiento_VTV || undefined,
-        Vencimiento_Poliza: body.Vencimiento_Poliza || undefined,
-      }
+      data: updateData
     })
 
     return NextResponse.json({
