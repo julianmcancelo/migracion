@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { CheckCircle, Mail, User, FileText } from 'lucide-react'
@@ -45,6 +46,9 @@ export function SuccessNotificationDialog({
           <DialogTitle className="text-center text-2xl font-bold text-gray-900">
             ¡Notificación Enviada!
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            La notificación se envió correctamente al titular
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">

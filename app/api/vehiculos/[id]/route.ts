@@ -113,21 +113,42 @@ export async function PATCH(
 
     const body = await request.json()
 
+    // Verificar que el vehículo existe
+    const vehiculoExistente = await prisma.vehiculos.findUnique({
+      where: { id }
+    })
+
+    if (!vehiculoExistente) {
+      return NextResponse.json(
+        { error: 'Vehículo no encontrado' },
+        { status: 404 }
+      )
+    }
+
     // Preparar datos para actualización (solo campos que no sean undefined)
     const updateData: any = {}
     
-    if (body.marca !== undefined) updateData.marca = body.marca
-    if (body.modelo !== undefined) updateData.modelo = body.modelo
-    if (body.ano !== undefined) updateData.ano = body.ano
-    if (body.tipo !== undefined) updateData.tipo = body.tipo
-    if (body.chasis !== undefined) updateData.chasis = body.chasis
-    if (body.motor !== undefined) updateData.motor = body.motor
-    if (body.asientos !== undefined) updateData.asientos = body.asientos
-    if (body.inscripcion_inicial !== undefined) updateData.inscripcion_inicial = body.inscripcion_inicial
-    if (body.Aseguradora !== undefined) updateData.Aseguradora = body.Aseguradora
-    if (body.poliza !== undefined) updateData.poliza = body.poliza
-    if (body.Vencimiento_VTV !== undefined) updateData.Vencimiento_VTV = body.Vencimiento_VTV
-    if (body.Vencimiento_Poliza !== undefined) updateData.Vencimiento_Poliza = body.Vencimiento_Poliza
+    if (body.marca !== undefined) updateData.marca = body.marca || null
+    if (body.modelo !== undefined) updateData.modelo = body.modelo || null
+    if (body.ano !== undefined) updateData.ano = body.ano || null
+    if (body.tipo !== undefined) updateData.tipo = body.tipo || null
+    if (body.chasis !== undefined) updateData.chasis = body.chasis || null
+    if (body.motor !== undefined) updateData.motor = body.motor || null
+    if (body.asientos !== undefined) updateData.asientos = body.asientos || null
+    
+    // Campos de fecha - convertir strings vacíos a null
+    if (body.inscripcion_inicial !== undefined) {
+      updateData.inscripcion_inicial = body.inscripcion_inicial ? new Date(body.inscripcion_inicial) : null
+    }
+    if (body.Vencimiento_VTV !== undefined) {
+      updateData.Vencimiento_VTV = body.Vencimiento_VTV ? new Date(body.Vencimiento_VTV) : null
+    }
+    if (body.Vencimiento_Poliza !== undefined) {
+      updateData.Vencimiento_Poliza = body.Vencimiento_Poliza ? new Date(body.Vencimiento_Poliza) : null
+    }
+    
+    if (body.Aseguradora !== undefined) updateData.Aseguradora = body.Aseguradora || null
+    if (body.poliza !== undefined) updateData.poliza = body.poliza || null
 
     // Actualizar vehículo
     const vehiculoActualizado = await prisma.vehiculos.update({
@@ -143,7 +164,11 @@ export async function PATCH(
   } catch (error: any) {
     console.error('Error al actualizar vehículo:', error)
     return NextResponse.json(
-      { error: 'Error al actualizar vehículo', details: error.message },
+      { 
+        error: 'Error al actualizar vehículo', 
+        details: error.message,
+        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      },
       { status: 500 }
     )
   }

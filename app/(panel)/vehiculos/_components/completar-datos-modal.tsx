@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -171,6 +172,9 @@ export function CompletarDatosModal({
             <AlertCircle className="h-5 w-5 text-orange-600" />
             Completar Datos - {vehiculo.dominio}
           </DialogTitle>
+          <DialogDescription>
+            Complete la información faltante del vehículo
+          </DialogDescription>
           <div className="mt-2 rounded-lg bg-orange-50 border border-orange-200 p-3">
             <p className="text-sm text-orange-800">
               <strong>Datos faltantes:</strong> {camposFaltantes.join(', ')}

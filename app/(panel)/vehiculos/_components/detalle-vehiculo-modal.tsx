@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import { Badge } from '@/components/ui/badge'
 import { 
@@ -206,6 +207,9 @@ export function DetalleVehiculoModal({
             <Car className="h-8 w-8" />
             {vehiculo.dominio}
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Detalles completos del vehículo {vehiculo.dominio}
+          </DialogDescription>
           <p className="mt-2 text-blue-100">
             {vehiculo.marca} {vehiculo.modelo} {vehiculo.ano ? `(${vehiculo.ano})` : ''}
           </p>

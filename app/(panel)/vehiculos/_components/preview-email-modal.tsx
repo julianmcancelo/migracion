@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -58,6 +59,9 @@ export function PreviewEmailModal({
               <Mail className="h-5 w-5 text-blue-600" />
               Vista Previa del Email
             </DialogTitle>
+            <DialogDescription className="sr-only">
+              Previsualiza el email antes de enviarlo al titular
+            </DialogDescription>
             <Button
               variant="ghost"
               size="icon"

@@ -6,6 +6,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
@@ -136,6 +137,9 @@ export function EditarVehiculoModal({
             <Edit className="h-5 w-5 text-blue-600" />
             Editar Vehículo - {vehiculo.dominio}
           </DialogTitle>
+          <DialogDescription>
+            Modifica la información técnica, documentación y seguro del vehículo
+          </DialogDescription>
         </DialogHeader>
 
         <div className="overflow-y-auto px-1" style={{ maxHeight: 'calc(90vh - 200px)' }}>

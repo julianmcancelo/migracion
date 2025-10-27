@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
 import { AlertCircle, X } from 'lucide-react'
@@ -40,6 +41,9 @@ export function ErrorNotificationDialog({
           <DialogTitle className="text-center text-2xl font-bold text-gray-900">
             Error al Enviar
           </DialogTitle>
+          <DialogDescription className="sr-only">
+            Ocurrió un error al enviar la notificación
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
