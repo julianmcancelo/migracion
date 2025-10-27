@@ -14,6 +14,9 @@ import {
   Shield,
   RefreshCcw,
   Bot,
+  RotateCw,
+  UserCog,
+  ClipboardCheck,
 } from 'lucide-react'
 import { VehiculoModal } from './vehiculo-modal'
 import { PersonaModal } from './persona-modal'
@@ -22,11 +25,16 @@ import { EditarHabilitacionDialog } from './editar-habilitacion-dialog'
 import { ModalObleas } from '@/components/obleas/modal-obleas'
 import ModalCambioVehiculo from '@/components/habilitaciones/modal-cambio-vehiculo'
 import ChatIAHabilitacion from '@/components/habilitaciones/chat-ia-habilitacion'
+import { ModalRenovar } from '@/components/habilitaciones/modal-renovar'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
@@ -78,6 +86,9 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const [showObleasModal, setShowObleasModal] = useState(false)
   const [showCambioVehiculoModal, setShowCambioVehiculoModal] = useState(false)
   const [showChatIAModal, setShowChatIAModal] = useState(false)
+  const [showRenovarModal, setShowRenovarModal] = useState(false)
+  const [habilitacionRenovar, setHabilitacionRenovar] = useState<any>(null)
+  const [showCambioTitularModal, setShowCambioTitularModal] = useState(false)
 
   const toggleRow = (id: number) => {
     const newExpanded = new Set(expandedRows)
@@ -138,6 +149,37 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleDescargarCertificado = async (hab: any) => {
+    try {
+      // Obtener datos del certificado
+      const response = await fetch(`/api/habilitaciones/${hab.id}/certificado-verificacion`)
+      
+      if (!response.ok) {
+        const error = await response.json()
+        throw new Error(error.error || 'Error al obtener datos del certificado')
+      }
+      
+      const result = await response.json()
+      
+      if (!result.success || !result.data) {
+        throw new Error('No se pudieron obtener los datos del certificado')
+      }
+
+      // Generar PDF en el cliente
+      const { generarCertificadoVerificacionPDF } = await import('@/components/habilitaciones/certificado-verificacion-pdf')
+      const doc = generarCertificadoVerificacionPDF(result.data)
+      
+      // Descargar PDF
+      doc.save(`Certificado-Verificacion-${hab.nro_licencia || hab.id}.pdf`)
+
+      alert('✅ Certificado de verificación descargado correctamente')
+    } catch (error) {
+      console.error('Error al descargar certificado:', error)
+      alert(`❌ Error: ${error instanceof Error ? error.message : 'Error desconocido'}`)
+    }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleGenerarCredencial = async (hab: any) => {
     try {
       const res = await fetch(`/api/habilitaciones/${hab.id}/generar-token-credencial`, {
@@ -172,6 +214,16 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   const handleCambioMaterial = (hab: any) => {
     setSelectedHabilitacion(hab)
     setShowCambioVehiculoModal(true)
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleRenovar = (hab: any) => {
+    setHabilitacionRenovar(hab)
+    setShowRenovarModal(true)
+  }
+
+  const handleCambioTitular = () => {
+    setShowCambioTitularModal(true)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -318,7 +370,8 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <MoreVertical className="h-4 w-4" />
                     </Button>
                   </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end" className="w-48">
+                  <DropdownMenuContent align="end" className="w-52">
+                    {/* Acciones rápidas */}
                     <DropdownMenuItem
                       onClick={() => handleVerDetalle(hab)}
                       className="cursor-pointer"
@@ -330,37 +383,16 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       <Edit className="mr-2 h-4 w-4" />
                       Editar
                     </DropdownMenuItem>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Documentos */}
                     <DropdownMenuItem
                       onClick={() => handleGenerarCredencial(hab)}
                       className="cursor-pointer"
                     >
                       <QrCode className="mr-2 h-4 w-4" />
                       Ver Credencial
-                    </DropdownMenuItem>
-                    {hab.estado === 'HABILITADO' && (
-                      <DropdownMenuItem
-                        onClick={() => handleGestionarObleas(hab)}
-                        className="cursor-pointer"
-                      >
-                        <Shield className="mr-2 h-4 w-4" />
-                        Gestionar Obleas
-                      </DropdownMenuItem>
-                    )}
-                    {hab.vehiculos && hab.vehiculos.length > 0 && (
-                      <DropdownMenuItem
-                        onClick={() => handleCambioMaterial(hab)}
-                        className="cursor-pointer"
-                      >
-                        <RefreshCcw className="mr-2 h-4 w-4" />
-                        Cambio de Material
-                      </DropdownMenuItem>
-                    )}
-                    <DropdownMenuItem
-                      onClick={() => handleChatIA(hab)}
-                      className="cursor-pointer"
-                    >
-                      <Bot className="mr-2 h-4 w-4" />
-                      Consultar con IA
                     </DropdownMenuItem>
                     {hab.tiene_resolucion && (
                       <DropdownMenuItem className="cursor-pointer">
@@ -369,18 +401,82 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuItem
-                      onClick={() => handleAsignarTurno(hab)}
-                      className="cursor-pointer"
-                    >
-                      <Calendar className="mr-2 h-4 w-4" />
-                      Asignar Turno
-                    </DropdownMenuItem>
-                    <DropdownMenuItem
                       onClick={() => handleDescargarPDF(hab)}
                       className="cursor-pointer"
                     >
                       <Download className="mr-2 h-4 w-4" />
                       Descargar PDF
+                    </DropdownMenuItem>
+                    {hab.tipo_transporte === 'Escolar' && (
+                      <DropdownMenuItem
+                        onClick={() => handleDescargarCertificado(hab)}
+                        className="cursor-pointer"
+                      >
+                        <ClipboardCheck className="mr-2 h-4 w-4" />
+                        Certificado Verificación
+                      </DropdownMenuItem>
+                    )}
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Submenú Gestión */}
+                    <DropdownMenuSub>
+                      <DropdownMenuSubTrigger className="cursor-pointer">
+                        <RefreshCcw className="mr-2 h-4 w-4" />
+                        <span>Gestión</span>
+                      </DropdownMenuSubTrigger>
+                      <DropdownMenuSubContent>
+                        <DropdownMenuItem
+                          onClick={() => handleRenovar(hab)}
+                          className="cursor-pointer"
+                        >
+                          <RotateCw className="mr-2 h-4 w-4" />
+                          Renovar Habilitación
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={handleCambioTitular}
+                          className="cursor-pointer"
+                        >
+                          <UserCog className="mr-2 h-4 w-4" />
+                          Cambio de Titular
+                        </DropdownMenuItem>
+                        {hab.vehiculos && hab.vehiculos.length > 0 && (
+                          <DropdownMenuItem
+                            onClick={() => handleCambioMaterial(hab)}
+                            className="cursor-pointer"
+                          >
+                            <RefreshCcw className="mr-2 h-4 w-4" />
+                            Cambio de Material
+                          </DropdownMenuItem>
+                        )}
+                        {hab.estado === 'HABILITADO' && (
+                          <DropdownMenuItem
+                            onClick={() => handleGestionarObleas(hab)}
+                            className="cursor-pointer"
+                          >
+                            <Shield className="mr-2 h-4 w-4" />
+                            Gestionar Obleas
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuItem
+                          onClick={() => handleAsignarTurno(hab)}
+                          className="cursor-pointer"
+                        >
+                          <Calendar className="mr-2 h-4 w-4" />
+                          Asignar Turno
+                        </DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuSub>
+                    
+                    <DropdownMenuSeparator />
+                    
+                    {/* Herramientas */}
+                    <DropdownMenuItem
+                      onClick={() => handleChatIA(hab)}
+                      className="cursor-pointer"
+                    >
+                      <Bot className="mr-2 h-4 w-4" />
+                      Consultar con IA
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -537,6 +633,39 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
             router.refresh()
           }}
         />
+      )}
+
+      {/* Modal de Renovar */}
+      {habilitacionRenovar && (
+        <ModalRenovar
+          habilitacion={habilitacionRenovar}
+          open={showRenovarModal}
+          onOpenChange={(open) => {
+            setShowRenovarModal(open)
+            if (!open) setHabilitacionRenovar(null)
+          }}
+        />
+      )}
+
+      {/* Modal Cambio de Titular - Próximamente */}
+      {showCambioTitularModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="bg-white rounded-lg shadow-xl p-6 max-w-md mx-4">
+            <h3 className="text-lg font-semibold mb-2">🚧 Próximamente</h3>
+            <p className="text-gray-600 mb-4">
+              La funcionalidad de <strong>Cambio de Titular</strong> estará disponible muy pronto.
+            </p>
+            <p className="text-sm text-gray-500 mb-4">
+              Mientras tanto, puedes editar la habilitación o usar la renovación anual.
+            </p>
+            <button
+              onClick={() => setShowCambioTitularModal(false)}
+              className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors"
+            >
+              Entendido
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Modal de Chat IA */}

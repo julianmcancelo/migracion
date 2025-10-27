@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
+import { notificarNuevoContacto } from '@/lib/notificaciones'
 
 // Configurar transporter de nodemailer
 // Reutiliza las variables de Gmail si están configuradas
@@ -51,6 +52,9 @@ export async function POST(request: NextRequest) {
           ultima_consulta = NOW(),
           contador_consultas = contador_consultas + 1
       `
+      
+      // Notificar a los administradores sobre el nuevo contacto
+      await notificarNuevoContacto(emailLower, 'requisitos_landing')
     } catch (dbError) {
       console.error('Error al guardar contacto:', dbError)
       // Continuar aunque falle el guardado
