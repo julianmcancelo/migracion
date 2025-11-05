@@ -19,7 +19,9 @@ import {
   Map,
   DollarSign,
   Clock,
-  Zap
+  Zap,
+  Wrench,
+  Navigation
 } from 'lucide-react'
 
 interface GeocodeProgress {
@@ -53,6 +55,80 @@ export default function GeocodeInterfazPage() {
   })
   const [result, setResult] = useState<GeocodeResult | null>(null)
   const [estimatedCost, setEstimatedCost] = useState<string>('')
+  
+  // Estados para geocodificación individual
+  const [singleAddress, setSingleAddress] = useState('')
+  const [singleResult, setSingleResult] = useState<any>(null)
+  const [singleLoading, setSingleLoading] = useState(false)
+
+  // Arreglar Excel
+  const handleFixExcel = async () => {
+    if (!file) {
+      toast.error('Primero selecciona un archivo Excel')
+      return
+    }
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/paradas/fix-excel', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        throw new Error('Error al arreglar Excel')
+      }
+
+      // Descargar archivo arreglado
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'paradas_arregladas.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+      
+      toast.success('Excel arreglado y descargado. ¡Ahora sube el archivo nuevo!')
+    } catch (error: any) {
+      console.error('Error:', error)
+      toast.error('Error al arreglar Excel')
+    }
+  }
+
+  // Geocodificar dirección individual
+  const handleGeocodeSingle = async () => {
+    if (!singleAddress.trim()) {
+      toast.error('Ingresa una dirección')
+      return
+    }
+
+    setSingleLoading(true)
+    setSingleResult(null)
+
+    try {
+      const response = await fetch('/api/paradas/geocode-single', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address: singleAddress })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSingleResult(data)
+        toast.success('¡Dirección geocodificada!')
+      } else {
+        toast.error(data.error || 'No se pudo geocodificar')
+      }
+    } catch (error: any) {
+      console.error('Error:', error)
+      toast.error('Error al geocodificar')
+    } finally {
+      setSingleLoading(false)
+    }
+  }
 
   // Manejar carga de archivo
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,6 +277,96 @@ export default function GeocodeInterfazPage() {
           <p className="text-gray-600">
             Convierte direcciones de Excel a coordenadas GPS automáticamente
           </p>
+        </div>
+
+        {/* Herramientas Rápidas */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Geocodificación Individual */}
+          <Card className="p-6 bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center">
+                <Navigation className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-green-900">Geocodificar Dirección</h3>
+                <p className="text-sm text-green-700">Obtén coordenadas de una sola dirección</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <Input
+                placeholder="Ej: Av. Hipólito Yrigoyen 2050, Lanús"
+                value={singleAddress}
+                onChange={(e) => setSingleAddress(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleGeocodeSingle()}
+              />
+              <Button 
+                onClick={handleGeocodeSingle}
+                disabled={singleLoading}
+                className="w-full bg-green-600 hover:bg-green-700"
+              >
+                {singleLoading ? 'Geocodificando...' : 'Obtener Coordenadas'}
+              </Button>
+
+              {singleResult && (
+                <div className="p-4 bg-white rounded-lg border border-green-300 mt-4">
+                  <p className="text-sm font-semibold text-gray-700 mb-2">Resultado:</p>
+                  <p className="text-xs text-gray-600 mb-2">{singleResult.formatted_address}</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="p-2 bg-green-100 rounded">
+                      <p className="text-xs text-green-600 font-medium">Latitud</p>
+                      <p className="font-mono text-green-900">{singleResult.lat.toFixed(6)}</p>
+                    </div>
+                    <div className="p-2 bg-green-100 rounded">
+                      <p className="text-xs text-green-600 font-medium">Longitud</p>
+                      <p className="font-mono text-green-900">{singleResult.lng.toFixed(6)}</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-gray-500 mt-2">Place ID: {singleResult.place_id}</p>
+                </div>
+              )}
+            </div>
+          </Card>
+
+          {/* Arreglar Excel */}
+          <Card className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
+                <Wrench className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-orange-900">Arreglar Excel</h3>
+                <p className="text-sm text-orange-700">Corrige columnas mal organizadas</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-white rounded border border-orange-200 text-sm text-orange-800">
+                <p className="font-medium mb-1">¿Qué hace?</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Mueve nombres de calles a la columna correcta</li>
+                  <li>• Genera códigos automáticos (P001, P002, etc.)</li>
+                  <li>• Organiza las columnas correctamente</li>
+                </ul>
+              </div>
+
+              <Button
+                onClick={handleFixExcel}
+                disabled={!file}
+                variant="outline"
+                className="w-full border-orange-400 text-orange-700 hover:bg-orange-100"
+              >
+                <Wrench className="w-4 h-4 mr-2" />
+                {file ? 'Arreglar y Descargar' : 'Primero sube un archivo'}
+              </Button>
+
+              {file && (
+                <p className="text-xs text-orange-600 text-center">
+                  Se descargará un nuevo Excel arreglado
+                </p>
+              )}
+            </div>
+          </Card>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6">
