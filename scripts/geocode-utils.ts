@@ -64,16 +64,22 @@ interface Logger {
 }
 
 /**
- * Normaliza una dirección para consistencia en caché
+ * Normaliza una fila en formato de dirección para Google Maps
  */
 export function normalizeAddress(row: ParadaRow): string {
+  // Si ya tiene una dirección pre-construida (DireccionBusqueda), usarla
+  const direccionPreconstruida = (row as any)['DireccionBusqueda'] || (row as any)['direccionBusqueda']
+  if (direccionPreconstruida && typeof direccionPreconstruida === 'string' && direccionPreconstruida.trim()) {
+    return direccionPreconstruida.trim()
+  }
+
   const parts: string[] = []
 
-  // Calle y altura
+  // Calle y altura (IMPORTANTE: incluir altura para ubicación exacta)
   if (row.calle) {
     parts.push(row.calle)
     if (row.altura) {
-      parts.push(row.altura)
+      parts.push(row.altura) // Altura es crucial para ubicación exacta
     }
   }
 
@@ -107,14 +113,11 @@ export function normalizeAddress(row: ParadaRow): string {
   // Normalizar abreviaturas comunes
   address = address
     .replace(/\bAv\.\s/gi, 'Avenida ')
-    .replace(/\bPje\.\s/gi, 'Pasaje ')
-    .replace(/\bEsq\.\s/gi, 'Esquina ')
-    .replace(/\bNº\s*/gi, '')
-    .replace(/\bN°\s*/gi, '')
-    .replace(/\s+/g, ' ')
-    .trim()
+    .replace(/\bAv\b/gi, 'Avenida')
+    .replace(/\bSta\.\s/gi, 'Santa ')
+    .replace(/\bSto\.\s/gi, 'Santo ')
 
-  return address
+  return address.replace(/\s+/g, ' ').trim()
 }
 
 /**

@@ -21,7 +21,9 @@ import {
   Clock,
   Zap,
   Wrench,
-  Navigation
+  Navigation,
+  Scissors,
+  Layers
 } from 'lucide-react'
 
 interface GeocodeProgress {
@@ -60,9 +62,17 @@ export default function GeocodeInterfazPage() {
   const [singleAddress, setSingleAddress] = useState('')
   const [singleResult, setSingleResult] = useState<any>(null)
   const [singleLoading, setSingleLoading] = useState(false)
+  
+  // Estados para guardar en BD
+  const [saving, setSaving] = useState(false)
+  const [saved, setSaved] = useState(false)
+  
+  // Estados para dividir y unificar
+  const [rowsPerFile, setRowsPerFile] = useState(50)
+  const [mergeFiles, setMergeFiles] = useState<File[]>([])
 
-  // Arreglar Excel
-  const handleFixExcel = async () => {
+  // Dividir Excel en lotes
+  const handleSplitExcel = async () => {
     if (!file) {
       toast.error('Primero selecciona un archivo Excel')
       return
@@ -71,14 +81,146 @@ export default function GeocodeInterfazPage() {
     try {
       const formData = new FormData()
       formData.append('file', file)
+      formData.append('rowsPerFile', rowsPerFile.toString())
+
+      const response = await fetch('/api/paradas/split-excel', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(`Error: ${errorData.error || 'Error al dividir'}`)
+        return
+      }
+
+      // Descargar ZIP
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = `paradas_divididas_${rowsPerFile}_filas.zip`
+      a.click()
+      URL.revokeObjectURL(url)
+      
+      toast.success(`✅ Archivo dividido en lotes de ${rowsPerFile} filas!`)
+    } catch (error: any) {
+      console.error('Error:', error)
+      toast.error(`Error: ${error.message}`)
+    }
+  }
+
+  // Unificar múltiples archivos
+  const handleMergeExcel = async () => {
+    if (mergeFiles.length === 0) {
+      toast.error('Selecciona al menos un archivo para unificar')
+      return
+    }
+
+    try {
+      const formData = new FormData()
+      mergeFiles.forEach(f => formData.append('files', f))
+
+      const response = await fetch('/api/paradas/merge-excel', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        toast.error(`Error: ${errorData.error || 'Error al unificar'}`)
+        return
+      }
+
+      // Descargar archivo unificado
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'paradas_unificadas.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+      
+      toast.success(`✅ ${mergeFiles.length} archivos unificados correctamente!`)
+      setMergeFiles([])
+    } catch (error: any) {
+      console.error('Error:', error)
+      toast.error(`Error: ${error.message}`)
+    }
+  }
+
+  // Formatear Excel de Lanús
+  const handleFormatLanusExcel = async () => {
+    if (!file) {
+      toast.error('Primero selecciona un archivo Excel')
+      return
+    }
+
+    console.log('📁 Formateando archivo de Lanús:', file.name)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      const response = await fetch('/api/paradas/format-lanus-excel', {
+        method: 'POST',
+        body: formData
+      })
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}))
+        console.error('❌ Error del servidor:', errorData)
+        toast.error(`Error: ${errorData.error || 'Error desconocido'}`)
+        return
+      }
+
+      // Descargar archivo formateado
+      const blob = await response.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement('a')
+      a.href = url
+      a.download = 'paradas_lanus_formato_geocode.xlsx'
+      a.click()
+      URL.revokeObjectURL(url)
+      
+      toast.success('✅ Excel formateado. ¡Ahora sube el archivo descargado para geocodificar!')
+    } catch (error: any) {
+      console.error('Error completo:', error)
+      toast.error(`Error: ${error.message}`)
+    }
+  }
+
+  // Arreglar Excel
+  const handleFixExcel = async () => {
+    if (!file) {
+      toast.error('Primero selecciona un archivo Excel')
+      return
+    }
+
+    console.log('📁 Archivo seleccionado:', file.name, file.type, file.size)
+
+    try {
+      const formData = new FormData()
+      formData.append('file', file)
+
+      console.log('📤 Enviando petición a /api/paradas/fix-excel...')
 
       const response = await fetch('/api/paradas/fix-excel', {
         method: 'POST',
         body: formData
       })
 
+      console.log('📥 Respuesta recibida:', response.status, response.statusText)
+
       if (!response.ok) {
-        throw new Error('Error al arreglar Excel')
+        // Intentar leer el error JSON
+        const errorData = await response.json().catch(() => ({}))
+        console.error('❌ Error del servidor:', errorData)
+        toast.error(`Error: ${errorData.error || 'Error desconocido'}`)
+        if (errorData.details) {
+          console.error('Detalles:', errorData.details)
+        }
+        return
       }
 
       // Descargar archivo arreglado
@@ -90,10 +232,10 @@ export default function GeocodeInterfazPage() {
       a.click()
       URL.revokeObjectURL(url)
       
-      toast.success('Excel arreglado y descargado. ¡Ahora sube el archivo nuevo!')
+      toast.success('✅ Excel arreglado. Ahora sube el archivo descargado!')
     } catch (error: any) {
-      console.error('Error:', error)
-      toast.error('Error al arreglar Excel')
+      console.error('Error completo:', error)
+      toast.error(`Error: ${error.message}`)
     }
   }
 
@@ -127,6 +269,38 @@ export default function GeocodeInterfazPage() {
       toast.error('Error al geocodificar')
     } finally {
       setSingleLoading(false)
+    }
+  }
+
+  // Guardar en base de datos
+  const handleSaveToDatabase = async () => {
+    if (!result?.geojson?.features) {
+      toast.error('No hay datos para guardar')
+      return
+    }
+
+    setSaving(true)
+
+    try {
+      const response = await fetch('/api/paradas/save-geocoded', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ features: result.geojson.features })
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        setSaved(true)
+        toast.success(`✅ ${data.message}`)
+      } else {
+        toast.error(data.error || 'Error al guardar')
+      }
+    } catch (error: any) {
+      console.error('Error:', error)
+      toast.error('Error al guardar en base de datos')
+    } finally {
+      setSaving(false)
     }
   }
 
@@ -328,43 +502,154 @@ export default function GeocodeInterfazPage() {
             </div>
           </Card>
 
-          {/* Arreglar Excel */}
+          {/* Formatear Excel de Lanús */}
           <Card className="p-6 bg-gradient-to-br from-orange-50 to-amber-50 border-orange-200">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-12 bg-orange-600 rounded-lg flex items-center justify-center">
                 <Wrench className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-orange-900">Arreglar Excel</h3>
-                <p className="text-sm text-orange-700">Corrige columnas mal organizadas</p>
+                <h3 className="font-bold text-orange-900">Formatear Excel Lanús</h3>
+                <p className="text-sm text-orange-700">Convierte tu Excel al formato geocodificable</p>
               </div>
             </div>
 
             <div className="space-y-3">
               <div className="p-3 bg-white rounded border border-orange-200 text-sm text-orange-800">
-                <p className="font-medium mb-1">¿Qué hace?</p>
+                <p className="font-medium mb-1">✨ Convierte automáticamente:</p>
                 <ul className="text-xs space-y-1">
-                  <li>• Mueve nombres de calles a la columna correcta</li>
-                  <li>• Genera códigos automáticos (P001, P002, etc.)</li>
-                  <li>• Organiza las columnas correctamente</li>
+                  <li>• AVENIDA → Calle</li>
+                  <li>• ALTURA → Altura</li>
+                  <li>• INTERSECCION → EntreCalles</li>
+                  <li>• <strong>Crea dirección exacta:</strong> Calle + Altura</li>
+                  <li>• Agrega columnas para LAT/LNG</li>
+                  <li>• Mantiene N° OBJE, TIPO, ORIENTACION</li>
                 </ul>
+                <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded">
+                  <p className="text-xs text-green-800">
+                    <strong>Ejemplo:</strong> &quot;29 de Septiembre 1853, Lanús&quot;
+                  </p>
+                </div>
               </div>
 
               <Button
-                onClick={handleFixExcel}
+                onClick={handleFormatLanusExcel}
                 disabled={!file}
-                variant="outline"
-                className="w-full border-orange-400 text-orange-700 hover:bg-orange-100"
+                className="w-full bg-orange-600 hover:bg-orange-700"
               >
                 <Wrench className="w-4 h-4 mr-2" />
-                {file ? 'Arreglar y Descargar' : 'Primero sube un archivo'}
+                {file ? '🔄 Formatear Excel' : 'Primero sube un archivo'}
               </Button>
 
               {file && (
-                <p className="text-xs text-orange-600 text-center">
-                  Se descargará un nuevo Excel arreglado
+                <p className="text-xs text-orange-600 text-center font-medium">
+                  💾 Descarga el Excel formateado y luego súbelo para geocodificar
                 </p>
               )}
+            </div>
+          </Card>
+        </div>
+
+        {/* Herramientas Avanzadas: Dividir y Unificar */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* Dividir en lotes */}
+          <Card className="p-6 bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-blue-600 rounded-lg flex items-center justify-center">
+                <Scissors className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-blue-900">Dividir en Lotes</h3>
+                <p className="text-sm text-blue-700">Para geocodificar de a poco</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-white rounded border border-blue-200 text-sm text-blue-800">
+                <p className="font-medium mb-2">💡 ¿Por qué dividir?</p>
+                <ul className="text-xs space-y-1">
+                  <li>• Evita timeouts en archivos grandes</li>
+                  <li>• Geocodifica de a poco sin perder progreso</li>
+                  <li>• Pausa y continúa cuando quieras</li>
+                </ul>
+              </div>
+
+              <div>
+                <Label className="text-blue-900">Filas por archivo</Label>
+                <Input
+                  type="number"
+                  value={rowsPerFile}
+                  onChange={(e) => setRowsPerFile(parseInt(e.target.value) || 50)}
+                  min="10"
+                  max="1000"
+                  className="mt-1"
+                />
+                <p className="text-xs text-blue-600 mt-1">
+                  Recomendado: 50-100 filas por archivo
+                </p>
+              </div>
+
+              <Button
+                onClick={handleSplitExcel}
+                disabled={!file}
+                className="w-full bg-blue-600 hover:bg-blue-700"
+              >
+                <Scissors className="w-4 h-4 mr-2" />
+                {file ? `✂️ Dividir en lotes de ${rowsPerFile}` : 'Sube un archivo primero'}
+              </Button>
+            </div>
+          </Card>
+
+          {/* Unificar archivos */}
+          <Card className="p-6 bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+            <div className="flex items-center gap-3 mb-4">
+              <div className="w-12 h-12 bg-purple-600 rounded-lg flex items-center justify-center">
+                <Layers className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="font-bold text-purple-900">Unificar Archivos</h3>
+                <p className="text-sm text-purple-700">Combina varios en uno</p>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="p-3 bg-white rounded border border-purple-200 text-sm text-purple-800">
+                <p className="font-medium mb-1">📦 Une archivos geocodificados</p>
+                <p className="text-xs">
+                  Selecciona todos los lotes que geocodificaste y únelos en un solo Excel
+                </p>
+              </div>
+
+              <div className="border-2 border-dashed border-purple-300 rounded-lg p-4 text-center">
+                <input
+                  type="file"
+                  multiple
+                  accept=".xlsx,.xls"
+                  onChange={(e) => setMergeFiles(Array.from(e.target.files || []))}
+                  className="hidden"
+                  id="merge-files-upload"
+                />
+                <label htmlFor="merge-files-upload" className="cursor-pointer">
+                  <Upload className="w-8 h-8 mx-auto mb-2 text-purple-600" />
+                  <p className="text-sm text-purple-900 font-medium">
+                    {mergeFiles.length > 0 
+                      ? `${mergeFiles.length} archivos seleccionados` 
+                      : 'Click para seleccionar archivos'}
+                  </p>
+                  <p className="text-xs text-purple-600 mt-1">
+                    Puedes seleccionar múltiples archivos
+                  </p>
+                </label>
+              </div>
+
+              <Button
+                onClick={handleMergeExcel}
+                disabled={mergeFiles.length === 0}
+                className="w-full bg-purple-600 hover:bg-purple-700"
+              >
+                <Layers className="w-4 h-4 mr-2" />
+                {mergeFiles.length > 0 ? `📦 Unificar ${mergeFiles.length} archivos` : 'Selecciona archivos primero'}
+              </Button>
             </div>
           </Card>
         </div>
@@ -566,6 +851,38 @@ export default function GeocodeInterfazPage() {
                     <Map className="w-4 h-4 mr-2" />
                     Ver en el Mapa
                   </Button>
+
+                  {/* Botón para guardar en BD */}
+                  <Button
+                    onClick={handleSaveToDatabase}
+                    disabled={saving || saved}
+                    className="w-full bg-purple-600 hover:bg-purple-700"
+                  >
+                    {saving ? (
+                      <>
+                        <Clock className="w-4 h-4 mr-2 animate-spin" />
+                        Guardando en BD...
+                      </>
+                    ) : saved ? (
+                      <>
+                        <CheckCircle className="w-4 h-4 mr-2" />
+                        ✅ Guardado en Base de Datos
+                      </>
+                    ) : (
+                      <>
+                        <Download className="w-4 h-4 mr-2" />
+                        💾 Guardar en Base de Datos
+                      </>
+                    )}
+                  </Button>
+
+                  {saved && (
+                    <div className="p-3 bg-purple-50 border border-purple-200 rounded-lg">
+                      <p className="text-sm text-purple-900">
+                        Las paradas ya están disponibles en <a href="/paradas" className="underline font-medium">el mapa principal</a>
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </Card>

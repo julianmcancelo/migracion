@@ -49,6 +49,7 @@
     "jose": "^5.9.6",
     "jspdf": "^3.0.3",
     "jspdf-autotable": "^5.0.2",
+    "jszip": "^3.10.1",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.546.0",
     "multer": "^2.0.2",

@@ -26,36 +26,66 @@ export async function POST(request: NextRequest) {
     const worksheet = workbook.Sheets[sheetName]
     const data = XLSX.utils.sheet_to_json<any>(worksheet)
 
-    // Detectar si necesita arreglo
-    const firstRow = data[0]
-    const codigoKey = Object.keys(firstRow).find(k => 
-      k.toLowerCase().includes('codigo') || k.toLowerCase().includes('código')
-    )
-    const calleKey = Object.keys(firstRow).find(k => 
-      k.toLowerCase().includes('calle') || k.toLowerCase().includes('direccion')
-    )
-
-    if (!codigoKey) {
+    if (!data || data.length === 0) {
       return NextResponse.json(
-        { error: 'No se encontró columna de código' },
+        { error: 'El archivo Excel está vacío' },
         { status: 400 }
       )
     }
 
+    // Detectar columnas flexiblemente
+    const firstRow = data[0]
+    const keys = Object.keys(firstRow)
+    
+    console.log('Columnas encontradas:', keys)
+    
+    // Buscar columnas (más flexible)
+    const codigoKey = keys.find(k => {
+      const lower = k.toLowerCase().trim()
+      return lower.includes('codigo') || lower.includes('código') || 
+             lower.includes('parada') || lower.includes('nombre')
+    })
+    
+    const calleKey = keys.find(k => {
+      const lower = k.toLowerCase().trim()
+      return lower.includes('calle') || lower.includes('direccion') || 
+             lower.includes('dirección') || lower === 'calle'
+    })
+    
+    const alturaKey = keys.find(k => {
+      const lower = k.toLowerCase().trim()
+      return lower.includes('altura') || lower.includes('numero') || 
+             lower.includes('número') || lower === 'altura' || lower === 'nro'
+    })
+    
+    const localidadKey = keys.find(k => {
+      const lower = k.toLowerCase().trim()
+      return lower.includes('localidad') || lower.includes('ciudad') || 
+             lower === 'localidad'
+    })
+
+    // Si no hay columna de código, intentamos adivinar cuál tiene los nombres de calles
+    const nombreCalleKey = codigoKey || calleKey || keys[0]
+
     // Arreglar datos: mover código a calle
     const fixed = data.map((row, index) => {
-      const codigo = codigoKey ? row[codigoKey] : ''
-      const calle = calleKey ? row[calleKey] || '' : ''
+      // Obtener valores de las columnas detectadas
+      const nombreCalle = row[nombreCalleKey] || ''
+      const altura = alturaKey ? row[alturaKey] : (row['Altura'] || row['altura'] || row['Numero'] || row['numero'] || '')
+      const localidad = localidadKey ? row[localidadKey] : (row['Localidad'] || row['localidad'] || 'Lanús')
       
       return {
         'CodigoParada': `P${String(index + 1).padStart(3, '0')}`,
-        'Calle': codigo || calle, // El nombre de calle que estaba en código
-        'Altura': row['Altura'] || row['altura'] || row['Numero'] || row['numero'] || '',
-        'Localidad': row['Localidad'] || row['localidad'] || 'Lanús',
+        'Calle': String(nombreCalle).trim(),
+        'Altura': String(altura).trim(),
+        'Localidad': String(localidad).trim(),
         'Provincia': row['Provincia'] || row['provincia'] || 'Buenos Aires',
-        'Referencia': row['Referencia'] || row['referencia'] || row['ESTADO'] || ''
+        'Pais': 'Argentina',
+        'Referencia': row['Referencia'] || row['referencia'] || row['ESTADO'] || row['Estado'] || ''
       }
     })
+    
+    console.log(`Procesadas ${fixed.length} filas`)
 
     // Crear nuevo workbook
     const newWorkbook = XLSX.utils.book_new()
@@ -75,8 +105,23 @@ export async function POST(request: NextRequest) {
   } catch (error: any) {
     console.error('Error al arreglar Excel:', error)
     return NextResponse.json(
-      { error: 'Error al procesar el archivo', details: error.message },
+      { 
+        error: 'Error al procesar el archivo', 
+        details: error.message,
+        stack: error.stack 
+      },
       { status: 500 }
     )
   }
+}
+
+/**
+ * GET /api/paradas/fix-excel
+ * Endpoint de prueba para verificar que la API funciona
+ */
+export async function GET() {
+  return NextResponse.json({
+    message: 'API de arreglo de Excel funcionando',
+    instructions: 'Envía un POST con el archivo Excel'
+  })
 }
