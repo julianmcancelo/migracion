@@ -473,3 +473,38 @@ enum habilitaciones_generales_tipo_transporte {
   Remis
   Demo
 }
+
+// === MODELO PARA PARADAS Y PUNTOS DE INTERÉS ===
+model paradas {
+  id          Int      @id @default(autoincrement())
+  titulo      String   @db.VarChar(150)
+  tipo        paradas_tipo
+  descripcion String?  @db.Text
+  latitud     Decimal  @db.Decimal(10, 8)
+  longitud    Decimal  @db.Decimal(11, 8)
+  estado      paradas_estado? @default(ok)
+  activo      Boolean  @default(true)
+  creado_en   DateTime @default(now())
+  actualizado DateTime @updatedAt
+  creado_por  Int?
+  metadata    Json?    // Para datos adicionales como líneas de transporte, etc.
+  
+  @@index([tipo], map: "idx_tipo")
+  @@index([activo], map: "idx_activo")
+  @@index([latitud, longitud], map: "idx_ubicacion")
+}
+
+enum paradas_tipo {
+  seguridad
+  transporte
+  semaforo
+  salud
+  educacion
+  municipal
+}
+
+enum paradas_estado {
+  ok
+  falla
+  mantenimiento
+}

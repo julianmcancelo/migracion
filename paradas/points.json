@@ -1,0 +1,1820 @@
+[
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "municipal",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Refugio",
+        "type": "transporte",
+        "description": "Refugio obsoleto.\nLineas 520, 9, 247",
+        "lat": -34.6987060000000013815224519930779933929443359375,
+        "lng": -58.42924699999999660349203622899949550628662109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "D\u00e1rsena ",
+        "type": "transporte",
+        "description": "L\u00edneas 521-524-522-526-527B-527C\n",
+        "lat": -34.70571799999999740293787908740341663360595703125,
+        "lng": -58.3896519999999981109795044176280498504638671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "D\u00e1rsena",
+        "type": "transporte",
+        "description": "L\u00edneas 266-278-281- 295A-295B-295D-295E\n",
+        "lat": -34.70713400000000348200046573765575885772705078125,
+        "lng": -58.39029000000000024783730623312294483184814453125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "D\u00e1rsena ",
+        "type": "transporte",
+        "description": "Refugio obsoleto\nL\u00edneas 299S-299-446-100-154\n",
+        "lat": -34.70828900000000061254468164406716823577880859375,
+        "lng": -58.3906980000000004338289727456867694854736328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio de chapa\nHacia Capital\t",
+        "lat": -34.70541800000000165482560987584292888641357421875,
+        "lng": -58.38951800000000247337084147147834300994873046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\nIDA\nL\u00edneas 177-79-160",
+        "lat": -34.725402000000002544766175560653209686279296875,
+        "lng": -58.39054800000000255977283813990652561187744140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\t\nVUELTA\nL\u00edneas 79-160-177",
+        "lat": -34.72994800000000026329871616326272487640380859375,
+        "lng": -58.39017199999999974124875734560191631317138671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\nIDA\nL\u00edneas 177-160-79",
+        "lat": -34.72937499999999744204615126363933086395263671875,
+        "lng": -58.38997400000000226327756536193192005157470703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\nIDA\nL\u00edneas 177-160-79",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "municipal",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Sede de licencias \nRefugio Estandar (sin banco)\nIDA\nL\u00ednea 100",
+        "lat": -34.72077699999999822466634213924407958984375,
+        "lng": -58.3923980000000000245563569478690624237060546875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Est\u00e1ndar (sin banco)\nIDA\nL\u00edneas 160-177-79",
+        "lat": -34.7269059999999996080077835358679294586181640625,
+        "lng": -58.3898989999999997735358192585408687591552734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Nueva\nHacia Malabia\t\nL\u00ednea 160, 177, 179",
+        "lat": -34.72352000000000060708771343342959880828857421875,
+        "lng": -58.3918350000000003774403012357652187347412109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\nVUELTA\nL\u00edneas 160-79-74",
+        "lat": -34.7359129999999964866219670511782169342041015625,
+        "lng": -58.39027399999999801138983457349240779876708984375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio Estandar (sin banco)\nIDA\nL\u00ednea 160-79-177",
+        "lat": -34.7319710000000014815668691881000995635986328125,
+        "lng": -58.38996300000000161389834829606115818023681640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Refugio de Chapa\nHacia Capital\t",
+        "lat": -34.73220500000000043883119360543787479400634765625,
+        "lng": -58.3902149999999977580955601297318935394287109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre\t3507 y Guarracino\nRefugio Estandar (sin banco)\t\nHacia Provincia",
+        "lat": -34.72848400000000168574842973612248897552490234375,
+        "lng": -58.39019900000000262707544607110321521759033203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre 3852 y Murature\nRefugio Estandar (sin banco)\nHacia Provincia\t",
+        "lat": -34.73355000000000103455022326670587062835693359375,
+        "lng": -58.3900220000000018671926227398216724395751953125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre\t3901 y Villarino\nRefugio Estandar (sin banco)\nHacia Provincia",
+        "lat": -34.73632099999999667261363356374204158782958984375,
+        "lng": -58.3910920000000004392859409563243389129638671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre 4000 y Azopardo\nRefugio Estandar (sin banco)\nHacia Provincia\t",
+        "lat": -34.73501300000000213685780181549489498138427734375,
+        "lng": -58.38999499999999898136593401432037353515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre 5818 y Malabia\nRefugio Estandar (sin banco)\t",
+        "lat": -34.73603200000000157388058141805231571197509765625,
+        "lng": -58.39004299999999858528099139221012592315673828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "29 de Septiembre 5818 y Malabia\nRefugio Estandar (sin banco)\t",
+        "lat": -34.71252299999999735291567048989236354827880859375,
+        "lng": -58.383836999999999761712388135492801666259765625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "9 de Julio\t3200 y Posadas\nRefugio Estandar (sin banco)\t",
+        "lat": -34.7234710000000035279299481771886348724365234375,
+        "lng": -58.3686500000000023646862246096134185791015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "9 de Julio\t3399 y Centenario Uruguayo\nRefugio Estandar (sin banco)\t\nHacia Kloosterman\nLineas 299, 526 ",
+        "lat": -34.7252610000000032641764846630394458770751953125,
+        "lng": -58.3662149999999968486008583568036556243896484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "seguridad",
+        "description": "9 de Julio\ty Gral. Pico\nRefugio Estandar (sin banco)\t\nHacia 29 de Septiembre\nLineas 299, 526",
+        "lat": -34.72433500000000350382833858020603656768798828125,
+        "lng": -58.36721200000000209229256142862141132354736328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "9 de Julio\t y Cotagaita\nRefugio de material\nHacia 29 de Septiembre\nL\u00edneas 239,526",
+        "lat": -34.729973999999998568455339409410953521728515625,
+        "lng": -58.35964899999999744295564596541225910186767578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "transporte",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "transporte",
+        "description": "modificado\n",
+        "lat": -34.72502899999999925739757600240409374237060546875,
+        "lng": -58.3676150000000006912159733474254608154296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "9 de Julio\ty Boulevard de los Italianos\nRefugio Estandar (sin banco)\nHacia 29 de Septiembre\nLineas 239 - 526",
+        "lat": -34.72803400000000095815266831777989864349365234375,
+        "lng": -58.36206299999999913552528596483170986175537109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "Achaval y San Lorenzo\t\nRefugio Estandar (sin banco)\t\nHacia Villa de Lujan\t\nLinea 299",
+        "lat": -34.7308120000000002391971065662801265716552734375,
+        "lng": -58.38364899999999835245034773834049701690673828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Aguilar\ten la Puerta del Cementerio\tRefugio Estandar (sin banco)\nHacia Villa de Lujan\n(Con calcos)\nLineas 100, 179",
+        "lat": -34.7341320000000024492692318744957447052001953125,
+        "lng": -58.37803799999999654346538591198623180389404296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Aguilar y Centenario Uruguayo\nRefugio Estandar (sin banco)\nHacia Centenario\n(faltan calcos)",
+        "lat": -34.73499100000000083809936768375337123870849609375,
+        "lng": -58.37668599999999941019268590025603771209716796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Aguilar y Palma\t\nRefugio Obsoleto\nHacia Villa de Lujan",
+        "lat": -34.7318039999999967903931974433362483978271484375,
+        "lng": -58.38140700000000293812263407744467258453369140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Aguilar y Pico\t\nRefugio de material\nHacia Villa de Lujan",
+        "lat": -34.73419299999999765304892207495868206024169921875,
+        "lng": -58.377802000000002635715645737946033477783203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Aguilar\ty Matanza\t\nRefugio Estandar (sin banco)\t\nHacia Lynch\t\nLineas 100 - 179",
+        "lat": -34.7368960000000015497789718210697174072265625,
+        "lng": -58.37441100000000204772732104174792766571044921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. 25 de Mayo 340 y Del Valle Iberlucea\nIDA",
+        "lat": -34.70819199999999682404450140893459320068359375,
+        "lng": -58.39312300000000277577782981097698211669921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. 25 de Mayo 599 y Tte. Ragnugni\nVUELTA",
+        "lat": -34.707054999999996880433172918856143951416015625,
+        "lng": -58.4005039999999979727363097481429576873779296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. 25 de Mayo 38 y Av. Hip\u00f3lito Yrigoyen\nParada Segura\nIDA",
+        "lat": -34.70826699999999931378624751232564449310302734375,
+        "lng": -58.39213600000000070622263592667877674102783203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. 25 de Mayo 404 y 2 de mayo\nParada Segura\nIDA",
+        "lat": -34.7078699999999997771737980656325817108154296875,
+        "lng": -58.39717799999999670035322196781635284423828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 2448 y Burela\nRefugio Estandar (sin banco)\nIDA\nLineas 178 - 85",
+        "lat": -34.6859060000000027912392397411167621612548828125,
+        "lng": -58.38660999999999745568857179023325443267822265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "municipal",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen\t2471 Entre Bolivia y Colombia\t\nRefugio Estandar (sin banco)\nVUELTA\nLineas 51 - 33 - 45a - 37 - 85 - 178",
+        "lat": -34.6860649999999992587618180550634860992431640625,
+        "lng": -58.387124999999997498889570124447345733642578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 2552 y Bueras\nRefugio Estandar (sin banco)\nIDA\nLineas 33 - 37 - 271 - 45a - 51 - 79\t",
+        "lat": -34.68612699999999904321157373487949371337890625,
+        "lng": -58.386674999999996771293808706104755401611328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 2699 y Jean Jaures\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.68793099999999895999280852265655994415283203125,
+        "lng": -58.3879239999999981591827236115932464599609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 2718 y Bouchard\tRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.6884510000000005902620614506304264068603515625,
+        "lng": -58.38776399999999711099007981829345226287841796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3043 Entre Remedios de Escalada de San Martin y Tuyut\u00ed\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.69158300000000139107214636169373989105224609375,
+        "lng": -58.3893460000000033005562727339565753936767578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3085 y Remedios de Escalada de San Martin\t\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.6914459999999991168806445784866809844970703125,
+        "lng": -58.38904000000000138470568344928324222564697265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3104 y Alfonsin\nRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.692486999999999852661858312785625457763671875,
+        "lng": -58.38947999999999893816493568010628223419189453125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3299 y Resistencia\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.6939119999999974197635310702025890350341796875,
+        "lng": -58.39039199999999851797838346101343631744384765625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "PArada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3740 y Eva peron\nParada Segura\t\nHacia caba",
+        "lat": -34.69903699999999702185959904454648494720458984375,
+        "lng": -58.39186699999999774490788695402443408966064453125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3872 y Coronel Rico\nParada Segura\t\nHacia caba",
+        "lat": -34.7001259999999973615558701567351818084716796875,
+        "lng": -58.3918350000000003774403012357652187347412109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyenn 4002 y Coronel Ramos\t\nParada Segura\t\nHacia caba",
+        "lat": -34.7015549999999990404830896295607089996337890625,
+        "lng": -58.39177600000000012414602679200470447540283203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 4175 y Felipe Llavallol\nParada Segura\t\nHacia Lomas",
+        "lat": -34.70332400000000205864125746302306652069091796875,
+        "lng": -58.39200100000000048794390750117599964141845703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 4355 y Gobernador Yrigoyen\t\nParada Segura\t\nHacia Lomas",
+        "lat": -34.7054270000000002482920535840094089508056640625,
+        "lng": -58.39200699999999955025486997328698635101318359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "D\u00e1rsena 1 ",
+        "type": "seguridad",
+        "description": "Av. Hip\u00f3lito Yrigoyen 4500",
+        "lat": -34.70710700000000059617377701215445995330810546875,
+        "lng": -58.39155600000000134741640067659318447113037109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "D\u00e1rsena 2",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen\t4500",
+        "lat": -34.7077469999999976835169945843517780303955078125,
+        "lng": -58.3915190000000023928805603645741939544677734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 4985 y Castro Barros\t\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA\nL\u00edneas 160-51-119-37-179",
+        "lat": -34.71261700000000161026036948896944522857666015625,
+        "lng": -58.39277899999999732472133473493158817291259765625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 5096 y O'Higgins\nRefugio Est\u00e1ndar (sin banco)\t\nIDA\nL\u00edneas 119-33-179-37",
+        "lat": -34.71391799999999960846253088675439357757568359375,
+        "lng": -58.392774000000002843080437742173671722412109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 5432 y Zuloaga\nRefugio Est\u00e1ndar (sin banco)\t\nIDA\nL\u00edneas 37-79",
+        "lat": -34.717522999999999910869519226253032684326171875,
+        "lng": -58.3935570000000012669261195696890354156494140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyenn 5499 y O'Brien\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA\nL\u00edneas 160-177-277-33-119",
+        "lat": -34.71820199999999800866135046817362308502197265625,
+        "lng": -58.39398099999999658393790014088153839111328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 5640 Pared\u00f3n UnLa\nRefugio Est\u00e1ndar (sin banco)\t\nIDA\t\t\nL\u00edneas 119 - 33 - 179 - 160 - 79 - 177",
+        "lat": -34.7202750000000008867573342286050319671630859375,
+        "lng": -58.39411499999999932697392068803310394287109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen6000\t\t\nRefugio Est\u00e1ndar (sin banco)\t\nIDA\t\t\nL\u00edneas 277-33-164-51-119",
+        "lat": -34.7266300000000001091393642127513885498046875,
+        "lng": -58.39542800000000255522536463104188442230224609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas ",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 6135 entre Luis Beltr\u00e1n y Juan de Garay\t\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA\t\nL\u00edneas 51-164",
+        "lat": -34.72637900000000144018486025743186473846435546875,
+        "lng": -58.395679999999998699422576464712619781494140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas ",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3985 y Moreno\nParada segura \nHacia Lomas\nL\u00edneas 33 - 45 - 51 - 164 - 119",
+        "lat": -34.7012069999999965830284054391086101531982421875,
+        "lng": -58.392167999999998073690221644937992095947265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 6330 Refugio Estandar (sin banco) (con calcos)\t\nIDA \nL\u00edneas 164-51",
+        "lat": -34.72845300000000179352355189621448516845703125,
+        "lng": -58.3957989999999966812538332305848598480224609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Av. Hip\u00f3lito Yrigoyen 3681 e Intendente Manuel Quindimil\t\nParada Segura\t\nHacia Lomas\t\nL\u00edneas 33 - 45 - 51 - 164 - 119",
+        "lat": -34.6979740000000020927473087795078754425048828125,
+        "lng": -58.39215200000000294267010758630931377410888671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia y Paraguay\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Escalada\nL\u00edneas 20 - 85 - 178 - 421",
+        "lat": -34.67374399999999923238647170364856719970703125,
+        "lng": -58.3964059999999989258867572061717510223388671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia y\tRemedios de Escalada\nRefugio Est\u00e1ndar (sin banco)\nHacia Viamonte\nL\u00ednea 20 ",
+        "lat": -34.67917899999999775673131807707250118255615234375,
+        "lng": -58.40387799999999884903445490635931491851806640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia y Palacios\nRefugio Estandar (sin banco)\t\nHacia Chile\nTERMINAL DEL 128",
+        "lat": -34.67639100000000240697772824205458164215087890625,
+        "lng": -58.3991630000000014888428268022835254669189453125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia 1383\ty Callao\nRefugio Obsoleto\t\nIDA",
+        "lat": -34.6739419999999967103576636873185634613037109375,
+        "lng": -58.39611099999999765941538498736917972564697265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia 1383\ty Callao\nRefugio Obsoleto\t\nIDA",
+        "lat": -34.6820239999999984092937665991485118865966796875,
+        "lng": -58.4062219999999996389306033961474895477294921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia 1787\ty Liniers\t\nRefugio Est\u00e1ndar (sin banco)\nIDA",
+        "lat": -34.68558900000000022600943339057266712188720703125,
+        "lng": -58.41041200000000088721208157949149608612060546875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia y Viamonte\t\nRefugio Estandar (sin banco)\nHacia Remedios de Escalada de San Martin\nLineas 32 - 247 - 160",
+        "lat": -34.6888349999999974215825204737484455108642578125,
+        "lng": -58.41690799999999939018380246125161647796630859375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Pres. Bernardino Rivadavia 3481 y Pedraza\t\nRefugio de chapa\t\nIDA\t",
+        "lat": -34.68950600000000150657797348685562610626220703125,
+        "lng": -58.4183189999999967767507769167423248291015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin y Cordoba\nRefugio de chapa \nHacia Provincia",
+        "lat": -34.70334600000000335739969159476459026336669921875,
+        "lng": -58.376036999999996623955667018890380859375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 1700 y Cordoba\t\nRefugio Estandar (sin banco)\t\nHacia Capital",
+        "lat": -34.7031429999999971869328874163329601287841796875,
+        "lng": -58.37575799999999759393176645971834659576416015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 1695\nRefugio de chapa\t\nHacia Provincia",
+        "lat": -34.7033679999999975507307681255042552947998046875,
+        "lng": -58.37553799999999881720214034430682659149169921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 2592\nRefugio Obsoleto\t\nHacia Provincia",
+        "lat": -34.71136299999999863530319998972117900848388671875,
+        "lng": -58.36445499999999952933649183250963687896728515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 3077 y Oyuela\nParada Segura\t\nHacia Provincia",
+        "lat": -34.71425099999999730471245129592716693878173828125,
+        "lng": -58.36119899999999915962689556181430816650390625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 2970 y Pedernera\t\nParada Segura\t\nHacia Capital\t",
+        "lat": -34.71278699999999872716216486878693103790283203125,
+        "lng": -58.362797000000000480213202536106109619140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin 3200 y Oyuela\nRefugio Estandar (sin banco)\t\nHacia Capital",
+        "lat": -34.714078999999998131897882558405399322509765625,
+        "lng": -58.36092500000000171667124959640204906463623046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Presidente Raul Alfonsin y San Lorenzo\nRefugio Obsoleto\t\nHacia Provincia",
+        "lat": -34.711737999999996873157215304672718048095703125,
+        "lng": -58.36457800000000162299329531379044055938720703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t4312 y Francisco Palacios\nParada Pl\u00e1stica (grande)\t\nL\u00edneas 9 - 70 - 178 - 188 - 85 - 177 - 160",
+        "lat": -34.662678999999997131453710608184337615966796875,
+        "lng": -58.41749800000000192312654689885675907135009765625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t5484 y Palacios\nParada Plastica (grande)\t\nHacia puente\t\nL\u00edneas 28 - 31 - 85 - 75 - 32 - 128 - 70 - 158 - 9",
+        "lat": -34.662633999999997058694134466350078582763671875,
+        "lng": -58.41707999999999856299837119877338409423828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t4312  \nRetorno del puente\nParada Pl\u00e1stica (chica)\t\nHacia Yrigoyen\t",
+        "lat": -34.662520000000000663931132294237613677978515625,
+        "lng": -58.4174610000000029685907065868377685546875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t3904 y Habana\t\nParada Pl\u00e1stica (chica)\t\nIDA\nL\u00edneas 158 - 179 - 9",
+        "lat": -34.666922999999997045961208641529083251953125,
+        "lng": -58.41724099999999708643372287042438983917236328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t3012 y Paso de Burgos\nParada Pl\u00e1stica (chica)\t\nIDA\t\nL\u00edneas 188 - 177",
+        "lat": -34.6732540000000000190993887372314929962158203125,
+        "lng": -58.41122699999999667852534912526607513427734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2504 y Dr. Ricardo Balbin\t\nParada Pl\u00e1stica (chica)\t\nIDA\t\nL\u00edneas 177 - 179 - 421",
+        "lat": -34.6769249999999971123543218709528446197509765625,
+        "lng": -58.40731699999999904093783698044717311859130859375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2318 y Ucrania\t\nParada Pl\u00e1stica (grande)\t\nIDA\t\nL\u00edneas 179 - 119 - 421 - 177",
+        "lat": -34.67848099999999789133653393946588039398193359375,
+        "lng": -58.4053109999999975343598634935915470123291015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Paradas",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2114 y Av. Rivadavia\t\nParada Pl\u00e1stica (grande)\t\nIDA\nL\u00edneas 177 - 179 - 119 - 421",
+        "lat": -34.67958399999999841156750335358083248138427734375,
+        "lng": -58.4045440000000013469616533257067203521728515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2073 y Av. Rivadavia\t\nParada Pl\u00e1stica (grande)\t\nVUELTA\nL\u00edneas 20 - 177 - 421",
+        "lat": -34.679698999999999387000571005046367645263671875,
+        "lng": -58.4038790000000034297045203857123851776123046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2287 y Ucrania\t\nParada Pl\u00e1stica (chica)\t\nVUELTA\nL\u00edneas 179 - 421",
+        "lat": -34.67821599999999904184733168222010135650634765625,
+        "lng": -58.40631400000000184036252903752028942108154296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t2687 y Rucci\t\nParada Pl\u00e1stica (chica)\t\nVUELTA\nL\u00edneas 119 - 177 - 421 - 354",
+        "lat": -34.6754329999999981737346388399600982666015625,
+        "lng": -58.4092160000000006903064786456525325775146484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1916 y Humberto Primo\t\nParada Pl\u00e1stica (chica)\t\nIDA\t\nL\u00edneas 20 - 179 - 177",
+        "lat": -34.681230999999996811311575584113597869873046875,
+        "lng": -58.40310000000000201225702767260372638702392578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1724 y La Rioja\t\nParada Pl\u00e1stica (grande)\t\nIDA\t\nL\u00edneas 179 - 20 - 354 - 177",
+        "lat": -34.6823509999999970432327245362102985382080078125,
+        "lng": -58.40208599999999705687514506280422210693359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1724 y La Rioja\t\nParada Pl\u00e1stica (grande)\t\nIDA\nL\u00edneas 179 - 20 - 354 - 177",
+        "lat": -34.68436700000000172394720721058547496795654296875,
+        "lng": -58.400294999999999845385900698602199554443359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1318 y Av. Gral. San Martin\t\nParada Pl\u00e1stica (grande)\t\nIDA\t\nL\u00edneas 179 - 20 - 177",
+        "lat": -34.68480799999999675264916731975972652435302734375,
+        "lng": -58.393315999999998666680767200887203216552734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1318 y Av. Gral. San Martin\t\nParada Pl\u00e1stica (grande)\t\nIDA\nL\u00edneas 179 - 20 - 177",
+        "lat": -34.6861660000000000536601874046027660369873046875,
+        "lng": -58.3980260000000015452314983122050762176513671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1112 y\tAv. Gral. San Martin\t\nParada Pl\u00e1stica (grande)\t\nIDA\t\nL\u00edneas 177-354",
+        "lat": -34.68777200000000249247023020870983600616455078125,
+        "lng": -58.39579400000000219961293623782694339752197265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1265 y Av. Gral. San Martin\t\nParada Pl\u00e1stica (grande)\t\nVUELTA\t\nL\u00edneas 177 - 354",
+        "lat": -34.686183999999997240593074820935726165771484375,
+        "lng": -58.3970920000000006666596163995563983917236328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1389 y Catamarca\t\nParada Pl\u00e1stica (chica)\t\nVUELTA\t\nL\u00edneas 177- 179 - 354",
+        "lat": -34.68526200000000159207047545351088047027587890625,
+        "lng": -58.39828299999999927649696473963558673858642578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1483 y Enrique Fernandez\nParada Pl\u00e1stica (chica)\t\nVUELTA\t\nL\u00edneas 177 - 179 - 20 - 354 ",
+        "lat": -34.6843489999999974315869621932506561279296875,
+        "lng": -58.39956500000000261252353084273636341094970703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1689 y La Rioja\t\nParada Pl\u00e1stica (chica)\t\nVUELTA\t\nL\u00edneas 177 - 179 - 20 - 354",
+        "lat": -34.68284899999999737474354333244264125823974609375,
+        "lng": -58.40102999999999866531652514822781085968017578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t914 y Concejal H. Noya\t\nParada Pl\u00e1stica (chica)\t\nIDA\t\nL\u00ednea 188 - 177",
+        "lat": -34.68933299999999775309333926998078823089599609375,
+        "lng": -58.39371799999999979036147124134004116058349609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t720 y Bolivia\t\nParada Plastica (grande)\t\nIDA",
+        "lat": -34.69085100000000210229700314812362194061279296875,
+        "lng": -58.39165299999999803048922331072390079498291015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t546 y Av. Hip\u00f3lito Yrigoyen\t\nParada Pl\u00e1stica (grande)\t\nIDA\t\nL\u00ednea 177",
+        "lat": -34.69210799999999750298229628242552280426025390625,
+        "lng": -58.38995200000000096451913123019039630889892578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t641 y Bolivia\nParada Pl\u00e1stica (grande)\t\nVUELTA\t\nL\u00edneas 177 - 354",
+        "lat": -34.69086399999999770216163597069680690765380859375,
+        "lng": -58.390906999999998561179381795227527618408203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t895 y Concejal H. Noya\t\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA\t\nL\u00edneas 177  -354",
+        "lat": -34.6888569999999987203409546054899692535400390625,
+        "lng": -58.39352999999999838109943084418773651123046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Remedios de Escalada de San Martin\t1099 y Santiago del estero\t\nParada Pl\u00e1stica (grande)\t\nVUELTA\t\nL\u00edneas 177 - 354",
+        "lat": -34.68747599999999664532879251055419445037841796875,
+        "lng": -58.395397000000002663000486791133880615234375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. San Martin\t4400 y Gral. Hornos\t\nVUELTA\t\t\nL\u00edneas 20 - 283\t",
+        "lat": -34.71332499999999754436430521309375762939453125,
+        "lng": -58.4278630000000021027517504990100860595703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "seguridad",
+        "description": "Av.Gral Jose de San Martin 3993 y Hernandarias\t\nParada Segura (faltan calcos) \nVUELTA\tLineas 20 - 247 - 405 - 179",
+        "lat": -34.71085099999999812325768289156258106231689453125,
+        "lng": -58.42311500000000279442247119732201099395751953125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 1079 y Av. Remedios de Escalada de San Martin\nParada Pl\u00e1stica y Refugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.6863340000000022200765670277178287506103515625,
+        "lng": -58.3977789999999998826751834712922573089599609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 300 y Brasil\nRefugio Obsoleto\t\nIDA",
+        "lat": -34.68085500000000109821485239081084728240966796875,
+        "lng": -58.390928999999999859937815926969051361083984375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 526 y Colombia\nRefugio Obsoleto\t\nIDA\t",
+        "lat": -34.68234600000000256159182754345238208770751953125,
+        "lng": -58.39270900000000352747520082630217075347900390625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 1314 y  Resistencia\t\nRefugio Estandar (sin banco)\t\nIDA\t",
+        "lat": -34.6875509999999991350705386139452457427978515625,
+        "lng": -58.39929200000000264481059275567531585693359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 1410 y Formosa\nRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.68829199999999701731212553568184375762939453125,
+        "lng": -58.400160999999997102349880151450634002685546875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 1587 e Int. Manuel Quindimil\t\nRefugio Estandar (sin banco)\nVUELTA\t",
+        "lat": -34.6896160000000008949427865445613861083984375,
+        "lng": -58.40207600000000098816599347628653049468994140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 1945 y Cnel. Delia\t\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.692756000000002813976607285439968109130859375,
+        "lng": -58.405090999999998757630237378180027008056640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2089 y Sayos\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.69454300000000301906766253523528575897216796875,
+        "lng": -58.40649599999999708188624936155974864959716796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2295 y Viamonte\t\nRefugio Estandar (sin banco)\t\nVUELTA\t",
+        "lat": -34.69590500000000332647687173448503017425537109375,
+        "lng": -58.4080790000000007466951501555740833282470703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 1610 y Int. Manuel Quindimil\t\nRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.6900389999999987367118592374026775360107421875,
+        "lng": -58.40220500000000214413375942967832088470458984375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 1806 y Ocampo\nRefugio Estandar (sin banco)\t\nIDA\t",
+        "lat": -34.69190900000000254976839642040431499481201171875,
+        "lng": -58.40401800000000065438143792562186717987060546875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 1936 y Cnel. Delia\nRefugio Estandar (sin banco)\tIDA",
+        "lat": -34.69306100000000014915713109076023101806640625,
+        "lng": -58.405090999999998757630237378180027008056640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 2100 Y Sayos\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA",
+        "lat": -34.6946439999999967085386742837727069854736328125,
+        "lng": -58.40619000000000227146301767788827419281005859375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2100 y Sayos\nRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.69418999999999897454472375102341175079345703125,
+        "lng": -58.40639900000000039881342672742903232574462890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2314 y Viamonte\t\nRefugio Estandar (sin banco)\t\nIDA\t",
+        "lat": -34.69631600000000304362401948310434818267822265625,
+        "lng": -58.408174999999999954525264911353588104248046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2693 y Moreno\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.699848000000002912202035076916217803955078125,
+        "lng": -58.41154399999999924375515547581017017364501953125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 2941 y Llavallol\nRefugio Est\u00e1ndar (sin banco)\t\nVUELTA",
+        "lat": -34.70197399999999987585397320799529552459716796875,
+        "lng": -58.41350700000000273348632617853581905364990234375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin\t2989\tLlavallol\tRefugio Estandar (sin banco)\tVUELTA\nLa foto que fue adjuntada en el Google Docs es de esta direcci\u00f3n ",
+        "lat": -34.69806200000000018235368770547211170196533203125,
+        "lng": -58.41004699999999871806721785105764865875244140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 3175 y 25 de mayo\t\nParada Segura\t\nVUELTA",
+        "lat": -34.70452800000000337377059622667729854583740234375,
+        "lng": -58.415492000000000416548573412001132965087890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 3200 y 25 de mayo\t\nParada Segura\t\nVUELTA\t",
+        "lat": -34.70425399999999882538759266026318073272705078125,
+        "lng": -58.415492000000000416548573412001132965087890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 2508 y Manuel Maza\t\nRefugio de material\t \nIDA",
+        "lat": -34.6981200000000029604052542708814144134521484375,
+        "lng": -58.409773999999998750354279763996601104736328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 2972 y Llavallol\nRefugio Estandar (sin banco)\t\nIDA\t",
+        "lat": -34.7024109999999978981577442027628421783447265625,
+        "lng": -58.41356600000000298678060062229633331298828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 3112 y Aristobulo del Valle\t\nRefugio de material\t\nIDA\t",
+        "lat": -34.7034689999999983456291374750435352325439453125,
+        "lng": -58.41450999999999993406163412146270275115966796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martinv 3899 Don Orione\nRefugio Estandar (sin banco)\t\nVUELTA",
+        "lat": -34.71018600000000020600054995156824588775634765625,
+        "lng": -58.42184900000000169484337675385177135467529296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "Av. Gral Jose de San Martin 3724 y Marco Avellaneda\t\nRefugio de chapa\t\nIDA ",
+        "lat": -34.70936499999999824694896233268082141876220703125,
+        "lng": -58.4198209999999988895069691352546215057373046875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Av.Gral Jose de San Martin 3906 y Don Orione\t\nRefugio Estandar (sin banco)\t\nIDA",
+        "lat": -34.710520999999999958163243718445301055908203125,
+        "lng": -58.42203099999999693636709707789123058319091796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Ayacucho y Oyuela\t\nRefugio Obsoleto\nL\u00ednea 271",
+        "lat": -34.71516799999999847159415367059409618377685546875,
+        "lng": -58.36149900000000201316652237437665462493896484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Blanco Encalada\t1012 y Damonte\t\nRefugio Est\u00e1ndar (sin banco)\t\t\nL\u00ednea 100",
+        "lat": -34.69711399999999912324710749089717864990234375,
+        "lng": -58.380436000000003105014911852777004241943359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Bola\u00f1os y Damonte\t\nRefugio Est\u00e1ndar (sin banco)\nL\u00ednea 100",
+        "lat": -34.6964880000000022164385882206261157989501953125,
+        "lng": -58.37980300000000255522536463104188442230224609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "seguridad",
+        "description": "Boqueron y Olazabal \nRefugio Estandar (sin banco)\t\nHacia Osorio\nLinea 520",
+        "lat": -34.69384600000000062891558627597987651824951171875,
+        "lng": -58.43391900000000305226421914994716644287109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Bouchard\t Entre Madariaga y Esquiu\t\nRefugio Est\u00e1ndar (sin banco)\t\t\nL\u00ednea 74",
+        "lat": -34.7043249999999972033037920482456684112548828125,
+        "lng": -58.3677009999999967249095789156854152679443359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Boulevard de los Italianos y Donato Alvarez (Hacia Donato Alvarez)\t\nRefugio Est\u00e1ndar (sin banco)\t",
+        "lat": -34.71769100000000207728589884936809539794921875,
+        "lng": -58.3499819999999971287252265028655529022216796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Bustamante\t542 y Lacarra\t\nRefugio Estandar (sin banco)\nHacia Yrigoyen (faltan calcos)\t\nL\u00edneas 178 - 373 - 85",
+        "lat": -34.6897220000000032769094104878604412078857421875,
+        "lng": -58.37925599999999803912942297756671905517578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Bustamante\t1585 y Salta\t\nRefugio Estandar (sin banco) (faltan calcos)\nL\u00edneas 178 - 373 - 85",
+        "lat": -34.69755500000000125737642520107328891754150390625,
+        "lng": -58.37031300000000300087776849977672100067138671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Bustamante\t549 y Republica del Libano\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Sarmiento\t\nL\u00edneas 178 - 373 - 85",
+        "lat": -34.6905160000000023501343093812465667724609375,
+        "lng": -58.37852099999999921919879852794110774993896484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Ramon Cabrero y Cordoba\t\nParada Segura (faltan calcos)",
+        "lat": -34.7141189999999966175892041064798831939697265625,
+        "lng": -58.3875010000000003174136509187519550323486328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "seguridad",
+        "description": "Camino Gral. Belgrano 2794 y Pedernera\nRefugio de material\t (faltan calcos)\t\nL\u00edneas 527 - 373 - 570",
+        "lat": -34.70700599999999980127540766261518001556396484375,
+        "lng": -58.356414000000000896761775948107242584228515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Camino Gral. Belgrano 3089 y Oyuela\nRefugio de material\t (faltan calcos)\t",
+        "lat": -34.708967999999998710336512885987758636474609375,
+        "lng": -58.35440200000000032787283998914062976837158203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Camino Gral. Belgrano y Posadas\t\nRefugio de material (faltan calcos)",
+        "lat": -34.709417999999999437932274304330348968505859375,
+        "lng": -58.3538870000000002846718416549265384674072265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Camino Gral. Belgrano 2705 \nRefugio de chapa\t",
+        "lat": -34.7053700000000020509105524979531764984130859375,
+        "lng": -58.35829700000000030968294595368206501007080078125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Camino Gral. Belgrano y M\u00e9ndez\t\nRefugio Obsoleto\nL\u00edneas 570 - 178- 373",
+        "lat": -34.71656200000000325189830618910491466522216796875,
+        "lng": -58.34566399999999930514604784548282623291015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Centenario Uruguayo y Blanco Encalada\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Alfons\u00edn\t\nL\u00edneas 527 - 271 - 33",
+        "lat": -34.71704700000000087811713456176221370697021484375,
+        "lng": -58.3567359999999979436324792914092540740966796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Condarco 2485 y Beron de Astrada\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Roma\nL\u00ednea 527\t",
+        "lat": -34.73503099999999932379068923182785511016845703125,
+        "lng": -58.36216999999999899273461778648197650909423828125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Condarco 2503 y Ber\u00f3n de Astrada\t\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Ram\u00f3n Cabrero \nL\u00ednea 527 ",
+        "lat": -34.735331000000002177330316044390201568603515625,
+        "lng": -58.3622179999999985966496751643717288970947265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Condarco 2999 y Albarrac\u00edn\t\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Roma\t\nL\u00ednea 527",
+        "lat": -34.73883000000000009777068044058978557586669921875,
+        "lng": -58.36643099999999861893229535780847072601318359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Condarco 3001 y Albarrac\u00edn\t\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Ram\u00f3n Cabrero\nL\u00ednea 527",
+        "lat": -34.73909400000000147201717481948435306549072265625,
+        "lng": -58.3664899999999988722265698015689849853515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Condarco 3325 y Aguilar\t\nRefugio de material\t\nHacia Ram\u00f3n Cabrero\t\nL\u00ednea 527",
+        "lat": -34.74129099999999681358531233854591846466064453125,
+        "lng": -58.368977000000000998625182546675205230712890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Dardo Rocha y 1ro de Mayo\t\nRefugio Est\u00e1ndar (sin banco)\nHacia Marco Avellaneda\nL\u00ednea 283",
+        "lat": -34.72115199999999646252035745419561862945556640625,
+        "lng": -58.41248300000000170939529198221862316131591796875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Dardo Rocha y Colon\t\nRefugio Est\u00e1ndar (sin banco)\t\nL\u00ednea 20",
+        "lat": -34.723083000000002584783942438662052154541015625,
+        "lng": -58.41609799999999808051143190823495388031005859375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Diputado Pedrera 1026 y Av. Rivadavia\t\nRefugio, Nome, Se\u00f1. Oficial, Poste\nIDA\nL\u00ednea 164",
+        "lat": -34.6801540000000017016645870171487331390380859375,
+        "lng": -58.404415000000000190993887372314929962158203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Diputado Pedrera 1221 y Callao\nRefugio, Nome, Se\u00f1. Oficial, Poste\nVUELTA\t\t\nL\u00ednea 164",
+        "lat": -34.68238600000000104728314909152686595916748046875,
+        "lng": -58.40490299999999734836819698102772235870361328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Donato Alvarez y Jos\u00e9 Luis de la Pe\u00f1a\n(mano hacia Lynch)\t\nRefugio Obsoleto\t\t\nLinea 524",
+        "lat": -34.71852799999999916735760052688419818878173828125,
+        "lng": -58.3503249999999979991116560995578765869140625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Donovan\t502\ty Bueras\t\nRefugio Obsoleto\t\t\nL\u00edneas 100 - 446",
+        "lat": -34.69360300000000307818481815047562122344970703125,
+        "lng": -58.37922900000000225873009185306727886199951171875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "seguridad",
+        "description": "Emilio Castro\t2500 y Oliden\t\nRefugio Estandar (sin banco)",
+        "lat": -34.69009199999999992769517120905220508575439453125,
+        "lng": -58.42212299999999913779902271926403045654296875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Enrique Fernandez\ty Ocampo\t\nRefugio Estandar (sin banco)\t",
+        "lat": -34.68999999999999772626324556767940521240234375,
+        "lng": -58.40627599999999830515662324614822864532470703125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Enrique Fernandez y Moreno\t\nRefugio Estandar (sin banco)\t\t\nL\u00edneas 179 - 247 - 20",
+        "lat": -34.6982780000000019526851247064769268035888671875,
+        "lng": -58.41439199999999942747308523394167423248291015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Pico (Hacia Centenario)\tRefugio Est\u00e1ndar (sin banco)\t(faltan calcos)\t\nL\u00edneas 522 - 354 - 527 - 281",
+        "lat": -34.72071100000000143381839734502136707305908203125,
+        "lng": -58.3638329999999996289261616766452789306640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Centenario Uruguayo \n(Hacia Centenario Uruguayo)\t\nParada Segura\t\nL\u00edneas 271 - 281 - 354 - 527",
+        "lat": -34.7219189999999997553459252230823040008544921875,
+        "lng": -58.36182099999999906003722571767866611480712890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Av. General Paz en la Plaza hacia Centenario\nRefugio Estandar (sin banco)\t(con calco)\nL\u00edneas 271 - 281 - 354 - 527\t",
+        "lat": -34.7244189999999974816091707907617092132568359375,
+        "lng": -58.35864000000000118006937555037438869476318359375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Av. Gral. Paz en la Plaza hacia Pintos\t\nRefugio Estandar (sin banco) (con calco)\nL\u00edneas 271 - 281 - 354 - 527",
+        "lat": -34.724502999999998564817360602319240570068359375,
+        "lng": -58.358822000000003527020453475415706634521484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Jos\u00e9 Luis de la Pe\u00f1a (mano hacia Pintos)\t\nParada Segura\nL\u00edneas 271 - 281 - 354 - 527",
+        "lat": -34.7255210000000005265974323265254497528076171875,
+        "lng": -58.35725099999999798683347762562334537506103515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n 4004 y Cnel. Mendez\t\t\nIDA\t\t\nL\u00edneas 33 - 281 - 354",
+        "lat": -34.72620500000000021145751816220581531524658203125,
+        "lng": -58.35634900000000158115653903223574161529541015625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Pico \n(Hacia Centenario)\t\nRefugio Estandar (sin banco)\t(faltan calcos)\nLineas 522 - 354 - 527 - 281",
+        "lat": -34.7208260000000024092514649964869022369384765625,
+        "lng": -58.3633659999999991896402207203209400177001953125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada ",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Posadas (Hacia Pintos)\nParada Segura\t\t\nLineas 522 - 354 - 527 - 281",
+        "lat": -34.71991299999999824876795173622667789459228515625,
+        "lng": -58.36494900000000285444912151433527469635009765625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Juan B. Justo  \n(Hacia Madariaga)\t\nRefugio de chapa\nL\u00edneas 522 - 354 - 527 - 281",
+        "lat": -34.712637000000000853106030263006687164306640625,
+        "lng": -58.37474399999999974397724145092070102691650390625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Juan B. Justo\n(Hacia Pintos)\nRefugio Est\u00e1ndar (sin banco)\t\nL\u00edneas 522, 354, 527, 281",
+        "lat": -34.7125539999999972451405483298003673553466796875,
+        "lng": -58.37522100000000335739969159476459026336669921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Pergamino (Hacia Madariaga)\nRefugio Est\u00e1ndar (sin banco)\nL\u00edneas 522 - 354 - 527 - 281",
+        "lat": -34.71331599999999895089786150492727756500244140625,
+        "lng": -58.3737890000000021473169908858835697174072265625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n 4320 y Jos\u00e9 \u00c1lvarez Condarco\t\tIDA\t\t\nL\u00edneas 33 - 271",
+        "lat": -34.7279860000000013542376109398901462554931640625,
+        "lng": -58.354365000000001373336999677121639251708984375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n 4102 y Cotagaita\t\t\nIDA\t\t\nL\u00edneas 33 - 281 - 354",
+        "lat": -34.72677300000000144564182846806943416595458984375,
+        "lng": -58.3556200000000018235368770547211170196533203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Pinto (Hacia Centenario)\nRefugio Nuevo (con calcos)\t\nL\u00ednea 354 ",
+        "lat": -34.7300139999999970541466609574854373931884765625,
+        "lng": -58.35141999999999740111888968385756015777587890625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Condarco \nLinea 354",
+        "lat": -34.7280700000000024374458007514476776123046875,
+        "lng": -58.35395199999999960027707857079803943634033203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Eva Per\u00f3n y Pinto \n(Hacia Pinto)\t\nRefugio Nuevo (con calcos)\t\nL\u00ednea 354",
+        "lat": -34.7303619999999995116013451479375362396240234375,
+        "lng": -58.35123200000000309728420688770711421966552734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Gral. Hornos y Dardo Rocha\t\nRefugio Est\u00e1ndar (sin banco)\t\nHacia Osorio\nL\u00ednea 20",
+        "lat": -34.7248340000000013105818652547895908355712890625,
+        "lng": -58.4191349999999971487341099418699741363525390625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Gral. Hornos 2423 y Gral. Paz (Hacia Rio)\nRefugio Est\u00e1ndar (sin banco)\t\nL\u00ednea 20",
+        "lat": -34.7196220000000010941221262328326702117919921875,
+        "lng": -58.42318499999999659166860510595142841339111328125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Gral. Olazabal 4595 y Ucrania\t(Hacia Rio)\nRefugio de material\n520",
+        "lat": -34.695301000000000612999428994953632354736328125,
+        "lng": -58.432535000000001446096575818955898284912109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Gral. Olazabal\t y Boqueron (Hacia Rio)\t\nRefugio de material\t\nL\u00edneas 520 - 9 - 188",
+        "lat": -34.6937130000000024665496312081813812255859375,
+        "lng": -58.433683000000002039087121374905109405517578125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "municipal",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Gral. Olaz\u00e1bal\ty Rivadavia\t\nRefugio Estandar (sin banco)\t\nHacia Ucrania\t\nL\u00edneas 520, 9, 188",
+        "lat": -34.69622700000000037334757507778704166412353515625,
+        "lng": -58.4318269999999984065652824938297271728515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Hermanos Ross\t3050 y 25 de Mayo\nRefugio Obsoleto",
+        "lat": -34.70543599999999884175849729217588901519775390625,
+        "lng": -58.40857199999999949113771435804665088653564453125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Hermanos Ross 3327 y Miguel Cane\nRefugio Estandar (sin banco)\nLinea 45",
+        "lat": -34.70933000000000134832589537836611270904541015625,
+        "lng": -58.41004199999999713099896325729787349700927734375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "H\u00e9roes de Malvinas y Aguilar\t\nRefugio Estandar (sin banco)\t\nHacia Beron de Astrada\nLinea 299",
+        "lat": -34.732314999999999827196006663143634796142578125,
+        "lng": -58.38101000000000340151018463075160980224609375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 19 y Av. Hip\u00f3lito Yrigoyen\t\nRefugio Estandar (sin banco) (faltan calcos)\n",
+        "lat": -34.69771800000000183672455023042857646942138671875,
+        "lng": -58.39268299999999811689121997915208339691162109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil \n60 y Av. Hip\u00f3lito Yrigoyen\t\nRefugio Estandar (sin banco)\tMano Capital\t\nL\u00edneas 164-119-520\n(NO ESTA ACTUALMENTE)",
+        "lat": -34.69795599999999780038706376217305660247802734375,
+        "lng": -58.392617999999998801285983063280582427978515625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 374 y Carlos Casares\t\nRefugio Estandar (sin banco)\t\t",
+        "lat": -34.69590500000000332647687173448503017425537109375,
+        "lng": -58.39511300000000204590833163820207118988037109375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 399 y Gobernador Udaondo\t\nRefugio Estandar (sin banco)\t\nMano Capital\t\nLinea 164-119-520",
+        "lat": -34.69557499999999805595507496036589145660400390625,
+        "lng": -58.39517200000000229920260608196258544921875,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 595 y Entre Bolivia y Diego Maradona\nRefugio Estandar (sin banco)\t\nMano Provincia\nL\u00edneas 164-119",
+        "lat": -34.6941149999999964848029776476323604583740234375,
+        "lng": -58.39690999999999831970853847451508045196533203125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 602 Entre Diego Maradona y Hector Noya\t\nRefugio Estandar (sin banco)\t\nMano Provincia\t\nLinea 164-119",
+        "lat": -34.6936520000000001573425834067165851593017578125,
+        "lng": -58.39769799999999833062247489579021930694580078125,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 739 y Hector Noya\t\nRefugio Estandar (sin banco)\t\nMano Provincia\t\nLinea 164-119",
+        "lat": -34.6928529999999994970494299195706844329833984375,
+        "lng": -58.398336999999997942722984589636325836181640625,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Parada",
+        "type": "transporte",
+        "description": "Intendente Manuel Quindimil 793 y Jujuy\nRefugio Estandar (sin banco)\t",
+        "lat": -34.6923680000000018708306015469133853912353515625,
+        "lng": -58.398899999999997589839040301740169525146484375,
+        "status": "ok"
+    },
+    {
+        "id": "",
+        "title": "Municipalidad de Lanus",
+        "type": "transporte",
+        "description": "",
+        "lat": -34.69869899999999773854142404161393642425537109375,
+        "lng": -58.3922910000000001673470251262187957763671875,
+        "status": "ok"
+    }
+]

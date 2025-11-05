@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Interactivo - Municipio de Lanús</title>
+
+    <!-- LeafletJS (para el mapa) -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+    <!-- TailwindCSS (para el diseño) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome (para los iconos) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        html, body { height: 100%; margin: 0; padding: 0; overflow: hidden; font-family: 'Inter', sans-serif; }
+        #app-container { display: flex; height: 100vh; }
+        #map { flex-grow: 1; height: 100%; z-index: 10; } /* Z-index base para el mapa */
+        #sidebar { width: 350px; min-width: 350px; height: 100%; overflow-y: auto; background-color: #f8fafc; border-right: 1px solid #e5e7eb; }
+        .custom-div-icon { display: flex; justify-content: center; align-items: center; border-radius: 50%; color: white; font-size: 16px; width: 32px; height: 32px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); border: 2px solid white; }
+        .semaforo-icon { display: flex; flex-direction: column; align-items: center; justify-content: center; background-color: #4b5563; width: 20px; height: 40px; border-radius: 8px; padding: 4px; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .semaforo-luz { width: 12px; height: 12px; border-radius: 50%; margin: 2px 0; }
+        .leaflet-popup-content-wrapper { border-radius: 8px; }
+        .popup-button { border: none; padding: 4px 8px; margin-top: 8px; margin-right: 5px; border-radius: 5px; color: white; font-size: 12px; cursor: pointer; }
+        .popup-edit { background-color: #2563eb; } /* blue-600 */
+        .popup-delete { background-color: #dc2626; } /* red-600 */
+        
+        #delete-modal {
+             z-index: 1000; /* Un valor alto para asegurar que esté por encima de Leaflet */
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+
+    <div id="app-container">
+        <!-- Panel Lateral -->
+        <aside id="sidebar" class="p-6">
+            <div class="flex items-center mb-6">
+                <img src="https://placehold.co/50x50/3b82f6/ffffff?text=ML" alt="Logo Municipio de Lanús" class="rounded-lg mr-4">
+                <div>
+                    <h1 class="text-xl font-bold text-gray-800">Mapa de Lanús</h1>
+                    <p class="text-sm text-gray-500">Puntos de Interés</p>
+                </div>
+            </div>
+
+            <h2 id="form-title" class="text-lg font-semibold text-gray-700 mb-4 border-b pb-2">Añadir Nuevo Punto</h2>
+            
+            <form id="add-point-form" class="space-y-4">
+                <input type="hidden" id="edit-id" name="id">
+                <div>
+                    <label for="title" class="block text-sm font-medium text-gray-600">Título</label>
+                    <input type="text" id="title" name="title" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="type" class="block text-sm font-medium text-gray-600">Tipo de Punto</label>
+                    <select id="type" name="type" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="seguridad">Punto de Seguridad</option>
+                        <option value="transporte">Garita / Transporte</option>
+                        <option value="semaforo">Semáforo</option>
+                        <option value="salud">Centro de Salud</option>
+                        <option value="educacion">Escuela / Educación</option>
+                        <option value="municipal">Oficina Municipal</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="description" class="block text-sm font-medium text-gray-600">Descripción (Opcional)</label>
+                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Añada detalles adicionales aquí..."></textarea>
+                </div>
+                 <div>
+                    <label for="lat" class="block text-sm font-medium text-gray-600">Latitud</label>
+                    <input type="number" step="any" id="lat" name="lat" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Clic en el mapa para obtenerla">
+                </div>
+                <div>
+                    <label for="lng" class="block text-sm font-medium text-gray-600">Longitud</label>
+                    <input type="number" step="any" id="lng" name="lng" required class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div id="semaforo-status-container" class="hidden">
+                     <label for="status" class="block text-sm font-medium text-gray-600">Estado del Semáforo</label>
+                     <select id="status" name="status" class="mt-1 block w-full px-3 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                        <option value="ok">Funcionando</option>
+                        <option value="falla">Con Falla</option>
+                    </select>
+                </div>
+
+                <div class="flex space-x-2">
+                    <button type="submit" id="submit-button" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out">
+                        Guardar Punto
+                    </button>
+                    <button type="button" id="cancel-edit-button" onclick="cancelEdit()" class="hidden w-full bg-gray-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-400 transition duration-150 ease-in-out">
+                        Cancelar
+                    </button>
+                </div>
+            </form>
+            <div id="message-box" class="mt-4 text-center"></div>
+        </aside>
+
+        <!-- Mapa -->
+        <main id="map"></main>
+    </div>
+
+    <!-- Modal de Confirmación de Borrado -->
+    <div id="delete-modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center">
+        <div class="relative mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+            <div class="mt-3 text-center">
+                <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                    <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+                </div>
+                <h3 class="text-lg leading-6 font-medium text-gray-900 mt-2">Eliminar Punto</h3>
+                <div class="mt-2 px-7 py-3">
+                    <p class="text-sm text-gray-500">¿Está seguro de que desea eliminar este punto? Esta acción no se puede deshacer.</p>
+                </div>
+                <div class="items-center px-4 py-3">
+                    <button id="modal-confirm-delete" class="px-4 py-2 bg-red-500 text-white text-base font-medium rounded-md w-full shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-300">
+                        Sí, eliminar
+                    </button>
+                    <button id="modal-cancel" class="px-4 py-2 bg-gray-200 text-gray-800 text-base font-medium rounded-md w-full shadow-sm hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 mt-2">
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        // --- 1. INICIALIZACIÓN DEL MAPA ---
+        const lanusCoords = [-34.715, -58.407];
+        const map = L.map('map').setView(lanusCoords, 14);
+        L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">H.O.T.</a>'
+        }).addTo(map);
+
+        // --- 2. DEFINICIÓN DE ICONOS ---
+        const icons = {
+            seguridad: L.divIcon({ html: '<i class="fa-solid fa-shield-halved"></i>', className: 'custom-div-icon bg-blue-600', iconSize: [32, 32], iconAnchor: [16, 16] }),
+            transporte: L.divIcon({ html: '<i class="fa-solid fa-bus"></i>', className: 'custom-div-icon bg-yellow-500', iconSize: [32, 32], iconAnchor: [16, 16] }),
+            salud: L.divIcon({ html: '<i class="fa-solid fa-briefcase-medical"></i>', className: 'custom-div-icon bg-red-600', iconSize: [32, 32], iconAnchor: [16, 16] }),
+            educacion: L.divIcon({ html: '<i class="fa-solid fa-graduation-cap"></i>', className: 'custom-div-icon bg-green-600', iconSize: [32, 32], iconAnchor: [16, 16] }),
+            municipal: L.divIcon({ html: '<i class="fa-solid fa-building-columns"></i>', className: 'custom-div-icon bg-gray-700', iconSize: [32, 32], iconAnchor: [16, 16] }),
+            createSemaforoIcon: (status) => {
+                const colorOk = status === 'ok' ? '#22c55e' : '#d1d5db';
+                const colorFalla = status === 'falla' ? '#ef4444' : '#d1d5db';
+                return L.divIcon({ html: `<div class="semaforo-icon"><div class="semaforo-luz" style="background-color: ${colorOk};"></div><div class="semaforo-luz" style="background-color: ${colorFalla};"></div></div>`, className: '', iconSize: [24, 44], iconAnchor: [12, 44] });
+            }
+        };
+
+        // --- 3. CARGA Y VISUALIZACIÓN DE PUNTOS ---
+        let markersLayer = L.layerGroup().addTo(map);
+        let currentPoints = []; // Almacenar los puntos cargados para editarlos
+
+        async function loadPoints() {
+            try {
+                const response = await fetch('get_points.php');
+                if (!response.ok) throw new Error('Error al cargar los datos del servidor.');
+                
+                currentPoints = await response.json();
+                if (!Array.isArray(currentPoints)) {
+                    console.error("La respuesta del servidor no es un array:", currentPoints);
+                    showMessage('Error: El formato de datos es incorrecto.', 'error');
+                    currentPoints = [];
+                }
+                
+                markersLayer.clearLayers();
+
+                currentPoints.forEach(point => {
+                    if (!point.lat || !point.lng) return;
+
+                    let icon = point.type === 'semaforo' ? icons.createSemaforoIcon(point.status || 'ok') : icons[point.type] || icons.municipal;
+                    const marker = L.marker([point.lat, point.lng], { icon: icon });
+                    
+                    // **CORRECCIÓN: Crear contenido del popup como nodos DOM para un manejo de eventos más seguro**
+                    const popupNode = document.createElement('div');
+                    let contentHTML = `<b>${point.title}</b><br><span class="text-xs capitalize bg-gray-200 px-2 py-1 rounded">${point.type}</span>`;
+                    if (point.description && point.description.trim() !== '') {
+                        contentHTML += `<br><br><p class="text-sm text-gray-600">${point.description}</p>`;
+                    }
+                    popupNode.innerHTML = contentHTML;
+
+                    const buttonsDiv = document.createElement('div');
+                    
+                    const editButton = document.createElement('button');
+                    editButton.innerHTML = 'Editar';
+                    editButton.className = 'popup-button popup-edit';
+                    editButton.addEventListener('click', () => {
+                        startEdit(point.id);
+                    });
+                    
+                    const deleteButton = document.createElement('button');
+                    deleteButton.innerHTML = 'Eliminar';
+                    deleteButton.className = 'popup-button popup-delete';
+                    deleteButton.addEventListener('click', () => {
+                        confirmDelete(point.id);
+                    });
+
+                    buttonsDiv.appendChild(editButton);
+                    buttonsDiv.appendChild(deleteButton);
+                    popupNode.appendChild(buttonsDiv);
+                    
+                    marker.bindPopup(popupNode);
+                    markersLayer.addLayer(marker);
+                });
+
+            } catch (error) {
+                console.error("Error:", error);
+                showMessage('Error al cargar los puntos. Ver la consola.', 'error');
+            }
+        }
+
+        // --- 4. LÓGICA DE FORMULARIO (AÑADIR Y EDITAR) ---
+        const form = document.getElementById('add-point-form');
+        
+        map.on('click', (e) => {
+            if (document.getElementById('edit-id').value === '') { // Solo autocompletar si no se está editando
+                 document.getElementById('lat').value = e.latlng.lat.toFixed(6);
+                 document.getElementById('lng').value = e.latlng.lng.toFixed(6);
+            }
+        });
+
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            const formData = new FormData(form);
+            const data = Object.fromEntries(formData.entries());
+            data.lat = parseFloat(data.lat);
+            data.lng = parseFloat(data.lng);
+
+            const isEditing = !!data.id;
+            const url = isEditing ? 'edit_point.php' : 'add_point.php';
+            showMessage('Guardando...', 'info');
+
+            try {
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    showMessage('Punto guardado con éxito.', 'success');
+                    cancelEdit();
+                    loadPoints();
+                } else {
+                    throw new Error(result.message || 'Error desconocido al guardar.');
+                }
+            } catch (error) {
+                showMessage(`Error al guardar: ${error.message}`, 'error');
+            }
+        });
+        
+        function startEdit(pointId) {
+            const point = currentPoints.find(p => p.id === pointId);
+            if (!point) return;
+
+            map.closePopup();
+
+            document.getElementById('edit-id').value = point.id;
+            document.getElementById('title').value = point.title;
+            document.getElementById('type').value = point.type;
+            document.getElementById('description').value = point.description || '';
+            document.getElementById('lat').value = point.lat;
+            document.getElementById('lng').value = point.lng;
+
+            const semaforoContainer = document.getElementById('semaforo-status-container');
+            if (point.type === 'semaforo') {
+                semaforoContainer.classList.remove('hidden');
+                document.getElementById('status').value = point.status || 'ok';
+            } else {
+                semaforoContainer.classList.add('hidden');
+            }
+
+            document.getElementById('form-title').innerText = 'Editando Punto';
+            document.getElementById('submit-button').innerText = 'Actualizar Punto';
+            document.getElementById('cancel-edit-button').classList.remove('hidden');
+            document.getElementById('sidebar').scrollTop = 0;
+        }
+
+        function cancelEdit() {
+            form.reset();
+            document.getElementById('edit-id').value = '';
+            document.getElementById('semaforo-status-container').classList.add('hidden');
+            document.getElementById('form-title').innerText = 'Añadir Nuevo Punto';
+            document.getElementById('submit-button').innerText = 'Guardar Punto';
+            document.getElementById('cancel-edit-button').classList.add('hidden');
+        }
+        // Hacer cancelEdit global para el botón
+        window.cancelEdit = cancelEdit;
+
+        // --- 5. LÓGICA DE ELIMINACIÓN ---
+        const deleteModal = document.getElementById('delete-modal');
+        const confirmDeleteBtn = document.getElementById('modal-confirm-delete');
+        const cancelDeleteBtn = document.getElementById('modal-cancel');
+        let pointIdToDelete = null;
+
+        function confirmDelete(pointId) {
+            pointIdToDelete = pointId;
+            deleteModal.classList.remove('hidden');
+        }
+
+        cancelDeleteBtn.onclick = () => {
+            deleteModal.classList.add('hidden');
+            pointIdToDelete = null;
+        };
+
+        confirmDeleteBtn.onclick = async () => {
+            if (!pointIdToDelete) return;
+            
+            showMessage('Eliminando...', 'info');
+            deleteModal.classList.add('hidden');
+
+            try {
+                const response = await fetch('delete_point.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id: pointIdToDelete })
+                });
+                const result = await response.json();
+                if (result.status === 'success') {
+                    showMessage('Punto eliminado con éxito.', 'success');
+                    loadPoints();
+                } else {
+                    throw new Error(result.message || 'Error desconocido al eliminar.');
+                }
+            } catch (error) {
+                showMessage(`Error al eliminar: ${error.message}`, 'error');
+            } finally {
+                pointIdToDelete = null;
+            }
+        };
+
+        // --- 6. UTILIDADES ---
+        const messageBox = document.getElementById('message-box');
+        function showMessage(message, type = 'info') {
+            const colorClasses = {
+                info: 'text-gray-700 bg-gray-100',
+                success: 'text-green-700 bg-green-100',
+                error: 'text-red-700 bg-red-100'
+            };
+            messageBox.innerHTML = `<p class="p-2 rounded-md ${colorClasses[type] || colorClasses.info}">${message}</p>`;
+            if (type !== 'info') {
+                setTimeout(() => { messageBox.innerHTML = ''; }, 4000);
+            }
+        }
+        
+        document.getElementById('type').addEventListener('change', (e) => {
+            const semaforoContainer = document.getElementById('semaforo-status-container');
+            semaforoContainer.classList.toggle('hidden', e.target.value !== 'semaforo');
+        });
+
+        // --- Carga inicial ---
+        loadPoints();
+    </script>
+</body>
+</html>
