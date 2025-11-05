@@ -4,10 +4,11 @@ import { useState, useEffect } from 'react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { Plus, Search, Trash2, Car, Scan } from 'lucide-react'
+import { Plus, Search, Trash2, Car, Scan, PlusCircle } from 'lucide-react'
 import { VehiculoHabilitacion } from '@/lib/validations/habilitacion'
 import { useDebounce } from '@/lib/hooks/use-debounce'
 import { OCRScanner } from '@/components/ocr-scanner'
+import { RegistroVehiculoRapidoDialog } from '@/app/(panel)/dashboard/_components/registro-vehiculo-rapido-dialog'
 
 interface VehiculosStepProps {
   vehiculos: VehiculoHabilitacion[]
@@ -32,6 +33,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   const [buscando, setBuscando] = useState(false)
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState<Vehiculo | null>(null)
   const [showOCR, setShowOCR] = useState(false)
+  const [showRegistroModal, setShowRegistroModal] = useState(false)
   // Caché local para mantener información completa de vehículos agregados
   const [vehiculosCache, setVehiculosCache] = useState<Map<number, Vehiculo>>(new Map())
 
@@ -133,6 +135,25 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
     setVehiculoSeleccionado(null)
     setBusqueda('')
     setResultados([])
+  }
+
+  // Manejar cuando se crea exitosamente un vehículo nuevo
+  const handleVehiculoCreado = (vehiculoNuevo: any) => {
+    // Agregar automáticamente el vehículo recién creado
+    const nuevoVehiculo: VehiculoHabilitacion = {
+      vehiculo_id: vehiculoNuevo.id,
+    }
+    
+    const nuevoCache = new Map(vehiculosCache)
+    nuevoCache.set(vehiculoNuevo.id, vehiculoNuevo)
+    setVehiculosCache(nuevoCache)
+    
+    onChange([...vehiculos, nuevoVehiculo])
+    
+    // Resetear búsqueda
+    setBusqueda('')
+    setResultados([])
+    setVehiculoSeleccionado(null)
   }
 
   const handleEliminarVehiculo = (index: number) => {
@@ -262,8 +283,19 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
                   </button>
                 ))
               ) : (
-                <div className="p-4 text-center text-sm text-gray-500">
-                  No se encontraron vehículos
+                <div className="p-4 space-y-3">
+                  <div className="text-center text-sm text-gray-500">
+                    No se encontraron vehículos con ese dominio
+                  </div>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full border-green-300 bg-green-50 text-green-700 hover:bg-green-100"
+                    onClick={() => setShowRegistroModal(true)}
+                  >
+                    <PlusCircle className="mr-2 h-4 w-4" />
+                    Crear Nuevo Vehículo
+                  </Button>
                 </div>
               )}
             </div>
@@ -349,6 +381,14 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
           </div>
         )}
       </div>
+
+      {/* Modal de Registro de Vehículo */}
+      <RegistroVehiculoRapidoDialog
+        open={showRegistroModal}
+        onOpenChange={setShowRegistroModal}
+        dominioInicial={busqueda.toUpperCase()}
+        onSuccess={handleVehiculoCreado}
+      />
     </div>
   )
 }

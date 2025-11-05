@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Dialog,
   DialogContent,
@@ -17,6 +17,8 @@ import { OCRScanner } from '@/components/ocr-scanner'
 interface RegistroVehiculoRapidoDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  dominioInicial?: string
+  onSuccess?: (vehiculo: any) => void
 }
 
 interface VehiculoFormData {
@@ -41,6 +43,8 @@ interface VehiculoFormData {
 export function RegistroVehiculoRapidoDialog({
   open,
   onOpenChange,
+  dominioInicial,
+  onSuccess,
 }: RegistroVehiculoRapidoDialogProps) {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -48,7 +52,7 @@ export function RegistroVehiculoRapidoDialog({
   const [vehiculoCreado, setVehiculoCreado] = useState<any>(null)
 
   const [formData, setFormData] = useState<VehiculoFormData>({
-    dominio: '',
+    dominio: dominioInicial || '',
     marca: '',
     modelo: '',
     tipo: '',
@@ -62,6 +66,13 @@ export function RegistroVehiculoRapidoDialog({
     Vencimiento_VTV: '',
     Vencimiento_Poliza: '',
   })
+
+  // Actualizar dominio cuando se pasa uno inicial
+  useEffect(() => {
+    if (open && dominioInicial) {
+      setFormData(prev => ({ ...prev, dominio: dominioInicial }))
+    }
+  }, [open, dominioInicial])
 
   // Procesar datos del OCR
   const handleOCRData = (data: any) => {
@@ -112,6 +123,9 @@ export function RegistroVehiculoRapidoDialog({
       }
 
       setVehiculoCreado(data.data)
+      
+      // Notificar éxito
+      onSuccess?.(data.data)
 
       // Resetear formulario
       setFormData({
