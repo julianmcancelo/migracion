@@ -29,7 +29,7 @@ import {
   type GeocodeResult,
   type ParadaRow,
   type GeocodeCache
-} from './geocode-utils'
+} from './geocode-utils.js'
 
 // Cargar variables de entorno
 config({ path: '.env.local' })

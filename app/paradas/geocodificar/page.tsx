@@ -420,7 +420,7 @@ export default function GeocodeInterfazPage() {
                 </li>
                 <li className="flex gap-2">
                   <span className="font-bold">3.</span>
-                  <span>Click en "Iniciar Geocodificación"</span>
+                  <span>Click en &quot;Iniciar Geocodificación&quot;</span>
                 </li>
                 <li className="flex gap-2">
                   <span className="font-bold">4.</span>

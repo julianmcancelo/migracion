@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server'
 import * as XLSX from 'xlsx'
-import { normalizeAddress, geocodeAddress, buildCSV, buildGeoJSON, type ParadaRow, type GeocodeResult } from '@/scripts/geocode-utils'
+import { normalizeAddress, geocodeAddress, buildCSV, buildGeoJSON, type ParadaRow, type GeocodeResult } from '../../../../scripts/geocode-utils'
 
 export const dynamic = 'force-dynamic'
 export const maxDuration = 300 // 5 minutos max
