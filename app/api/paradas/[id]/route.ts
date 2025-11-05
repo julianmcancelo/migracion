@@ -21,6 +21,11 @@ export async function GET(
 
     const parada = await prisma.paradas.findUnique({
       where: { id },
+      include: {
+        imagenes: {
+          orderBy: { orden: 'asc' },
+        },
+      },
     })
 
     if (!parada) {
@@ -64,7 +69,7 @@ export async function PUT(
     }
 
     const body = await request.json()
-    const { titulo, tipo, descripcion, latitud, longitud, estado, activo, metadata } = body
+    const { titulo, tipo, descripcion, latitud, longitud, estado, activo, metadata, imagenes } = body
 
     // Verificar que la parada existe
     const paradaExistente = await prisma.paradas.findUnique({
@@ -95,10 +100,58 @@ export async function PUT(
       if (!isNaN(lng)) dataToUpdate.longitud = lng
     }
 
+    // Actualizar la parada
     const paradaActualizada = await prisma.paradas.update({
       where: { id },
       data: dataToUpdate,
+      include: {
+        imagenes: {
+          orderBy: { orden: 'asc' },
+        },
+      },
     })
+
+    // Si se envían imágenes, reemplazar todas las existentes
+    if (imagenes !== undefined && Array.isArray(imagenes)) {
+      // Eliminar imágenes existentes
+      await prisma.paradas_imagenes.deleteMany({
+        where: { parada_id: id },
+      })
+
+      // Crear nuevas imágenes
+      if (imagenes.length > 0) {
+        await prisma.paradas_imagenes.createMany({
+          data: imagenes.map((img: any, index: number) => ({
+            parada_id: id,
+            imagen_base64: img.imagen_base64,
+            descripcion: img.descripcion || null,
+            orden: img.orden || index,
+          })),
+        })
+      }
+
+      // Recargar la parada con las nuevas imágenes
+      const paradaConImagenes = await prisma.paradas.findUnique({
+        where: { id },
+        include: {
+          imagenes: {
+            orderBy: { orden: 'asc' },
+          },
+        },
+      })
+
+      if (paradaConImagenes) {
+        return NextResponse.json({
+          success: true,
+          message: 'Parada actualizada exitosamente',
+          data: {
+            ...paradaConImagenes,
+            latitud: Number(paradaConImagenes.latitud),
+            longitud: Number(paradaConImagenes.longitud),
+          },
+        })
+      }
+    }
 
     return NextResponse.json({
       success: true,

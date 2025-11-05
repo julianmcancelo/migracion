@@ -36,6 +36,11 @@ export async function GET(request: NextRequest) {
       where,
       take: limite,
       orderBy: { creado_en: 'desc' },
+      include: {
+        imagenes: {
+          orderBy: { orden: 'asc' },
+        },
+      },
     })
 
     // Convertir Decimal a number para JSON
@@ -71,7 +76,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { titulo, tipo, descripcion, latitud, longitud, estado, metadata } = body
+    const { titulo, tipo, descripcion, latitud, longitud, estado, metadata, imagenes } = body
 
     // Validaciones básicas
     if (!titulo || !tipo || !latitud || !longitud) {
@@ -102,6 +107,16 @@ export async function POST(request: NextRequest) {
         estado: estado || 'ok',
         creado_por: session.user.id,
         metadata: metadata || null,
+        imagenes: imagenes ? {
+          create: imagenes.map((img: any, index: number) => ({
+            imagen_base64: img.imagen_base64,
+            descripcion: img.descripcion || null,
+            orden: img.orden || index,
+          })),
+        } : undefined,
+      },
+      include: {
+        imagenes: true,
       },
     })
 

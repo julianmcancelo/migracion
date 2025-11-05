@@ -1,0 +1,20 @@
+# Archivos de entrada (pueden contener datos sensibles)
+*.xlsx
+*.xls
+*.csv
+
+# Caché de geocodificación
+cache/
+cache/*.json
+
+# Archivos de salida
+out/
+out/*.csv
+out/*.geojson
+out/*.json
+out/*.log
+
+# Excepción: permitir archivos de ejemplo
+!ejemplo.xlsx
+!README*.md
+!SETUP*.md

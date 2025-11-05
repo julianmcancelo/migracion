@@ -3,6 +3,15 @@
 export type ParadaTipo = 'seguridad' | 'transporte' | 'semaforo' | 'salud' | 'educacion' | 'municipal'
 export type ParadaEstado = 'ok' | 'falla' | 'mantenimiento'
 
+export interface ParadaImagen {
+  id: number
+  parada_id: number
+  imagen_base64: string
+  descripcion?: string | null
+  orden: number
+  creado_en: Date | string
+}
+
 export interface Parada {
   id: number
   titulo: string
@@ -16,6 +25,7 @@ export interface Parada {
   actualizado: Date | string
   creado_por?: number | null
   metadata?: any
+  imagenes?: ParadaImagen[]
 }
 
 export interface ParadaFormData {
@@ -26,6 +36,11 @@ export interface ParadaFormData {
   longitud: number
   estado?: ParadaEstado
   metadata?: any
+  imagenes?: Array<{
+    imagen_base64: string
+    descripcion?: string
+    orden?: number
+  }>
 }
 
 export const TIPOS_PARADA = {

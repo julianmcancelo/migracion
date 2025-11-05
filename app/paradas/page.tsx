@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
 import MapaLeaflet from '@/components/paradas/MapaLeaflet'
 import FormularioParada from '@/components/paradas/FormularioParada'
-import { Parada, ParadaFormData } from '@/components/paradas/types'
+import { Parada, ParadaFormData, TIPOS_PARADA } from '@/components/paradas/types'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -145,21 +145,61 @@ export default function ParadasPage() {
     <div className="h-screen flex flex-col md:flex-row overflow-hidden bg-gray-50">
       {/* Panel Lateral - Formulario */}
       <aside className="w-full md:w-96 h-auto md:h-full overflow-y-auto bg-white border-r shadow-sm p-4">
-        <div className="mb-4">
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center shadow-md">
-              <span className="text-white text-xl font-bold">ML</span>
+        <div className="mb-6">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-14 h-14 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
+              <i className="fa-solid fa-map-location-dot text-white text-2xl"></i>
             </div>
             <div>
-              <h1 className="text-xl font-bold text-gray-800">
+              <h1 className="text-2xl font-bold text-gray-800">
                 Mapa de Lanús
               </h1>
-              <p className="text-sm text-gray-500">Puntos de Interés</p>
+              <p className="text-sm text-gray-500">Sistema de Puntos de Interés</p>
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Total de puntos: <strong className="text-blue-600">{paradas.length}</strong>
-          </p>
+          
+          {/* Estadísticas */}
+          <div className="grid grid-cols-2 gap-3">
+            <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-3 rounded-lg border border-blue-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-blue-600 font-medium uppercase">Total</p>
+                  <p className="text-2xl font-bold text-blue-900">{paradas.length}</p>
+                </div>
+                <i className="fa-solid fa-map-pin text-blue-400 text-2xl"></i>
+              </div>
+            </div>
+            <div className="bg-gradient-to-br from-green-50 to-green-100 p-3 rounded-lg border border-green-200">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-xs text-green-600 font-medium uppercase">Activos</p>
+                  <p className="text-2xl font-bold text-green-900">{paradas.filter(p => p.activo).length}</p>
+                </div>
+                <i className="fa-solid fa-circle-check text-green-400 text-2xl"></i>
+              </div>
+            </div>
+          </div>
+
+          {/* Tipos de paradas */}
+          <div className="mt-4 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-xs font-semibold text-gray-700 mb-2 uppercase">Por Tipo</p>
+            <div className="space-y-1.5">
+              {Object.entries(
+                paradas.reduce((acc, p) => {
+                  acc[p.tipo] = (acc[p.tipo] || 0) + 1
+                  return acc
+                }, {} as Record<string, number>)
+              ).map(([tipo, count]) => (
+                <div key={tipo} className="flex items-center justify-between text-xs">
+                  <span className="text-gray-600 capitalize flex items-center gap-2">
+                    <i className={`fa-solid fa-circle text-[8px]`} style={{ color: TIPOS_PARADA[tipo as keyof typeof TIPOS_PARADA]?.color || '#64748b' }}></i>
+                    {TIPOS_PARADA[tipo as keyof typeof TIPOS_PARADA]?.label || tipo}
+                  </span>
+                  <span className="font-semibold text-gray-800">{count}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
         <FormularioParada

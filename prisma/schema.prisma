@@ -489,9 +489,26 @@ model paradas {
   creado_por  Int?
   metadata    Json?    // Para datos adicionales como líneas de transporte, etc.
   
+  // Relaciones
+  imagenes    paradas_imagenes[]
+  
   @@index([tipo], map: "idx_tipo")
   @@index([activo], map: "idx_activo")
   @@index([latitud, longitud], map: "idx_ubicacion")
+}
+
+model paradas_imagenes {
+  id          Int      @id @default(autoincrement())
+  parada_id   Int
+  imagen_base64 String @db.MediumText  // Base64 de la imagen
+  descripcion String?  @db.VarChar(255)
+  orden       Int      @default(0)
+  creado_en   DateTime @default(now())
+  
+  // Relación
+  parada      paradas  @relation(fields: [parada_id], references: [id], onDelete: Cascade)
+  
+  @@index([parada_id], map: "idx_parada_id")
 }
 
 enum paradas_tipo {
