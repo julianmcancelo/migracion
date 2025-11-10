@@ -98,7 +98,6 @@ export default function MapaLeafletMejorado({
     sin_estado: true
   })
   const [mostrarFiltros, setMostrarFiltros] = useState(true)
-  const mapRef = useRef<any>(null)
 
   useEffect(() => {
     import('leaflet').then((leaflet) => {
@@ -301,7 +300,6 @@ export default function MapaLeafletMejorado({
         zoom={zoom}
         style={{ height: '100%', width: '100%', zIndex: 10 }}
         className="rounded-lg"
-        ref={mapRef}
       >
         <TileLayer
           attribution={selectedLayerConfig.attribution}
