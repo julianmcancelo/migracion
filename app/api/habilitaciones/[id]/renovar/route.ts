@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verificarSesion } from '@/lib/auth'
+import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 import { notificarAdmins } from '@/lib/notificaciones'
 
@@ -18,8 +18,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const usuario = await verificarSesion()
-    if (!usuario) {
+    const session = await getSession()
+    if (!session) {
       return NextResponse.json({ error: 'No autorizado' }, { status: 401 })
     }
 
@@ -204,8 +204,8 @@ export async function POST(
         tipo_novedad: 'RENOVACION',
         entidad_afectada: 'habilitacion',
         descripcion: `Habilitación renovada para el año ${añoActual}. Nueva licencia: ${nuevaLicencia}`,
-        usuario_id: usuario.id,
-        usuario_nombre: usuario.nombre,
+        usuario_id: session.userId,
+        usuario_nombre: session.nombre,
         datos_nuevos: JSON.stringify({
           nueva_habilitacion_id: habNueva.id,
           nueva_licencia: nuevaLicencia,

@@ -46,7 +46,7 @@ export async function POST(request: NextRequest) {
     console.log(`📦 Creados ${chunks.length} archivos`)
 
     // Crear un ZIP con todos los archivos
-    const JSZip = require('jszip')
+    const JSZip = (await import('jszip')).default
     const zip = new JSZip()
 
     chunks.forEach((chunk, index) => {
