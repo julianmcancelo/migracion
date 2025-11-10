@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { toast } from 'sonner'
-import MapaLeaflet from '@/components/paradas/MapaLeaflet'
+import MapaLeafletMejorado from '@/components/paradas/MapaLeafletMejorado'
 import FormularioParada from '@/components/paradas/FormularioParada'
 import { Parada, ParadaFormData, TIPOS_PARADA } from '@/components/paradas/types'
 import {
@@ -15,7 +15,6 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
-import { Card } from '@/components/ui/card'
 
 export default function ParadasPage() {
   const [paradas, setParadas] = useState<Parada[]>([])
@@ -213,14 +212,12 @@ export default function ParadasPage() {
 
       {/* Mapa Principal */}
       <main className="flex-1 h-[400px] md:h-full relative">
-        <Card className="h-full rounded-none md:rounded-lg m-0 md:m-4 overflow-hidden shadow-xl">
-          <MapaLeaflet
-            paradas={paradas}
-            onMapClick={handleMapClick}
-            onEditClick={handleEditClick}
-            onDeleteClick={setDeletingParada}
-          />
-        </Card>
+        <MapaLeafletMejorado
+          paradas={paradas}
+          onMapClick={handleMapClick}
+          onEditClick={handleEditClick}
+          onDeleteClick={setDeletingParada}
+        />
       </main>
 
       {/* Modal de Confirmación de Eliminación */}

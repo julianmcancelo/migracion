@@ -105,7 +105,7 @@ export async function POST(request: NextRequest) {
         latitud: lat,
         longitud: lng,
         estado: estado || 'ok',
-        creado_por: session.user.id,
+        creado_por: session.userId || null,
         metadata: metadata || null,
         imagenes: imagenes ? {
           create: imagenes.map((img: any, index: number) => ({
