@@ -23,6 +23,9 @@ export default function ParadasPage() {
   const [deletingParada, setDeletingParada] = useState<Parada | null>(null)
   const [clickedLat, setClickedLat] = useState<number>()
   const [clickedLng, setClickedLng] = useState<number>()
+  // Coordenadas actuales de la parada en edición (actualizadas al arrastrar)
+  const [editingLat, setEditingLat] = useState<number>()
+  const [editingLng, setEditingLng] = useState<number>()
 
   // Cargar paradas al montar el componente
   useEffect(() => {
@@ -119,6 +122,9 @@ export default function ParadasPage() {
 
   const handleEditClick = (parada: Parada) => {
     setEditingParada(parada)
+    // Establecer coordenadas iniciales de edición
+    setEditingLat(parada.latitud)
+    setEditingLng(parada.longitud)
     // Scroll al formulario en móvil
     if (window.innerWidth < 768) {
       window.scrollTo({ top: 0, behavior: 'smooth' })
@@ -127,6 +133,15 @@ export default function ParadasPage() {
 
   const handleCancelEdit = () => {
     setEditingParada(null)
+    setEditingLat(undefined)
+    setEditingLng(undefined)
+  }
+
+  const handleMarkerDragEnd = (paradaId: number, lat: number, lng: number) => {
+    // Actualizar coordenadas de edición cuando se arrastra el marcador
+    setEditingLat(lat)
+    setEditingLng(lng)
+    toast.info('📍 Ubicación actualizada. Guarda los cambios para confirmar.')
   }
 
   if (loading) {
@@ -207,6 +222,8 @@ export default function ParadasPage() {
           editingParada={editingParada}
           initialLat={clickedLat}
           initialLng={clickedLng}
+          editingLat={editingLat}
+          editingLng={editingLng}
         />
       </aside>
 
@@ -217,6 +234,8 @@ export default function ParadasPage() {
           onMapClick={handleMapClick}
           onEditClick={handleEditClick}
           onDeleteClick={setDeletingParada}
+          onMarkerDragEnd={handleMarkerDragEnd}
+          editingParadaId={editingParada?.id || null}
         />
       </main>
 

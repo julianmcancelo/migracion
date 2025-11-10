@@ -22,6 +22,8 @@ interface FormularioParadaProps {
   editingParada?: Parada | null
   initialLat?: number
   initialLng?: number
+  editingLat?: number
+  editingLng?: number
 }
 
 export default function FormularioParada({
@@ -30,6 +32,8 @@ export default function FormularioParada({
   editingParada,
   initialLat,
   initialLng,
+  editingLat,
+  editingLng,
 }: FormularioParadaProps) {
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState<ParadaFormData>({
@@ -55,7 +59,7 @@ export default function FormularioParada({
     }
   }, [editingParada])
 
-  // Actualizar coordenadas cuando cambian desde el mapa
+  // Actualizar coordenadas cuando cambian desde el mapa (nuevo punto)
   useEffect(() => {
     if (initialLat !== undefined && initialLng !== undefined && !editingParada) {
       setFormData((prev) => ({
@@ -65,6 +69,17 @@ export default function FormularioParada({
       }))
     }
   }, [initialLat, initialLng, editingParada])
+
+  // Actualizar coordenadas al arrastrar marcador en modo edición
+  useEffect(() => {
+    if (editingLat !== undefined && editingLng !== undefined && editingParada) {
+      setFormData((prev) => ({
+        ...prev,
+        latitud: editingLat,
+        longitud: editingLng,
+      }))
+    }
+  }, [editingLat, editingLng, editingParada])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

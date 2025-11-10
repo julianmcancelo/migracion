@@ -31,6 +31,8 @@ interface MapaLeafletMejoradoProps {
   onMarkerClick?: (parada: Parada) => void
   onEditClick?: (parada: Parada) => void
   onDeleteClick?: (parada: Parada) => void
+  onMarkerDragEnd?: (paradaId: number, lat: number, lng: number) => void
+  editingParadaId?: number | null
   center?: [number, number]
   zoom?: number
 }
@@ -77,6 +79,8 @@ export default function MapaLeafletMejorado({
   onMarkerClick,
   onEditClick,
   onDeleteClick,
+  onMarkerDragEnd,
+  editingParadaId,
   center = [-34.715, -58.407], // Lanús
   zoom = 14,
 }: MapaLeafletMejoradoProps) {
@@ -309,22 +313,43 @@ export default function MapaLeafletMejorado({
 
         {paradasFiltradas.map((parada) => {
           const icon = customIcons[parada.tipo] || customIcons.municipal
+          const isEditing = editingParadaId === parada.id
           
           return (
             <Marker
               key={parada.id}
               position={[parada.latitud, parada.longitud]}
               icon={icon}
+              draggable={isEditing}
               eventHandlers={{
                 click: () => {
                   if (onMarkerClick) {
                     onMarkerClick(parada)
                   }
                 },
+                dragend: (e) => {
+                  if (isEditing && onMarkerDragEnd) {
+                    const marker = e.target
+                    const position = marker.getLatLng()
+                    onMarkerDragEnd(parada.id, position.lat, position.lng)
+                  }
+                },
               }}
             >
               <Popup className="custom-popup">
                 <div className="min-w-[240px] max-w-[320px]">
+                  {/* Indicador de modo edición arrastrable */}
+                  {isEditing && (
+                    <div className="mb-3 p-3 bg-blue-50 border-l-4 border-blue-500 rounded-r-lg">
+                      <div className="flex items-center gap-2 text-blue-700">
+                        <i className="fa-solid fa-hand-pointer text-lg animate-pulse"></i>
+                        <div className="flex-1">
+                          <p className="text-xs font-bold">Modo Edición Activo</p>
+                          <p className="text-xs">Arrastra este marcador para cambiar su ubicación</p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex items-center gap-3 mb-3 pb-3 border-b border-gray-200">
                     <div 
                       className="w-12 h-12 rounded-full flex items-center justify-center text-white shadow-md"

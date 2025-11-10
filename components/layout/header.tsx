@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Menu } from 'lucide-react'
 import { DropdownNotificaciones } from './dropdown-notificaciones'
+import { useConfiguracion } from '@/lib/hooks/useConfiguracion'
 
 interface HeaderProps {
   user?: {
@@ -26,6 +27,7 @@ export function Header({ user, onMenuClick }: HeaderProps) {
   const [userMenuOpen, setUserMenuOpen] = useState(false)
   const [loading, setLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
+  const { config } = useConfiguracion()
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
@@ -63,14 +65,26 @@ export function Header({ user, onMenuClick }: HeaderProps) {
           {/* Logo y título */}
           <div className="flex items-center gap-3 sm:gap-6 lg:gap-8">
             <div className="flex items-center gap-2 sm:gap-3 lg:gap-4">
-              <img
-                src="https://www.lanus.gob.ar/logo-200.png"
-                alt="Municipio de Lanús"
-                className="h-8 w-auto sm:h-10"
-              />
+              {config?.logo_base64 ? (
+                <img
+                  src={config.logo_base64}
+                  alt={config.titulo}
+                  className="h-8 w-auto sm:h-10"
+                />
+              ) : (
+                <img
+                  src="https://www.lanus.gob.ar/logo-200.png"
+                  alt="Logo"
+                  className="h-8 w-auto sm:h-10"
+                />
+              )}
               <div className="hidden min-w-0 md:block">
-                <h1 className="truncate text-base font-bold text-gray-900 lg:text-xl">Sistema de Gestión</h1>
-                <p className="truncate text-xs text-gray-500">Municipio de Lanús</p>
+                <h1 className="truncate text-base font-bold text-gray-900 lg:text-xl">
+                  {config?.titulo || 'Sistema de Gestión'}
+                </h1>
+                {config?.subtitulo && (
+                  <p className="truncate text-xs text-gray-500">{config.subtitulo}</p>
+                )}
               </div>
             </div>
 

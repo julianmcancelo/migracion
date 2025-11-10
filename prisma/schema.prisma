@@ -520,6 +520,22 @@ enum paradas_tipo {
   municipal
 }
 
+/// Configuración personalizable de la aplicación
+model configuracion_app {
+  id                Int      @id @default(autoincrement())
+  titulo            String   @default("Sistema de Gestión") @db.VarChar(200)
+  subtitulo         String?  @db.VarChar(300)
+  logo_base64       String?  @db.LongText
+  favicon_base64    String?  @db.LongText
+  color_primario    String?  @default("#2563eb") @db.VarChar(20)
+  color_secundario  String?  @default("#1e40af") @db.VarChar(20)
+  pie_pagina        String?  @db.Text
+  actualizado_en    DateTime @default(now()) @updatedAt @db.Timestamp(0)
+  actualizado_por   Int?
+  
+  @@map("configuracion_app")
+}
+
 enum paradas_estado {
   ok
   falla

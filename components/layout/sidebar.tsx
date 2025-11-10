@@ -15,6 +15,7 @@ import {
   Car,
   Users,
   MapPin,
+  Settings,
 } from 'lucide-react'
 
 interface NavItem {
@@ -86,6 +87,11 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       href: '/turnos',
       icon: Calendar,
       badge: 3,
+    },
+    {
+      name: 'Configuración',
+      href: '/configuracion',
+      icon: Settings,
     },
   ]
 
