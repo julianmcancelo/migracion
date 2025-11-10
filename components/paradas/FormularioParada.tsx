@@ -52,12 +52,12 @@ export default function FormularioParada({
         titulo: editingParada.titulo,
         tipo: editingParada.tipo,
         descripcion: editingParada.descripcion || '',
-        latitud: editingParada.latitud,
-        longitud: editingParada.longitud,
+        latitud: editingLat !== undefined ? editingLat : editingParada.latitud,
+        longitud: editingLng !== undefined ? editingLng : editingParada.longitud,
         estado: editingParada.estado || 'ok',
       })
     }
-  }, [editingParada])
+  }, [editingParada, editingLat, editingLng])
 
   // Actualizar coordenadas cuando cambian desde el mapa (nuevo punto)
   useEffect(() => {
@@ -69,17 +69,6 @@ export default function FormularioParada({
       }))
     }
   }, [initialLat, initialLng, editingParada])
-
-  // Actualizar coordenadas al arrastrar marcador en modo edición
-  useEffect(() => {
-    if (editingLat !== undefined && editingLng !== undefined && editingParada) {
-      setFormData((prev) => ({
-        ...prev,
-        latitud: editingLat,
-        longitud: editingLng,
-      }))
-    }
-  }, [editingLat, editingLng, editingParada])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -174,40 +163,53 @@ export default function FormularioParada({
             />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="latitud">Latitud *</Label>
-              <Input
-                id="latitud"
-                type="number"
-                step="any"
-                value={formData.latitud}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    latitud: parseFloat(e.target.value),
-                  })
-                }
-                required
-                placeholder="Click en el mapa"
-              />
+          <div className="space-y-2">
+            <div className="flex items-center justify-between mb-2">
+              <Label>Coordenadas *</Label>
+              {editingParada && editingLat !== undefined && (
+                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-1 rounded-full font-medium flex items-center gap-1">
+                  <i className="fa-solid fa-arrows-up-down-left-right"></i>
+                  Actualizado por arrastre
+                </span>
+              )}
             </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="latitud" className="text-xs text-gray-600">Latitud</Label>
+                <Input
+                  id="latitud"
+                  type="number"
+                  step="any"
+                  value={formData.latitud}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      latitud: parseFloat(e.target.value),
+                    })
+                  }
+                  required
+                  placeholder="Click en el mapa"
+                  className="font-mono text-sm"
+                />
+              </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="longitud">Longitud *</Label>
-              <Input
-                id="longitud"
-                type="number"
-                step="any"
-                value={formData.longitud}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    longitud: parseFloat(e.target.value),
-                  })
-                }
-                required
-              />
+              <div className="space-y-2">
+                <Label htmlFor="longitud" className="text-xs text-gray-600">Longitud</Label>
+                <Input
+                  id="longitud"
+                  type="number"
+                  step="any"
+                  value={formData.longitud}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+                      longitud: parseFloat(e.target.value),
+                    })
+                  }
+                  required
+                  className="font-mono text-sm"
+                />
+              </div>
             </div>
           </div>
 
