@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
 
     // Usar Gemini 2.0 Flash con capacidad de visión
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const prompt = `
 Eres un sistema experto en lectura de títulos de vehículos y cédulas verdes/azules argentinas.

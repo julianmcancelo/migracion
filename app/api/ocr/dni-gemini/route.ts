@@ -1,10 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import {
+  getGeminiVisionModel,
+  executeWithRetry,
+  handleGeminiError,
+  extractJSON,
+} from '@/lib/gemini-utils'
 
 /**
- * POST /api/ocr/dni
+ * POST /api/ocr/dni-gemini
  * 
- * Extrae datos del DNI usando Gemini 2.0 Flash (Vision)
+ * Extrae datos del DNI usando Gemini 1.5 Flash (Vision) con retry automático
  */
 export async function POST(request: NextRequest) {
   try {
@@ -42,9 +47,8 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(bytes)
     const base64Data = buffer.toString('base64')
 
-    // Usar Gemini 2.0 Flash con capacidad de visión
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    // Usar Gemini 1.5 Flash (mejor cuota gratuita)
+    const model = getGeminiVisionModel()
 
     const prompt = `
 Eres un sistema experto en lectura de DNI argentinos (Documento Nacional de Identidad).
@@ -83,33 +87,30 @@ Devuelve SOLO un objeto JSON válido con este formato exacto:
 NO agregues texto adicional, solo el JSON.
 `
 
-    const result = await model.generateContent([
-      prompt,
+    // Ejecutar con retry automático en caso de rate limit
+    const result = await executeWithRetry(
+      () =>
+        model.generateContent([
+          prompt,
+          {
+            inlineData: {
+              data: base64Data,
+              mimeType: file.type,
+            },
+          },
+        ]),
       {
-        inlineData: {
-          data: base64Data,
-          mimeType: file.type,
-        },
-      },
-    ])
+        maxRetries: 3,
+        initialDelay: 1000,
+        maxDelay: 5000,
+      }
+    )
 
     const response = result.response
     const text = response.text()
 
-    // Extraer JSON de la respuesta
-    let datosExtraidos
-    try {
-      // Intentar parsear directamente
-      datosExtraidos = JSON.parse(text)
-    } catch {
-      // Si falla, buscar JSON en el texto
-      const jsonMatch = text.match(/\{[\s\S]*\}/)
-      if (jsonMatch) {
-        datosExtraidos = JSON.parse(jsonMatch[0])
-      } else {
-        throw new Error('No se pudo extraer JSON de la respuesta')
-      }
-    }
+    // Extraer JSON de la respuesta usando utilidad
+    const datosExtraidos = extractJSON(text)
 
     // Validar que tenga al menos el DNI
     if (!datosExtraidos.dni) {
@@ -134,15 +135,21 @@ NO agregues texto adicional, solo el JSON.
       },
       message: 'Datos extraídos correctamente. Revise y confirme antes de guardar.',
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en OCR de DNI:', error)
+
+    // Manejar errores de Gemini de forma amigable
+    const errorInfo = handleGeminiError(error)
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Error al procesar el archivo',
-        details: error instanceof Error ? error.message : 'Error desconocido',
+        error: errorInfo.userMessage,
+        shouldRetry: errorInfo.shouldRetry,
+        retryAfter: errorInfo.retryAfter,
+        details: process.env.NODE_ENV === 'development' ? errorInfo.message : undefined,
       },
-      { status: 500 }
+      { status: error.status || 500 }
     )
   }
 }

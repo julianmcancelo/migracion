@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { GoogleGenerativeAI } from '@google/generative-ai'
+import {
+  getGeminiChatModel,
+  executeWithRetry,
+  handleGeminiError,
+} from '@/lib/gemini-utils'
 
 /**
  * POST /api/chat-ia-global
  * 
- * Chat IA global para consultas generales sobre el sistema
+ * Chat IA global para consultas generales sobre el sistema con retry automático
  */
 export async function POST(request: NextRequest) {
   try {
@@ -79,8 +83,7 @@ Responde de forma clara, concisa y profesional en español.
 Si la pregunta es sobre cómo hacer algo en el sistema, da pasos específicos.
 `
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = getGeminiChatModel()
 
     const prompt = `
 ${contextoSistema}
@@ -94,7 +97,13 @@ Si no estás seguro, di que no tienes esa información específica pero sugiere 
 RESPUESTA:
 `
 
-    const result = await model.generateContent(prompt)
+    // Ejecutar con retry automático en caso de rate limit
+    const result = await executeWithRetry(() => model.generateContent(prompt), {
+      maxRetries: 2,
+      initialDelay: 1000,
+      maxDelay: 3000,
+    })
+
     const respuesta = result.response.text()
 
     return NextResponse.json({
@@ -105,15 +114,21 @@ RESPUESTA:
         timestamp: new Date().toISOString(),
       },
     })
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error en chat IA global:', error)
+
+    // Manejar errores de Gemini de forma amigable
+    const errorInfo = handleGeminiError(error)
+
     return NextResponse.json(
       {
         success: false,
-        error: 'Error al procesar consulta',
-        details: error instanceof Error ? error.message : 'Error desconocido',
+        error: errorInfo.userMessage,
+        shouldRetry: errorInfo.shouldRetry,
+        retryAfter: errorInfo.retryAfter,
+        details: process.env.NODE_ENV === 'development' ? errorInfo.message : undefined,
       },
-      { status: 500 }
+      { status: error.status || 500 }
     )
   }
 }

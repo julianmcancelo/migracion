@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
 
     // Inicializar Gemini
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const prompt = `
 Eres un experto en extraer información de pólizas de seguro automotor argentinas.

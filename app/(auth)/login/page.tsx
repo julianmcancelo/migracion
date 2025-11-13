@@ -53,8 +53,10 @@ function LoginForm() {
       const data = await response.json()
 
       if (data.success) {
-        // Redirigir al dashboard
-        router.push('/dashboard')
+        // Esperar un momento para que la cookie se establezca
+        await new Promise(resolve => setTimeout(resolve, 100))
+        // Forzar recarga completa del navegador
+        window.location.replace('/dashboard')
       } else {
         setError(data.error || 'Error al iniciar sesión')
       }

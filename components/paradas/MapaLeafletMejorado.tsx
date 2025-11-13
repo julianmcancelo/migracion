@@ -122,8 +122,8 @@ export default function MapaLeafletMejorado({
             <div class="marker-container" style="position: relative; animation: markerBounce 0.5s ease-out;">
               <div class="marker-pulse" style="
                 position: absolute;
-                width: 32px;
-                height: 32px;
+                width: 22px;
+                height: 22px;
                 border-radius: 50%;
                 background: ${config.color}33;
                 animation: pulse 2s infinite;
@@ -134,33 +134,33 @@ export default function MapaLeafletMejorado({
               <div class="marker-icon" style="
                 position: relative;
                 background: ${gradient};
-                width: 28px;
-                height: 28px;
+                width: 18px;
+                height: 18px;
                 border-radius: 50%;
                 display: flex;
                 align-items: center;
                 justify-content: center;
                 color: white;
                 border: 2px solid white;
-                box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 0 0 1px ${config.color}44;
+                box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 0 0 1px ${config.color}44;
                 cursor: pointer;
                 transition: all 0.3s ease;
                 z-index: 10;
-              " onmouseover="this.style.transform='scale(1.2)';this.style.boxShadow='0 6px 12px rgba(0,0,0,0.3), 0 0 0 2px ${config.color}';" 
-                 onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2), 0 0 0 1px ${config.color}44';">
-                <i class="fa-solid fa-${config.icon}" style="font-size: 13px; filter: drop-shadow(0 1px 2px rgba(0,0,0,0.2));"></i>
+              " onmouseover="this.style.transform='scale(1.3)';this.style.boxShadow='0 5px 10px rgba(0,0,0,0.3), 0 0 0 2px ${config.color}';" 
+                 onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 3px 6px rgba(0,0,0,0.2), 0 0 0 1px ${config.color}44';">
+                <i class="fa-solid fa-${config.icon}" style="font-size: 9px; filter: drop-shadow(0 1px 1px rgba(0,0,0,0.2));"></i>
               </div>
               <div style="
                 position: absolute;
-                bottom: -5px;
+                bottom: -4px;
                 left: 50%;
                 transform: translateX(-50%);
                 width: 0;
                 height: 0;
-                border-left: 4px solid transparent;
-                border-right: 4px solid transparent;
-                border-top: 5px solid white;
-                filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+                border-left: 3px solid transparent;
+                border-right: 3px solid transparent;
+                border-top: 4px solid white;
+                filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
               "></div>
             </div>
             <style>
@@ -177,9 +177,9 @@ export default function MapaLeafletMejorado({
             </style>
           `,
           className: '',
-          iconSize: [32, 38],
-          iconAnchor: [16, 38],
-          popupAnchor: [0, -38],
+          iconSize: [22, 26],
+          iconAnchor: [11, 26],
+          popupAnchor: [0, -26],
         })
       })
 
@@ -188,49 +188,49 @@ export default function MapaLeafletMejorado({
           <div class="semaforo-container" style="position: relative; animation: markerBounce 0.5s ease-out;">
             <div style="
               background: linear-gradient(180deg, #1f2937 0%, #374151 100%);
-              width: 18px;
-              height: 38px;
-              border-radius: 9px;
+              width: 12px;
+              height: 26px;
+              border-radius: 6px;
               display: flex;
               flex-direction: column;
               align-items: center;
               justify-content: space-around;
-              padding: 4px 2px;
+              padding: 3px 1.5px;
               border: 2px solid white;
-              box-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 0 0 1px #4b556344;
+              box-shadow: 0 3px 6px rgba(0,0,0,0.2), 0 0 0 1px #4b556344;
               cursor: pointer;
               transition: all 0.3s ease;
               position: relative;
               z-index: 10;
-            " onmouseover="this.style.transform='scale(1.2)';this.style.boxShadow='0 6px 12px rgba(0,0,0,0.3), 0 0 0 2px #4b5563';" 
-               onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 4px 8px rgba(0,0,0,0.2), 0 0 0 1px #4b556344';">
+            " onmouseover="this.style.transform='scale(1.3)';this.style.boxShadow='0 5px 10px rgba(0,0,0,0.3), 0 0 0 2px #4b5563';" 
+               onmouseout="this.style.transform='scale(1)';this.style.boxShadow='0 3px 6px rgba(0,0,0,0.2), 0 0 0 1px #4b556344';">
               <div style="
-                width: 11px;
-                height: 11px;
+                width: 7px;
+                height: 7px;
                 border-radius: 50%;
                 background: radial-gradient(circle at 30% 30%, #fbbf24, #f59e0b);
-                box-shadow: 0 0 6px #fbbf24, inset 0 -1px 2px rgba(0,0,0,0.3);
+                box-shadow: 0 0 4px #fbbf24, inset 0 -1px 1px rgba(0,0,0,0.3);
                 animation: semaphoreLight 3s infinite;
               "></div>
               <div style="
-                width: 11px;
-                height: 11px;
+                width: 7px;
+                height: 7px;
                 border-radius: 50%;
                 background: radial-gradient(circle at 30% 30%, #22c55e, #16a34a);
-                box-shadow: 0 0 6px #22c55e, inset 0 -1px 2px rgba(0,0,0,0.3);
+                box-shadow: 0 0 4px #22c55e, inset 0 -1px 1px rgba(0,0,0,0.3);
               "></div>
             </div>
             <div style="
               position: absolute;
-              bottom: -5px;
+              bottom: -4px;
               left: 50%;
               transform: translateX(-50%);
               width: 0;
               height: 0;
-              border-left: 4px solid transparent;
-              border-right: 4px solid transparent;
-              border-top: 5px solid white;
-              filter: drop-shadow(0 1px 2px rgba(0,0,0,0.15));
+              border-left: 3px solid transparent;
+              border-right: 3px solid transparent;
+              border-top: 4px solid white;
+              filter: drop-shadow(0 1px 1px rgba(0,0,0,0.15));
             "></div>
           </div>
           <style>
@@ -241,9 +241,9 @@ export default function MapaLeafletMejorado({
           </style>
         `,
         className: '',
-        iconSize: [22, 46],
-        iconAnchor: [11, 46],
-        popupAnchor: [0, -46],
+        iconSize: [16, 32],
+        iconAnchor: [8, 32],
+        popupAnchor: [0, -32],
       })
 
       setCustomIcons(icons)
