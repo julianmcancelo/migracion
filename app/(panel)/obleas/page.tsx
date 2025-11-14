@@ -38,16 +38,45 @@ export default function ObleasPage() {
     setBuscado(true)
 
     try {
-      const response = await fetch(
-        `/api/habilitaciones?busqueda=${encodeURIComponent(busqueda)}&estado=ACTIVA`
-      )
-      const data = await response.json()
+      // Buscar en ambos tipos de transporte
+      const tiposTransporte = ['Escolar', 'Remis']
+      let todasHabilitaciones: any[] = []
 
-      if (data.success) {
-        setHabilitaciones(data.data || [])
-      } else {
-        setHabilitaciones([])
+      for (const tipo of tiposTransporte) {
+        const response = await fetch(
+          `/api/habilitaciones?tipo=${tipo}&buscar=${encodeURIComponent(busqueda)}&limite=50`
+        )
+        const data = await response.json()
+
+        if (data.success && data.data) {
+          todasHabilitaciones = [...todasHabilitaciones, ...data.data]
+        }
       }
+
+      // Filtrar solo habilitaciones activas y mapear los datos
+      const habilitacionesActivas = todasHabilitaciones
+        .filter((hab) => hab.estado === 'ACTIVA')
+        .map((hab) => {
+          // Obtener titular (buscar en personas con rol TITULAR)
+          const titular = hab.personas?.find((p: any) => p.rol === 'TITULAR')
+          // Obtener primer vehículo
+          const vehiculo = hab.vehiculos?.[0]
+
+          return {
+            id: hab.id,
+            nro_licencia: hab.nro_licencia,
+            tipo_transporte: hab.tipo_transporte,
+            estado: hab.estado,
+            titular_nombre: titular?.nombre || 'Sin titular',
+            titular_dni: titular?.dni || 'N/A',
+            vehiculo_dominio: vehiculo?.dominio || 'N/A',
+            vehiculo_marca: vehiculo?.marca || '',
+            vehiculo_modelo: vehiculo?.modelo || '',
+            vigencia_fin: hab.vigencia_fin,
+          }
+        })
+
+      setHabilitaciones(habilitacionesActivas)
     } catch (error) {
       console.error('Error al buscar:', error)
       alert('Error al buscar habilitaciones')
