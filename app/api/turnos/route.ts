@@ -65,9 +65,10 @@ export async function GET(request: Request) {
       LEFT JOIN habilitaciones_generales AS hg ON t.habilitacion_id = hg.id
       LEFT JOIN habilitaciones_personas AS hp ON hg.id = hp.habilitacion_id AND hp.rol = 'TITULAR'
       LEFT JOIN personas AS p ON hp.persona_id = p.id
-      LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id
+      LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id AND hv.activo = 1
       LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
       ${whereClause}
+      GROUP BY t.id
       ORDER BY t.fecha ASC, t.hora ASC
       LIMIT 100
     `
