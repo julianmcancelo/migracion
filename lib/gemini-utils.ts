@@ -65,20 +65,21 @@ export function getGeminiClient() {
 }
 
 /**
- * Obtiene el modelo recomendado para OCR (mejor cuota)
+ * Obtiene el modelo recomendado para OCR (visión)
  */
 export function getGeminiVisionModel() {
   const genAI = getGeminiClient()
-  // gemini-1.5-flash tiene mejor cuota gratuita que gemini-2.0-flash-exp
-  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+  // gemini-2.0-flash-exp es mejor para OCR y visión
+  return genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 }
 
 /**
- * Obtiene el modelo para chat (mejor cuota)
+ * Obtiene el modelo para chat
  */
 export function getGeminiChatModel() {
   const genAI = getGeminiClient()
-  return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
+  // Usar gemini-2.0-flash-exp también para chat
+  return genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' })
 }
 
 /**
@@ -98,6 +99,16 @@ export function handleGeminiError(error: any): {
         'Servicio temporalmente no disponible. Por favor, intente nuevamente en unos segundos.',
       shouldRetry: true,
       retryAfter: 2000,
+    }
+  }
+
+  // Error 404 - Model Not Found
+  if (error.status === 404) {
+    return {
+      message: 'Modelo de IA no encontrado o no disponible',
+      userMessage:
+        'El servicio de IA no está disponible temporalmente. Contacte al administrador.',
+      shouldRetry: false,
     }
   }
 
@@ -165,21 +176,25 @@ export function extractJSON(text: string): any {
 
 /**
  * Límites de la API gratuita de Gemini
+ * Nota: gemini-1.5-flash no está disponible en v1beta actualmente
  */
 export const GEMINI_FREE_LIMITS = {
+  'gemini-2.0-flash-exp': {
+    requestsPerMinute: 10,
+    requestsPerDay: 1000,
+    tokensPerMinute: 500000,
+    note: 'Modelo activo - Mejor para OCR y visión',
+  },
   'gemini-1.5-flash': {
     requestsPerMinute: 15,
     requestsPerDay: 1500,
     tokensPerMinute: 1000000,
+    note: 'No disponible en v1beta actualmente',
   },
   'gemini-1.5-pro': {
     requestsPerMinute: 2,
     requestsPerDay: 50,
     tokensPerMinute: 32000,
-  },
-  'gemini-2.0-flash-exp': {
-    requestsPerMinute: 10, // Experimental, límites más bajos
-    requestsPerDay: 1000,
-    tokensPerMinute: 500000,
+    note: 'Disponible pero con límites muy bajos',
   },
 }

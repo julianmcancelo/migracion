@@ -73,19 +73,9 @@ export function Sidebar({ collapsed, onToggle, mobileOpen, onMobileClose }: Side
       icon: Shield,
     },
     {
-      name: 'Inspecciones',
-      href: '/inspecciones',
+      name: 'Control Vehicular',
+      href: '/control-vehicular',
       icon: CheckCircle,
-    },
-    {
-      name: 'Verificaciones',
-      href: '/verificaciones',
-      icon: FileCheck,
-    },
-    {
-      name: 'Turnos',
-      href: '/turnos',
-      icon: Calendar,
       badge: 3,
     },
     {

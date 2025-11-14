@@ -11,7 +11,7 @@ interface DatosInspeccion {
     tipo_habilitacion?: string
     tipo_transporte: string | null
     resultado: string | null
-    firma_inspector: string
+    firma_inspector: string | null
     firma_contribuyente: string | null
   }
   titular: {
@@ -73,53 +73,52 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
     // ==================== HEADER ====================
     const agregarHeader = () => {
-      // Fondo rojo bordó del header
+      // Fondo rojo bordó del header (más compacto)
       doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-      doc.roundedRect(10, 10, 190, 25, 3, 3, 'F')
+      doc.roundedRect(10, 8, 190, 18, 2, 2, 'F')
 
       // Logo placeholder - texto "Lanús"
-      doc.setFontSize(14)
+      doc.setFontSize(11)
       doc.setTextColor(255, 255, 255)
       doc.setFont('helvetica', 'bold')
-      doc.text('Lanus', 15, 20)
-      doc.setFontSize(7)
+      doc.text('Lanus', 15, 15)
+      doc.setFontSize(6)
       doc.setFont('helvetica', 'normal')
-      doc.text('PARTIDO', 15, 24)
+      doc.text('PARTIDO', 15, 18)
 
-      // Subsecretaria
-      doc.setFontSize(7)
-      doc.text('Subsecretaria de Ordenamiento Urbano', 15, 28.5)
-      doc.text('Direccion Gral. de Movilidad y Transporte', 15, 31.5)
+      // Subsecretaria (más compacto)
+      doc.setFontSize(6)
+      doc.text('Subsecretaria de Ordenamiento Urbano', 15, 21)
+      doc.text('Dir. Gral. de Movilidad y Transporte', 15, 24)
 
       // Titulo principal centrado
-      doc.setFontSize(14)
+      doc.setFontSize(11)
       doc.setFont('helvetica', 'bold')
-      doc.text('CERTIFICADO DE VERIFICACION VEHICULAR', 105, 22, { align: 'center' })
+      doc.text('CERTIFICADO DE VERIFICACION VEHICULAR', 105, 17, { align: 'center' })
 
       // Fecha y hora en la esquina derecha
       let fecha: Date
       try {
         fecha = new Date(datos.inspeccion.fecha)
-        // Verificar si es una fecha válida
         if (isNaN(fecha.getTime())) {
           throw new Error('Fecha inválida')
         }
       } catch (e) {
         console.error('Error procesando fecha:', e)
-        fecha = new Date() // Usar fecha actual como fallback
+        fecha = new Date()
       }
 
-      doc.setFontSize(8)
+      doc.setFontSize(7)
       doc.setFont('helvetica', 'normal')
-      doc.text(`Fecha: ${fecha.toLocaleDateString('es-AR')}`, 195, 20, { align: 'right' })
+      doc.text(`Fecha: ${fecha.toLocaleDateString('es-AR')}`, 195, 15, { align: 'right' })
       doc.text(
         `Hora: ${fecha.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`,
         195,
-        24,
+        19,
         { align: 'right' }
       )
 
-      yPos = 42
+      yPos = 30
     }
 
     // ==================== FOOTER ====================
@@ -158,7 +157,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     agregarHeader()
 
     // ==================== INFO PRINCIPAL ====================
-    yPos += 3
+    yPos += 4
 
     // Línea superior
     doc.setFontSize(9)
@@ -168,109 +167,102 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     // Primera fila: Expediente y Licencia
     doc.text('Expediente N°:', 15, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.inspeccion.nro_expediente || 'S/N'), 45, yPos)
+    doc.text(String(datos.inspeccion.nro_expediente || 'S/N'), 43, yPos)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('Licencia N°:', 110, yPos)
+    doc.text('Licencia N°:', 115, yPos)
     doc.setFont('helvetica', 'normal')
     doc.text(String(datos.inspeccion.nro_licencia), 140, yPos)
 
-    yPos += 6
+    yPos += 5
 
     // Segunda fila: Tipo de Habilitacion y Transporte
     doc.setFont('helvetica', 'bold')
-    doc.text('Tipo de Habilitacion:', 15, yPos)
+    doc.text('Tipo Habilitacion:', 15, yPos)
     doc.setFont('helvetica', 'normal')
     doc.text(String(datos.inspeccion.tipo_habilitacion || 'Inicial'), 50, yPos)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('Transporte:', 110, yPos)
+    doc.text('Transporte:', 115, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.inspeccion.tipo_transporte || 'Escolar'), 135, yPos)
+    doc.text(String(datos.inspeccion.tipo_transporte || 'Escolar'), 138, yPos)
 
-    yPos += 8
+    yPos += 7
 
     // ==================== TITULAR ====================
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
+    doc.setFontSize(9)
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('Titular', 15, yPos)
-    yPos += 5
+    yPos += 4
 
-    doc.setFontSize(9)
+    doc.setFontSize(8)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     doc.text('Nombre:', 15, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.titular.nombre), 35, yPos)
-    yPos += 5
+    doc.text(String(datos.titular.nombre).substring(0, 48), 33, yPos)
+    yPos += 4
 
     doc.setFont('helvetica', 'bold')
     doc.text('DNI:', 15, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.titular.dni || '---'), 27, yPos)
+    doc.text(String(datos.titular.dni || '---'), 26, yPos)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('Domicilio:', 70, yPos)
+    doc.text('Domicilio:', 65, yPos)
     doc.setFont('helvetica', 'normal')
     const domicilio = String(datos.titular.domicilio || 'No especificado')
-    doc.text(domicilio.substring(0, 40), 93, yPos)
-    yPos += 8
+    doc.text(domicilio.substring(0, 42), 83, yPos)
+    yPos += 6
 
     // ==================== CONDUCTOR ====================
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
-    doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.text('Conductor', 110, yPos - 13)
-
     doc.setFontSize(9)
+    doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
+    doc.text('Conductor', 115, yPos - 10)
+
+    doc.setFontSize(8)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    doc.text('Nombre:', 110, yPos - 8)
+    doc.text('Nombre:', 115, yPos - 6)
     doc.setFont('helvetica', 'normal')
     const nombreConductor = String(datos.conductor?.nombre || 'No especificado')
-    doc.text(nombreConductor.substring(0, 30), 130, yPos - 8)
+    doc.text(nombreConductor.substring(0, 32), 133, yPos - 6)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('DNI:', 110, yPos - 3)
+    doc.text('DNI:', 115, yPos - 2)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.conductor?.dni || 'S/D'), 122, yPos - 3)
+    doc.text(String(datos.conductor?.dni || 'S/D'), 126, yPos - 2)
 
     // ==================== VEHÍCULO ====================
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
+    doc.setFontSize(9)
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('Vehiculo', 15, yPos)
-    yPos += 5
+    yPos += 4
 
-    doc.setFontSize(9)
+    doc.setFontSize(8)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
     doc.text('Dominio:', 15, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.vehiculo.dominio), 36, yPos)
-    yPos += 5
+    doc.text(String(datos.vehiculo.dominio), 34, yPos)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('Marca:', 15, yPos)
+    doc.text('Marca:', 75, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.vehiculo.marca), 31, yPos)
+    doc.text(String(datos.vehiculo.marca), 90, yPos)
 
     doc.setFont('helvetica', 'bold')
-    doc.text('Modelo:', 90, yPos)
+    doc.text('Modelo:', 135, yPos)
     doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.vehiculo.modelo), 110, yPos)
-    yPos += 5
-
-    doc.setFont('helvetica', 'bold')
-    doc.text('Inscripcion Inicial:', 15, yPos)
-    doc.setFont('helvetica', 'normal')
-    doc.text(String(datos.vehiculo.inscripcion_inicial || 'No registrada'), 50, yPos)
-    yPos += 10
+    doc.text(String(datos.vehiculo.modelo), 152, yPos)
+    yPos += 7
 
     // ==================== TITULO DE TABLA ====================
     doc.setFont('helvetica', 'bold')
-    doc.setFontSize(10)
+    doc.setFontSize(9)
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('DETALLES Y OBSERVACIONES DEL VEHICULO', 105, yPos, { align: 'center' })
-    yPos += 6
+    yPos += 5
 
     // ==================== TABLA DE ITEMS ====================
     // Preparar datos para la tabla estilo certificado
@@ -298,126 +290,122 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       headStyles: {
         fillColor: [255, 255, 255],
         textColor: [0, 0, 0],
-        fontSize: 8,
+        fontSize: 7,
         fontStyle: 'bold',
         halign: 'center',
-        lineWidth: 0.5,
+        lineWidth: 0.3,
         lineColor: [0, 0, 0],
+        cellPadding: 1.5,
       },
       bodyStyles: {
         fontSize: 7,
         textColor: colorTexto,
-        cellPadding: 2,
-        lineWidth: 0.5,
+        cellPadding: 1.5,
+        lineWidth: 0.3,
         lineColor: [0, 0, 0],
+        minCellHeight: 5,
       },
       columnStyles: {
-        0: { cellWidth: 75, halign: 'left' },
-        1: { cellWidth: 15, halign: 'center', fillColor: [255, 230, 230] },
-        2: { cellWidth: 15, halign: 'center', fillColor: [255, 255, 230] },
-        3: { cellWidth: 15, halign: 'center', fillColor: [255, 230, 230] },
-        4: { cellWidth: 60, halign: 'left' },
+        0: { cellWidth: 87, halign: 'left' },
+        1: { cellWidth: 13, halign: 'center', fillColor: [255, 230, 230] },
+        2: { cellWidth: 13, halign: 'center', fillColor: [255, 255, 230] },
+        3: { cellWidth: 13, halign: 'center', fillColor: [255, 230, 230] },
+        4: { cellWidth: 44, halign: 'left' },
       },
       margin: { left: 15, right: 15 },
     })
 
     //  - autoTable modifica la instancia
-    yPos = doc.lastAutoTable.finalY + 12
+    yPos = doc.lastAutoTable.finalY + 5
 
     // ==================== FIRMAS ====================
-    if (yPos > 235) {
-      doc.addPage()
-      agregarHeader()
-      yPos = 52
-    }
-
     // Título de sección
     doc.setFillColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.roundedRect(15, yPos - 2, 180, 8, 2, 2, 'F')
-    doc.setFontSize(11)
+    doc.roundedRect(15, yPos, 180, 7, 1, 1, 'F')
+    doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(255, 255, 255)
-    doc.text('FIRMAS DIGITALES', 20, yPos + 3)
+    doc.text('FIRMAS DIGITALES', 20, yPos + 4.5)
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    yPos += 12
+    yPos += 9
 
-    // Cajas para las firmas (más compactas)
+    // Cajas para las firmas (compactas pero legibles)
     // Caja Inspector
     doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
-    doc.roundedRect(20, yPos - 3, 75, 40, 3, 3, 'F')
+    doc.roundedRect(20, yPos, 75, 28, 2, 2, 'F')
     doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
     doc.setLineWidth(0.3)
-    doc.roundedRect(20, yPos - 3, 75, 40, 3, 3, 'S')
+    doc.roundedRect(20, yPos, 75, 28, 2, 2, 'S')
 
     // Caja Contribuyente
     doc.setFillColor(colorFondo[0], colorFondo[1], colorFondo[2])
-    doc.roundedRect(115, yPos - 3, 75, 40, 3, 3, 'F')
+    doc.roundedRect(115, yPos, 75, 28, 2, 2, 'F')
     doc.setDrawColor(colorBorde[0], colorBorde[1], colorBorde[2])
-    doc.roundedRect(115, yPos - 3, 75, 40, 3, 3, 'S')
+    doc.roundedRect(115, yPos, 75, 28, 2, 2, 'S')
 
     // Firma Inspector
-    doc.setFontSize(7.5)
+    doc.setFontSize(7)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.text('INSPECTOR', 57.5, yPos + 2, { align: 'center' })
+    doc.text('INSPECTOR', 57.5, yPos + 3.5, { align: 'center' })
 
     if (datos.inspeccion.firma_inspector) {
       try {
         console.log('Agregando firma del inspector...')
-        doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 30, yPos + 5, 55, 18)
+        doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 32, yPos + 6, 50, 13)
       } catch (e) {
         console.error('Error agregando firma del inspector:', e)
-        doc.setFontSize(7)
+        doc.setFontSize(6.5)
         doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('Firma no disponible', 57.5, yPos + 15, { align: 'center' })
+        doc.text('Firma no disponible', 57.5, yPos + 12, { align: 'center' })
       }
     } else {
-      doc.setFontSize(7)
+      doc.setFontSize(6.5)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('Firma no registrada', 57.5, yPos + 15, { align: 'center' })
+      doc.text('Firma no registrada', 57.5, yPos + 12, { align: 'center' })
     }
 
     doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.setLineWidth(0.4)
-    doc.line(30, yPos + 25, 85, yPos + 25)
-    doc.setFontSize(7.5)
+    doc.setLineWidth(0.3)
+    doc.line(30, yPos + 20, 85, yPos + 20)
+    doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    doc.text(String(datos.inspeccion.inspector), 57.5, yPos + 29, { align: 'center' })
-    doc.setFontSize(6.5)
+    doc.text(String(datos.inspeccion.inspector), 57.5, yPos + 23, { align: 'center' })
+    doc.setFontSize(6)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text('Inspector Municipal', 57.5, yPos + 33, { align: 'center' })
+    doc.text('Inspector Municipal', 57.5, yPos + 26, { align: 'center' })
 
     // Firma Contribuyente
-    doc.setFontSize(7.5)
+    doc.setFontSize(7)
     doc.setFont('helvetica', 'bold')
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.text('CONTRIBUYENTE', 152.5, yPos + 2, { align: 'center' })
+    doc.text('CONTRIBUYENTE', 152.5, yPos + 3.5, { align: 'center' })
 
     if (datos.inspeccion.firma_contribuyente) {
       try {
-        doc.addImage(datos.inspeccion.firma_contribuyente, 'PNG', 125, yPos + 5, 55, 18)
+        doc.addImage(datos.inspeccion.firma_contribuyente, 'PNG', 127, yPos + 6, 50, 13)
       } catch (e) {
-        doc.setFontSize(7)
+        doc.setFontSize(6.5)
         doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('Firma no disponible', 152.5, yPos + 15, { align: 'center' })
+        doc.text('Firma no disponible', 152.5, yPos + 12, { align: 'center' })
       }
     } else {
-      doc.setFontSize(7)
+      doc.setFontSize(6.5)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('Firma no registrada', 152.5, yPos + 15, { align: 'center' })
+      doc.text('Firma no registrada', 152.5, yPos + 12, { align: 'center' })
     }
 
     doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
-    doc.setLineWidth(0.4)
-    doc.line(125, yPos + 25, 180, yPos + 25)
-    doc.setFontSize(7.5)
+    doc.setLineWidth(0.3)
+    doc.line(125, yPos + 20, 180, yPos + 20)
+    doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(colorTexto[0], colorTexto[1], colorTexto[2])
-    doc.text(String(datos.titular.nombre), 152.5, yPos + 29, { align: 'center' })
-    doc.setFontSize(6.5)
+    doc.text(String(datos.titular.nombre), 152.5, yPos + 23, { align: 'center' })
+    doc.setFontSize(6)
     doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text('Titular del Vehiculo', 152.5, yPos + 33, { align: 'center' })
+    doc.text('Titular del Vehiculo', 152.5, yPos + 26, { align: 'center' })
 
     yPos += 38
 

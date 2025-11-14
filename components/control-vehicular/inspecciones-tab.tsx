@@ -28,10 +28,10 @@ interface Inspeccion {
 }
 
 /**
- * Página principal de inspecciones
+ * Componente tab de inspecciones
  * Lista todas las inspecciones realizadas
  */
-export default function InspeccionesPage() {
+export default function InspeccionesTab() {
   const [inspecciones, setInspecciones] = useState<Inspeccion[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -112,32 +112,14 @@ export default function InspeccionesPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header Simplificado */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl">
-              <ClipboardCheck className="h-6 w-6 text-blue-600" />
-              Inspecciones Vehiculares
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">Gestión de inspecciones técnicas</p>
-          </div>
-
-          <div className="flex flex-col gap-2 sm:flex-row sm:gap-2">
-            <Link href="/turnos" className="w-full sm:w-auto">
-              <Button variant="outline" className="w-full sm:w-auto">
-                <Calendar className="mr-2 h-4 w-4" />
-                Turnos
-              </Button>
-            </Link>
-            <Link href="/inspecciones/nueva" className="w-full sm:w-auto">
-              <Button className="w-full bg-blue-600 hover:bg-blue-700 sm:w-auto">
-                <Plus className="mr-2 h-4 w-4" />
-                Nueva Inspección
-              </Button>
-            </Link>
-          </div>
-        </div>
+      {/* Botón Nueva Inspección */}
+      <div className="flex justify-end">
+        <Link href="/inspecciones/nueva">
+          <Button className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="mr-2 h-4 w-4" />
+            Nueva Inspección
+          </Button>
+        </Link>
       </div>
 
       {/* Resumen Simple */}

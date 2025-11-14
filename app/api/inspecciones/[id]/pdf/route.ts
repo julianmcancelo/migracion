@@ -3,6 +3,42 @@ import { prisma } from '@/lib/db'
 import { generarPDFInspeccion } from '@/lib/pdf-generator'
 import path from 'path'
 
+// Items predeterminados para Remis
+const ITEMS_REMIS = [
+  'Estado General de la Carrocería (exterior, paragolpes, vidrios)',
+  'Estado de Espejos Retrovisores (Der. / Izq.)',
+  'Estado y funcionamiento de todas las Luces (Posición, L.Corta, L. Larga, Giros, Balizas, Stop, M. Atrás)',
+  'Cubiertas (Estado General banda de rodamiento y perfil. Def./Tras.)',
+  'Estado General del Interior (Estado y Anclaje de Butacas y asiento trasero. Tapicería y Paneles de puerta)',
+  'Cinturones de Seguridad (en las plazas delanteras y traseras acorde a la configuración del fabricante)',
+  'Cabezales o Apoya Cabeza (en todas las plazas acorde a la configuración del fabricante)',
+  'Matafuego Reglamentario (fijado en el interior del habitáculo, con carga y fecha vigente)',
+  'Kit de Emergencias para Primeros Auxilios Completo',
+  'Mampara Divisoria Transparente entre plazas delanteras y traseras',
+]
+
+// Items predeterminados para Escolar (incluye items comunes + específicos)
+const ITEMS_ESCOLAR = [
+  'Estado General de la Carrocería (exterior, paragolpes, vidrios)',
+  'Estado de Espejos Retrovisores (Der. / Izq.)',
+  'Estado y funcionamiento de todas las Luces (Posición, L.Corta, L. Larga, Giros, Balizas, Stop, M. Atrás)',
+  'Cubiertas (Estado General banda de rodamiento y perfil. Def./Tras.)',
+  'Estado General del Interior (Estado y Anclaje de Butacas y asiento trasero. Tapicería y Paneles de puerta)',
+  'Cinturones de Seguridad (en las plazas delanteras y traseras acorde a la configuración del fabricante)',
+  'Cabezales o Apoya Cabeza (en todas las plazas acorde a la configuración del fabricante)',
+  'Matafuego Reglamentario (fijado en el interior del habitáculo, con carga y fecha vigente)',
+  'Kit de Emergencias para Primeros Auxilios Completo',
+  'Pta. accionada cond. para desc./ asc. (Puerta derecha)',
+  'Pta. accionada cond. para desc./ asc. (Puerta izquierda)',
+  'Salida de Emer. indep. de la plataf. asc. / desc. (En Caso de Combi - L. Der. y Trasero)',
+  'Vent. Vidrio Temp. / inastillable (Apertura 10 cm)',
+  'Pisos rec. con mat. Antideslizantes',
+  'Dimens. de Banquetas (desde el piso 0.40 mts - ancho min 0.45mts Prof. medida horiz. 0.40 mts)',
+  'Asientos: Fijos, Acolchados, Estructu. metalicas, revestimiento (Caucho o similar)',
+  'Pintura (Carroceria baja y capot naranja Nº 1054 IRAM - carroceria alta techo y parantes Color blanco)',
+  'Leyenda de Escolares o Niños Tamaño minimo: 0,20 mts',
+]
+
 /**
  * Convierte una ruta de imagen a base64 data URL
  */
@@ -153,7 +189,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       )
     }
 
-    if (!inspeccion.firma_inspector) {
+    // Solo requerir firma si la inspección no está pendiente
+    if (!inspeccion.firma_inspector && inspeccion.resultado !== 'PENDIENTE') {
       return NextResponse.json(
         { success: false, error: 'Falta firma del inspector' },
         { status: 400 }
@@ -171,7 +208,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
         tipo_habilitacion: habilitacion?.tipo || undefined,
         tipo_transporte: inspeccion.tipo_transporte,
         resultado: inspeccion.resultado,
-        firma_inspector: inspeccion.firma_inspector,
+        firma_inspector: inspeccion.firma_inspector || null,
         firma_contribuyente: inspeccion.firma_contribuyente || null,
       },
       titular: {
@@ -195,16 +232,45 @@ export async function GET(request: Request, { params }: { params: { id: string }
           ? new Date(habVehiculo.vehiculo.inscripcion_inicial).toLocaleDateString('es-AR')
           : undefined,
       },
-      items: (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0
-        ? inspeccion.inspeccion_detalles
-        : inspeccion.inspeccion_items
-      ).map((item: any) => ({
-        nombre: item.nombre_item || item.item_id_original,
-        categoria: item.item_id || 'GENERAL', // Usar item_id como categoría
-        estado: item.estado,
-        observacion: item.observacion || '',
-        foto_path: item.foto_path || undefined,
-      })),
+      items: (() => {
+        // Si hay detalles de inspección, usarlos
+        if (inspeccion.inspeccion_detalles && inspeccion.inspeccion_detalles.length > 0) {
+          return inspeccion.inspeccion_detalles.map((item: any) => ({
+            nombre: item.nombre_item || item.item_id_original,
+            categoria: item.item_id || 'GENERAL',
+            estado: item.estado,
+            observacion: item.observacion || '',
+            foto_path: item.foto_path || undefined,
+          }))
+        }
+        
+        // Si hay items guardados, usarlos
+        if (inspeccion.inspeccion_items && inspeccion.inspeccion_items.length > 0) {
+          return inspeccion.inspeccion_items.map((item: any) => ({
+            nombre: item.nombre_item || item.item_id_original,
+            categoria: item.item_id || 'GENERAL',
+            estado: item.estado,
+            observacion: item.observacion || '',
+            foto_path: item.foto_path || undefined,
+          }))
+        }
+        
+        // Si no hay items (inspección pendiente), usar items predeterminados según el tipo
+        const tipoTransporte = inspeccion.tipo_transporte?.toUpperCase() || ''
+        const itemsPredeterminados = tipoTransporte.includes('REMIS') 
+          ? ITEMS_REMIS 
+          : tipoTransporte.includes('ESCOLAR') 
+          ? ITEMS_ESCOLAR 
+          : ITEMS_REMIS // Por defecto usar Remis
+        
+        return itemsPredeterminados.map(nombre => ({
+          nombre,
+          categoria: 'GENERAL',
+          estado: '', // Vacío para inspecciones pendientes
+          observacion: '',
+          foto_path: undefined,
+        }))
+      })(),
       fotos: inspeccion.inspeccion_fotos.map(foto => ({
         tipo: foto.tipo_foto || 'Adicional',
         path: foto.foto_path || '',

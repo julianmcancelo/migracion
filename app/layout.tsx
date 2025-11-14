@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: 'Sistema de Gestión de Transporte - Lanús',
   description:
     'Portal de acceso para la administración y consulta de habilitaciones del Municipio de Lanús',
+  icons: {
+    icon: '/favicon.svg',
+  },
 }
 
 export default function RootLayout({

@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
+import Link from 'next/link'
 import {
   Calendar,
   Clock,
@@ -47,7 +48,7 @@ interface Turno {
  * Página de gestión de turnos
  * Lista, crea y actualiza turnos de inspección
  */
-export default function TurnosPage() {
+export default function TurnosTab() {
   const [turnos, setTurnos] = useState<Turno[]>([])
   const [turnosFiltrados, setTurnosFiltrados] = useState<Turno[]>([])
   const [habilitacionesSinTurno, setHabilitacionesSinTurno] = useState<any[]>([])
@@ -324,24 +325,15 @@ export default function TurnosPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header Simplificado */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="flex items-center gap-2 text-xl font-bold text-gray-900 sm:text-2xl">
-              <Calendar className="h-6 w-6 text-blue-600" />
-              Gestión de Turnos
-            </h1>
-            <p className="mt-1 text-sm text-gray-500">Administrá los turnos de inspección</p>
-          </div>
-
-          <Button onClick={abrirModalNuevo} className="w-full bg-blue-600 hover:bg-blue-700 sm:w-auto">
+      {/* Botón Nuevo Turno */}
+      <div className="flex justify-end">
+        <Link href="/turnos/nuevo">
+          <Button className="bg-blue-600 hover:bg-blue-700">
             <Plus className="mr-2 h-4 w-4" />
             Nuevo Turno
           </Button>
-        </div>
+        </Link>
       </div>
-
       {/* Habilitaciones sin turno - Alerta Simple */}
       {habilitacionesSinTurno.length > 0 && (
         <div className="rounded-lg border-l-4 border-orange-500 bg-orange-50 p-4">

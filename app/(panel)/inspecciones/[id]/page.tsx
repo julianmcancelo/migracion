@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { ArrowLeft, Save, Loader2, CheckCircle, XCircle, AlertCircle } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, CheckCircle, XCircle, AlertCircle, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -64,7 +64,9 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
   const router = useRouter()
   const [loading, setLoading] = useState(true)
   const [guardando, setGuardando] = useState(false)
+  const [eliminando, setEliminando] = useState(false)
   const [inspeccion, setInspeccion] = useState<Inspeccion | null>(null)
+  const [puedeEliminar, setPuedeEliminar] = useState(false)
 
   const [nombreInspector, setNombreInspector] = useState('')
   const [resultado, setResultado] = useState<
@@ -83,7 +85,21 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
 
   useEffect(() => {
     cargarInspeccion()
+    verificarPermisos()
   }, [params.id])
+
+  const verificarPermisos = async () => {
+    try {
+      const response = await fetch('/api/auth/session')
+      const data = await response.json()
+      
+      if (data.success && data.user) {
+        setPuedeEliminar(data.user.email === 'jmcancelo@lanus.gob.ar')
+      }
+    } catch (error) {
+      console.error('Error al verificar permisos:', error)
+    }
+  }
 
   const cargarInspeccion = async () => {
     try {
@@ -169,6 +185,34 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
     }
   }
 
+  const handleEliminar = async () => {
+    if (!confirm('⚠️ ¿Está seguro de ELIMINAR esta inspección?\n\nEsta acción no se puede deshacer.')) {
+      return
+    }
+
+    setEliminando(true)
+
+    try {
+      const response = await fetch(`/api/inspecciones/${params.id}/eliminar`, {
+        method: 'DELETE',
+      })
+
+      const data = await response.json()
+
+      if (data.success) {
+        alert('✅ Inspección eliminada exitosamente')
+        router.push('/inspecciones')
+      } else {
+        alert('❌ Error: ' + (data.error || 'Error desconocido'))
+      }
+    } catch (error) {
+      console.error('Error al eliminar:', error)
+      alert('❌ Error al eliminar la inspección')
+    } finally {
+      setEliminando(false)
+    }
+  }
+
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
@@ -219,6 +263,29 @@ export default function EditarInspeccionPage({ params }: { params: { id: string 
             <span className="font-mono font-bold text-blue-600">{inspeccion.nro_licencia}</span>
           </p>
         </div>
+        
+        {/* Botón Eliminar - Solo para usuario autorizado */}
+        {puedeEliminar && (
+          <Button
+            variant="destructive"
+            size="sm"
+            onClick={handleEliminar}
+            disabled={eliminando}
+            className="bg-red-600 hover:bg-red-700"
+          >
+            {eliminando ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Eliminando...
+              </>
+            ) : (
+              <>
+                <Trash2 className="mr-2 h-4 w-4" />
+                Eliminar Inspección
+              </>
+            )}
+          </Button>
+        )}
       </div>
 
       {/* Información de la habilitación */}

@@ -10,9 +10,10 @@ Quota exceeded for metric: generativelanguage.googleapis.com/generate_content_fr
 
 ## 🛠️ Mejoras Implementadas
 
-### 1. **Cambio de Modelo**
-- ❌ Antes: `gemini-2.0-flash-exp` (límites experimentales bajos)
-- ✅ Ahora: `gemini-1.5-flash` (15 req/min, 1500 req/día)
+### 1. **Modelo Optimizado para OCR**
+- ✅ Usando: `gemini-2.0-flash-exp` (mejor para visión y OCR)
+- ⚠️ Nota: `gemini-1.5-flash` no está disponible en v1beta actualmente
+- 📊 Límites: 10 req/min, 1000 req/día
 
 ### 2. **Retry Logic Automático**
 ```typescript
@@ -39,11 +40,11 @@ Nuevo archivo: `lib/gemini-utils.ts`
 
 ## 📊 Límites de Gemini Gratuito
 
-| Modelo | Requests/Minuto | Requests/Día | Tokens/Minuto |
-|--------|----------------|--------------|---------------|
-| **gemini-1.5-flash** ✅ | 15 | 1,500 | 1,000,000 |
-| gemini-1.5-pro | 2 | 50 | 32,000 |
-| gemini-2.0-flash-exp ⚠️ | 10 | 1,000 | 500,000 |
+| Modelo | Requests/Minuto | Requests/Día | Tokens/Minuto | Estado |
+|--------|----------------|--------------|---------------|--------|
+| **gemini-2.0-flash-exp** ✅ | 10 | 1,000 | 500,000 | ACTIVO |
+| gemini-1.5-flash | 15 | 1,500 | 1,000,000 | No disponible en v1beta |
+| gemini-1.5-pro | 2 | 50 | 32,000 | Disponible |
 
 ## 🚀 Alternativa: DeepSeek (Próxima Implementación)
 

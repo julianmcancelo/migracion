@@ -5,8 +5,9 @@ import { getSession } from '@/lib/auth'
 export const dynamic = 'force-dynamic'
 
 /**
- * DELETE /api/inspecciones/[id]/eliminar
- * Elimina una inspección y todos sus registros relacionados
+ * DELETE /api/verificaciones/[id]/eliminar
+ * Elimina una verificación del historial
+ * Solo permitido para el usuario jmcancelo@lanus.gob.ar
  */
 export async function DELETE(request: Request, context: { params: Promise<{ id: string }> }) {
   try {
@@ -22,39 +23,39 @@ export async function DELETE(request: Request, context: { params: Promise<{ id: 
     // Solo permitir eliminación al usuario específico
     if (session.email !== 'jmcancelo@lanus.gob.ar') {
       return NextResponse.json(
-        { success: false, error: 'No tienes permisos para eliminar inspecciones' },
+        { success: false, error: 'No tienes permisos para eliminar verificaciones' },
         { status: 403 }
       )
     }
 
     const params = await context.params
-    const inspeccionId = parseInt(params.id)
+    const verificacionId = parseInt(params.id)
 
-    // Verificar que la inspección existe
-    const inspeccion = await prisma.inspecciones.findUnique({
-      where: { id: inspeccionId },
+    // Verificar que la verificación existe
+    const verificacion = await prisma.verificaciones_historial.findUnique({
+      where: { id: verificacionId },
     })
 
-    if (!inspeccion) {
+    if (!verificacion) {
       return NextResponse.json(
-        { success: false, error: 'Inspección no encontrada' },
+        { success: false, error: 'Verificación no encontrada' },
         { status: 404 }
       )
     }
 
-    // Eliminar la inspección (las relaciones se eliminan en cascada según el schema)
-    await prisma.inspecciones.delete({
-      where: { id: inspeccionId },
+    // Eliminar la verificación
+    await prisma.verificaciones_historial.delete({
+      where: { id: verificacionId },
     })
 
     return NextResponse.json({
       success: true,
-      message: 'Inspección eliminada exitosamente',
+      message: 'Verificación eliminada exitosamente',
     })
   } catch (error) {
-    console.error('Error al eliminar inspección:', error)
+    console.error('Error al eliminar verificación:', error)
     return NextResponse.json(
-      { success: false, error: 'Error al eliminar inspección' },
+      { success: false, error: 'Error al eliminar verificación' },
       { status: 500 }
     )
   }

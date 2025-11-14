@@ -31,7 +31,7 @@ interface Verificacion {
   creado_en: string
 }
 
-export default function VerificacionesPage() {
+export default function VerificacionesTab() {
   const [verificaciones, setVerificaciones] = useState<Verificacion[]>([])
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
@@ -176,16 +176,6 @@ export default function VerificacionesPage() {
 
   return (
     <div className="space-y-4">
-      {/* Header Simplificado */}
-      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-        <div className="flex items-center gap-3">
-          <FileCheck2 className="h-6 w-6 text-blue-600" />
-          <div>
-            <h1 className="text-xl font-bold text-gray-900 sm:text-2xl">Verificaciones Técnicas</h1>
-            <p className="text-sm text-gray-500">Historial de verificaciones realizadas</p>
-          </div>
-        </div>
-      </div>
 
       {/* Resumen Simple */}
       <div className="flex flex-wrap gap-2">
