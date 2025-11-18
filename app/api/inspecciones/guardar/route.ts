@@ -72,7 +72,14 @@ export async function POST(request: NextRequest) {
     console.log('✅ Inspección creada con ID:', inspeccion.id);
 
     // Guardar los detalles de cada ítem (con foto en Base64)
+    let itemsConFoto = 0;
     for (const item of items) {
+      if (item.foto) {
+        const sizeInKB = (item.foto.length * 0.75) / 1024;
+        console.log(`📸 Item ${item.nombre} con foto: ${sizeInKB.toFixed(0)}KB`);
+        itemsConFoto++;
+      }
+      
       await prisma.inspeccion_detalles.create({
         data: {
           inspeccion_id: inspeccion.id,
@@ -85,7 +92,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    console.log(`✅ ${items.length} ítems guardados`);
+    console.log(`✅ ${items.length} ítems guardados (${itemsConFoto} con foto)`);
 
     // Guardar fotos del vehículo (en Base64)
     const vehiclePhotoTypes = [
@@ -99,6 +106,10 @@ export async function POST(request: NextRequest) {
     for (const photoType of vehiclePhotoTypes) {
       const photoData = fotos_vehiculo[photoType.key];
       if (photoData && photoData !== '') {
+        const sizeInKB = (photoData.length * 0.75) / 1024;
+        console.log(`📸 Guardando foto ${photoType.label}: ${sizeInKB.toFixed(0)}KB`);
+        console.log(`   Empieza con: ${photoData.substring(0, 50)}...`);
+        
         await prisma.inspeccion_fotos.create({
           data: {
             inspeccion_id: inspeccion.id,
@@ -108,6 +119,9 @@ export async function POST(request: NextRequest) {
           },
         });
         fotosGuardadas++;
+        console.log(`✅ Foto ${photoType.label} guardada correctamente`);
+      } else {
+        console.log(`⚠️ Foto ${photoType.label} vacía, no se guarda`);
       }
     }
 
