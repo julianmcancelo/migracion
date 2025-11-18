@@ -93,8 +93,23 @@ export default function SignaturePad({ onSave, onClose, title }: SignaturePadPro
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Convertir a Base64 con compresión JPEG más agresiva (50% de calidad)
-    const base64 = canvas.toDataURL('image/jpeg', 0.5);
+    // Crear un canvas temporal con fondo blanco
+    const tempCanvas = document.createElement('canvas');
+    tempCanvas.width = canvas.width;
+    tempCanvas.height = canvas.height;
+    const tempCtx = tempCanvas.getContext('2d');
+    
+    if (!tempCtx) return;
+    
+    // Rellenar con blanco
+    tempCtx.fillStyle = '#FFFFFF';
+    tempCtx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+    
+    // Dibujar la firma encima
+    tempCtx.drawImage(canvas, 0, 0);
+    
+    // Convertir a Base64 con compresión JPEG (50% de calidad)
+    const base64 = tempCanvas.toDataURL('image/jpeg', 0.5);
     
     console.log(`✍️ Firma guardada: ${(base64.length / 1024).toFixed(0)}KB`);
     onSave(base64);
