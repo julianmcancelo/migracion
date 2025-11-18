@@ -18,6 +18,46 @@ export default function CameraCapture({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
+  const compressImage = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = document.createElement('img');
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          
+          // Calcular nuevas dimensiones (máximo 1200px)
+          let width = img.width;
+          let height = img.height;
+          const maxSize = 1200;
+          
+          if (width > height && width > maxSize) {
+            height = (height * maxSize) / width;
+            width = maxSize;
+          } else if (height > maxSize) {
+            width = (width * maxSize) / height;
+            height = maxSize;
+          }
+          
+          canvas.width = width;
+          canvas.height = height;
+          
+          // Dibujar imagen redimensionada
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          // Convertir a Base64 con calidad reducida (0.7 = 70%)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          resolve(compressedBase64);
+        };
+        img.onerror = reject;
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -25,20 +65,12 @@ export default function CameraCapture({
     setIsProcessing(true);
 
     try {
-      // Convertir a Base64
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result as string;
-        onCapture(base64);
-        setIsProcessing(false);
-      };
-      reader.onerror = () => {
-        alert('Error al procesar la imagen');
-        setIsProcessing(false);
-      };
-      reader.readAsDataURL(file);
+      // Comprimir imagen antes de enviar
+      const compressedBase64 = await compressImage(file);
+      onCapture(compressedBase64);
     } catch (error) {
-      alert('Error al capturar la foto');
+      alert('Error al procesar la imagen');
+    } finally {
       setIsProcessing(false);
     }
 

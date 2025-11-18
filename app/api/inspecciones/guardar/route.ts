@@ -4,6 +4,15 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import { existsSync } from 'fs';
 
+// Configuración para aumentar el límite de tamaño del body
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '50mb',
+    },
+  },
+};
+
 /**
  * POST /api/inspecciones/guardar
  * Guarda una inspección completa con fotos y firmas en Base64

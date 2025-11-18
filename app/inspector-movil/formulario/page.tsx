@@ -187,22 +187,36 @@ export default function FormularioInspeccionPage() {
         sendEmailCopy,
       };
 
+      console.log('📤 Enviando inspección...');
+
       const response = await fetch('/api/inspecciones/guardar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
       });
 
-      const result = await response.json();
+      // Manejar errores de tamaño
+      if (response.status === 413) {
+        throw new Error('Las imágenes son demasiado grandes. Por favor, intente con fotos de menor resolución.');
+      }
+
+      // Intentar parsear JSON solo si la respuesta es válida
+      let result;
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        throw new Error('Error al procesar la respuesta del servidor. Por favor, intente nuevamente.');
+      }
 
       if (response.ok && result.status === 'success') {
-        alert('Inspección guardada correctamente');
+        alert('✅ Inspección guardada correctamente');
         sessionStorage.removeItem('tramite_inspeccion');
         router.push('/inspector-movil');
       } else {
         throw new Error(result.message || 'Error al guardar la inspección');
       }
     } catch (error: any) {
+      console.error('❌ Error al guardar inspección:', error);
       alert(`Error: ${error.message}`);
     } finally {
       setIsSubmitting(false);

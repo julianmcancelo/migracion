@@ -93,8 +93,8 @@ export default function SignaturePad({ onSave, onClose, title }: SignaturePadPro
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    // Convertir a Base64
-    const base64 = canvas.toDataURL('image/png');
+    // Convertir a Base64 con compresión JPEG (más pequeño que PNG)
+    const base64 = canvas.toDataURL('image/jpeg', 0.8);
     onSave(base64);
   };
 
