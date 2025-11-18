@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { existsSync } from 'fs';
 
 // Configuración para aumentar el límite de tamaño del body
 export const config = {
@@ -16,6 +13,7 @@ export const config = {
 /**
  * POST /api/inspecciones/guardar
  * Guarda una inspección completa con fotos y firmas en Base64
+ * Compatible con Vercel (serverless) - guarda imágenes en Base64 en la BD
  */
 export async function POST(request: NextRequest) {
   try {
@@ -47,67 +45,40 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Crear directorio para las fotos si no existe
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'inspecciones');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
+    console.log('💾 Guardando inspección para habilitación:', habilitacion_id);
+
+    // Calcular resultado automático basado en los estados
+    const itemsMalos = items.filter((i: any) => i.estado === 'mal').length;
+    const itemsRegulares = items.filter((i: any) => i.estado === 'regular').length;
+    
+    let resultado = 'APROBADO';
+    if (itemsMalos > 0) {
+      resultado = 'RECHAZADO';
+    } else if (itemsRegulares > 2) {
+      resultado = 'CONDICIONAL';
     }
 
-    const timestamp = Date.now();
-    const inspectionFolder = `${nro_licencia}_${timestamp}`;
-    const inspectionPath = path.join(uploadDir, inspectionFolder);
-    await mkdir(inspectionPath, { recursive: true });
-
-    /**
-     * Función auxiliar para guardar Base64 como archivo
-     */
-    const saveBase64File = async (
-      base64Data: string,
-      filename: string
-    ): Promise<string> => {
-      if (!base64Data || base64Data === '') return '';
-
-      // Extraer el contenido Base64 (remover el prefijo data:image/...)
-      const matches = base64Data.match(/^data:([A-Za-z-+\/]+);base64,(.+)$/);
-      if (!matches || matches.length !== 3) {
-        throw new Error('Formato Base64 inválido');
-      }
-
-      const base64Content = matches[2];
-      const buffer = Buffer.from(base64Content, 'base64');
-      const filePath = path.join(inspectionPath, filename);
-      
-      await writeFile(filePath, buffer);
-      
-      // Retornar la ruta relativa para guardar en BD
-      return `/uploads/inspecciones/${inspectionFolder}/${filename}`;
-    };
+    console.log(`📊 Resultado: ${resultado} (Malos: ${itemsMalos}, Regulares: ${itemsRegulares})`);
 
     // Guardar la inspección en la base de datos
     const inspeccion = await prisma.inspecciones.create({
       data: {
         habilitacion_id: parseInt(habilitacion_id),
         nro_licencia,
-        nombre_inspector: 'Inspector', // TODO: Obtener del usuario autenticado
+        nombre_inspector: titular?.nombre || 'Inspector',
         firma_digital: firma_inspector, // Campo legacy
         tipo_transporte,
         firma_inspector,
         firma_contribuyente: firma_contribuyente || null,
         email_contribuyente: email_contribuyente || null,
-        resultado: 'PENDIENTE', // Se puede calcular según los estados
+        resultado,
       },
     });
 
-    // Guardar los detalles de cada ítem
-    for (const item of items) {
-      let fotoPath = '';
-      if (item.foto) {
-        fotoPath = await saveBase64File(
-          item.foto,
-          `item_${item.id}_${timestamp}.png`
-        );
-      }
+    console.log('✅ Inspección creada con ID:', inspeccion.id);
 
+    // Guardar los detalles de cada ítem (con foto en Base64)
+    for (const item of items) {
       await prisma.inspeccion_detalles.create({
         data: {
           inspeccion_id: inspeccion.id,
@@ -115,12 +86,14 @@ export async function POST(request: NextRequest) {
           nombre_item: item.nombre,
           estado: item.estado,
           observacion: item.observacion || null,
-          foto_path: fotoPath || null,
+          foto_path: item.foto || null, // Guardar Base64 directamente
         },
       });
     }
 
-    // Guardar fotos del vehículo
+    console.log(`✅ ${items.length} ítems guardados`);
+
+    // Guardar fotos del vehículo (en Base64)
     const vehiclePhotoTypes = [
       { key: 'frente', label: 'Frente' },
       { key: 'contrafrente', label: 'Contrafrente' },
@@ -128,40 +101,54 @@ export async function POST(request: NextRequest) {
       { key: 'lateral_der', label: 'Lateral Derecho' },
     ];
 
+    let fotosGuardadas = 0;
     for (const photoType of vehiclePhotoTypes) {
       const photoData = fotos_vehiculo[photoType.key];
       if (photoData && photoData !== '') {
-        const fotoPath = await saveBase64File(
-          photoData,
-          `vehiculo_${photoType.key}_${timestamp}.png`
-        );
-
         await prisma.inspeccion_fotos.create({
           data: {
             inspeccion_id: inspeccion.id,
             tipo_foto: photoType.label,
             item_id_original: photoType.key,
-            foto_path: fotoPath,
+            foto_path: photoData, // Guardar Base64 directamente
           },
         });
+        fotosGuardadas++;
       }
     }
 
     // Guardar foto adicional si existe
     if (foto_adicional && foto_adicional !== '') {
-      const fotoPath = await saveBase64File(
-        foto_adicional,
-        `adicional_${timestamp}.png`
-      );
-
       await prisma.inspeccion_fotos.create({
         data: {
           inspeccion_id: inspeccion.id,
           tipo_foto: 'Adicional',
           item_id_original: 'adicional',
-          foto_path: fotoPath,
+          foto_path: foto_adicional, // Guardar Base64 directamente
         },
       });
+      fotosGuardadas++;
+    }
+
+    console.log(`✅ ${fotosGuardadas} fotos del vehículo guardadas`);
+
+    // Marcar turno como finalizado si existe
+    const turno = await prisma.turnos.findFirst({
+      where: {
+        habilitacion_id: parseInt(habilitacion_id),
+        estado: {
+          in: ['PENDIENTE', 'CONFIRMADO'],
+        },
+      },
+      orderBy: { fecha: 'desc' },
+    });
+
+    if (turno) {
+      await prisma.turnos.update({
+        where: { id: turno.id },
+        data: { estado: 'FINALIZADO' },
+      });
+      console.log('✅ Turno marcado como finalizado');
     }
 
     // TODO: Implementar envío de email si sendEmailCopy es true
