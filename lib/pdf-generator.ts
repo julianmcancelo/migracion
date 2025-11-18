@@ -352,17 +352,28 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     if (datos.inspeccion.firma_inspector) {
       try {
         console.log('Agregando firma del inspector...')
+        
+        // Validar tamaño de la firma
+        const firmaLength = datos.inspeccion.firma_inspector.length
+        const sizeInMB = (firmaLength * 0.75) / (1024 * 1024)
+        
+        if (sizeInMB > 2) {
+          console.warn(`⚠️ Firma del inspector muy grande (${sizeInMB.toFixed(2)}MB)`)
+          throw new Error('Firma demasiado grande')
+        }
+        
         doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 32, yPos + 6, 50, 13)
+        console.log('✅ Firma del inspector agregada')
       } catch (e) {
-        console.error('Error agregando firma del inspector:', e)
+        console.error('❌ Error agregando firma del inspector:', e)
         doc.setFontSize(6.5)
         doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('Firma no disponible', 57.5, yPos + 12, { align: 'center' })
+        doc.text('(Error al cargar firma)', 57, yPos + 13, { align: 'center' })
       }
     } else {
       doc.setFontSize(6.5)
       doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('Firma no registrada', 57.5, yPos + 12, { align: 'center' })
+      doc.text('(Sin firma)', 57, yPos + 13, { align: 'center' })
     }
 
     doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
@@ -493,8 +504,35 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
             // Intentar agregar la imagen
             if (foto.path.startsWith('data:image')) {
               // Es una imagen base64
-              doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
-              imagenAgregada = true
+              try {
+                // Validar que el Base64 no sea demasiado grande (> 5MB)
+                const base64Length = foto.path.length
+                const sizeInMB = (base64Length * 0.75) / (1024 * 1024) // Aproximado
+                
+                if (sizeInMB > 5) {
+                  console.warn(`⚠️ Imagen demasiado grande (${sizeInMB.toFixed(2)}MB), omitiendo...`)
+                  throw new Error('Imagen demasiado grande')
+                }
+                
+                doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
+                imagenAgregada = true
+                console.log(`✅ Imagen agregada: ${foto.tipo}`)
+              } catch (imgError) {
+                console.error(`❌ Error al agregar imagen ${foto.tipo}:`, imgError)
+                // Mostrar placeholder si falla
+                doc.setFillColor(255, 240, 240)
+                doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
+                doc.setFontSize(8)
+                doc.setTextColor(200, 50, 50)
+                doc.text('Error al cargar', xPos + imgWidth / 2, yPos + imgHeight / 2 - 2, {
+                  align: 'center',
+                })
+                doc.setFontSize(7)
+                doc.text('imagen', xPos + imgWidth / 2, yPos + imgHeight / 2 + 3, {
+                  align: 'center',
+                })
+                imagenAgregada = true
+              }
             } else if (foto.path.startsWith('http://') || foto.path.startsWith('https://')) {
               // Es una URL - mostrar placeholder con mensaje
               doc.setFillColor(240, 240, 250)
