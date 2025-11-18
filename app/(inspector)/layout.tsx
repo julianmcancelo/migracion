@@ -1,4 +1,4 @@
-bhimport { Metadata } from 'next';
+import { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: 'Inspecciones - Sistema de Habilitaciones',

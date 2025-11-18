@@ -3,66 +3,74 @@ import prisma from '@/lib/db';
 
 /**
  * GET /api/obleas/pendientes
- * Obtiene las obleas pendientes de colocación para el inspector
+ * Obtiene las habilitaciones que necesitan colocación de oblea
+ * (habilitaciones aprobadas sin oblea colocada)
  */
 export async function GET(request: NextRequest) {
   try {
-    // Obtener obleas con estado 'PENDIENTE' o 'APROBADA'
-    const obleasPendientes = await prisma.obleas.findMany({
+    // Obtener habilitaciones HABILITADAS que no tienen oblea colocada
+    const habilitacionesSinOblea = await prisma.habilitaciones_generales.findMany({
       where: {
-        OR: [
-          { estado: 'PENDIENTE' },
-          { estado: 'APROBADA' },
-        ],
-        fecha_colocacion: null, // No han sido colocadas aún
+        estado: 'HABILITADO',
+        // Buscar habilitaciones que no tienen obleas o tienen obleas sin fecha de colocación
+        obleas: {
+          none: {},
+        },
       },
       include: {
-        habilitaciones_generales: {
+        habilitaciones_personas: {
           include: {
-            habilitaciones_personas: {
-              include: {
-                personas: true,
-              },
-            },
-            habilitaciones_vehiculos: {
-              include: {
-                vehiculos: true,
-              },
-            },
+            persona: true,
           },
+        },
+        habilitaciones_vehiculos: {
+          include: {
+            vehiculo: true,
+          },
+        },
+        turnos: {
+          where: {
+            estado: 'CONFIRMADO',
+          },
+          orderBy: {
+            fecha: 'desc',
+          },
+          take: 1,
         },
       },
       orderBy: {
-        fecha_solicitud: 'desc',
+        fecha_aprobacion: 'desc',
       },
+      take: 100, // Limitar a 100 resultados
     });
 
     // Mapear los datos para el frontend
-    const obleasFormateadas = obleasPendientes.map((oblea) => {
-      const habilitacion = oblea.habilitaciones_generales;
-      const persona = habilitacion?.habilitaciones_personas?.[0]?.personas;
-      const vehiculo = habilitacion?.habilitaciones_vehiculos?.[0]?.vehiculos;
+    const obleasPendientes = habilitacionesSinOblea.map((habilitacion) => {
+      const persona = habilitacion.habilitaciones_personas?.[0]?.persona;
+      const vehiculo = habilitacion.habilitaciones_vehiculos?.[0]?.vehiculo;
+      const turno = habilitacion.turnos?.[0];
 
       return {
-        id: oblea.id,
-        numero_oblea: oblea.numero_oblea,
-        estado: oblea.estado,
-        fecha_solicitud: oblea.fecha_solicitud,
-        vigencia_inicio: oblea.vigencia_inicio,
-        vigencia_fin: oblea.vigencia_fin,
-        habilitacion: {
-          id: habilitacion?.id,
-          nro_licencia: habilitacion?.nro_licencia,
-          tipo_transporte: habilitacion?.tipo_transporte,
-          estado: habilitacion?.estado,
-        },
+        id: habilitacion.id,
+        nro_licencia: habilitacion.nro_licencia,
+        tipo_transporte: habilitacion.tipo_transporte,
+        estado: habilitacion.estado,
+        fecha_aprobacion: habilitacion.fecha_aprobacion,
+        vigencia_inicio: habilitacion.vigencia_inicio,
+        vigencia_fin: habilitacion.vigencia_fin,
         titular: persona
           ? {
               nombre: persona.nombre,
               dni: persona.dni,
               telefono: persona.telefono,
+              email: persona.email,
             }
-          : null,
+          : {
+              nombre: 'Sin titular',
+              dni: 'N/A',
+              telefono: null,
+              email: null,
+            },
         vehiculo: vehiculo
           ? {
               dominio: vehiculo.dominio,
@@ -70,14 +78,25 @@ export async function GET(request: NextRequest) {
               modelo: vehiculo.modelo,
               anio: vehiculo.anio,
             }
+          : {
+              dominio: 'N/A',
+              marca: 'Sin vehículo',
+              modelo: '',
+              anio: null,
+            },
+        turno: turno
+          ? {
+              fecha: turno.fecha,
+              hora: turno.hora,
+            }
           : null,
       };
     });
 
     return NextResponse.json({
       status: 'success',
-      data: obleasFormateadas,
-      total: obleasFormateadas.length,
+      data: obleasPendientes,
+      total: obleasPendientes.length,
     });
   } catch (error) {
     console.error('Error al obtener obleas pendientes:', error);

@@ -8,6 +8,7 @@ import {
   LogOut,
   Sun,
   ChevronRight,
+  Shield,
 } from 'lucide-react';
 
 interface Inspector {
@@ -175,6 +176,23 @@ export default function InspectorMenuPage() {
                 Consultar Historial
               </h3>
               <p className="text-sm text-gray-600">Ver inspecciones pasadas</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-gray-400" />
+          </button>
+
+          {/* Colocación de Obleas */}
+          <button
+            onClick={() => router.push('/inspector-movil/obleas')}
+            className="w-full bg-white rounded-2xl shadow-sm border border-gray-200 p-5 hover:shadow-md transition-all active:scale-[0.98] flex items-center gap-4"
+          >
+            <div className="bg-[#E6F7FF] p-3 rounded-xl">
+              <Shield className="w-7 h-7 text-[#0093D2]" />
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="text-lg font-bold text-gray-900">
+                Colocación de Obleas
+              </h3>
+              <p className="text-sm text-gray-600">Registrar obleas colocadas</p>
             </div>
             <ChevronRight className="w-5 h-5 text-gray-400" />
           </button>
