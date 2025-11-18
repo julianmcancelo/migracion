@@ -41,15 +41,23 @@ const ITEMS_ESCOLAR = [
 
 /**
  * Convierte una ruta de imagen a base64 data URL
+ * Compatible con imágenes guardadas en Base64 en la BD (nuevo sistema)
+ * y con rutas de archivos del sistema antiguo
  */
 async function convertirImagenABase64(rutaImagen: string): Promise<string | null> {
   try {
-    // Si ya es base64, retornar tal cual
+    // Si no hay imagen, retornar null
+    if (!rutaImagen || rutaImagen === '') {
+      return null
+    }
+
+    // Si ya es base64, retornar tal cual (nuevo sistema)
     if (rutaImagen.startsWith('data:image')) {
+      console.log('✅ Imagen ya en Base64')
       return rutaImagen
     }
 
-    // Construir URL completa para descargar la imagen
+    // Sistema antiguo: Construir URL completa para descargar la imagen
     let urlImagen = ''
 
     if (rutaImagen.startsWith('http://') || rutaImagen.startsWith('https://')) {
@@ -57,10 +65,11 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
       urlImagen = rutaImagen
     } else {
       // Construir URL desde la ruta relativa
-      // Remover cualquier prefijo de ruta local si existe
       const nombreArchivo = rutaImagen.replace(/^.*[\\\/]/, '')
       urlImagen = `https://credenciales.transportelanus.com.ar/uploads/inspecciones_fotos/${nombreArchivo}`
     }
+
+    console.log('📥 Descargando imagen desde:', urlImagen)
 
     // Intentar descargar la imagen
     const response = await fetch(urlImagen)
@@ -80,13 +89,14 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
       }
 
       const base64 = buffer.toString('base64')
+      console.log('✅ Imagen convertida a Base64')
       return `data:${mimeType};base64,${base64}`
     }
 
-    console.log(`No se pudo descargar la imagen: ${urlImagen}`)
+    console.log(`⚠️ No se pudo descargar la imagen: ${urlImagen}`)
     return null
   } catch (error) {
-    console.error('Error al convertir imagen:', error)
+    console.error('❌ Error al convertir imagen:', error)
     return null
   }
 }
@@ -102,6 +112,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
     if (!id || isNaN(Number(id))) {
       return NextResponse.json({ success: false, error: 'ID inválido' }, { status: 400 })
     }
+
+    console.log('📄 Generando PDF para inspección ID:', id)
 
     // Obtener datos completos de la inspección
     const inspeccion = await prisma.inspecciones.findUnique({
