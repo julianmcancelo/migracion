@@ -458,7 +458,8 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         return false
       }
       const sizeInKB = (foto.path.length * 0.75) / 1024
-      if (sizeInKB > 200) {
+      console.log(`📊 Foto ${foto.tipo}: ${sizeInKB.toFixed(0)}KB`)
+      if (sizeInKB > 400) {
         console.log(`⚠️ Foto ${foto.tipo} muy grande (${sizeInKB.toFixed(0)}KB), omitiendo`)
         return false
       }
