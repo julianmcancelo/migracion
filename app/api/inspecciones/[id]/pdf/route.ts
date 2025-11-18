@@ -295,10 +295,13 @@ export async function GET(request: Request, { params }: { params: { id: string }
           foto_path: undefined,
         }))
       })(),
-      fotos: inspeccion.inspeccion_fotos.map(foto => ({
-        tipo: foto.tipo_foto || 'Adicional',
-        path: foto.foto_path || '',
-      })),
+      fotos: inspeccion.inspeccion_fotos.map(foto => {
+        console.log(`🔍 Foto DB: ${foto.tipo_foto}, path length: ${foto.foto_path?.length || 0}`)
+        return {
+          tipo: foto.tipo_foto || 'Adicional',
+          path: foto.foto_path || '',
+        }
+      }),
     }
 
     // Convertir fotos a base64
