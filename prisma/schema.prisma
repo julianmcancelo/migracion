@@ -160,7 +160,7 @@ model inspeccion_detalles {
   estado        String       @db.VarChar(20)
   observacion   String?      @db.Text
   foto_url      String?      @db.VarChar(255)
-  foto_path     String?      @db.VarChar(255)
+  foto_path     String?      @db.LongText
   creado_en     DateTime     @default(now()) @db.Timestamp(0)
   latitud       Decimal?     @db.Decimal(10, 8)
   longitud      Decimal?     @db.Decimal(11, 8)
@@ -175,7 +175,7 @@ model inspeccion_fotos {
   inspeccion_id    Int
   tipo_foto        String?      @db.VarChar(50)
   item_id_original String       @db.VarChar(50)
-  foto_path        String?      @db.VarChar(255)
+  foto_path        String?      @db.LongText
   latitud          Decimal?     @db.Decimal(10, 8)
   longitud         Decimal?     @db.Decimal(11, 8)
   fecha_creacion   DateTime     @default(now()) @db.Timestamp(0)
