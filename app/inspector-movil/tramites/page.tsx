@@ -49,7 +49,15 @@ export default function TramitesPage() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/inspecciones/tramites-pendientes');
+      // Agregar timestamp para evitar caché
+      const timestamp = new Date().getTime();
+      const response = await fetch(`/api/inspecciones/tramites-pendientes?_t=${timestamp}`, {
+        cache: 'no-store',
+        headers: {
+          'Cache-Control': 'no-cache',
+          'Pragma': 'no-cache',
+        },
+      });
       const result = await response.json();
       
       if (result.status === 'success') {

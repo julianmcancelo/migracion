@@ -1,6 +1,10 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
+// Desactivar caché para este endpoint
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 /**
  * GET /api/inspecciones/tramites-pendientes
  * Obtiene los trámites con turnos asignados que están pendientes de inspección
@@ -138,10 +142,18 @@ export async function GET() {
 
     console.log(`✅ Retornando ${tramitesFormateados.length} trámites formateados`);
 
-    return NextResponse.json({
+    const response = NextResponse.json({
       status: 'success',
       data: tramitesFormateados,
     });
+
+    // Headers anti-caché
+    response.headers.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    response.headers.set('Pragma', 'no-cache');
+    response.headers.set('Expires', '0');
+    response.headers.set('Surrogate-Control', 'no-store');
+
+    return response;
   } catch (error) {
     console.error('Error al obtener trámites pendientes:', error);
     return NextResponse.json(
