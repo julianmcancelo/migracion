@@ -508,33 +508,40 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
             if (foto.path.startsWith('data:image')) {
               // Es una imagen base64
               try {
-                // Validar que el Base64 no sea demasiado grande (> 2MB)
+                // Validar que el Base64 no sea demasiado grande
                 const base64Length = foto.path.length
-                const sizeInKB = (base64Length * 0.75) / 1024 // Tamaño aproximado en KB
+                const sizeInKB = (base64Length * 0.75) / 1024
                 const sizeInMB = sizeInKB / 1024
                 
                 console.log(`📊 Procesando imagen ${foto.tipo}: ${sizeInKB.toFixed(0)}KB`)
                 
-                if (sizeInMB > 2) {
-                  console.warn(`⚠️ Imagen demasiado grande (${sizeInMB.toFixed(2)}MB), omitiendo...`)
+                // Límite más estricto: 500KB por imagen
+                if (sizeInKB > 500) {
+                  console.warn(`⚠️ Imagen demasiado grande (${sizeInKB.toFixed(0)}KB), omitiendo...`)
                   throw new Error('Imagen demasiado grande')
                 }
                 
+                // Intentar agregar la imagen
                 doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
                 imagenAgregada = true
                 console.log(`✅ Imagen agregada: ${foto.tipo} (${sizeInKB.toFixed(0)}KB)`)
               } catch (imgError) {
                 console.error(`❌ Error al agregar imagen ${foto.tipo}:`, imgError)
                 // Mostrar placeholder si falla
-                doc.setFillColor(255, 240, 240)
+                doc.setFillColor(255, 245, 245)
                 doc.rect(xPos, yPos, imgWidth, imgHeight, 'F')
-                doc.setFontSize(8)
-                doc.setTextColor(200, 50, 50)
-                doc.text('Error al cargar', xPos + imgWidth / 2, yPos + imgHeight / 2 - 2, {
+                doc.setDrawColor(200, 200, 200)
+                doc.setLineWidth(0.5)
+                doc.rect(xPos, yPos, imgWidth, imgHeight, 'S')
+                doc.setFontSize(9)
+                doc.setTextColor(150, 150, 150)
+                doc.text('📷', xPos + imgWidth / 2, yPos + imgHeight / 2 - 5, { align: 'center' })
+                doc.setFontSize(7)
+                doc.text('Imagen no disponible', xPos + imgWidth / 2, yPos + imgHeight / 2 + 2, {
                   align: 'center',
                 })
-                doc.setFontSize(7)
-                doc.text('imagen', xPos + imgWidth / 2, yPos + imgHeight / 2 + 3, {
+                doc.setFontSize(6)
+                doc.text('en este PDF', xPos + imgWidth / 2, yPos + imgHeight / 2 + 7, {
                   align: 'center',
                 })
                 imagenAgregada = true
