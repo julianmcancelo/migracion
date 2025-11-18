@@ -1,19 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
-// Configuración para aumentar el límite de tamaño del body
-export const config = {
-  api: {
-    bodyParser: {
-      sizeLimit: '50mb',
-    },
-  },
-};
-
 /**
  * POST /api/inspecciones/guardar
  * Guarda una inspección completa con fotos y firmas en Base64
  * Compatible con Vercel (serverless) - guarda imágenes en Base64 en la BD
+ * 
+ * Nota: El límite de body en Vercel es 4.5MB por defecto.
+ * Las imágenes se comprimen en el cliente antes de enviar.
  */
 export async function POST(request: NextRequest) {
   try {
