@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
-import { generarPDFInspeccionPdfMake } from '@/lib/pdf-generator-pdfmake'
+import { generarPDFInspeccion } from '@/lib/pdf-generator'
 import path from 'path'
 
 // Items predeterminados para Remis
@@ -328,8 +328,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       }
     }
 
-    // Generar PDF con pdfMake
-    const pdfBuffer = await generarPDFInspeccionPdfMake(datosCompletos)
+    // Generar PDF con jsPDF (sin imágenes por ahora)
+    const pdfBuffer = await generarPDFInspeccion(datosCompletos)
 
     // Convertir Buffer a Uint8Array para NextResponse
     const pdfArray = new Uint8Array(pdfBuffer)
