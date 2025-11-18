@@ -349,35 +349,10 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('INSPECTOR', 57.5, yPos + 3.5, { align: 'center' })
 
-    if (datos.inspeccion.firma_inspector) {
-      try {
-        console.log('Agregando firma del inspector...')
-        
-        // Validar tamaño de la firma
-        const firmaLength = datos.inspeccion.firma_inspector.length
-        const sizeInKB = (firmaLength * 0.75) / 1024
-        const sizeInMB = sizeInKB / 1024
-        
-        console.log(`📊 Firma del inspector: ${sizeInKB.toFixed(0)}KB`)
-        
-        if (sizeInMB > 1) {
-          console.warn(`⚠️ Firma del inspector muy grande (${sizeInMB.toFixed(2)}MB)`)
-          throw new Error('Firma demasiado grande')
-        }
-        
-        doc.addImage(datos.inspeccion.firma_inspector, 'PNG', 32, yPos + 6, 50, 13)
-        console.log('✅ Firma del inspector agregada')
-      } catch (e) {
-        console.error('❌ Error agregando firma del inspector:', e)
-        doc.setFontSize(6.5)
-        doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('(Error al cargar firma)', 57, yPos + 13, { align: 'center' })
-      }
-    } else {
-      doc.setFontSize(6.5)
-      doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-      doc.text('(Sin firma)', 57, yPos + 13, { align: 'center' })
-    }
+    // TEMPORALMENTE DESHABILITADO - Mostrar solo texto
+    doc.setFontSize(6.5)
+    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+    doc.text('(Firma digital registrada)', 57, yPos + 13, { align: 'center' })
 
     doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.setLineWidth(0.3)
@@ -396,17 +371,12 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('CONTRIBUYENTE', 152.5, yPos + 3.5, { align: 'center' })
 
+    // TEMPORALMENTE DESHABILITADO - Mostrar solo texto
+    doc.setFontSize(6.5)
+    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
     if (datos.inspeccion.firma_contribuyente) {
-      try {
-        doc.addImage(datos.inspeccion.firma_contribuyente, 'PNG', 127, yPos + 6, 50, 13)
-      } catch (e) {
-        doc.setFontSize(6.5)
-        doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-        doc.text('Firma no disponible', 152.5, yPos + 12, { align: 'center' })
-      }
+      doc.text('(Firma digital registrada)', 152.5, yPos + 12, { align: 'center' })
     } else {
-      doc.setFontSize(6.5)
-      doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
       doc.text('Firma no registrada', 152.5, yPos + 12, { align: 'center' })
     }
 
@@ -438,8 +408,10 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     })
 
     console.log(`📸 Total de fotos a procesar: ${todasLasFotos.length}`)
+    console.log('⚠️ FOTOS TEMPORALMENTE DESHABILITADAS - Generando PDF sin imágenes')
     
-    if (todasLasFotos.length > 0) {
+    // TEMPORALMENTE DESHABILITADO - Las fotos causan que el PDF falle
+    if (false && todasLasFotos.length > 0) {
       doc.addPage()
       agregarHeader()
       yPos = 60
