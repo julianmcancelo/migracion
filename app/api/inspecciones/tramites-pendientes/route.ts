@@ -7,97 +7,101 @@ import prisma from '@/lib/db';
  */
 export async function GET() {
   try {
-    // Obtener habilitaciones con turnos pendientes
-    const tramites = await prisma.habilitaciones_generales.findMany({
+    console.log('🔍 Buscando trámites pendientes...');
+    
+    // Primero obtener turnos pendientes/confirmados
+    const turnosPendientes = await prisma.turnos.findMany({
       where: {
+        estado: {
+          in: ['PENDIENTE', 'CONFIRMADO'],
+        },
+      },
+      orderBy: {
+        fecha: 'asc',
+      },
+    });
+
+    console.log(`📋 Encontrados ${turnosPendientes.length} turnos pendientes/confirmados`);
+
+    // Obtener habilitaciones de esos turnos (IDs únicos)
+    const habilitacionIds = Array.from(new Set(turnosPendientes.map(t => t.habilitacion_id)));
+    
+    const habilitaciones = await prisma.habilitaciones_generales.findMany({
+      where: {
+        id: {
+          in: habilitacionIds,
+        },
         is_deleted: false,
         estado: {
           in: ['EN_TRAMITE', 'HABILITADO'],
         },
-        turnos: {
-          some: {
-            estado: {
-              in: ['PENDIENTE', 'CONFIRMADO'],
-            },
-          },
-        },
       },
-      include: {
-        // Titular
-        habilitaciones_personas: {
+    });
+
+    console.log(`🏢 Encontradas ${habilitaciones.length} habilitaciones válidas`);
+
+    // Obtener datos relacionados manualmente
+    const tramitesFormateados = await Promise.all(
+      habilitaciones.map(async (hab) => {
+        // Obtener titular
+        const habPersona = await prisma.habilitaciones_personas.findFirst({
           where: {
+            habilitacion_id: hab.id,
             rol: 'TITULAR',
           },
           include: {
             persona: true,
           },
-          take: 1,
-        },
-        // Vehículo activo
-        habilitaciones_vehiculos: {
+        });
+
+        // Obtener vehículo
+        const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
           where: {
+            habilitacion_id: hab.id,
             activo: true,
           },
           include: {
             vehiculo: true,
           },
-          take: 1,
-        },
-        // Turno más próximo
-        turnos: {
-          where: {
-            estado: {
-              in: ['PENDIENTE', 'CONFIRMADO'],
-            },
-          },
-          orderBy: {
-            fecha: 'asc',
-          },
-          take: 1,
-        },
-      },
-      orderBy: {
-        id: 'desc',
-      },
-    });
+        });
 
-    // Formatear los datos para el frontend
-    const tramitesFormateados = tramites.map((hab) => {
-      const titular = hab.habilitaciones_personas[0]?.persona;
-      const vehiculo = hab.habilitaciones_vehiculos[0]?.vehiculo;
-      const turno = hab.turnos[0];
+        // Obtener turno más próximo
+        const turno = turnosPendientes.find(t => t.habilitacion_id === hab.id);
 
-      return {
-        habilitacion: {
-          id: hab.id,
-          nro_licencia: hab.nro_licencia,
-          estado: hab.estado,
-          tipo_transporte: hab.tipo_transporte,
-          expte: hab.expte,
-        },
-        titular: titular
-          ? {
-              nombre: titular.nombre,
-              dni: titular.dni,
-              email: titular.email,
-            }
-          : null,
-        vehiculo: vehiculo
-          ? {
-              dominio: vehiculo.dominio,
-              marca: vehiculo.marca,
-              modelo: vehiculo.modelo,
-            }
-          : null,
-        turno: turno
-          ? {
-              fecha: turno.fecha.toISOString().split('T')[0],
-              hora: turno.hora.toISOString().split('T')[1].substring(0, 5),
-              estado: turno.estado,
-            }
-          : null,
-      };
-    });
+        return {
+          habilitacion: {
+            id: hab.id,
+            nro_licencia: hab.nro_licencia,
+            estado: hab.estado,
+            tipo_transporte: hab.tipo_transporte,
+            expte: hab.expte,
+          },
+          titular: habPersona?.persona
+            ? {
+                nombre: habPersona.persona.nombre,
+                dni: habPersona.persona.dni,
+                email: habPersona.persona.email,
+              }
+            : null,
+          vehiculo: habVehiculo?.vehiculo
+            ? {
+                dominio: habVehiculo.vehiculo.dominio,
+                marca: habVehiculo.vehiculo.marca,
+                modelo: habVehiculo.vehiculo.modelo,
+              }
+            : null,
+          turno: turno
+            ? {
+                fecha: turno.fecha.toISOString().split('T')[0],
+                hora: turno.hora.toISOString().split('T')[1].substring(0, 5),
+                estado: turno.estado,
+              }
+            : null,
+        };
+      })
+    );
+
+    console.log(`✅ Retornando ${tramitesFormateados.length} trámites formateados`);
 
     return NextResponse.json({
       status: 'success',
