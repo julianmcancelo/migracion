@@ -22,6 +22,15 @@ export async function GET() {
     });
 
     console.log(`📋 Encontrados ${turnosPendientes.length} turnos pendientes/confirmados`);
+    
+    if (turnosPendientes.length > 0) {
+      console.log('📅 Primeros 3 turnos:', turnosPendientes.slice(0, 3).map(t => ({
+        id: t.id,
+        fecha: t.fecha,
+        estado: t.estado,
+        habilitacion_id: t.habilitacion_id
+      })));
+    }
 
     // Obtener habilitaciones de esos turnos (IDs únicos)
     const habilitacionIds = Array.from(new Set(turnosPendientes.map(t => t.habilitacion_id)));
@@ -39,6 +48,15 @@ export async function GET() {
     });
 
     console.log(`🏢 Encontradas ${habilitaciones.length} habilitaciones válidas`);
+    
+    if (habilitaciones.length > 0) {
+      console.log('🔑 Primeras 3 habilitaciones:', habilitaciones.slice(0, 3).map(h => ({
+        id: h.id,
+        nro_licencia: h.nro_licencia,
+        estado: h.estado,
+        tipo_transporte: h.tipo_transporte
+      })));
+    }
 
     // Obtener datos relacionados manualmente
     const tramitesFormateados = await Promise.all(
