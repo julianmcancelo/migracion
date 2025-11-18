@@ -318,12 +318,20 @@ export async function GET(request: Request, { params }: { params: { id: string }
     for (const foto of datosCompletos.fotos) {
       if (foto.path) {
         console.log(`📸 Foto: ${foto.tipo}`)
+        console.log(`   Path length: ${foto.path.length} caracteres`)
         console.log(`   Path empieza con: ${foto.path.substring(0, 50)}...`)
-        const base64 = await convertirImagenABase64(foto.path)
-        if (base64) {
-          foto.path = base64
+        
+        // Si ya es Base64 válido, no procesarlo de nuevo
+        if (foto.path.startsWith('data:image')) {
+          console.log(`✅ Foto ${foto.tipo} ya tiene Base64 válido, usando directamente`)
+          // Ya está en el formato correcto, no hacer nada
         } else {
-          console.warn(`⚠️ No se pudo convertir foto: ${foto.tipo}`)
+          const base64 = await convertirImagenABase64(foto.path)
+          if (base64) {
+            foto.path = base64
+          } else {
+            console.warn(`⚠️ No se pudo convertir foto: ${foto.tipo}`)
+          }
         }
       }
     }
