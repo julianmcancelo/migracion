@@ -42,6 +42,7 @@ export default function TramitesPage() {
   const [tramites, setTramites] = useState<Tramite[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
 
   const fetchTramites = async () => {
     setIsLoading(true);
@@ -52,6 +53,7 @@ export default function TramitesPage() {
       
       if (result.status === 'success') {
         setTramites(result.data || []);
+        setLastUpdate(new Date());
       } else {
         throw new Error(result.message || 'Error al cargar trámites');
       }
@@ -64,6 +66,14 @@ export default function TramitesPage() {
 
   useEffect(() => {
     fetchTramites();
+    
+    // Auto-actualizar cada 30 segundos
+    const interval = setInterval(() => {
+      console.log('🔄 Auto-actualizando trámites...');
+      fetchTramites();
+    }, 30000); // 30 segundos
+    
+    return () => clearInterval(interval);
   }, []);
 
   const handleSelectTramite = (tramite: Tramite) => {
@@ -167,6 +177,25 @@ export default function TramitesPage() {
             Selecciona un trámite para comenzar
           </p>
         </div>
+      </div>
+
+      {/* Barra de actualización */}
+      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-[120px] z-10 shadow-sm">
+        <div className="text-sm text-gray-600">
+          {lastUpdate && (
+            <span>
+              Actualizado: {lastUpdate.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+            </span>
+          )}
+        </div>
+        <button
+          onClick={fetchTramites}
+          disabled={isLoading}
+          className="flex items-center gap-2 bg-[#0093D2] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#007AB8] transition-colors disabled:opacity-50"
+        >
+          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+          Actualizar
+        </button>
       </div>
 
       <div className="px-4 pt-4">
