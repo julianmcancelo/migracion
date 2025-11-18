@@ -12,86 +12,96 @@ export async function GET(request: NextRequest) {
     const habilitacionesSinOblea = await prisma.habilitaciones_generales.findMany({
       where: {
         estado: 'HABILITADO',
-        // Buscar habilitaciones que no tienen obleas o tienen obleas sin fecha de colocación
+        is_deleted: false,
+        // Buscar habilitaciones que no tienen obleas
         obleas: {
           none: {},
         },
       },
-      include: {
-        habilitaciones_personas: {
+      orderBy: {
+        id: 'desc',
+      },
+      take: 100, // Limitar a 100 resultados
+    });
+
+    // Obtener datos relacionados manualmente
+    const obleasPendientes = await Promise.all(
+      habilitacionesSinOblea.map(async (habilitacion) => {
+        // Obtener titular
+        const habPersona = await prisma.habilitaciones_personas.findFirst({
+          where: {
+            habilitacion_id: habilitacion.id,
+            rol: 'TITULAR',
+          },
           include: {
             persona: true,
           },
-        },
-        habilitaciones_vehiculos: {
+        });
+
+        // Obtener vehículo
+        const habVehiculo = await prisma.habilitaciones_vehiculos.findFirst({
+          where: {
+            habilitacion_id: habilitacion.id,
+            activo: true,
+          },
           include: {
             vehiculo: true,
           },
-        },
-        turnos: {
+        });
+
+        // Obtener último turno
+        const turno = await prisma.turnos.findFirst({
           where: {
+            habilitacion_id: habilitacion.id,
             estado: 'CONFIRMADO',
           },
           orderBy: {
             fecha: 'desc',
           },
-          take: 1,
-        },
-      },
-      orderBy: {
-        fecha_aprobacion: 'desc',
-      },
-      take: 100, // Limitar a 100 resultados
-    });
+        });
 
-    // Mapear los datos para el frontend
-    const obleasPendientes = habilitacionesSinOblea.map((habilitacion) => {
-      const persona = habilitacion.habilitaciones_personas?.[0]?.persona;
-      const vehiculo = habilitacion.habilitaciones_vehiculos?.[0]?.vehiculo;
-      const turno = habilitacion.turnos?.[0];
-
-      return {
-        id: habilitacion.id,
-        nro_licencia: habilitacion.nro_licencia,
-        tipo_transporte: habilitacion.tipo_transporte,
-        estado: habilitacion.estado,
-        fecha_aprobacion: habilitacion.fecha_aprobacion,
-        vigencia_inicio: habilitacion.vigencia_inicio,
-        vigencia_fin: habilitacion.vigencia_fin,
-        titular: persona
-          ? {
-              nombre: persona.nombre,
-              dni: persona.dni,
-              telefono: persona.telefono,
-              email: persona.email,
-            }
-          : {
-              nombre: 'Sin titular',
-              dni: 'N/A',
-              telefono: null,
-              email: null,
-            },
-        vehiculo: vehiculo
-          ? {
-              dominio: vehiculo.dominio,
-              marca: vehiculo.marca,
-              modelo: vehiculo.modelo,
-              anio: vehiculo.anio,
-            }
-          : {
-              dominio: 'N/A',
-              marca: 'Sin vehículo',
-              modelo: '',
-              anio: null,
-            },
-        turno: turno
-          ? {
-              fecha: turno.fecha,
-              hora: turno.hora,
-            }
-          : null,
-      };
-    });
+        return {
+          id: habilitacion.id,
+          nro_licencia: habilitacion.nro_licencia,
+          tipo_transporte: habilitacion.tipo_transporte,
+          estado: habilitacion.estado,
+          vigencia_inicio: habilitacion.vigencia_inicio,
+          vigencia_fin: habilitacion.vigencia_fin,
+          titular: habPersona?.persona
+            ? {
+                nombre: habPersona.persona.nombre,
+                dni: habPersona.persona.dni,
+                telefono: habPersona.persona.telefono,
+                email: habPersona.persona.email,
+              }
+            : {
+                nombre: 'Sin titular',
+                dni: 'N/A',
+                telefono: null,
+                email: null,
+              },
+          vehiculo: habVehiculo?.vehiculo
+            ? {
+                dominio: habVehiculo.vehiculo.dominio,
+                marca: habVehiculo.vehiculo.marca,
+                modelo: habVehiculo.vehiculo.modelo,
+                anio: habVehiculo.vehiculo.ano,
+              }
+            : {
+                dominio: 'N/A',
+                marca: 'Sin vehículo',
+                modelo: '',
+                anio: null,
+              },
+          turno: turno
+            ? {
+                fecha: turno.fecha,
+                hora: turno.hora,
+              }
+            : null,
+        };
+      })
+    );
 
     return NextResponse.json({
       status: 'success',
