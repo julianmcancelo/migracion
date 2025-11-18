@@ -97,6 +97,16 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    // Marcar la habilitación como "oblea colocada"
+    await prisma.habilitaciones_generales.update({
+      where: {
+        id: parseInt(habilitacion_id),
+      },
+      data: {
+        oblea_colocada: true,
+      },
+    });
+
     return NextResponse.json({
       status: 'success',
       message: 'Oblea registrada correctamente',

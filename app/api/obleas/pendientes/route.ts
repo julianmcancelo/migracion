@@ -8,15 +8,12 @@ import prisma from '@/lib/db';
  */
 export async function GET(request: NextRequest) {
   try {
-    // Obtener habilitaciones HABILITADAS que no tienen oblea colocada
+    // Obtener habilitaciones HABILITADAS que NO tienen oblea colocada
     const habilitacionesSinOblea = await prisma.habilitaciones_generales.findMany({
       where: {
         estado: 'HABILITADO',
         is_deleted: false,
-        // Buscar habilitaciones que no tienen obleas
-        obleas: {
-          none: {},
-        },
+        oblea_colocada: false, // Solo las que NO tienen oblea colocada
       },
       orderBy: {
         id: 'desc',
@@ -63,6 +60,7 @@ export async function GET(request: NextRequest) {
         return {
           id: habilitacion.id,
           nro_licencia: habilitacion.nro_licencia,
+          nro_resolucion: habilitacion.resolucion,
           tipo_transporte: habilitacion.tipo_transporte,
           estado: habilitacion.estado,
           vigencia_inicio: habilitacion.vigencia_inicio,
