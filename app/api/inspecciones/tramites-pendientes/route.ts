@@ -35,15 +35,32 @@ export async function GET() {
     // Obtener habilitaciones de esos turnos (IDs únicos)
     const habilitacionIds = Array.from(new Set(turnosPendientes.map(t => t.habilitacion_id)));
     
+    console.log(`🔑 IDs de habilitaciones a buscar: ${habilitacionIds.join(', ')}`);
+    
+    // Primero obtener TODAS las habilitaciones para ver sus estados
+    const todasLasHabilitaciones = await prisma.habilitaciones_generales.findMany({
+      where: {
+        id: {
+          in: habilitacionIds,
+        },
+      },
+    });
+    
+    console.log(`📊 Estados de todas las habilitaciones:`, todasLasHabilitaciones.map(h => ({
+      id: h.id,
+      nro_licencia: h.nro_licencia,
+      estado: h.estado,
+      is_deleted: h.is_deleted
+    })));
+    
+    // Ahora filtrar solo las válidas (no eliminadas)
     const habilitaciones = await prisma.habilitaciones_generales.findMany({
       where: {
         id: {
           in: habilitacionIds,
         },
         is_deleted: false,
-        estado: {
-          in: ['EN_TRAMITE', 'HABILITADO'],
-        },
+        // Removido el filtro de estado para mostrar todas
       },
     });
 
