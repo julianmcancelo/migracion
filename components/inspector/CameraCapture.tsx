@@ -27,10 +27,10 @@ export default function CameraCapture({
           const canvas = document.createElement('canvas');
           const ctx = canvas.getContext('2d');
           
-          // Calcular nuevas dimensiones (máximo 1200px)
+          // Calcular nuevas dimensiones (máximo 800px para reducir tamaño)
           let width = img.width;
           let height = img.height;
-          const maxSize = 1200;
+          const maxSize = 800; // Reducido de 1200 a 800
           
           if (width > height && width > maxSize) {
             height = (height * maxSize) / width;
@@ -46,8 +46,10 @@ export default function CameraCapture({
           // Dibujar imagen redimensionada
           ctx?.drawImage(img, 0, 0, width, height);
           
-          // Convertir a Base64 con calidad reducida (0.7 = 70%)
-          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+          // Convertir a Base64 con calidad más baja (0.5 = 50%)
+          const compressedBase64 = canvas.toDataURL('image/jpeg', 0.5);
+          
+          console.log(`📸 Imagen comprimida: ${(compressedBase64.length / 1024).toFixed(0)}KB`);
           resolve(compressedBase64);
         };
         img.onerror = reject;

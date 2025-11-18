@@ -355,9 +355,12 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         
         // Validar tamaño de la firma
         const firmaLength = datos.inspeccion.firma_inspector.length
-        const sizeInMB = (firmaLength * 0.75) / (1024 * 1024)
+        const sizeInKB = (firmaLength * 0.75) / 1024
+        const sizeInMB = sizeInKB / 1024
         
-        if (sizeInMB > 2) {
+        console.log(`📊 Firma del inspector: ${sizeInKB.toFixed(0)}KB`)
+        
+        if (sizeInMB > 1) {
           console.warn(`⚠️ Firma del inspector muy grande (${sizeInMB.toFixed(2)}MB)`)
           throw new Error('Firma demasiado grande')
         }
@@ -505,18 +508,21 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
             if (foto.path.startsWith('data:image')) {
               // Es una imagen base64
               try {
-                // Validar que el Base64 no sea demasiado grande (> 5MB)
+                // Validar que el Base64 no sea demasiado grande (> 2MB)
                 const base64Length = foto.path.length
-                const sizeInMB = (base64Length * 0.75) / (1024 * 1024) // Aproximado
+                const sizeInKB = (base64Length * 0.75) / 1024 // Tamaño aproximado en KB
+                const sizeInMB = sizeInKB / 1024
                 
-                if (sizeInMB > 5) {
+                console.log(`📊 Procesando imagen ${foto.tipo}: ${sizeInKB.toFixed(0)}KB`)
+                
+                if (sizeInMB > 2) {
                   console.warn(`⚠️ Imagen demasiado grande (${sizeInMB.toFixed(2)}MB), omitiendo...`)
                   throw new Error('Imagen demasiado grande')
                 }
                 
                 doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
                 imagenAgregada = true
-                console.log(`✅ Imagen agregada: ${foto.tipo}`)
+                console.log(`✅ Imagen agregada: ${foto.tipo} (${sizeInKB.toFixed(0)}KB)`)
               } catch (imgError) {
                 console.error(`❌ Error al agregar imagen ${foto.tipo}:`, imgError)
                 // Mostrar placeholder si falla
