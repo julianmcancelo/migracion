@@ -314,11 +314,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
     // Convertir Buffer a Uint8Array para NextResponse
     const pdfArray = new Uint8Array(pdfBuffer)
 
-    // Retornar PDF
+    // Retornar PDF para descarga automática
+    const filename = `Inspeccion-${datosCompletos.inspeccion.nro_licencia || id}-${new Date().toISOString().split('T')[0]}.pdf`
+    
     return new NextResponse(pdfArray, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `inline; filename="Inspeccion-${id}.pdf"`,
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'no-cache',
       },
     })
   } catch (error) {
