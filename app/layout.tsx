@@ -8,6 +8,19 @@ export const metadata: Metadata = {
   icons: {
     icon: '/favicon.svg',
   },
+  manifest: '/manifest.json',
+  themeColor: '#0093D2',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Inspecciones Lanús',
+  },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+  },
 }
 
 export default function RootLayout({

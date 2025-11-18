@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import ServiceWorkerRegistration from '@/components/pwa/ServiceWorkerRegistration';
 
 export const metadata: Metadata = {
   title: 'Inspecciones - Sistema de Habilitaciones',
@@ -14,6 +15,7 @@ export default function InspectorLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       {children}
+      <ServiceWorkerRegistration />
     </div>
   );
 }
