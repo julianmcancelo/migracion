@@ -34,6 +34,7 @@ interface Inspeccion {
 export default function InspeccionesPage() {
   const [inspecciones, setInspecciones] = useState<Inspeccion[]>([])
   const [loading, setLoading] = useState(true)
+  const [filtroEstado, setFiltroEstado] = useState<'TODAS' | 'PENDIENTE' | 'APROBADO' | 'CONDICIONAL' | 'RECHAZADO'>('TODAS')
 
   useEffect(() => {
     cargarInspecciones()
@@ -110,6 +111,13 @@ export default function InspeccionesPage() {
     }
   }
 
+  // Filtrar inspecciones según el estado seleccionado
+  const inspeccionesFiltradas = inspecciones.filter(inspeccion => {
+    if (filtroEstado === 'TODAS') return true
+    if (filtroEstado === 'PENDIENTE') return !inspeccion.resultado || inspeccion.resultado === 'PENDIENTE'
+    return inspeccion.resultado === filtroEstado
+  })
+
   return (
     <div className="space-y-4">
       {/* Header Simplificado */}
@@ -140,31 +148,59 @@ export default function InspeccionesPage() {
         </div>
       </div>
 
-      {/* Resumen Simple */}
-      <div className="flex flex-wrap gap-2">
-        <div className="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2">
-          <span className="text-xs text-blue-700">Pendientes:</span>
-          <span className="ml-2 text-lg font-bold text-blue-900">
-            {inspecciones.filter(i => i.resultado === 'PENDIENTE' || !i.resultado).length}
-          </span>
-        </div>
-        <div className="rounded-lg border border-green-200 bg-green-50 px-3 py-2">
-          <span className="text-xs text-green-700">Aprobadas:</span>
-          <span className="ml-2 text-lg font-bold text-green-900">
-            {inspecciones.filter(i => i.resultado === 'APROBADO').length}
-          </span>
-        </div>
-        <div className="rounded-lg border border-yellow-200 bg-yellow-50 px-3 py-2">
-          <span className="text-xs text-yellow-700">Condicionales:</span>
-          <span className="ml-2 text-lg font-bold text-yellow-900">
-            {inspecciones.filter(i => i.resultado === 'CONDICIONAL').length}
-          </span>
-        </div>
-        <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2">
-          <span className="text-xs text-red-700">Rechazadas:</span>
-          <span className="ml-2 text-lg font-bold text-red-900">
-            {inspecciones.filter(i => i.resultado === 'RECHAZADO').length}
-          </span>
+      {/* Filtros por Estado */}
+      <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+        <div className="flex flex-wrap gap-2">
+          <button
+            onClick={() => setFiltroEstado('TODAS')}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              filtroEstado === 'TODAS'
+                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Todas ({inspecciones.length})
+          </button>
+          <button
+            onClick={() => setFiltroEstado('PENDIENTE')}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              filtroEstado === 'PENDIENTE'
+                ? 'border-blue-500 bg-blue-50 text-blue-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Pendientes ({inspecciones.filter(i => i.resultado === 'PENDIENTE' || !i.resultado).length})
+          </button>
+          <button
+            onClick={() => setFiltroEstado('APROBADO')}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              filtroEstado === 'APROBADO'
+                ? 'border-green-500 bg-green-50 text-green-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Aprobadas ({inspecciones.filter(i => i.resultado === 'APROBADO').length})
+          </button>
+          <button
+            onClick={() => setFiltroEstado('CONDICIONAL')}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              filtroEstado === 'CONDICIONAL'
+                ? 'border-yellow-500 bg-yellow-50 text-yellow-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Condicionales ({inspecciones.filter(i => i.resultado === 'CONDICIONAL').length})
+          </button>
+          <button
+            onClick={() => setFiltroEstado('RECHAZADO')}
+            className={`rounded-lg border px-4 py-2 text-sm font-medium transition-colors ${
+              filtroEstado === 'RECHAZADO'
+                ? 'border-red-500 bg-red-50 text-red-700'
+                : 'border-gray-200 bg-white text-gray-700 hover:bg-gray-50'
+            }`}
+          >
+            Rechazadas ({inspecciones.filter(i => i.resultado === 'RECHAZADO').length})
+          </button>
         </div>
       </div>
 
@@ -182,6 +218,11 @@ export default function InspeccionesPage() {
                 Crear Primera Inspección
               </Button>
             </Link>
+          </div>
+        ) : inspeccionesFiltradas.length === 0 ? (
+          <div className="p-8 text-center">
+            <AlertCircle className="mx-auto mb-4 h-12 w-12 text-gray-300" />
+            <p className="text-gray-500">No hay inspecciones con el estado seleccionado</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -212,7 +253,7 @@ export default function InspeccionesPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
-                {inspecciones.map(inspeccion => (
+                {inspeccionesFiltradas.map(inspeccion => (
                   <tr
                     key={inspeccion.id}
                     className="cursor-pointer hover:bg-gray-50"
