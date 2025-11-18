@@ -437,6 +437,8 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       }
     })
 
+    console.log(`📸 Total de fotos a procesar: ${todasLasFotos.length}`)
+    
     if (todasLasFotos.length > 0) {
       doc.addPage()
       agregarHeader()
@@ -459,6 +461,10 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       let fotosEnFila = 0
 
       todasLasFotos.forEach((foto, index) => {
+        console.log(`📷 Procesando foto ${index + 1}/${todasLasFotos.length}: ${foto.tipo}`)
+        console.log(`   Path length: ${foto.path?.length || 0} caracteres`)
+        console.log(`   Starts with data:image: ${foto.path?.startsWith('data:image')}`)
+        
         // Verificar si necesita nueva página
         if (yPos + imgHeight + 15 > 265) {
           doc.addPage()
