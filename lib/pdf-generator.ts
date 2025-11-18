@@ -356,8 +356,8 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
           const sizeInKB = (datos.inspeccion.firma_inspector.length * 0.75) / 1024
           console.log(`📝 Firma inspector: ${sizeInKB.toFixed(0)}KB`)
           
-          // Límite: 300KB para firmas
-          if (sizeInKB < 300) {
+          // Límite: 500KB para firmas
+          if (sizeInKB < 500) {
             doc.addImage(datos.inspeccion.firma_inspector, 'JPEG', 32, yPos + 6, 50, 13)
             console.log('✅ Firma del inspector agregada')
           } else {
@@ -401,7 +401,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
           const sizeInKB = (datos.inspeccion.firma_contribuyente.length * 0.75) / 1024
           console.log(`📝 Firma contribuyente: ${sizeInKB.toFixed(0)}KB`)
           
-          if (sizeInKB < 300) {
+          if (sizeInKB < 500) {
             doc.addImage(datos.inspeccion.firma_contribuyente, 'JPEG', 127, yPos + 6, 50, 13)
             console.log('✅ Firma del contribuyente agregada')
           } else {
@@ -451,7 +451,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
     console.log(`📸 Total de fotos a procesar: ${todasLasFotos.length}`)
     
-    // Filtrar solo fotos válidas y no muy grandes
+    // Filtrar solo fotos válidas (límite generoso de 1MB)
     const fotosValidas = todasLasFotos.filter(foto => {
       if (!foto.path || !foto.path.startsWith('data:image')) {
         console.log(`⚠️ Foto ${foto.tipo} no tiene Base64 válido`)
@@ -459,7 +459,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       }
       const sizeInKB = (foto.path.length * 0.75) / 1024
       console.log(`📊 Foto ${foto.tipo}: ${sizeInKB.toFixed(0)}KB`)
-      if (sizeInKB > 400) {
+      if (sizeInKB > 1024) {
         console.log(`⚠️ Foto ${foto.tipo} muy grande (${sizeInKB.toFixed(0)}KB), omitiendo`)
         return false
       }
