@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Shield, Search, Download, FileCheck2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -24,78 +24,100 @@ interface Habilitacion {
  */
 export default function ObleasPage() {
   const [busqueda, setBusqueda] = useState('')
-  const [habilitaciones, setHabilitaciones] = useState<Habilitacion[]>([])
-  const [loading, setLoading] = useState(false)
-  const [buscado, setBuscado] = useState(false)
+  const [todasHabilitaciones, setTodasHabilitaciones] = useState<Habilitacion[]>([])
+  const [habilitacionesFiltradas, setHabilitacionesFiltradas] = useState<Habilitacion[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const buscarHabilitaciones = async () => {
-    if (!busqueda.trim()) {
-      alert('Por favor ingresa un número de licencia, dominio o DNI')
-      return
-    }
+  // Cargar todas las habilitaciones al montar el componente
+  useEffect(() => {
+    cargarTodasHabilitaciones()
+  }, [])
 
+  // Filtrar habilitaciones cuando cambia el texto de búsqueda
+  useEffect(() => {
+    filtrarHabilitaciones()
+  }, [busqueda, todasHabilitaciones])
+
+  const cargarTodasHabilitaciones = async () => {
     setLoading(true)
-    setBuscado(true)
 
     try {
-      // Buscar en ambos tipos de transporte
-      const tiposTransporte = ['Escolar', 'Remis']
-      let todasHabilitaciones: any[] = []
+      // Cargar habilitaciones con obleas desde el endpoint específico
+      // Aumentamos el límite para obtener todas las obleas
+      const response = await fetch('/api/obleas?limite=500')
+      const data = await response.json()
 
-      for (const tipo of tiposTransporte) {
-        const response = await fetch(
-          `/api/habilitaciones?tipo=${tipo}&buscar=${encodeURIComponent(busqueda)}&limite=50`
-        )
-        const data = await response.json()
+      console.log('📊 Datos de obleas recibidos:', data)
+      console.log('📊 data.success:', data.success)
+      console.log('📊 data.data length:', data.data?.length)
+      console.log('📊 Primera oblea:', data.data?.[0])
 
-        if (data.success && data.data) {
-          todasHabilitaciones = [...todasHabilitaciones, ...data.data]
-        }
+      if (data.success && data.data) {
+        // Mapear los datos de obleas a formato de habilitación
+        const habilitacionesConObleas = data.data.map((oblea: any) => ({
+          id: oblea.habilitacion_id,
+          nro_licencia: oblea.nro_licencia,
+          tipo_transporte: oblea.tipo_transporte || 'N/A',
+          estado: oblea.estado_habilitacion || 'N/A',
+          titular_nombre: oblea.titular || 'Sin titular',
+          titular_dni: oblea.titular_dni || 'N/A',
+          vehiculo_dominio: oblea.vehiculo_dominio || 'N/A',
+          vehiculo_marca: oblea.vehiculo_marca || '',
+          vehiculo_modelo: oblea.vehiculo_modelo || '',
+          vigencia_fin: oblea.vigencia_fin || 'N/A',
+          fecha_colocacion: oblea.fecha_solicitud,
+        }))
+
+        console.log('✅ Habilitaciones con obleas:', habilitacionesConObleas.length)
+        setTodasHabilitaciones(habilitacionesConObleas)
+        setHabilitacionesFiltradas(habilitacionesConObleas)
+      } else {
+        console.warn('⚠️ No se encontraron obleas')
+        setTodasHabilitaciones([])
+        setHabilitacionesFiltradas([])
       }
-
-      // Filtrar solo habilitaciones activas y mapear los datos
-      const habilitacionesActivas = todasHabilitaciones
-        .filter((hab) => hab.estado === 'ACTIVA')
-        .map((hab) => {
-          // Obtener titular (buscar en personas con rol TITULAR)
-          const titular = hab.personas?.find((p: any) => p.rol === 'TITULAR')
-          // Obtener primer vehículo
-          const vehiculo = hab.vehiculos?.[0]
-
-          return {
-            id: hab.id,
-            nro_licencia: hab.nro_licencia,
-            tipo_transporte: hab.tipo_transporte,
-            estado: hab.estado,
-            titular_nombre: titular?.nombre || 'Sin titular',
-            titular_dni: titular?.dni || 'N/A',
-            vehiculo_dominio: vehiculo?.dominio || 'N/A',
-            vehiculo_marca: vehiculo?.marca || '',
-            vehiculo_modelo: vehiculo?.modelo || '',
-            vigencia_fin: hab.vigencia_fin,
-          }
-        })
-
-      setHabilitaciones(habilitacionesActivas)
     } catch (error) {
-      console.error('Error al buscar:', error)
-      alert('Error al buscar habilitaciones')
-      setHabilitaciones([])
+      console.error('❌ Error al cargar habilitaciones con obleas:', error)
+      alert('Error al cargar habilitaciones con obleas')
     } finally {
       setLoading(false)
     }
   }
 
-  const descargarCertificado = (habilitacionId: number, nroLicencia: string) => {
-    // Abrir en nueva pestaña para descargar el PDF
-    window.open(`/api/obleas/${habilitacionId}/certificado`, '_blank')
+  const filtrarHabilitaciones = () => {
+    if (!busqueda.trim()) {
+      setHabilitacionesFiltradas(todasHabilitaciones)
+      return
+    }
+
+    const busquedaLower = busqueda.toLowerCase()
+    const filtradas = todasHabilitaciones.filter((hab) => {
+      return (
+        hab.nro_licencia.toLowerCase().includes(busquedaLower) ||
+        hab.titular_nombre.toLowerCase().includes(busquedaLower) ||
+        hab.titular_dni.includes(busqueda) ||
+        hab.vehiculo_dominio.toLowerCase().includes(busquedaLower) ||
+        hab.tipo_transporte.toLowerCase().includes(busquedaLower)
+      )
+    })
+
+    setHabilitacionesFiltradas(filtradas)
   }
 
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      buscarHabilitaciones()
+  const descargarCertificado = (habilitacionId: number, nroLicencia: string) => {
+    console.log('🎫 Descargando certificado para:', { habilitacionId, nroLicencia })
+    
+    // Abrir en nueva pestaña para descargar el PDF
+    const url = `/api/obleas/${habilitacionId}/certificado`
+    console.log('📄 URL del certificado:', url)
+    
+    const newWindow = window.open(url, '_blank')
+    
+    if (!newWindow) {
+      alert('Por favor permite las ventanas emergentes para descargar el certificado')
     }
   }
+
 
   return (
     <div className="space-y-4">
@@ -108,7 +130,7 @@ export default function ObleasPage() {
               Certificados de Obleas
             </h1>
             <p className="text-sm text-gray-500">
-              Busca una habilitación y descarga su certificado de oblea
+              Habilitaciones con obleas colocadas - Descarga certificados
             </p>
           </div>
         </div>
@@ -118,104 +140,104 @@ export default function ObleasPage() {
       <div className="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
         <div className="mb-3">
           <label className="mb-2 block text-sm font-medium text-gray-700">
-            Buscar por N° Licencia, Dominio o DNI
+            Buscar por N° Licencia, Dominio, DNI o Titular
           </label>
-          <div className="flex gap-2">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
             <Input
               type="text"
-              placeholder="Ej: 2024/123, ABC123, 12345678"
+              placeholder="Filtrar habilitaciones activas..."
               value={busqueda}
               onChange={(e) => setBusqueda(e.target.value)}
-              onKeyPress={handleKeyPress}
-              className="flex-1"
+              className="pl-10"
               disabled={loading}
             />
-            <Button
-              onClick={buscarHabilitaciones}
-              disabled={loading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              <Search className="mr-2 h-4 w-4" />
-              {loading ? 'Buscando...' : 'Buscar'}
-            </Button>
           </div>
         </div>
 
         {/* Información */}
-        <div className="mt-3 rounded-lg bg-blue-50 p-3">
+        <div className="mt-3 flex items-center justify-between rounded-lg bg-blue-50 p-3">
           <p className="text-sm text-blue-900">
-            <strong>ℹ️ Instrucción:</strong> El certificado de oblea es para verificación holográfica.
-            Ingresa el número de licencia, dominio del vehículo o DNI del titular para buscar.
+            <strong>ℹ️ Total:</strong> {habilitacionesFiltradas.length} habilitaciones con obleas
+            {busqueda && ` (filtradas de ${todasHabilitaciones.length})`}
           </p>
         </div>
       </div>
 
       {/* Resultados */}
-      {buscado && (
-        <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
-          {loading ? (
-            <div className="p-8 text-center text-gray-500">Buscando habilitaciones...</div>
-          ) : habilitaciones.length === 0 ? (
-            <div className="p-8 text-center">
-              <Shield className="mx-auto mb-2 h-12 w-12 text-gray-300" />
-              <p className="text-gray-500">
-                No se encontraron habilitaciones activas
-              </p>
+      <div className="rounded-lg border border-gray-200 bg-white shadow-sm">
+        {loading ? (
+          <div className="p-8 text-center text-gray-500">
+            <div className="mx-auto mb-2 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
+            Cargando habilitaciones con obleas...
+          </div>
+        ) : habilitacionesFiltradas.length === 0 ? (
+          <div className="p-8 text-center">
+            <Shield className="mx-auto mb-2 h-12 w-12 text-gray-300" />
+            <p className="text-gray-500">
+              {busqueda ? 'No se encontraron resultados' : 'No hay obleas registradas'}
+            </p>
+            {busqueda && (
               <p className="mt-1 text-sm text-gray-400">
-                Intenta con otro número de licencia, dominio o DNI
+                Intenta con otro término de búsqueda
               </p>
-            </div>
-          ) : (
-            <div className="divide-y divide-gray-100">
-              {habilitaciones.map((hab) => (
-                <div
-                  key={hab.id}
-                  className="flex items-center justify-between p-4 hover:bg-gray-50"
-                >
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3">
-                      <Shield className="h-5 w-5 text-blue-600" />
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <span className="font-mono text-sm font-bold text-blue-600">
-                            {hab.nro_licencia}
-                          </span>
-                          <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-                            {hab.estado}
-                          </span>
-                        </div>
-                        <p className="text-sm text-gray-900">{hab.titular_nombre}</p>
-                        <div className="mt-1 flex gap-4 text-xs text-gray-500">
-                          <span>DNI: {hab.titular_dni}</span>
-                          <span>•</span>
-                          <span>Dominio: <strong>{hab.vehiculo_dominio}</strong></span>
-                          <span>•</span>
-                          <span>{hab.tipo_transporte}</span>
-                        </div>
-                        {hab.vehiculo_marca && (
-                          <p className="mt-1 text-xs text-gray-500">
-                            {hab.vehiculo_marca} {hab.vehiculo_modelo}
-                          </p>
-                        )}
+            )}
+            {!busqueda && (
+              <p className="mt-1 text-sm text-gray-400">
+                Las obleas se generan cuando se coloca una oblea en un vehículo
+              </p>
+            )}
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-100">
+            {habilitacionesFiltradas.map((hab: Habilitacion) => (
+              <div
+                key={hab.id}
+                className="flex items-center justify-between p-4 hover:bg-gray-50"
+              >
+                <div className="flex-1">
+                  <div className="flex items-center gap-3">
+                    <Shield className="h-5 w-5 text-blue-600" />
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-sm font-bold text-blue-600">
+                          {hab.nro_licencia}
+                        </span>
+                        <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
+                          {hab.estado}
+                        </span>
                       </div>
+                      <p className="text-sm text-gray-900">{hab.titular_nombre}</p>
+                      <div className="mt-1 flex gap-4 text-xs text-gray-500">
+                        <span>DNI: {hab.titular_dni}</span>
+                        <span>•</span>
+                        <span>Dominio: <strong>{hab.vehiculo_dominio}</strong></span>
+                        <span>•</span>
+                        <span>{hab.tipo_transporte}</span>
+                      </div>
+                      {hab.vehiculo_marca && (
+                        <p className="mt-1 text-xs text-gray-500">
+                          {hab.vehiculo_marca} {hab.vehiculo_modelo}
+                        </p>
+                      )}
                     </div>
                   </div>
-                  <Button
-                    onClick={() => descargarCertificado(hab.id, hab.nro_licencia)}
-                    className="bg-blue-600 hover:bg-blue-700"
-                  >
-                    <Download className="mr-2 h-4 w-4" />
-                    Descargar Certificado
-                  </Button>
                 </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                <Button
+                  onClick={() => descargarCertificado(hab.id, hab.nro_licencia)}
+                  className="bg-blue-600 hover:bg-blue-700"
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  Descargar Certificado
+                </Button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
       {/* Ayuda */}
-      {!buscado && (
+      {todasHabilitaciones.length > 0 && (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-4">
           <h3 className="mb-2 font-semibold text-gray-900">¿Qué es el certificado de oblea?</h3>
           <ul className="space-y-1 text-sm text-gray-600">
