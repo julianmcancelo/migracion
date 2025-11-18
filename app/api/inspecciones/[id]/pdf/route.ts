@@ -48,13 +48,22 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
   try {
     // Si no hay imagen, retornar null
     if (!rutaImagen || rutaImagen === '') {
+      console.log('⚠️ Imagen vacía')
       return null
     }
 
-    // Si ya es base64, retornar tal cual (nuevo sistema)
+    // Si ya es base64 completo (con prefijo data:image), retornar tal cual
     if (rutaImagen.startsWith('data:image')) {
-      console.log('✅ Imagen ya en Base64')
+      console.log('✅ Imagen ya en Base64 completo')
       return rutaImagen
+    }
+
+    // Si es base64 sin prefijo (solo el string), agregar prefijo
+    // Detectar si es base64 puro (empieza con /9j/ para JPEG o iVBOR para PNG)
+    if (rutaImagen.startsWith('/9j/') || rutaImagen.startsWith('iVBOR') || rutaImagen.length > 1000) {
+      console.log('✅ Base64 sin prefijo detectado, agregando prefijo')
+      // Asumir JPEG por defecto
+      return `data:image/jpeg;base64,${rutaImagen}`
     }
 
     // Sistema antiguo: Construir URL completa para descargar la imagen
@@ -63,10 +72,13 @@ async function convertirImagenABase64(rutaImagen: string): Promise<string | null
     if (rutaImagen.startsWith('http://') || rutaImagen.startsWith('https://')) {
       // Ya es una URL completa
       urlImagen = rutaImagen
-    } else {
-      // Construir URL desde la ruta relativa
+    } else if (rutaImagen.startsWith('uploads/')) {
+      // Ruta relativa del sistema antiguo
       const nombreArchivo = rutaImagen.replace(/^.*[\\\/]/, '')
       urlImagen = `https://credenciales.transportelanus.com.ar/uploads/inspecciones_fotos/${nombreArchivo}`
+    } else {
+      console.log(`⚠️ Formato de imagen no reconocido: ${rutaImagen.substring(0, 50)}...`)
+      return null
     }
 
     console.log('📥 Descargando imagen desde:', urlImagen)
