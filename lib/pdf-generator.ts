@@ -349,10 +349,34 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('INSPECTOR', 57.5, yPos + 3.5, { align: 'center' })
 
-    // TEMPORALMENTE DESHABILITADO - Mostrar solo texto
-    doc.setFontSize(6.5)
-    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
-    doc.text('(Firma digital registrada)', 57, yPos + 13, { align: 'center' })
+    if (datos.inspeccion.firma_inspector) {
+      try {
+        // Validar que sea Base64 válido
+        if (datos.inspeccion.firma_inspector.startsWith('data:image')) {
+          const sizeInKB = (datos.inspeccion.firma_inspector.length * 0.75) / 1024
+          console.log(`📝 Firma inspector: ${sizeInKB.toFixed(0)}KB`)
+          
+          // Límite: 300KB para firmas
+          if (sizeInKB < 300) {
+            doc.addImage(datos.inspeccion.firma_inspector, 'JPEG', 32, yPos + 6, 50, 13)
+            console.log('✅ Firma del inspector agregada')
+          } else {
+            throw new Error('Firma muy grande')
+          }
+        } else {
+          throw new Error('Formato inválido')
+        }
+      } catch (e) {
+        console.warn('⚠️ No se pudo agregar firma del inspector:', e)
+        doc.setFontSize(6.5)
+        doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+        doc.text('(Firma registrada)', 57, yPos + 13, { align: 'center' })
+      }
+    } else {
+      doc.setFontSize(6.5)
+      doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+      doc.text('(Sin firma)', 57, yPos + 13, { align: 'center' })
+    }
 
     doc.setDrawColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.setLineWidth(0.3)
@@ -371,12 +395,30 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     doc.setTextColor(colorPrimario[0], colorPrimario[1], colorPrimario[2])
     doc.text('CONTRIBUYENTE', 152.5, yPos + 3.5, { align: 'center' })
 
-    // TEMPORALMENTE DESHABILITADO - Mostrar solo texto
-    doc.setFontSize(6.5)
-    doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
     if (datos.inspeccion.firma_contribuyente) {
-      doc.text('(Firma digital registrada)', 152.5, yPos + 12, { align: 'center' })
+      try {
+        if (datos.inspeccion.firma_contribuyente.startsWith('data:image')) {
+          const sizeInKB = (datos.inspeccion.firma_contribuyente.length * 0.75) / 1024
+          console.log(`📝 Firma contribuyente: ${sizeInKB.toFixed(0)}KB`)
+          
+          if (sizeInKB < 300) {
+            doc.addImage(datos.inspeccion.firma_contribuyente, 'JPEG', 127, yPos + 6, 50, 13)
+            console.log('✅ Firma del contribuyente agregada')
+          } else {
+            throw new Error('Firma muy grande')
+          }
+        } else {
+          throw new Error('Formato inválido')
+        }
+      } catch (e) {
+        console.warn('⚠️ No se pudo agregar firma del contribuyente:', e)
+        doc.setFontSize(6.5)
+        doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
+        doc.text('(Firma registrada)', 152.5, yPos + 12, { align: 'center' })
+      }
     } else {
+      doc.setFontSize(6.5)
+      doc.setTextColor(colorMutado[0], colorMutado[1], colorMutado[2])
       doc.text('Firma no registrada', 152.5, yPos + 12, { align: 'center' })
     }
 
@@ -408,10 +450,24 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     })
 
     console.log(`📸 Total de fotos a procesar: ${todasLasFotos.length}`)
-    console.log('⚠️ FOTOS TEMPORALMENTE DESHABILITADAS - Generando PDF sin imágenes')
     
-    // TEMPORALMENTE DESHABILITADO - Las fotos causan que el PDF falle
-    if (false && todasLasFotos.length > 0) {
+    // Filtrar solo fotos válidas y no muy grandes
+    const fotosValidas = todasLasFotos.filter(foto => {
+      if (!foto.path || !foto.path.startsWith('data:image')) {
+        console.log(`⚠️ Foto ${foto.tipo} no tiene Base64 válido`)
+        return false
+      }
+      const sizeInKB = (foto.path.length * 0.75) / 1024
+      if (sizeInKB > 200) {
+        console.log(`⚠️ Foto ${foto.tipo} muy grande (${sizeInKB.toFixed(0)}KB), omitiendo`)
+        return false
+      }
+      return true
+    })
+    
+    console.log(`✅ ${fotosValidas.length} fotos válidas para incluir en PDF`)
+    
+    if (fotosValidas.length > 0) {
       doc.addPage()
       agregarHeader()
       yPos = 60
@@ -432,10 +488,8 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       let xPos = 15
       let fotosEnFila = 0
 
-      todasLasFotos.forEach((foto, index) => {
-        console.log(`📷 Procesando foto ${index + 1}/${todasLasFotos.length}: ${foto.tipo}`)
-        console.log(`   Path length: ${foto.path?.length || 0} caracteres`)
-        console.log(`   Starts with data:image: ${foto.path?.startsWith('data:image')}`)
+      fotosValidas.forEach((foto, index) => {
+        console.log(`📷 Procesando foto ${index + 1}/${fotosValidas.length}: ${foto.tipo}`)
         
         // Verificar si necesita nueva página
         if (yPos + imgHeight + 15 > 265) {
