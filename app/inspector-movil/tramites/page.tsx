@@ -43,6 +43,7 @@ export default function TramitesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [fechaSeleccionada, setFechaSeleccionada] = useState<string>('TODAS');
 
   const fetchTramites = async () => {
     setIsLoading(true);
@@ -87,6 +88,20 @@ export default function TramitesPage() {
       : 'bg-blue-50 text-blue-700 border-blue-200';
   };
 
+  // Obtener fechas únicas disponibles
+  const fechasDisponibles = Array.from(
+    new Set(
+      tramites
+        .map(t => t.turno?.fecha)
+        .filter(f => f)
+    )
+  ).sort();
+
+  // Filtrar trámites por fecha seleccionada
+  const tramitesFiltrados = fechaSeleccionada === 'TODAS' 
+    ? tramites 
+    : tramites.filter(t => t.turno?.fecha === fechaSeleccionada);
+
   const formatFecha = (fecha: string) => {
     const date = new Date(fecha + 'T00:00:00');
     return date.toLocaleDateString('es-AR', {
@@ -96,7 +111,7 @@ export default function TramitesPage() {
     });
   };
 
-  const groupedTramites = tramites.reduce((acc, tramite) => {
+  const groupedTramites = tramitesFiltrados.reduce((acc, tramite) => {
     const fecha = tramite.turno?.fecha || 'Sin fecha';
     if (!acc[fecha]) {
       acc[fecha] = [];
@@ -180,22 +195,47 @@ export default function TramitesPage() {
       </div>
 
       {/* Barra de actualización */}
-      <div className="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between sticky top-[120px] z-10 shadow-sm">
-        <div className="text-sm text-gray-600">
-          {lastUpdate && (
-            <span>
-              Actualizado: {lastUpdate.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
-            </span>
-          )}
+      <div className="bg-white border-b border-gray-200 px-4 py-3 sticky top-[120px] z-10 shadow-sm">
+        <div className="flex items-center justify-between mb-3">
+          <div className="text-sm text-gray-600">
+            {lastUpdate && (
+              <span>
+                Actualizado: {lastUpdate.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+              </span>
+            )}
+          </div>
+          <button
+            onClick={fetchTramites}
+            disabled={isLoading}
+            className="flex items-center gap-2 bg-[#0093D2] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#007AB8] transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
+            Actualizar
+          </button>
         </div>
-        <button
-          onClick={fetchTramites}
-          disabled={isLoading}
-          className="flex items-center gap-2 bg-[#0093D2] text-white px-4 py-2 rounded-lg font-semibold hover:bg-[#007AB8] transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-          Actualizar
-        </button>
+        
+        {/* Selector de fecha */}
+        {fechasDisponibles.length > 0 && (
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-gray-500" />
+            <select
+              value={fechaSeleccionada}
+              onChange={(e) => setFechaSeleccionada(e.target.value)}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0093D2] focus:border-transparent"
+            >
+              <option value="TODAS">Todas las fechas ({tramites.length})</option>
+              {fechasDisponibles.map(fecha => {
+                if (!fecha) return null;
+                const count = tramites.filter(t => t.turno?.fecha === fecha).length;
+                return (
+                  <option key={fecha} value={fecha}>
+                    {formatFecha(fecha)} ({count})
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+        )}
       </div>
 
       <div className="px-4 pt-4">
