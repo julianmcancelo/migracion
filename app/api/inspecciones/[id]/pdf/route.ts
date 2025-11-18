@@ -290,8 +290,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
     }
 
     // Convertir fotos a base64
+    console.log(`🔍 Procesando ${datosCompletos.items.length} items`)
     for (const item of datosCompletos.items) {
       if (item.foto_path) {
+        console.log(`📸 Item con foto: ${item.nombre?.substring(0, 30)}...`)
+        console.log(`   Foto empieza con: ${item.foto_path.substring(0, 50)}...`)
         const base64 = await convertirImagenABase64(item.foto_path)
         if (base64) {
           item.foto_path = base64
@@ -299,11 +302,16 @@ export async function GET(request: Request, { params }: { params: { id: string }
       }
     }
 
+    console.log(`🔍 Procesando ${datosCompletos.fotos.length} fotos del vehículo`)
     for (const foto of datosCompletos.fotos) {
       if (foto.path) {
+        console.log(`📸 Foto: ${foto.tipo}`)
+        console.log(`   Path empieza con: ${foto.path.substring(0, 50)}...`)
         const base64 = await convertirImagenABase64(foto.path)
         if (base64) {
           foto.path = base64
+        } else {
+          console.warn(`⚠️ No se pudo convertir foto: ${foto.tipo}`)
         }
       }
     }
