@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import ServiceWorkerRegistration from '@/components/pwa/ServiceWorkerRegistration';
+import SyncStatus from '@/components/pwa/SyncStatus';
 
 export const metadata: Metadata = {
   title: 'Inspecciones - Sistema de Habilitaciones',
@@ -16,6 +17,7 @@ export default function InspectorLayout({
     <div className="min-h-screen bg-gray-50">
       {children}
       <ServiceWorkerRegistration />
+      <SyncStatus />
     </div>
   );
 }

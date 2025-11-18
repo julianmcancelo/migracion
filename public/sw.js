@@ -82,6 +82,73 @@ self.addEventListener('sync', (event) => {
 });
 
 async function syncInspecciones() {
-  // Aquí puedes implementar lógica para sincronizar inspecciones pendientes
-  console.log('Sincronizando inspecciones pendientes...');
+  console.log('🔄 Sincronizando inspecciones pendientes...');
+  
+  try {
+    // Abrir IndexedDB
+    const db = await openDB();
+    const transaction = db.transaction(['inspecciones-pendientes'], 'readonly');
+    const store = transaction.objectStore('inspecciones-pendientes');
+    const index = store.index('synced');
+    
+    return new Promise((resolve, reject) => {
+      const request = index.getAll(IDBKeyRange.only(false));
+      
+      request.onsuccess = async () => {
+        const pending = request.result;
+        console.log(`📊 ${pending.length} inspecciones pendientes de sincronizar`);
+        
+        for (const inspeccion of pending) {
+          try {
+            // Intentar enviar al servidor
+            const response = await fetch('/api/inspecciones/guardar', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(inspeccion.data)
+            });
+            
+            if (response.ok) {
+              // Marcar como sincronizada
+              await markAsSynced(db, inspeccion.id);
+              console.log(`✅ Inspección ${inspeccion.id} sincronizada`);
+            }
+          } catch (error) {
+            console.error(`❌ Error sincronizando ${inspeccion.id}:`, error);
+          }
+        }
+        
+        resolve();
+      };
+      
+      request.onerror = () => reject(request.error);
+    });
+  } catch (error) {
+    console.error('❌ Error en sincronización:', error);
+  }
+}
+
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open('inspecciones-offline', 1);
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
+async function markAsSynced(db, id) {
+  const transaction = db.transaction(['inspecciones-pendientes'], 'readwrite');
+  const store = transaction.objectStore('inspecciones-pendientes');
+  const getRequest = store.get(id);
+  
+  return new Promise((resolve, reject) => {
+    getRequest.onsuccess = () => {
+      const inspeccion = getRequest.result;
+      if (inspeccion) {
+        inspeccion.synced = true;
+        store.put(inspeccion);
+      }
+      resolve();
+    };
+    getRequest.onerror = () => reject(getRequest.error);
+  });
 }

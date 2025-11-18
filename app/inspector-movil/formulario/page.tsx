@@ -189,6 +189,19 @@ export default function FormularioInspeccionPage() {
 
       console.log('📤 Enviando inspección...');
 
+      // Verificar si hay conexión
+      if (!navigator.onLine) {
+        console.log('⚠️ Sin conexión, guardando offline...');
+        const { offlineStorage } = await import('@/lib/offline-storage');
+        await offlineStorage.init();
+        const offlineId = await offlineStorage.saveInspeccion(payload);
+        
+        alert('⚠️ Sin conexión. La inspección se guardó localmente y se sincronizará cuando vuelva la conexión.');
+        sessionStorage.removeItem('tramite_inspeccion');
+        router.push('/inspector-movil');
+        return;
+      }
+
       const response = await fetch('/api/inspecciones/guardar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

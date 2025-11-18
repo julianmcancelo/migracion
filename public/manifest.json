@@ -2,7 +2,7 @@
   "name": "Inspecciones Lanús",
   "short_name": "Inspecciones",
   "description": "Sistema de inspecciones vehiculares - Municipio de Lanús",
-  "start_url": "/inspector-movil/tramites",
+  "start_url": "/inspector-movil",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#0093D2",
