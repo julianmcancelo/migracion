@@ -76,11 +76,17 @@ export default function InstallPWA({
   const handleDismiss = () => {
     setShowInstallPrompt(false)
     // No mostrar de nuevo en esta sesión
-    sessionStorage.setItem('pwa-prompt-dismissed', 'true')
+    if (typeof window !== 'undefined') {
+      sessionStorage.setItem('pwa-prompt-dismissed', 'true')
+    }
   }
 
   // No mostrar si ya está instalada o si fue rechazada en esta sesión
-  if (isInstalled || sessionStorage.getItem('pwa-prompt-dismissed')) {
+  if (isInstalled) {
+    return null
+  }
+  
+  if (typeof window !== 'undefined' && sessionStorage.getItem('pwa-prompt-dismissed')) {
     return null
   }
 
