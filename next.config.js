@@ -22,6 +22,54 @@ const nextConfig = {
   // Configuración de producción
   poweredByHeader: false, // Ocultar header X-Powered-By
   
+  // PWA Configuration
+  headers: async () => [
+    {
+      source: '/sw-admin.js',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=0, must-revalidate',
+        },
+        {
+          key: 'Service-Worker-Allowed',
+          value: '/',
+        },
+      ],
+    },
+    {
+      source: '/sw-inspector.js',
+      headers: [
+        {
+          key: 'Cache-Control',
+          value: 'public, max-age=0, must-revalidate',
+        },
+        {
+          key: 'Service-Worker-Allowed',
+          value: '/',
+        },
+      ],
+    },
+    {
+      source: '/manifest-admin.json',
+      headers: [
+        {
+          key: 'Content-Type',
+          value: 'application/manifest+json',
+        },
+      ],
+    },
+    {
+      source: '/manifest-inspector.json',
+      headers: [
+        {
+          key: 'Content-Type',
+          value: 'application/manifest+json',
+        },
+      ],
+    },
+  ],
+  
   // TypeScript
   typescript: {
     ignoreBuildErrors: true, // Permitir build con warnings de TypeScript

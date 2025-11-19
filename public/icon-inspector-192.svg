@@ -1,0 +1,16 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192">
+  <defs>
+    <linearGradient id="inspectorGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="38.400000000000006" fill="url(#inspectorGrad)"/>
+  <g transform="translate(28.799999999999997, 28.799999999999997)">
+    <circle cx="67.19999999999999" cy="67.19999999999999" r="28.799999999999997" fill="none" stroke="white" stroke-width="5.76"/>
+    <line x1="86.4" y1="86.4" x2="115.19999999999999" y2="115.19999999999999" stroke="white" stroke-width="7.68" stroke-linecap="round"/>
+    <path d="M 48 67.19999999999999 L 61.44 80.64 L 86.4 53.760000000000005" 
+          fill="none" stroke="white" stroke-width="4.800000000000001" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+</svg>

@@ -1,0 +1,17 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="adminGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0093D2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#007AB8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="102.4" fill="url(#adminGrad)"/>
+  <g transform="translate(102.4, 102.4)">
+    <path d="M 153.6 25.6 L 256 76.8 L 153.6 128 L 153.6 281.6 C 153.6 307.2 179.2 307.2 204.8 307.2 L 307.2 307.2 C 332.8 307.2 358.4 307.2 358.4 281.6 L 358.4 128 L 256 76.8 L 358.4 25.6 Z" 
+          fill="white" opacity="0.95"/>
+    <circle cx="256" cy="204.8" r="40.96" fill="#0093D2"/>
+    <path d="M 256 163.84 L 266.24 143.36 L 286.72 153.6 L 276.48 174.08 L 296.96 184.32 L 286.72 204.8 L 296.96 225.28 L 276.48 235.52 L 286.72 256 L 266.24 266.24 L 256 245.76 L 245.76 266.24 L 225.28 256 L 235.52 235.52 L 215.04 225.28 L 225.28 204.8 L 215.04 184.32 L 235.52 174.08 L 225.28 153.6 L 245.76 143.36 Z" 
+          fill="#0093D2" opacity="0.8"/>
+  </g>
+</svg>

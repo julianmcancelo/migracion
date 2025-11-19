@@ -24,7 +24,9 @@
     "validate": "npm run type-check && npm run lint && npm run format:check",
     "postinstall": "prisma generate",
     "geocode": "tsx scripts/geocode-paradas.ts",
-    "geocode:dry": "tsx scripts/geocode-paradas.ts --dry-run"
+    "geocode:dry": "tsx scripts/geocode-paradas.ts --dry-run",
+    "pwa:generate-icons": "node scripts/generate-pwa-icons.js",
+    "pwa:verify": "node scripts/verify-pwa.js"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",

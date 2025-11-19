@@ -5,6 +5,8 @@ import { Header } from '@/components/layout/header'
 import { Sidebar } from '@/components/layout/sidebar'
 import ChatIAGlobal from '@/components/chat-ia-global'
 import { ToastProvider } from '@/components/ui/toast-notifications'
+import InstallPWA from '@/components/pwa/InstallPWA'
+import PWARegistration from '@/components/pwa/PWARegistration'
 
 interface PanelLayoutClientProps {
   children: React.ReactNode
@@ -81,6 +83,10 @@ export function PanelLayoutClient({ children, user }: PanelLayoutClientProps) {
         {/* Chat IA Global - Disponible en toda la aplicación */}
         <ChatIAGlobal />
       </div>
+
+      {/* PWA Components */}
+      <PWARegistration swPath="/sw-admin.js" appName="Admin Panel" />
+      <InstallPWA appName="Panel Administrativo" variant="admin" />
     </ToastProvider>
   )
 }

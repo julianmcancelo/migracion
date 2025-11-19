@@ -6,6 +6,13 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Panel de Gestión | Municipio de Lanús',
   description: 'Sistema de gestión de habilitaciones de transporte',
+  manifest: '/manifest-admin.json',
+  themeColor: '#0093D2',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Transporte Lanús',
+  },
 }
 
 /**
