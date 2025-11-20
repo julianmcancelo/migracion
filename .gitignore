@@ -22,9 +22,17 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local env files
+# Local env files - CRÍTICO PARA SEGURIDAD
 .env
+.env.local
 .env*.local
+.env.production
+.env.development
+.env.test
+
+# Backups de configuración
+*.backup
+.env.local.backup
 
 # Vercel
 .vercel

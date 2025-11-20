@@ -2,9 +2,12 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { jwtVerify } from 'jose'
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-change-in-production'
-)
+// Validar que JWT_SECRET existe
+if (!process.env.JWT_SECRET) {
+  throw new Error('🔒 SEGURIDAD: JWT_SECRET no configurado. El sistema no puede iniciar.')
+}
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 // Rutas que requieren autenticación
 const protectedRoutes = ['/dashboard', '/habilitaciones', '/inspecciones', '/turnos']

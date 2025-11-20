@@ -22,8 +22,51 @@ const nextConfig = {
   // Configuración de producción
   poweredByHeader: false, // Ocultar header X-Powered-By
   
-  // PWA Configuration
+  // Comprimir respuestas
+  compress: true,
+  
+  // Security & PWA Headers
   headers: async () => [
+    // Security Headers para todas las rutas
+    {
+      source: '/:path*',
+      headers: [
+        // Prevenir clickjacking
+        {
+          key: 'X-Frame-Options',
+          value: 'DENY',
+        },
+        // Prevenir MIME sniffing
+        {
+          key: 'X-Content-Type-Options',
+          value: 'nosniff',
+        },
+        // Protección XSS
+        {
+          key: 'X-XSS-Protection',
+          value: '1; mode=block',
+        },
+        // Referrer Policy
+        {
+          key: 'Referrer-Policy',
+          value: 'strict-origin-when-cross-origin',
+        },
+        // Permissions Policy
+        {
+          key: 'Permissions-Policy',
+          value: 'camera=(), microphone=(), geolocation=(self)',
+        },
+        // HSTS (solo en producción)
+        ...(process.env.NODE_ENV === 'production'
+          ? [
+              {
+                key: 'Strict-Transport-Security',
+                value: 'max-age=31536000; includeSubDomains; preload',
+              },
+            ]
+          : []),
+      ],
+    },
     {
       source: '/sw-admin.js',
       headers: [
@@ -70,9 +113,14 @@ const nextConfig = {
     },
   ],
   
-  // TypeScript
+  // TypeScript - IMPORTANTE: Corregir errores antes de producción
   typescript: {
-    ignoreBuildErrors: true, // Permitir build con warnings de TypeScript
+    ignoreBuildErrors: process.env.NODE_ENV === 'development', // Solo ignorar en desarrollo
+  },
+  
+  // ESLint
+  eslint: {
+    ignoreDuringBuilds: process.env.NODE_ENV === 'development',
   },
 
   // Webpack optimization

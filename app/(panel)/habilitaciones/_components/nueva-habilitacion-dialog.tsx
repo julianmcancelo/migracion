@@ -64,13 +64,8 @@ export function NuevaHabilitacionDialog({
     setError(null)
 
     try {
-      // Validar que tenga al menos una persona y un vehículo
-      if (!formData.personas || formData.personas.length === 0) {
-        throw new Error('Debe agregar al menos una persona')
-      }
-      if (!formData.vehiculos || formData.vehiculos.length === 0) {
-        throw new Error('Debe agregar al menos un vehículo')
-      }
+      // Validación relajada para facilitar la carga
+      // Ya no es obligatorio tener personas y vehículos al crear
 
       const response = await fetch('/api/habilitaciones', {
         method: 'POST',
@@ -121,13 +116,12 @@ export function NuevaHabilitacionDialog({
             <div key={paso.id} className="flex flex-1 items-center">
               <div className="flex flex-1 flex-col items-center">
                 <div
-                  className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-colors ${
-                    pasoActual === paso.id
-                      ? 'bg-blue-600 text-white'
-                      : pasoActual > paso.id
-                        ? 'bg-green-600 text-white'
-                        : 'bg-gray-200 text-gray-600'
-                  }`}
+                  className={`flex h-10 w-10 items-center justify-center rounded-full font-semibold transition-colors ${pasoActual === paso.id
+                    ? 'bg-blue-600 text-white'
+                    : pasoActual > paso.id
+                      ? 'bg-green-600 text-white'
+                      : 'bg-gray-200 text-gray-600'
+                    }`}
                 >
                   {paso.id}
                 </div>
@@ -135,9 +129,8 @@ export function NuevaHabilitacionDialog({
               </div>
               {index < PASOS.length - 1 && (
                 <div
-                  className={`mx-2 h-1 flex-1 transition-colors ${
-                    pasoActual > paso.id ? 'bg-green-600' : 'bg-gray-200'
-                  }`}
+                  className={`mx-2 h-1 flex-1 transition-colors ${pasoActual > paso.id ? 'bg-green-600' : 'bg-gray-200'
+                    }`}
                 />
               )}
             </div>
@@ -177,10 +170,18 @@ export function NuevaHabilitacionDialog({
 
         {/* Botones de navegación */}
         <div className="flex items-center justify-between border-t pt-4">
-          <Button variant="outline" onClick={handleBack} disabled={pasoActual === 1 || loading}>
-            <ChevronLeft className="mr-2 h-4 w-4" />
-            Anterior
-          </Button>
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleBack} disabled={pasoActual === 1 || loading}>
+              <ChevronLeft className="mr-2 h-4 w-4" />
+              Anterior
+            </Button>
+
+            {pasoActual < PASOS.length && (
+              <Button variant="secondary" onClick={handleSubmit} disabled={loading}>
+                Guardar Borrador
+              </Button>
+            )}
+          </div>
 
           <div className="text-sm text-gray-500">
             Paso {pasoActual} de {PASOS.length}

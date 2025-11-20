@@ -368,38 +368,39 @@ function ColocarObleaContent() {
               </div>
             </button>
           )}
+          <input
+            ref={inputFileRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={handleFileChange}
+          />
         </div>
 
-        {/* Firmas - Mejorado para móvil */}
-        <div className="rounded-xl bg-white p-4 shadow-lg">
-          <div className="mb-3 flex items-center gap-2">
+        {/* Firmas Digitales - Formato Profesional */}
+        <div className="rounded-xl bg-white p-5 shadow-lg border border-gray-200">
+          <div className="mb-5 flex items-center gap-2">
             <div className="rounded-full bg-purple-100 p-2">
-              <Check className="h-5 w-5 text-purple-600" />
+              <Shield className="h-5 w-5 text-purple-600" />
             </div>
-            <div className="flex-1">
+            <div>
               <h2 className="text-base font-bold text-gray-900">Firmas Digitales</h2>
-              <p className="text-xs text-gray-600">Mínimo 1 firma requerida</p>
+              <p className="text-xs text-gray-500">Mínimo 1 firma requerida</p>
             </div>
           </div>
 
           {/* Firma Receptor */}
-          <div className="mb-4">
-            <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-bold text-gray-700">
-                👤 Firma del Receptor
-              </label>
-              {firmaReceptor && (
-                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700">
-                  ✓ Guardada
-                </span>
-              )}
-            </div>
-            <div className="overflow-hidden rounded-xl border-2 border-dashed border-purple-300 bg-purple-50">
+          <div className="mb-6">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Firma del Receptor
+            </label>
+            <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
               <canvas
                 ref={canvasReceptorRef}
                 width={600}
                 height={200}
-                className="w-full touch-none bg-white"
+                className="w-full touch-none bg-white cursor-crosshair"
                 onMouseDown={() => {
                   if (canvasReceptorRef.current && !firmandoReceptor) {
                     iniciarFirma(canvasReceptorRef.current)
@@ -414,15 +415,15 @@ function ColocarObleaContent() {
                 }}
               />
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-3 flex gap-2">
               <button
                 onClick={() => {
                   limpiarFirma(canvasReceptorRef.current)
                   setFirmaReceptor('')
                 }}
-                className="rounded-lg border-2 border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 active:bg-gray-100"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
               >
-                🗑️ Limpiar
+                Limpiar
               </button>
               <button
                 onClick={() => {
@@ -430,31 +431,27 @@ function ColocarObleaContent() {
                     setFirmaReceptor(canvasReceptorRef.current.toDataURL())
                   }
                 }}
-                className="rounded-lg bg-purple-600 px-4 py-2.5 text-sm font-semibold text-white active:bg-purple-700"
+                className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
               >
-                💾 Guardar
+                Guardar Firma
               </button>
             </div>
+            {firmaReceptor && (
+              <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+            )}
           </div>
 
           {/* Firma Inspector */}
           <div>
-            <div className="mb-2 flex items-center justify-between">
-              <label className="text-sm font-bold text-gray-700">
-                👮 Firma del Inspector
-              </label>
-              {firmaInspector && (
-                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-bold text-green-700">
-                  ✓ Guardada
-                </span>
-              )}
-            </div>
-            <div className="overflow-hidden rounded-xl border-2 border-dashed border-blue-300 bg-blue-50">
+            <label className="mb-2 block text-sm font-semibold text-gray-700">
+              Firma del Inspector
+            </label>
+            <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
               <canvas
                 ref={canvasInspectorRef}
                 width={600}
                 height={200}
-                className="w-full touch-none bg-white"
+                className="w-full touch-none bg-white cursor-crosshair"
                 onMouseDown={() => {
                   if (canvasInspectorRef.current && !firmandoInspector) {
                     iniciarFirma(canvasInspectorRef.current)
@@ -469,15 +466,15 @@ function ColocarObleaContent() {
                 }}
               />
             </div>
-            <div className="mt-2 grid grid-cols-2 gap-2">
+            <div className="mt-3 flex gap-2">
               <button
                 onClick={() => {
                   limpiarFirma(canvasInspectorRef.current)
                   setFirmaInspector('')
                 }}
-                className="rounded-lg border-2 border-gray-300 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 active:bg-gray-100"
+                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
               >
-                🗑️ Limpiar
+                Limpiar
               </button>
               <button
                 onClick={() => {
@@ -485,11 +482,14 @@ function ColocarObleaContent() {
                     setFirmaInspector(canvasInspectorRef.current.toDataURL())
                   }
                 }}
-                className="rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white active:bg-blue-700"
+                className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
               >
-                💾 Guardar
+                Guardar Firma
               </button>
             </div>
+            {firmaInspector && (
+              <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+            )}
           </div>
         </div>
 

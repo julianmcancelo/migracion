@@ -1,9 +1,12 @@
 import { SignJWT, jwtVerify } from 'jose'
 import { cookies } from 'next/headers'
 
-const secret = new TextEncoder().encode(
-  process.env.JWT_SECRET || 'fallback-secret-change-in-production'
-)
+// Validar que JWT_SECRET existe
+if (!process.env.JWT_SECRET) {
+  throw new Error('🔒 SEGURIDAD: JWT_SECRET no configurado. El sistema no puede iniciar.')
+}
+
+const secret = new TextEncoder().encode(process.env.JWT_SECRET)
 
 export type SessionData = {
   userId: number

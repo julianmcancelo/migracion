@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Plus, Bus, Car, FileCheck, Clock, CheckCircle2, AlertCircle } from 'lucide-react'
+import { Plus, Bus, Car, FileCheck, Clock, CheckCircle2, AlertCircle, Download } from 'lucide-react'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
@@ -11,6 +11,7 @@ import { SearchBar } from './_components/search-bar'
 import { HabilitacionesTable } from './_components/habilitaciones-table'
 import { Pagination } from './_components/pagination'
 import { NuevaHabilitacionDialog } from './_components/nueva-habilitacion-dialog'
+import { VencimientosAlert } from './_components/vencimientos-alert'
 
 type TipoTransporte = 'Escolar' | 'Remis'
 
@@ -114,6 +115,20 @@ export default function HabilitacionesPage() {
     cargarHabilitaciones()
   }
 
+  const handleExport = async () => {
+    try {
+      const params = new URLSearchParams({
+        tipo: tipoActivo,
+        buscar: busqueda,
+      })
+
+      // Abrir en nueva pestaña para descargar
+      window.open(`/api/habilitaciones/export?${params.toString()}`, '_blank')
+    } catch (error) {
+      console.error('Error al exportar:', error)
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header Minimalista */}
@@ -122,11 +137,20 @@ export default function HabilitacionesPage() {
           <h1 className="text-2xl font-bold text-slate-900">Habilitaciones</h1>
           <p className="text-sm text-slate-600 mt-1">Gestión de transporte</p>
         </div>
-        <Button onClick={() => setModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
-          <Plus className="mr-2 h-4 w-4" />
-          Nueva
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleExport}>
+            <Download className="mr-2 h-4 w-4" />
+            Exportar
+          </Button>
+          <Button onClick={() => setModalOpen(true)} className="bg-blue-600 hover:bg-blue-700">
+            <Plus className="mr-2 h-4 w-4" />
+            Nueva
+          </Button>
+        </div>
       </div>
+
+      {/* Alertas de Vencimiento */}
+      <VencimientosAlert />
 
       {/* Stats Minimalistas */}
       <div className="grid grid-cols-4 gap-4">
@@ -201,7 +225,7 @@ export default function HabilitacionesPage() {
             </TabsList>
 
             <div className="flex-1 max-w-md">
-              <SearchBar 
+              <SearchBar
                 onSearch={handleSearch}
                 placeholder="Buscar por licencia, DNI, nombre, dominio..."
               />

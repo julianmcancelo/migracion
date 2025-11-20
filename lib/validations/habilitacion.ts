@@ -47,8 +47,8 @@ export const habilitacionSchema = z.object({
   oblea_colocada: z.boolean().default(false),
 
   // Relaciones
-  personas: z.array(personaHabilitacionSchema).min(1, 'Debe agregar al menos una persona'),
-  vehiculos: z.array(vehiculoHabilitacionSchema).min(1, 'Debe agregar al menos un vehículo'),
+  personas: z.array(personaHabilitacionSchema).optional().default([]),
+  vehiculos: z.array(vehiculoHabilitacionSchema).optional().default([]),
   establecimientos: z.array(establecimientoHabilitacionSchema).optional(),
 })
 
