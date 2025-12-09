@@ -64,9 +64,10 @@ export async function GET(
 
     // Generar PDF
     const pdfBuffer = await generarPDF(habilitacion)
+    const pdfBytes = new Uint8Array(pdfBuffer)
 
     // Retornar PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBytes, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `inline; filename="Habilitacion-${habilitacion.nro_licencia || habilitacion.id}.pdf"`,
