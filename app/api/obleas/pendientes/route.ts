@@ -3,17 +3,18 @@ import prisma from '@/lib/db';
 
 /**
  * GET /api/obleas/pendientes
- * Obtiene las habilitaciones que necesitan colocación de oblea
- * (habilitaciones aprobadas sin oblea colocada)
+ * Obtiene las habilitaciones relevantes para el inspector móvil
+ * (habilitaciones HABILITADO o EN_TRAMITE, con o sin oblea colocada)
  */
 export async function GET(request: NextRequest) {
   try {
-    // Obtener habilitaciones HABILITADAS que NO tienen oblea colocada
+    // Obtener habilitaciones HABILITADAS o EN_TRAMITE, independientemente de si tienen oblea
     const habilitacionesSinOblea = await prisma.habilitaciones_generales.findMany({
       where: {
-        estado: 'HABILITADO',
+        estado: {
+          in: ['HABILITADO', 'EN_TRAMITE'],
+        },
         is_deleted: false,
-        oblea_colocada: false, // Solo las que NO tienen oblea colocada
       },
       orderBy: {
         id: 'desc',
