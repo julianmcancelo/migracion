@@ -124,7 +124,7 @@ export async function POST(
 
       return {
         vehiculo_anterior: vehiculoActual?.vehiculo,
-        vehiculo_nuevo: nuevoVinculo.vehiculo,
+        vehiculo_nuevo: nuevoVehiculo,
       }
     })
 
