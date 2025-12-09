@@ -233,31 +233,31 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
   }
 
   const getEstadoBadge = (estado: string | null) => {
-    const estados: Record<string, { className: string; label: string }> = {
+    const estados: Record<string, { variant: 'success' | 'warning' | 'danger' | 'info' | 'secondary'; label: string }> = {
       HABILITADO: {
-        className: 'bg-green-100 text-green-700 border-green-200',
+        variant: 'success',
         label: 'Habilitado',
       },
       EN_TRAMITE: {
-        className: 'bg-yellow-100 text-yellow-700 border-yellow-200',
+        variant: 'warning',
         label: 'En Trámite',
       },
       NO_HABILITADO: {
-        className: 'bg-red-100 text-red-700 border-red-200',
+        variant: 'danger',
         label: 'No Habilitado',
       },
       INICIADO: {
-        className: 'bg-blue-100 text-blue-700 border-blue-200',
+        variant: 'info',
         label: 'Iniciado',
       },
     }
 
     const config = estados[estado || ''] || {
-      className: 'bg-slate-100 text-slate-700 border-slate-200',
+      variant: 'secondary',
       label: estado || 'N/A',
     }
     return (
-      <Badge className={`${config.className} border text-xs font-medium`}>
+      <Badge variant={config.variant} className="text-xs font-medium">
         {config.label}
       </Badge>
     )
