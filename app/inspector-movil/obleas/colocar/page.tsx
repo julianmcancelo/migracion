@@ -23,6 +23,7 @@ function ColocarObleaContent() {
   const router = useRouter()
   const canvasReceptorRef = useRef<HTMLCanvasElement>(null)
   const canvasInspectorRef = useRef<HTMLCanvasElement>(null)
+  const inputFileRef = useRef<HTMLInputElement | null>(null)
 
   const [habilitacionId] = useState(searchParams.get('id'))
   const [habilitacion, setHabilitacion] = useState<Habilitacion | null>(null)
@@ -78,52 +79,50 @@ function ColocarObleaContent() {
     }
   }
 
-  const capturarFoto = () => {
-    const input = document.createElement('input')
-    input.type = 'file'
-    input.accept = 'image/*'
-    input.capture = 'environment' as any
+  const procesarArchivoImagen = (file: File) => {
+    const reader = new FileReader()
+    reader.onload = event => {
+      const img = new Image()
+      img.onload = () => {
+        const canvas = document.createElement('canvas')
+        const ctx = canvas.getContext('2d')
 
-    input.onchange = (e: any) => {
-      const file = e.target.files[0]
-      if (file) {
-        // Comprimir imagen para móviles
-        const reader = new FileReader()
-        reader.onload = event => {
-          const img = new Image()
-          img.onload = () => {
-            const canvas = document.createElement('canvas')
-            const ctx = canvas.getContext('2d')
-            
-            // Redimensionar si es muy grande
-            let width = img.width
-            let height = img.height
-            const maxSize = 1200
-            
-            if (width > maxSize || height > maxSize) {
-              if (width > height) {
-                height = (height / width) * maxSize
-                width = maxSize
-              } else {
-                width = (width / height) * maxSize
-                height = maxSize
-              }
-            }
-            
-            canvas.width = width
-            canvas.height = height
-            ctx?.drawImage(img, 0, 0, width, height)
-            
-            // Comprimir a 80% calidad
-            setFotoOblea(canvas.toDataURL('image/jpeg', 0.8))
+        // Redimensionar si es muy grande
+        let width = img.width
+        let height = img.height
+        const maxSize = 1200
+
+        if (width > maxSize || height > maxSize) {
+          if (width > height) {
+            height = (height / width) * maxSize
+            width = maxSize
+          } else {
+            width = (width / height) * maxSize
+            height = maxSize
           }
-          img.src = event.target?.result as string
         }
-        reader.readAsDataURL(file)
-      }
-    }
 
-    input.click()
+        canvas.width = width
+        canvas.height = height
+        ctx?.drawImage(img, 0, 0, width, height)
+
+        // Comprimir a 80% calidad
+        setFotoOblea(canvas.toDataURL('image/jpeg', 0.8))
+      }
+      img.src = event.target?.result as string
+    }
+    reader.readAsDataURL(file)
+  }
+
+  const handleFileChange = (e: any) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      procesarArchivoImagen(file)
+    }
+  }
+
+  const capturarFoto = () => {
+    inputFileRef.current?.click()
   }
 
   const iniciarFirma = (canvas: HTMLCanvasElement) => {
