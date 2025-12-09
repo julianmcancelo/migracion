@@ -108,9 +108,10 @@ export async function GET(
 
     // Generar PDF
     const pdfBuffer = await generarCertificadoPDF(datos)
+    const pdfBytes = new Uint8Array(pdfBuffer)
 
     // Retornar PDF
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBytes, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="certificado-${habilitacion.nro_licencia}-${Date.now()}.pdf"`,
