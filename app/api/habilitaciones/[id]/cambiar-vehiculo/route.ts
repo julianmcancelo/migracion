@@ -114,9 +114,9 @@ export async function POST(
           }) : null,
           datos_nuevos: JSON.stringify({
             vehiculo_id: nuevoVinculo.vehiculo_id,
-            dominio: nuevoVinculo.vehiculo.dominio,
-            marca: nuevoVinculo.vehiculo.marca,
-            modelo: nuevoVinculo.vehiculo.modelo,
+            dominio: nuevoVehiculo.dominio,
+            marca: nuevoVehiculo.marca,
+            modelo: nuevoVehiculo.modelo,
           }),
           observaciones: observaciones || 'Cambio de material rodante',
         },
