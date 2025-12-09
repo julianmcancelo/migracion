@@ -315,8 +315,11 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       margin: { left: 15, right: 15 },
     })
 
-    //  - autoTable modifica la instancia
-    yPos = doc.lastAutoTable.finalY + 5
+    //  - autoTable modifica la instancia (propiedad agregada por el plugin)
+    const lastTable: any = (doc as any).lastAutoTable
+    if (lastTable && typeof lastTable.finalY === 'number') {
+      yPos = lastTable.finalY + 5
+    }
 
     // ==================== FIRMAS ====================
     // Título de sección
