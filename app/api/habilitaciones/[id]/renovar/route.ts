@@ -120,16 +120,23 @@ export async function POST(
         data: personasData,
       })
     } else if (!copiarTitular && nuevoTitular) {
-      // Crear nueva persona
+      // Crear nueva persona (usar mismo formato que /api/personas)
+      const nombreCompleto = nuevoTitular.apellido
+        ? `${nuevoTitular.apellido}, ${nuevoTitular.nombre}`
+        : nuevoTitular.nombre
+
       const nuevaPersona = await prisma.personas.create({
         data: {
-          nombre: nuevoTitular.nombre,
-          apellido: nuevoTitular.apellido,
+          nombre: nombreCompleto,
           dni: nuevoTitular.dni,
-          fecha_nacimiento: nuevoTitular.fecha_nacimiento || null,
-          domicilio: nuevoTitular.domicilio || null,
+          genero: nuevoTitular.genero || null,
+          cuit: nuevoTitular.cuit || null,
           telefono: nuevoTitular.telefono || null,
           email: nuevoTitular.email || null,
+          domicilio_calle: nuevoTitular.domicilio_calle || null,
+          domicilio_nro: nuevoTitular.domicilio_nro || null,
+          domicilio_localidad: nuevoTitular.domicilio_localidad || null,
+          domicilio: 0,
         },
       })
 
@@ -168,7 +175,7 @@ export async function POST(
           dominio: nuevoVehiculo.dominio,
           marca: nuevoVehiculo.marca || null,
           modelo: nuevoVehiculo.modelo || null,
-          anio: nuevoVehiculo.anio || null,
+          ano: nuevoVehiculo.ano || null,
           tipo: nuevoVehiculo.tipo || null,
           chasis: nuevoVehiculo.chasis || null,
           motor: nuevoVehiculo.motor || null,
