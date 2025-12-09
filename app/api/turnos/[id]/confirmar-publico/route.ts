@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
+import { notificarAdmins } from '@/lib/notificaciones'
 
 /**
  * POST /api/turnos/[id]/confirmar-publico
@@ -75,14 +76,17 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       })
     }
 
-    // Crear notificación para el sistema
-    await prisma.notificaciones.create({
-      data: {
-        dni_usuario: 'SISTEMA',
-        tipo: 'TURNO_CONFIRMADO',
-        titulo: `Turno confirmado - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
-        texto: `El titular ha confirmado su asistencia al turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. Inspección creada automáticamente.`,
-        leida: false,
+    // Crear notificación para administradores
+    await notificarAdmins({
+      tipo: 'TURNO_CONFIRMADO',
+      titulo: `Turno confirmado - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
+      mensaje: `El titular ha confirmado su asistencia al turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. Inspección creada automáticamente.`,
+      icono: '✅',
+      url: `/turnos/${turnoId}`,
+      metadata: {
+        turnoId,
+        habilitacion_id: turno.habilitacion_id,
+        fecha: turno.fecha,
       },
     })
 

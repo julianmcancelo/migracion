@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 import nodemailer from 'nodemailer'
+import { notificarAdmins } from '@/lib/notificaciones'
 
 /**
  * POST /api/turnos/[id]/reprogramar-publico
@@ -56,14 +57,18 @@ export async function POST(request: Request, context: { params: Promise<{ id: st
       },
     })
 
-    // Crear notificación para el sistema
-    await prisma.notificaciones.create({
-      data: {
-        dni_usuario: 'SISTEMA',
-        tipo: 'TURNO_REPROGRAMAR',
-        titulo: `Reprogramación - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
-        texto: `Solicitud de reprogramación del turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. ${observaciones ? `Motivo: ${observaciones}` : 'Sin motivo especificado'}`,
-        leida: false,
+    // Crear notificación para administradores
+    await notificarAdmins({
+      tipo: 'TURNO_REPROGRAMAR',
+      titulo: `Reprogramación - Lic. ${turno.habilitacion?.nro_licencia || turnoId}`,
+      mensaje: `Solicitud de reprogramación del turno del ${new Date(turno.fecha).toLocaleDateString('es-AR')}. ${observaciones ? `Motivo: ${observaciones}` : 'Sin motivo especificado'}`,
+      icono: '📅',
+      url: `/turnos/${turnoId}`,
+      metadata: {
+        turnoId,
+        habilitacion_id: turno.habilitacion_id,
+        fecha: turno.fecha,
+        observaciones,
       },
     })
 
