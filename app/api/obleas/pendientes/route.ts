@@ -8,6 +8,10 @@ import prisma from '@/lib/db';
  */
 export async function GET(request: NextRequest) {
   try {
+    const searchParams = request.nextUrl.searchParams;
+    const limiteParam = searchParams.get('limite');
+    const limite = limiteParam ? parseInt(limiteParam) || 100 : 100;
+
     // Obtener habilitaciones HABILITADAS o EN_TRAMITE, independientemente de si tienen oblea
     const habilitacionesSinOblea = await prisma.habilitaciones_generales.findMany({
       where: {
@@ -19,7 +23,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         id: 'desc',
       },
-      take: 100, // Limitar a 100 resultados
+      take: limite, // Limitar resultados
     });
 
     // Obtener datos relacionados manualmente

@@ -42,43 +42,41 @@ export default function ObleasPage() {
     setLoading(true)
 
     try {
-      // Cargar habilitaciones con obleas desde el endpoint específico
-      // Aumentamos el límite para obtener todas las obleas
-      const response = await fetch('/api/obleas?limite=500')
+      // Cargar habilitaciones relevantes para certificados desde el endpoint de pendientes
+      const response = await fetch('/api/obleas/pendientes?limite=500')
       const data = await response.json()
 
-      console.log('📊 Datos de obleas recibidos:', data)
+      console.log('📊 Datos de habilitaciones para certificados recibidos:', data)
       console.log('📊 data.success:', data.success)
       console.log('📊 data.data length:', data.data?.length)
       console.log('📊 Primera oblea:', data.data?.[0])
 
-      if (data.success && data.data) {
-        // Mapear los datos de obleas a formato de habilitación
-        const habilitacionesConObleas = data.data.map((oblea: any) => ({
-          id: oblea.habilitacion_id,
-          nro_licencia: oblea.nro_licencia,
-          tipo_transporte: oblea.tipo_transporte || 'N/A',
-          estado: oblea.estado_habilitacion || 'N/A',
-          titular_nombre: oblea.titular || 'Sin titular',
-          titular_dni: oblea.titular_dni || 'N/A',
-          vehiculo_dominio: oblea.vehiculo_dominio || 'N/A',
-          vehiculo_marca: oblea.vehiculo_marca || '',
-          vehiculo_modelo: oblea.vehiculo_modelo || '',
-          vigencia_fin: oblea.vigencia_fin || 'N/A',
-          fecha_colocacion: oblea.fecha_solicitud,
+      if (data.status === 'success' && data.data) {
+        // Mapear los datos de habilitaciones (pendientes) al formato de la pantalla
+        const habilitaciones = data.data.map((hab: any) => ({
+          id: hab.id,
+          nro_licencia: hab.nro_licencia || 'S/N',
+          tipo_transporte: hab.tipo_transporte || 'N/A',
+          estado: hab.estado || 'N/A',
+          titular_nombre: hab.titular?.nombre || 'Sin titular',
+          titular_dni: hab.titular?.dni || 'N/A',
+          vehiculo_dominio: hab.vehiculo?.dominio || 'N/A',
+          vehiculo_marca: hab.vehiculo?.marca || '',
+          vehiculo_modelo: hab.vehiculo?.modelo || '',
+          vigencia_fin: hab.vigencia_fin || 'N/A',
         }))
 
-        console.log('✅ Habilitaciones con obleas:', habilitacionesConObleas.length)
-        setTodasHabilitaciones(habilitacionesConObleas)
-        setHabilitacionesFiltradas(habilitacionesConObleas)
+        console.log('✅ Habilitaciones cargadas para certificados:', habilitaciones.length)
+        setTodasHabilitaciones(habilitaciones)
+        setHabilitacionesFiltradas(habilitaciones)
       } else {
-        console.warn('⚠️ No se encontraron obleas')
+        console.warn('⚠️ No se encontraron habilitaciones para certificados')
         setTodasHabilitaciones([])
         setHabilitacionesFiltradas([])
       }
     } catch (error) {
-      console.error('❌ Error al cargar habilitaciones con obleas:', error)
-      alert('Error al cargar habilitaciones con obleas')
+      console.error('❌ Error al cargar habilitaciones para certificados:', error)
+      alert('Error al cargar habilitaciones para certificados')
     } finally {
       setLoading(false)
     }
