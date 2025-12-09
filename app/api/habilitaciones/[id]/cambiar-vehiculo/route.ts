@@ -60,7 +60,7 @@ export async function POST(
     }
 
     // Ejecutar cambio en transacción
-    const resultado = await prisma.$transaction(async (tx) => {
+    const resultado = await prisma.$transaction(async (tx: any) => {
       // 1. Obtener el vehículo actual activo
       const vehiculoActual = await tx.habilitaciones_vehiculos.findFirst({
         where: {
@@ -196,8 +196,8 @@ export async function GET(
     })
 
     // Separar vehículo actual vs historial
-    const vehiculoActual = historial.find((h) => h.activo)
-    const vehiculosHistoricos = historial.filter((h) => !h.activo)
+    const vehiculoActual = historial.find((h: any) => h.activo)
+    const vehiculosHistoricos = historial.filter((h: any) => !h.activo)
 
     return NextResponse.json({
       success: true,
@@ -213,7 +213,7 @@ export async function GET(
               observaciones: vehiculoActual.observaciones_cambio,
             }
           : null,
-        historial: vehiculosHistoricos.map((h) => ({
+        historial: vehiculosHistoricos.map((h: any) => ({
           id: h.id,
           vehiculo_id: h.vehiculo_id,
           dominio: h.vehiculo?.dominio,
