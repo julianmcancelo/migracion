@@ -93,8 +93,9 @@ export async function POST(request: NextRequest) {
 
     // Generar ZIP
     const zipBuffer = await zip.generateAsync({ type: 'nodebuffer' })
+    const zipArray = new Uint8Array(zipBuffer)
 
-    return new NextResponse(zipBuffer, {
+    return new NextResponse(zipArray, {
       headers: {
         'Content-Type': 'application/zip',
         'Content-Disposition': `attachment; filename="paradas_divididas_${chunks.length}_archivos.zip"`,
