@@ -96,7 +96,9 @@ export async function GET(
     const pdfBuffer = await generarPDFVerificacion(datos)
 
     // Retornar PDF
-    return new NextResponse(pdfBuffer, {
+    const pdfArray = new Uint8Array(pdfBuffer)
+
+    return new NextResponse(pdfArray, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': `attachment; filename="verificacion-${habilitacion.nro_licencia}-${Date.now()}.pdf"`,
