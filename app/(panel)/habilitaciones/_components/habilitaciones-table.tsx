@@ -449,7 +449,7 @@ export function HabilitacionesTable({ habilitaciones, loading = false }: Habilit
                             Cambio de Material
                           </DropdownMenuItem>
                         )}
-                        {hab.estado === 'HABILITADO' && (
+                        {(hab.estado === 'HABILITADO' || hab.estado === 'Habilitado' || hab.estado === 'habilitado') && (
                           <DropdownMenuItem
                             onClick={() => handleGestionarObleas(hab)}
                             className="cursor-pointer"
