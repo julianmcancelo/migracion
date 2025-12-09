@@ -1,4 +1,4 @@
-# 🚀 Migración a Next.js - Sistema de Gestión de Transporte
+# Migración a Next.js - Sistema de Gestión de Transporte
 
 Prueba de concepto de migración del sistema PHP a Next.js 14 con TypeScript, Prisma y MySQL.
 
