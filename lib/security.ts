@@ -4,6 +4,8 @@
  */
 
 import { z } from 'zod'
+import crypto from 'crypto'
+import bcrypt from 'bcryptjs'
 
 /**
  * Validación de archivos subidos
@@ -281,7 +283,6 @@ export function isAllowedOrigin(origin: string | null): boolean {
  * Generar token seguro
  */
 export function generateSecureToken(length: number = 32): string {
-  const crypto = require('crypto')
   return crypto.randomBytes(length).toString('hex')
 }
 
@@ -289,7 +290,6 @@ export function generateSecureToken(length: number = 32): string {
  * Hash de password (wrapper de bcrypt)
  */
 export async function hashPassword(password: string): Promise<string> {
-  const bcrypt = require('bcryptjs')
   return bcrypt.hash(password, 10)
 }
 
@@ -297,7 +297,6 @@ export async function hashPassword(password: string): Promise<string> {
  * Verificar password
  */
 export async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  const bcrypt = require('bcryptjs')
   return bcrypt.compare(password, hash)
 }
 
