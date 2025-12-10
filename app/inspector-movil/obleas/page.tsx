@@ -164,6 +164,9 @@ export default function ObleasPage() {
     return { escolar, remis, total: obleas.length };
   };
 
+  const pendientes = obleasFiltradas.filter(o => !o.oblea_colocada);
+  const colocadas = obleasFiltradas.filter(o => o.oblea_colocada);
+
   const stats = contarPorTipo();
 
   return (
@@ -297,161 +300,283 @@ export default function ObleasPage() {
             </p>
           </div>
 
-          {/* Lista de obleas */}
-          <div className="px-4 pb-4 space-y-3">
-            {obleasFiltradas.map((oblea) => (
-              <button
-                key={oblea.id}
-                onClick={() => handleSelectOblea(oblea)}
-                className="w-full bg-white rounded-2xl shadow-lg border-2 border-gray-100 overflow-hidden active:scale-[0.97] transition-all hover:shadow-xl hover:border-[#0093D2]/30"
-              >
-                {/* Header con tipo y estado */}
-                <div className={`px-4 py-3 flex items-center justify-between ${
-                  oblea.tipo_transporte === 'Escolar' 
-                    ? 'bg-gradient-to-r from-orange-500 to-orange-600' 
-                    : 'bg-gradient-to-r from-[#0093D2] to-[#007AB8]'
-                }`}>
-                  <div className="flex items-center gap-2 text-white">
-                    {oblea.tipo_transporte === 'Escolar' ? (
-                      <div className="bg-white/20 rounded-full p-1.5">
-                        <Bus className="h-4 w-4" />
-                      </div>
-                    ) : (
-                      <div className="bg-white/20 rounded-full p-1.5">
-                        <CarFront className="h-4 w-4" />
-                      </div>
-                    )}
-                    <div>
-                      <p className="text-sm font-bold">{oblea.tipo_transporte}</p>
-                      <p className="text-xs text-white/80">Lic. {oblea.nro_licencia}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
-                    <CheckCircle2 className="h-3.5 w-3.5 text-white" />
-                    <span className="text-xs font-bold text-white">
-                      {oblea.estado || 'Habilitado'}
-                    </span>
-                  </div>
+          {/* Lista de obleas separada por estado de oblea */}
+          <div className="px-4 pb-4 space-y-6">
+            {/* Pendientes de colocar */}
+            {pendientes.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
+                    Pendientes de colocar ({pendientes.length})
+                  </p>
                 </div>
 
-                <div className="p-4">
-                  {/* Número de Resolución */}
-                  {oblea.nro_resolucion && (
-                    <div className="mb-3 flex items-center justify-center">
-                      <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-2 border-emerald-300 rounded-lg px-4 py-2 shadow-sm">
-                        <p className="text-xs text-emerald-600 font-bold uppercase tracking-wide text-center">
-                          N° Resolución
-                        </p>
-                        <p className="text-lg font-black text-emerald-700 text-center">
-                          {oblea.nro_resolucion}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Dominio destacado con diseño mejorado */}
-                  <div className="mb-4 relative">
-                    <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl blur-sm opacity-50"></div>
-                    <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white text-2xl font-black px-5 py-3 rounded-xl tracking-[0.3em] shadow-xl border-2 border-gray-700">
-                      {oblea.vehiculo.dominio}
-                    </div>
-                  </div>
-
-                  {/* Información en grid */}
-                  <div className="grid grid-cols-1 gap-3 mb-4">
-                    {/* Titular */}
-                    <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl p-3 border border-blue-200/50">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white rounded-full p-2 shadow-sm">
-                          <User className="w-5 h-5 text-[#0093D2]" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-[#0093D2] font-bold uppercase tracking-wide">Titular</p>
-                          <p className="text-sm font-bold text-gray-900 truncate">
-                            {oblea.titular.nombre}
-                          </p>
-                          <p className="text-xs text-gray-600">DNI: {oblea.titular.dni}</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Vehículo */}
-                    <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl p-3 border border-purple-200/50">
-                      <div className="flex items-center gap-3">
-                        <div className="bg-white rounded-full p-2 shadow-sm">
-                          <Car className="w-5 h-5 text-purple-600" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs text-purple-600 font-bold uppercase tracking-wide">Vehículo</p>
-                          <p className="text-sm font-bold text-gray-900 truncate">
-                            {oblea.vehiculo.marca} {oblea.vehiculo.modelo}
-                          </p>
-                          {oblea.vehiculo.anio && (
-                            <p className="text-xs text-gray-600">Año: {oblea.vehiculo.anio}</p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Turno */}
-                    {oblea.turno && (
-                      <div className="bg-gradient-to-r from-green-50 to-green-100/50 rounded-xl p-3 border border-green-200/50">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-white rounded-full p-2 shadow-sm">
-                            <Clock className="w-5 h-5 text-green-600" />
+                {pendientes.map(oblea => (
+                  <button
+                    key={oblea.id}
+                    onClick={() => handleSelectOblea(oblea)}
+                    className="w-full bg-white rounded-2xl shadow-lg border-2 border-gray-100 overflow-hidden active:scale-[0.97] transition-all hover:shadow-xl hover:border-[#0093D2]/30"
+                  >
+                    {/* Header con tipo y estado */}
+                    <div
+                      className={`px-4 py-3 flex items-center justify-between ${
+                        oblea.tipo_transporte === 'Escolar'
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600'
+                          : 'bg-gradient-to-r from-[#0093D2] to-[#007AB8]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 text-white">
+                        {oblea.tipo_transporte === 'Escolar' ? (
+                          <div className="bg-white/20 rounded-full p-1.5">
+                            <Bus className="h-4 w-4" />
                           </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-green-600 font-bold uppercase tracking-wide">Turno Programado</p>
-                            <p className="text-sm font-bold text-gray-900">
-                              {new Date(oblea.turno.fecha).toLocaleDateString('es-AR', { 
-                                day: '2-digit', 
-                                month: 'short', 
-                                year: 'numeric' 
-                              })}
-                            </p>
-                            <p className="text-xs text-gray-600">Hora: {oblea.turno.hora}</p>
+                        ) : (
+                          <div className="bg-white/20 rounded-full p-1.5">
+                            <CarFront className="h-4 w-4" />
                           </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-bold">{oblea.tipo_transporte}</p>
+                          <p className="text-xs text-white/80">Lic. {oblea.nro_licencia}</p>
                         </div>
                       </div>
-                    )}
-
-                    {/* Vigencia */}
-                    {oblea.vigencia_fin && (
-                      <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 rounded-xl p-3 border border-amber-200/50">
-                        <div className="flex items-center gap-3">
-                          <div className="bg-white rounded-full p-2 shadow-sm">
-                            <Calendar className="w-5 h-5 text-amber-600" />
-                          </div>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-xs text-amber-600 font-bold uppercase tracking-wide">Vigencia</p>
-                            <p className="text-sm font-bold text-gray-900">
-                              Hasta {new Date(oblea.vigencia_fin).toLocaleDateString('es-AR', { 
-                                day: '2-digit', 
-                                month: 'short', 
-                                year: 'numeric' 
-                              })}
-                            </p>
-                          </div>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Botón de acción mejorado */}
-                  <div className="mt-4">
-                    <div className="bg-gradient-to-r from-[#0093D2] to-[#007AB8] rounded-xl p-4 shadow-md">
-                      <div className="flex items-center justify-center gap-2 text-white font-bold">
-                        <Shield className="w-6 h-6" />
-                        <span className="text-base">
-                          {oblea.oblea_colocada ? 'Consultar Oblea' : 'Colocar Oblea'}
+                      <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                        <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                        <span className="text-xs font-bold text-white">
+                          {oblea.estado || 'Habilitado'}
                         </span>
-                        <ChevronRight className="w-6 h-6" />
                       </div>
                     </div>
-                  </div>
+
+                    <div className="p-4">
+                      {/* Número de Resolución */}
+                      {oblea.nro_resolucion && (
+                        <div className="mb-3 flex items-center justify-center">
+                          <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 border-2 border-emerald-300 rounded-lg px-4 py-2 shadow-sm">
+                            <p className="text-xs text-emerald-600 font-bold uppercase tracking-wide text-center">
+                              N° Resolución
+                            </p>
+                            <p className="text-lg font-black text-emerald-700 text-center">
+                              {oblea.nro_resolucion}
+                            </p>
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dominio destacado con diseño mejorado */}
+                      <div className="mb-4 relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-gray-800 to-gray-900 rounded-xl blur-sm opacity-50"></div>
+                        <div className="relative bg-gradient-to-r from-gray-900 to-gray-800 text-white text-2xl font-black px-5 py-3 rounded-xl tracking-[0.3em] shadow-xl border-2 border-gray-700">
+                          {oblea.vehiculo.dominio}
+                        </div>
+                      </div>
+
+                      {/* Información en grid */}
+                      <div className="grid grid-cols-1 gap-3 mb-4">
+                        {/* Titular */}
+                        <div className="bg-gradient-to-r from-blue-50 to-blue-100/50 rounded-xl p-3 border border-blue-200/50">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-white rounded-full p-2 shadow-sm">
+                              <User className="w-5 h-5 text-[#0093D2]" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-[#0093D2] font-bold uppercase tracking-wide">Titular</p>
+                              <p className="text-sm font-bold text-gray-900 truncate">
+                                {oblea.titular.nombre}
+                              </p>
+                              <p className="text-xs text-gray-600">DNI: {oblea.titular.dni}</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Vehículo */}
+                        <div className="bg-gradient-to-r from-purple-50 to-purple-100/50 rounded-xl p-3 border border-purple-200/50">
+                          <div className="flex items-center gap-3">
+                            <div className="bg-white rounded-full p-2 shadow-sm">
+                              <Car className="w-5 h-5 text-purple-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-xs text-purple-600 font-bold uppercase tracking-wide">Vehículo</p>
+                              <p className="text-sm font-bold text-gray-900 truncate">
+                                {oblea.vehiculo.marca} {oblea.vehiculo.modelo}
+                              </p>
+                              {oblea.vehiculo.anio && (
+                                <p className="text-xs text-gray-600">Año: {oblea.vehiculo.anio}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Turno */}
+                        {oblea.turno && (
+                          <div className="bg-gradient-to-r from-green-50 to-green-100/50 rounded-xl p-3 border border-green-200/50">
+                            <div className="flex items-center gap-3">
+                              <div className="bg-white rounded-full p-2 shadow-sm">
+                                <Clock className="w-5 h-5 text-green-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-green-600 font-bold uppercase tracking-wide">Turno Programado</p>
+                                <p className="text-sm font-bold text-gray-900">
+                                  {new Date(oblea.turno.fecha).toLocaleDateString('es-AR', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                  })}
+                                </p>
+                                <p className="text-xs text-gray-600">Hora: {oblea.turno.hora}</p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Vigencia */}
+                        {oblea.vigencia_fin && (
+                          <div className="bg-gradient-to-r from-amber-50 to-amber-100/50 rounded-xl p-3 border border-amber-200/50">
+                            <div className="flex items-center gap-3">
+                              <div className="bg-white rounded-full p-2 shadow-sm">
+                                <Calendar className="w-5 h-5 text-amber-600" />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-xs text-amber-600 font-bold uppercase tracking-wide">Vigencia</p>
+                                <p className="text-sm font-bold text-gray-900">
+                                  Hasta {new Date(oblea.vigencia_fin).toLocaleDateString('es-AR', {
+                                    day: '2-digit',
+                                    month: 'short',
+                                    year: 'numeric',
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Botón de acción mejorado */}
+                      <div className="mt-4">
+                        <div className="bg-gradient-to-r from-[#0093D2] to-[#007AB8] rounded-xl p-4 shadow-md">
+                          <div className="flex items-center justify-center gap-2 text-white font-bold">
+                            <Shield className="w-6 h-6" />
+                            <span className="text-base">
+                              {oblea.oblea_colocada ? 'Consultar Oblea' : 'Colocar Oblea'}
+                            </span>
+                            <ChevronRight className="w-6 h-6" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            {/* Obleas ya colocadas */}
+            {colocadas.length > 0 && (
+              <div className="space-y-3">
+                <div className="flex items-center justify-between px-1">
+                  <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">
+                    Obleas colocadas ({colocadas.length})
+                  </p>
                 </div>
-              </button>
-            ))}
+
+                {colocadas.map(oblea => (
+                  <button
+                    key={oblea.id}
+                    onClick={() => handleSelectOblea(oblea)}
+                    className="w-full bg-white rounded-2xl shadow-lg border-2 border-emerald-100 overflow-hidden active:scale-[0.97] transition-all hover:shadow-xl hover:border-emerald-300/80"
+                  >
+                    {/* Header con tipo y estado */}
+                    <div
+                      className={`px-4 py-3 flex items-center justify-between ${
+                        oblea.tipo_transporte === 'Escolar'
+                          ? 'bg-gradient-to-r from-orange-500 to-orange-600'
+                          : 'bg-gradient-to-r from-[#0093D2] to-[#007AB8]'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2 text-white">
+                        {oblea.tipo_transporte === 'Escolar' ? (
+                          <div className="bg-white/20 rounded-full p-1.5">
+                            <Bus className="h-4 w-4" />
+                          </div>
+                        ) : (
+                          <div className="bg-white/20 rounded-full p-1.5">
+                            <CarFront className="h-4 w-4" />
+                          </div>
+                        )}
+                        <div>
+                          <p className="text-sm font-bold">{oblea.tipo_transporte}</p>
+                          <p className="text-xs text-white/80">Lic. {oblea.nro_licencia}</p>
+                        </div>
+                      </div>
+                      <div className="flex flex-col items-end gap-1">
+                        <div className="flex items-center gap-1.5 bg-white/20 backdrop-blur-sm rounded-full px-3 py-1.5">
+                          <CheckCircle2 className="h-3.5 w-3.5 text-white" />
+                          <span className="text-xs font-bold text-white">
+                            {oblea.estado || 'Habilitado'}
+                          </span>
+                        </div>
+                        <span className="mt-1 inline-flex items-center rounded-full bg-emerald-100/90 px-2.5 py-0.5 text-[10px] font-semibold text-emerald-800 uppercase tracking-wide">
+                          Oblea colocada
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="p-4">
+                      {/* Dominio destacado */}
+                      <div className="mb-3 relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-emerald-800 to-emerald-900 rounded-xl blur-sm opacity-40"></div>
+                        <div className="relative bg-gradient-to-r from-emerald-900 to-emerald-800 text-white text-xl font-black px-5 py-2.5 rounded-xl tracking-[0.25em] shadow-xl border-2 border-emerald-600/80">
+                          {oblea.vehiculo.dominio}
+                        </div>
+                      </div>
+
+                      {/* Titular + vehículo resumidos */}
+                      <div className="space-y-2 mb-3">
+                        <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Titular</p>
+                        <p className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                          <User className="w-4 h-4 text-emerald-600" />
+                          <span className="truncate">{oblea.titular.nombre}</span>
+                        </p>
+                        <p className="text-xs text-gray-600">DNI: {oblea.titular.dni}</p>
+
+                        <p className="mt-3 text-xs font-semibold text-gray-500 uppercase tracking-wide">Vehículo</p>
+                        <p className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                          <Car className="w-4 h-4 text-emerald-600" />
+                          <span className="truncate">{oblea.vehiculo.marca} {oblea.vehiculo.modelo}</span>
+                        </p>
+                      </div>
+
+                      {/* Vigencia corta si existe */}
+                      {oblea.vigencia_fin && (
+                        <div className="flex items-center gap-2 text-xs text-gray-600 bg-emerald-50 border border-emerald-100 rounded-lg px-3 py-2">
+                          <Calendar className="w-4 h-4 text-emerald-600" />
+                          <span>
+                            Vigente hasta{' '}
+                            <span className="font-semibold text-emerald-700">
+                              {new Date(oblea.vigencia_fin).toLocaleDateString('es-AR', {
+                                day: '2-digit',
+                                month: 'short',
+                                year: 'numeric',
+                              })}
+                            </span>
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Botón de acción: siempre consultar */}
+                      <div className="mt-4">
+                        <div className="bg-gradient-to-r from-emerald-500 to-emerald-600 rounded-xl p-4 shadow-md">
+                          <div className="flex items-center justify-center gap-2 text-white font-bold">
+                            <Shield className="w-6 h-6" />
+                            <span className="text-base">Consultar Oblea</span>
+                            <ChevronRight className="w-6 h-6" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </>
       )}
