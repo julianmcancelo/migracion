@@ -25,6 +25,7 @@ interface Oblea {
   nro_resolucion: string | null;
   tipo_transporte: string;
   estado: string;
+  oblea_colocada?: boolean;
   vigencia_inicio: string | null;
   vigencia_fin: string | null;
   titular: {
@@ -62,8 +63,13 @@ export default function ObleasPage() {
       const result = await response.json();
 
       if (result.status === 'success') {
-        setObleas(result.data || []);
-        setObleasFiltradas(result.data || []);
+        const dataConFlag = (result.data || []).map((o: any) => ({
+          ...o,
+          oblea_colocada: Boolean(o.oblea_colocada),
+        }));
+
+        setObleas(dataConFlag);
+        setObleasFiltradas(dataConFlag);
       } else {
         throw new Error(result.message || 'Error al cargar obleas');
       }
@@ -436,7 +442,9 @@ export default function ObleasPage() {
                     <div className="bg-gradient-to-r from-[#0093D2] to-[#007AB8] rounded-xl p-4 shadow-md">
                       <div className="flex items-center justify-center gap-2 text-white font-bold">
                         <Shield className="w-6 h-6" />
-                        <span className="text-base">Colocar Oblea</span>
+                        <span className="text-base">
+                          {oblea.oblea_colocada ? 'Consultar Oblea' : 'Colocar Oblea'}
+                        </span>
                         <ChevronRight className="w-6 h-6" />
                       </div>
                     </div>
