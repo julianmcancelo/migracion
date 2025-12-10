@@ -54,6 +54,7 @@ export default function ObleasPage() {
   const [busqueda, setBusqueda] = useState('');
   const [filtroTipo, setFiltroTipo] = useState<'TODOS' | 'Escolar' | 'Remis'>('TODOS');
   const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [tabActiva, setTabActiva] = useState<'PENDIENTES' | 'COLOCADAS'>('PENDIENTES');
 
   const fetchObleas = async () => {
     setIsLoading(true);
@@ -180,7 +181,7 @@ export default function ObleasPage() {
                 <Shield className="h-6 w-6" />
               </div>
               <div>
-                <h1 className="text-xl font-bold">Obleas Pendientes</h1>
+                <h1 className="text-xl font-bold">Obleas</h1>
                 <p className="text-xs text-blue-100">{stats.total} habilitaciones</p>
               </div>
             </div>
@@ -193,7 +194,7 @@ export default function ObleasPage() {
           </div>
 
           {/* Estadísticas rápidas */}
-          <div className="grid grid-cols-3 gap-2">
+          <div className="grid grid-cols-3 gap-2 mb-3">
             <button
               onClick={() => setFiltroTipo('TODOS')}
               className={`rounded-lg p-2 transition-all ${
@@ -226,6 +227,32 @@ export default function ObleasPage() {
             >
               <p className="text-xs font-medium">Remis</p>
               <p className="text-lg font-bold">{stats.remis}</p>
+            </button>
+          </div>
+
+          {/* Solapas Pendientes / Colocadas */}
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setTabActiva('PENDIENTES')}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold flex items-center justify-center gap-1 border transition-all ${
+                tabActiva === 'PENDIENTES'
+                  ? 'bg-white text-[#0093D2] border-white shadow-sm'
+                  : 'bg-white/10 text-blue-100 border-white/20'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-300" />
+              Pendientes ({pendientes.length})
+            </button>
+            <button
+              onClick={() => setTabActiva('COLOCADAS')}
+              className={`rounded-full px-3 py-1.5 text-xs font-semibold flex items-center justify-center gap-1 border transition-all ${
+                tabActiva === 'COLOCADAS'
+                  ? 'bg-white text-emerald-700 border-white shadow-sm'
+                  : 'bg-white/10 text-blue-100 border-white/20'
+              }`}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-300" />
+              Colocadas ({colocadas.length})
             </button>
           </div>
         </div>
@@ -300,10 +327,10 @@ export default function ObleasPage() {
             </p>
           </div>
 
-          {/* Lista de obleas separada por estado de oblea */}
+          {/* Lista de obleas según solapa activa */}
           <div className="px-4 pb-4 space-y-6">
             {/* Pendientes de colocar */}
-            {pendientes.length > 0 && (
+            {tabActiva === 'PENDIENTES' && pendientes.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <p className="text-xs font-semibold text-amber-700 uppercase tracking-wide">
@@ -470,7 +497,7 @@ export default function ObleasPage() {
             )}
 
             {/* Obleas ya colocadas */}
-            {colocadas.length > 0 && (
+            {tabActiva === 'COLOCADAS' && colocadas.length > 0 && (
               <div className="space-y-3">
                 <div className="flex items-center justify-between px-1">
                   <p className="text-xs font-semibold text-emerald-700 uppercase tracking-wide">
