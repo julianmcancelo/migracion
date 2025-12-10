@@ -31,7 +31,8 @@ function ColocarObleaContent() {
   const router = useRouter()
   const canvasReceptorRef = useRef<HTMLCanvasElement>(null)
   const canvasInspectorRef = useRef<HTMLCanvasElement>(null)
-  const inputFileRef = useRef<HTMLInputElement | null>(null)
+  const inputFileCameraRef = useRef<HTMLInputElement | null>(null)
+  const inputFileGalleryRef = useRef<HTMLInputElement | null>(null)
 
   const [habilitacionId] = useState(searchParams.get('id'))
   const [habilitacion, setHabilitacion] = useState<Habilitacion | null>(null)
@@ -144,7 +145,11 @@ function ColocarObleaContent() {
   }
 
   const capturarFoto = () => {
-    inputFileRef.current?.click()
+    inputFileCameraRef.current?.click()
+  }
+
+  const seleccionarDesdeGaleria = () => {
+    inputFileGalleryRef.current?.click()
   }
 
   const iniciarFirma = (canvas: HTMLCanvasElement) => {
@@ -394,28 +399,48 @@ function ColocarObleaContent() {
                   <X className="h-5 w-5" />
                 </button>
                 <div className="absolute bottom-3 left-3 rounded-full bg-green-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
-                  ✓ Foto capturada
+                  ✓ Foto cargada
                 </div>
               </div>
             ) : (
-              <button
-                onClick={capturarFoto}
-                className="flex h-56 w-full items-center justify-center rounded-xl border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 active:from-blue-100 active:to-blue-200"
-              >
-                <div className="text-center">
-                  <div className="mx-auto mb-3 rounded-full bg-blue-500 p-4">
-                    <Camera className="h-8 w-8 text-white" />
+              <div className="space-y-3">
+                <button
+                  onClick={capturarFoto}
+                  className="flex h-40 w-full items-center justify-center rounded-xl border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 active:from-blue-100 active:to-blue-200"
+                >
+                  <div className="text-center">
+                    <div className="mx-auto mb-3 rounded-full bg-blue-500 p-4">
+                      <Camera className="h-8 w-8 text-white" />
+                    </div>
+                    <span className="text-base font-bold text-blue-700">Tomar foto con cámara</span>
+                    <p className="mt-1 text-xs text-blue-600">Usar la cámara del dispositivo</p>
                   </div>
-                  <span className="text-base font-bold text-blue-700">Tomar Foto</span>
-                  <p className="mt-1 text-xs text-blue-600">Presiona para abrir la cámara</p>
-                </div>
-              </button>
+                </button>
+                <button
+                  onClick={seleccionarDesdeGaleria}
+                  className="flex h-14 w-full items-center justify-center rounded-xl border border-dashed border-gray-300 bg-white active:bg-gray-50"
+                >
+                  <div className="text-center">
+                    <span className="text-sm font-semibold text-gray-800">Elegir foto desde galería</span>
+                    <p className="mt-0.5 text-[11px] text-gray-500">Seleccionar una imagen ya existente</p>
+                  </div>
+                </button>
+              </div>
             )}
+            {/* Input para cámara */}
             <input
-              ref={inputFileRef}
+              ref={inputFileCameraRef}
               type="file"
               accept="image/*"
               capture="environment"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+            {/* Input para galería (sin capture) */}
+            <input
+              ref={inputFileGalleryRef}
+              type="file"
+              accept="image/*"
               className="hidden"
               onChange={handleFileChange}
             />
