@@ -1,8 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { existsSync } from 'fs';
 
 /**
  * POST /api/obleas/colocar
@@ -43,57 +40,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Crear directorio para las fotos
-    const uploadDir = path.join(process.cwd(), 'public', 'uploads', 'obleas');
-    if (!existsSync(uploadDir)) {
-      await mkdir(uploadDir, { recursive: true });
-    }
-
-    const timestamp = Date.now();
-    const obleaFolder = `${nro_licencia}_${timestamp}`;
-    const obleaPath = path.join(uploadDir, obleaFolder);
-    await mkdir(obleaPath, { recursive: true });
-
-    // Función para guardar Base64
-    const saveBase64File = async (
-      base64Data: string,
-      filename: string
-    ): Promise<string> => {
-      if (!base64Data || base64Data === '') return '';
-
-      const matches = base64Data.match(/^data:([A-Za-z-+\\/]+);base64,(.+)$/);
-      if (!matches || matches.length !== 3) {
-        throw new Error('Formato Base64 inválido');
-      }
-
-      const base64Content = matches[2];
-      const buffer = Buffer.from(base64Content, 'base64');
-      const filePath = path.join(obleaPath, filename);
-
-      await writeFile(filePath, buffer);
-
-      return `/uploads/obleas/${obleaFolder}/${filename}`;
-    };
-
-    // Guardar archivos
-    const pathFoto = await saveBase64File(foto_oblea, `oblea_${timestamp}.png`);
-    const pathFirmaReceptor = firma_receptor
-      ? await saveBase64File(firma_receptor, `firma_receptor_${timestamp}.png`)
-      : '';
-    const pathFirmaInspector = firma_inspector
-      ? await saveBase64File(firma_inspector, `firma_inspector_${timestamp}.png`)
-      : '';
-
-    // Guardar en la base de datos
+    // Guardar en la base de datos directamente en base64 (data URL)
     const oblea = await prisma.obleas.create({
       data: {
         habilitacion_id: parseInt(habilitacion_id),
         nro_licencia,
         titular,
         fecha_colocacion: new Date(),
-        path_foto: pathFoto,
-        path_firma_receptor: pathFirmaReceptor,
-        path_firma_inspector: pathFirmaInspector,
+        // Se guardan directamente los data URL/base64 recibidos
+        path_foto: foto_oblea,
+        path_firma_receptor: firma_receptor || '',
+        path_firma_inspector: firma_inspector || '',
       },
     });
 
