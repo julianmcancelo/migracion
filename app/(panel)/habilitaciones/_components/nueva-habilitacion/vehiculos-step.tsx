@@ -34,6 +34,7 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
   const [vehiculoSeleccionado, setVehiculoSeleccionado] = useState<Vehiculo | null>(null)
   const [showOCR, setShowOCR] = useState(false)
   const [showRegistroModal, setShowRegistroModal] = useState(false)
+  const ocrEnabled = process.env.NEXT_PUBLIC_ENABLE_OCR === 'true'
   // Caché local para mantener información completa de vehículos agregados
   const [vehiculosCache, setVehiculosCache] = useState<Map<number, Vehiculo>>(new Map())
 
@@ -195,8 +196,8 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
       <div className="space-y-4 rounded-lg border bg-gray-50 p-4">
         <h4 className="font-medium">Agregar Vehículo</h4>
 
-        {/* Botón OCR */}
-        {!showOCR && (
+        {/* Botón OCR (opcional) */}
+        {ocrEnabled && !showOCR && (
           <div className="rounded-lg border border-blue-200 bg-blue-50 p-3">
             <div className="flex items-center justify-between">
               <div className="flex-1">
@@ -222,8 +223,8 @@ export function VehiculosStep({ vehiculos, onChange }: VehiculosStepProps) {
           </div>
         )}
 
-        {/* Componente OCR */}
-        {showOCR && (
+        {/* Componente OCR (opcional) */}
+        {ocrEnabled && showOCR && (
           <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-3">
             <div className="mb-2 flex items-center justify-between">
               <h5 className="text-sm font-semibold text-blue-900">Escanear Cédula Verde</h5>

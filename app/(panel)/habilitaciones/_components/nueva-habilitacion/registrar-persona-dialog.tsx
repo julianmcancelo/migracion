@@ -43,6 +43,7 @@ export function RegistrarPersonaDialog({
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [showOCR, setShowOCR] = useState(false)
+  const ocrEnabled = process.env.NEXT_PUBLIC_ENABLE_OCR === 'true'
 
   const [formData, setFormData] = useState<CrearPersonaInput>({
     nombre: '',
@@ -168,8 +169,8 @@ export function RegistrarPersonaDialog({
             </div>
           )}
 
-          {/* Botón para activar OCR */}
-          {!showOCR && (
+          {/* Botón para activar OCR (opcional) */}
+          {ocrEnabled && !showOCR && (
             <div className="rounded-lg border border-blue-200 bg-blue-50 p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -194,8 +195,8 @@ export function RegistrarPersonaDialog({
             </div>
           )}
 
-          {/* Componente OCR */}
-          {showOCR && (
+          {/* Componente OCR (opcional) */}
+          {ocrEnabled && showOCR && (
             <div className="rounded-lg border-2 border-blue-300 bg-blue-50 p-4">
               <div className="mb-3 flex items-center justify-between">
                 <h4 className="font-semibold text-blue-900">Escanear DNI con IA</h4>
