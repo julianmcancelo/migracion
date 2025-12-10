@@ -18,6 +18,14 @@ interface Habilitacion {
   vigencia_fin: string
 }
 
+interface ObleaDetalle {
+  id: number
+  fecha_colocacion: string
+  path_foto: string
+  path_firma_receptor: string | null
+  path_firma_inspector: string | null
+}
+
 function ColocarObleaContent() {
   const searchParams = useSearchParams()
   const router = useRouter()
@@ -28,6 +36,7 @@ function ColocarObleaContent() {
   const [habilitacionId] = useState(searchParams.get('id'))
   const [habilitacion, setHabilitacion] = useState<Habilitacion | null>(null)
   const [loading, setLoading] = useState(true)
+  const [obleaDetalle, setObleaDetalle] = useState<ObleaDetalle | null>(null)
   
   // Estados del formulario
   const [fotoOblea, setFotoOblea] = useState<string>('')
@@ -68,6 +77,19 @@ function ColocarObleaContent() {
           vehiculo_modelo: hab.habilitaciones_vehiculos?.[0]?.vehiculo?.modelo || '',
           vigencia_fin: hab.vigencia_fin || 'N/A',
         })
+
+        if (hab.oblea_colocada) {
+          try {
+            const detalleRes = await fetch(`/api/habilitaciones/${habilitacionId}/oblea-detalle`)
+            const detalleData = await detalleRes.json()
+
+            if (detalleRes.ok && detalleData.success) {
+              setObleaDetalle(detalleData.data)
+            }
+          } catch (e) {
+            console.error('Error al cargar detalle de oblea:', e)
+          }
+        }
       } else {
         alert('No se pudo cargar la habilitación')
       }
@@ -320,64 +342,87 @@ function ColocarObleaContent() {
           </div>
         </div>
 
-        {/* Foto de la Oblea - Mejorado */}
-        <div className="rounded-xl bg-white p-4 shadow-lg">
-          <div className="mb-3 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="rounded-full bg-blue-100 p-2">
-                <Camera className="h-5 w-5 text-blue-600" />
+        {/* Foto de la Oblea - Mejorado / Consulta */}
+        {obleaDetalle ? (
+          <div className="rounded-xl bg-white p-4 shadow-lg">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="rounded-full bg-blue-100 p-2">
+                  <Camera className="h-5 w-5 text-blue-600" />
+                </div>
+                <h2 className="text-base font-bold text-gray-900">
+                  Foto de la Oblea (Registrada)
+                </h2>
               </div>
-              <h2 className="text-base font-bold text-gray-900">
-                Foto de la Oblea
-              </h2>
             </div>
-            <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-600">
-              Requerido
-            </span>
-          </div>
 
-          {fotoOblea ? (
             <div className="relative overflow-hidden rounded-xl">
               <img
-                src={fotoOblea}
+                src={obleaDetalle.path_foto}
                 alt="Oblea colocada"
                 className="w-full rounded-xl object-cover shadow-md"
               />
-              <button
-                onClick={() => setFotoOblea('')}
-                className="absolute right-3 top-3 rounded-full bg-red-500 p-2.5 text-white shadow-xl active:bg-red-600"
-              >
-                <X className="h-5 w-5" />
-              </button>
-              <div className="absolute bottom-3 left-3 rounded-full bg-green-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
-                ✓ Foto capturada
-              </div>
             </div>
-          ) : (
-            <button
-              onClick={capturarFoto}
-              className="flex h-56 w-full items-center justify-center rounded-xl border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 active:from-blue-100 active:to-blue-200"
-            >
-              <div className="text-center">
-                <div className="mx-auto mb-3 rounded-full bg-blue-500 p-4">
-                  <Camera className="h-8 w-8 text-white" />
+          </div>
+        ) : (
+          <div className="rounded-xl bg-white p-4 shadow-lg">
+            <div className="mb-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="rounded-full bg-blue-100 p-2">
+                  <Camera className="h-5 w-5 text-blue-600" />
                 </div>
-                <span className="text-base font-bold text-blue-700">Tomar Foto</span>
-                <p className="mt-1 text-xs text-blue-600">Presiona para abrir la cámara</p>
+                <h2 className="text-base font-bold text-gray-900">
+                  Foto de la Oblea
+                </h2>
               </div>
-            </button>
-          )}
-          <input
-            ref={inputFileRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-        </div>
+              <span className="rounded-full bg-red-100 px-3 py-1 text-xs font-bold text-red-600">
+                Requerido
+              </span>
+            </div>
 
-        {/* Firmas Digitales - Formato Profesional */}
+            {fotoOblea ? (
+              <div className="relative overflow-hidden rounded-xl">
+                <img
+                  src={fotoOblea}
+                  alt="Oblea colocada"
+                  className="w-full rounded-xl object-cover shadow-md"
+                />
+                <button
+                  onClick={() => setFotoOblea('')}
+                  className="absolute right-3 top-3 rounded-full bg-red-500 p-2.5 text-white shadow-xl active:bg-red-600"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                <div className="absolute bottom-3 left-3 rounded-full bg-green-500 px-3 py-1.5 text-xs font-bold text-white shadow-lg">
+                  ✓ Foto capturada
+                </div>
+              </div>
+            ) : (
+              <button
+                onClick={capturarFoto}
+                className="flex h-56 w-full items-center justify-center rounded-xl border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-blue-100 active:from-blue-100 active:to-blue-200"
+              >
+                <div className="text-center">
+                  <div className="mx-auto mb-3 rounded-full bg-blue-500 p-4">
+                    <Camera className="h-8 w-8 text-white" />
+                  </div>
+                  <span className="text-base font-bold text-blue-700">Tomar Foto</span>
+                  <p className="mt-1 text-xs text-blue-600">Presiona para abrir la cámara</p>
+                </div>
+              </button>
+            )}
+            <input
+              ref={inputFileRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={handleFileChange}
+            />
+          </div>
+        )}
+
+        {/* Firmas Digitales - Formato Profesional / Consulta */}
         <div className="rounded-xl bg-white p-5 shadow-lg border border-gray-200">
           <div className="mb-5 flex items-center gap-2">
             <div className="rounded-full bg-purple-100 p-2">
@@ -394,49 +439,61 @@ function ColocarObleaContent() {
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Firma del Receptor
             </label>
-            <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
-              <canvas
-                ref={canvasReceptorRef}
-                width={600}
-                height={200}
-                className="w-full touch-none bg-white cursor-crosshair"
-                onMouseDown={() => {
-                  if (canvasReceptorRef.current && !firmandoReceptor) {
-                    iniciarFirma(canvasReceptorRef.current)
-                    setFirmandoReceptor(true)
-                  }
-                }}
-                onTouchStart={() => {
-                  if (canvasReceptorRef.current && !firmandoReceptor) {
-                    iniciarFirma(canvasReceptorRef.current)
-                    setFirmandoReceptor(true)
-                  }
-                }}
-              />
-            </div>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={() => {
-                  limpiarFirma(canvasReceptorRef.current)
-                  setFirmaReceptor('')
-                }}
-                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
-              >
-                Limpiar
-              </button>
-              <button
-                onClick={() => {
-                  if (canvasReceptorRef.current) {
-                    setFirmaReceptor(canvasReceptorRef.current.toDataURL())
-                  }
-                }}
-                className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
-              >
-                Guardar Firma
-              </button>
-            </div>
-            {firmaReceptor && (
-              <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+            {obleaDetalle && obleaDetalle.path_firma_receptor ? (
+              <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50 p-2">
+                <img
+                  src={obleaDetalle.path_firma_receptor}
+                  alt="Firma del receptor"
+                  className="w-full max-h-56 object-contain bg-white"
+                />
+              </div>
+            ) : (
+              <>
+                <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
+                  <canvas
+                    ref={canvasReceptorRef}
+                    width={600}
+                    height={200}
+                    className="w-full touch-none bg-white cursor-crosshair"
+                    onMouseDown={() => {
+                      if (canvasReceptorRef.current && !firmandoReceptor) {
+                        iniciarFirma(canvasReceptorRef.current)
+                        setFirmandoReceptor(true)
+                      }
+                    }}
+                    onTouchStart={() => {
+                      if (canvasReceptorRef.current && !firmandoReceptor) {
+                        iniciarFirma(canvasReceptorRef.current)
+                        setFirmandoReceptor(true)
+                      }
+                    }}
+                  />
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => {
+                      limpiarFirma(canvasReceptorRef.current)
+                      setFirmaReceptor('')
+                    }}
+                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
+                  >
+                    Limpiar
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (canvasReceptorRef.current) {
+                        setFirmaReceptor(canvasReceptorRef.current.toDataURL())
+                      }
+                    }}
+                    className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
+                  >
+                    Guardar Firma
+                  </button>
+                </div>
+                {firmaReceptor && (
+                  <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+                )}
+              </>
             )}
           </div>
 
@@ -445,98 +502,114 @@ function ColocarObleaContent() {
             <label className="mb-2 block text-sm font-semibold text-gray-700">
               Firma del Inspector
             </label>
-            <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
-              <canvas
-                ref={canvasInspectorRef}
-                width={600}
-                height={200}
-                className="w-full touch-none bg-white cursor-crosshair"
-                onMouseDown={() => {
-                  if (canvasInspectorRef.current && !firmandoInspector) {
-                    iniciarFirma(canvasInspectorRef.current)
-                    setFirmandoInspector(true)
-                  }
-                }}
-                onTouchStart={() => {
-                  if (canvasInspectorRef.current && !firmandoInspector) {
-                    iniciarFirma(canvasInspectorRef.current)
-                    setFirmandoInspector(true)
-                  }
-                }}
-              />
-            </div>
-            <div className="mt-3 flex gap-2">
-              <button
-                onClick={() => {
-                  limpiarFirma(canvasInspectorRef.current)
-                  setFirmaInspector('')
-                }}
-                className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
-              >
-                Limpiar
-              </button>
-              <button
-                onClick={() => {
-                  if (canvasInspectorRef.current) {
-                    setFirmaInspector(canvasInspectorRef.current.toDataURL())
-                  }
-                }}
-                className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
-              >
-                Guardar Firma
-              </button>
-            </div>
-            {firmaInspector && (
-              <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+            {obleaDetalle && obleaDetalle.path_firma_inspector ? (
+              <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50 p-2">
+                <img
+                  src={obleaDetalle.path_firma_inspector}
+                  alt="Firma del inspector"
+                  className="w-full max-h-56 object-contain bg-white"
+                />
+              </div>
+            ) : (
+              <>
+                <div className="overflow-hidden rounded-lg border-2 border-gray-300 bg-gray-50">
+                  <canvas
+                    ref={canvasInspectorRef}
+                    width={600}
+                    height={200}
+                    className="w-full touch-none bg-white cursor-crosshair"
+                    onMouseDown={() => {
+                      if (canvasInspectorRef.current && !firmandoInspector) {
+                        iniciarFirma(canvasInspectorRef.current)
+                        setFirmandoInspector(true)
+                      }
+                    }}
+                    onTouchStart={() => {
+                      if (canvasInspectorRef.current && !firmandoInspector) {
+                        iniciarFirma(canvasInspectorRef.current)
+                        setFirmandoInspector(true)
+                      }
+                    }}
+                  />
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <button
+                    onClick={() => {
+                      limpiarFirma(canvasInspectorRef.current)
+                      setFirmaInspector('')
+                    }}
+                    className="flex-1 rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 active:bg-gray-50 transition-colors"
+                  >
+                    Limpiar
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (canvasInspectorRef.current) {
+                        setFirmaInspector(canvasInspectorRef.current.toDataURL())
+                      }
+                    }}
+                    className="flex-1 rounded-lg bg-[#0093D2] px-4 py-2.5 text-sm font-medium text-white active:bg-[#007AB8] transition-colors"
+                  >
+                    Guardar Firma
+                  </button>
+                </div>
+                {firmaInspector && (
+                  <p className="mt-2 text-sm text-green-600 font-medium">✓ Firma guardada correctamente</p>
+                )}
+              </>
             )}
           </div>
         </div>
 
         {/* Resumen de completitud */}
-        <div className="rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 p-4">
-          <h3 className="mb-3 text-sm font-bold text-gray-700">📋 Checklist de Registro</h3>
-          <div className="space-y-2">
-            <div className={`flex items-center gap-2 text-sm ${fotoOblea ? 'text-green-600' : 'text-gray-400'}`}>
-              {fotoOblea ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="font-medium">Foto de la oblea</span>
-            </div>
-            <div className={`flex items-center gap-2 text-sm ${firmaReceptor || firmaInspector ? 'text-green-600' : 'text-gray-400'}`}>
-              {firmaReceptor || firmaInspector ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
-              <span className="font-medium">Al menos una firma</span>
+        {!obleaDetalle && (
+          <div className="rounded-xl bg-gradient-to-r from-gray-50 to-gray-100 p-4">
+            <h3 className="mb-3 text-sm font-bold text-gray-700">📋 Checklist de Registro</h3>
+            <div className="space-y-2">
+              <div className={`flex items-center gap-2 text-sm ${fotoOblea ? 'text-green-600' : 'text-gray-400'}`}>
+                {fotoOblea ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+                <span className="font-medium">Foto de la oblea</span>
+              </div>
+              <div className={`flex items-center gap-2 text-sm ${firmaReceptor || firmaInspector ? 'text-green-600' : 'text-gray-400'}`}>
+                {firmaReceptor || firmaInspector ? <CheckCircle className="h-5 w-5" /> : <AlertCircle className="h-5 w-5" />}
+                <span className="font-medium">Al menos una firma</span>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
 
       {/* Botón de Guardar Flotante - Mejorado */}
-      <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent p-4 pb-6 shadow-2xl">
-        <button
-          onClick={guardarOblea}
-          disabled={guardando || !fotoOblea || (!firmaReceptor && !firmaInspector)}
-          className={`w-full rounded-2xl py-5 text-lg font-bold shadow-xl transition-all ${
-            guardando || !fotoOblea || (!firmaReceptor && !firmaInspector)
-              ? 'bg-gray-300 text-gray-500'
-              : 'bg-gradient-to-r from-green-500 to-green-600 text-white active:scale-95'
-          }`}
-        >
-          {guardando ? (
-            <div className="flex items-center justify-center gap-2">
-              <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
-              <span>Guardando...</span>
-            </div>
-          ) : (
-            <div className="flex items-center justify-center gap-2">
-              <Save className="h-6 w-6" />
-              <span>Registrar Oblea</span>
-            </div>
+      {!obleaDetalle && (
+        <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent p-4 pb-6 shadow-2xl">
+          <button
+            onClick={guardarOblea}
+            disabled={guardando || !fotoOblea || (!firmaReceptor && !firmaInspector)}
+            className={`w-full rounded-2xl py-5 text-lg font-bold shadow-xl transition-all ${
+              guardando || !fotoOblea || (!firmaReceptor && !firmaInspector)
+                ? 'bg-gray-300 text-gray-500'
+                : 'bg-gradient-to-r from-green-500 to-green-600 text-white active:scale-95'
+            }`}
+          >
+            {guardando ? (
+              <div className="flex items-center justify-center gap-2">
+                <div className="h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                <span>Guardando...</span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2">
+                <Save className="h-6 w-6" />
+                <span>Registrar Oblea</span>
+              </div>
+            )}
+          </button>
+          {(!fotoOblea || (!firmaReceptor && !firmaInspector)) && (
+            <p className="mt-2 text-center text-xs text-red-600">
+              ⚠️ Completa todos los campos requeridos
+            </p>
           )}
-        </button>
-        {(!fotoOblea || (!firmaReceptor && !firmaInspector)) && (
-          <p className="mt-2 text-center text-xs text-red-600">
-            ⚠️ Completa todos los campos requeridos
-          </p>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   )
 }
