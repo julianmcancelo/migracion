@@ -70,6 +70,7 @@ export async function GET(request: NextRequest) {
           estado: habilitacion.estado,
           vigencia_inicio: habilitacion.vigencia_inicio,
           vigencia_fin: habilitacion.vigencia_fin,
+          oblea_colocada: habilitacion.oblea_colocada,
           titular: habPersona?.persona
             ? {
                 nombre: habPersona.persona.nombre,

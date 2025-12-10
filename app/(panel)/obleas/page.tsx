@@ -16,6 +16,7 @@ interface Habilitacion {
   vehiculo_marca: string
   vehiculo_modelo: string
   vigencia_fin: string
+  oblea_colocada: boolean
 }
 
 /**
@@ -64,6 +65,7 @@ export default function ObleasPage() {
           vehiculo_marca: hab.vehiculo?.marca || '',
           vehiculo_modelo: hab.vehiculo?.modelo || '',
           vigencia_fin: hab.vigencia_fin || 'N/A',
+          oblea_colocada: Boolean(hab.oblea_colocada),
         }))
 
         console.log('✅ Habilitaciones cargadas para certificados:', habilitaciones.length)
@@ -203,6 +205,15 @@ export default function ObleasPage() {
                         </span>
                         <span className="rounded bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
                           {hab.estado}
+                        </span>
+                        <span
+                          className={`rounded px-2 py-0.5 text-xs font-medium ${
+                            hab.oblea_colocada
+                              ? 'bg-emerald-100 text-emerald-700'
+                              : 'bg-amber-100 text-amber-700'
+                          }`}
+                        >
+                          {hab.oblea_colocada ? 'Oblea colocada' : 'Pendiente de oblea'}
                         </span>
                       </div>
                       <p className="text-sm text-gray-900">{hab.titular_nombre}</p>
