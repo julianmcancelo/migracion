@@ -28,6 +28,21 @@ export default function QRScanner({
                     Html5QrcodeSupportedFormats.QR_CODE,
                 ];
 
+                // Listar cámaras primero para ser más robustos
+                const devices = await Html5Qrcode.getCameras();
+                if (!devices || devices.length === 0) {
+                    throw new Error('No se encontraron cámaras.');
+                }
+
+                // Intentar encontrar cámara trasera
+                const backCamera = devices.find(device =>
+                    device.label.toLowerCase().includes('back') ||
+                    device.label.toLowerCase().includes('trasera') ||
+                    device.label.toLowerCase().includes('environment')
+                );
+
+                const cameraId = backCamera ? backCamera.id : devices[0].id;
+
                 const scanner = new Html5Qrcode(regionId, {
                     formatsToSupport,
                     verbose: false
@@ -36,14 +51,13 @@ export default function QRScanner({
                 scannerRef.current = scanner;
 
                 await scanner.start(
-                    { facingMode: "environment" },
+                    cameraId, // Usar ID específico en lugar de constraint genérico
                     {
                         fps: 10,
                         qrbox: { width: 250, height: 250 },
                         aspectRatio: 1.0,
                     },
                     (decodedText) => {
-                        // Success callback
                         if (scannerRef.current) {
                             scannerRef.current.stop().then(() => {
                                 scannerRef.current?.clear();
@@ -52,8 +66,7 @@ export default function QRScanner({
                         }
                     },
                     (errorMessage) => {
-                        // Error callback (scanning...)
-                        // No reportar errores constantes de "no QR found"
+                        // Ignorar errores de frame
                     }
                 );
 
@@ -62,16 +75,17 @@ export default function QRScanner({
                 console.error('Error iniciando cámara:', err);
                 let errorMessage = 'No se pudo acceder a la cámara.';
 
-                if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError') {
-                    errorMessage = 'Permiso de cámara denegado. Por favor, permite el acceso en tu navegador.';
+                // Manejar si el error es un string
+                if (typeof err === 'string') {
+                    errorMessage = err;
+                } else if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError') {
+                    errorMessage = 'Permiso de cámara denegado. Por favor, permite el acceso.';
                 } else if (err?.name === 'NotFoundError' || err?.name === 'DevicesNotFoundError') {
-                    errorMessage = 'No se encontró ninguna cámara en el dispositivo.';
+                    errorMessage = 'No se encontró ninguna cámara.';
                 } else if (err?.name === 'NotReadableError' || err?.name === 'TrackStartError') {
-                    errorMessage = 'La cámara está en uso por otra aplicación o no es accesible.';
-                } else if (err?.name === 'OverconstrainedError') {
-                    errorMessage = 'Las restricciones de cámara no son compatibles (cámara trasera no encontrada).';
+                    errorMessage = 'La cámara está en uso o no es accesible.';
                 } else if (err?.message) {
-                    errorMessage = `Error: ${err.message}`;
+                    errorMessage = err.message;
                 }
 
                 setCameraError(errorMessage);
