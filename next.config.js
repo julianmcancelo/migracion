@@ -21,10 +21,10 @@ const nextConfig = {
 
   // Configuración de producción
   poweredByHeader: false, // Ocultar header X-Powered-By
-  
+
   // Comprimir respuestas
   compress: true,
-  
+
   // Security & PWA Headers
   headers: async () => [
     // Security Headers para todas las rutas
@@ -54,16 +54,16 @@ const nextConfig = {
         // Permissions Policy
         {
           key: 'Permissions-Policy',
-          value: 'camera=(), microphone=(), geolocation=(self)',
+          value: 'camera=(self), microphone=(), geolocation=(self)',
         },
         // HSTS (solo en producción)
         ...(process.env.NODE_ENV === 'production'
           ? [
-              {
-                key: 'Strict-Transport-Security',
-                value: 'max-age=31536000; includeSubDomains; preload',
-              },
-            ]
+            {
+              key: 'Strict-Transport-Security',
+              value: 'max-age=31536000; includeSubDomains; preload',
+            },
+          ]
           : []),
       ],
     },
@@ -112,12 +112,12 @@ const nextConfig = {
       ],
     },
   ],
-  
+
   // TypeScript - IMPORTANTE: Corregir errores antes de producción
   typescript: {
     ignoreBuildErrors: process.env.NODE_ENV === 'development', // Solo ignorar en desarrollo
   },
-  
+
   // ESLint
   eslint: {
     ignoreDuringBuilds: process.env.NODE_ENV === 'development',
