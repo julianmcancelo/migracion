@@ -1,4 +1,4 @@
-```typescript
+
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
 
@@ -70,7 +70,7 @@ t.id,
       LEFT JOIN personas AS p ON hp.persona_id = p.id
       LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id AND hv.activo = 1
       LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
-      ${ whereClause }
+      ${whereClause}
       GROUP BY t.id
       ORDER BY t.fecha ASC, t.hora ASC
       LIMIT 100
@@ -160,7 +160,7 @@ export async function POST(request: Request) {
       data: {
         habilitacion_id: Number(habilitacion_id),
         fecha: fechaDate,
-        hora: new Date(`1970-01-01T${ hora }:00`),
+        hora: new Date(`1970-01-01T${hora}:00`),
         fecha_hora: fechaHora,
         observaciones: observaciones || null,
         estado: 'PENDIENTE',
@@ -192,7 +192,7 @@ export async function POST(request: Request) {
         })
 
         await fetch(
-          `${ process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' } /api/turnos / enviar - email`,
+          `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'} /api/turnos / enviar - email`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
