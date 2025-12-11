@@ -73,6 +73,7 @@ export async function GET(
 
     // Preparar datos para el PDF
     const datos = {
+      id: habilitacion.id,
       nro_licencia: habilitacion.nro_licencia || 'S/N',
       tipo_transporte: habilitacion.tipo_transporte || 'N/A',
       estado: habilitacion.estado || 'N/A',

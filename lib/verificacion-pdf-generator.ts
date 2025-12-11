@@ -1,7 +1,9 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import QRCode from 'qrcode'
 
 interface DatosHabilitacion {
+  id: number // Added id
   nro_licencia: string
   tipo_transporte: string
   estado: string
@@ -36,6 +38,21 @@ export async function generarPDFVerificacion(datos: DatosHabilitacion): Promise<
   const pageHeight = doc.internal.pageSize.height
   const margin = 15
 
+  // Generar QR
+  const qrData = JSON.stringify({
+    t: 'i', // inspeccion
+    h: datos.id
+  })
+  // URL base para redirección
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'
+  const qrUrl = `${baseUrl}/inspector-movil/qr?data=${encodeURIComponent(qrData)}`
+
+  const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+    errorCorrectionLevel: 'M',
+    margin: 1,
+    width: 100
+  })
+
   // Título principal
   doc.setFillColor(41, 128, 185)
   doc.rect(0, 0, pageWidth, 35, 'F')
@@ -48,6 +65,13 @@ export async function generarPDFVerificacion(datos: DatosHabilitacion): Promise<
   doc.setFontSize(12)
   doc.setFont('helvetica', 'normal')
   doc.text('Municipio de Lanús - Dirección de Transporte', pageWidth / 2, 25, { align: 'center' })
+
+  // Agregar QR al header (derecha)
+  try {
+    doc.addImage(qrCodeDataUrl, 'PNG', pageWidth - 35, 2, 30, 30)
+  } catch (e) {
+    console.error('Error agregando QR:', e)
+  }
 
   // Resetear color de texto
   doc.setTextColor(0, 0, 0)
