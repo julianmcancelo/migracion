@@ -58,9 +58,23 @@ export default function QRScanner({
                 );
 
                 setIsScanning(true);
-            } catch (err) {
+            } catch (err: any) {
                 console.error('Error iniciando cámara:', err);
-                setCameraError('No se pudo acceder a la cámara. Asegúrate de dar permisos y usar HTTPS.');
+                let errorMessage = 'No se pudo acceder a la cámara.';
+
+                if (err?.name === 'NotAllowedError' || err?.name === 'PermissionDeniedError') {
+                    errorMessage = 'Permiso de cámara denegado. Por favor, permite el acceso en tu navegador.';
+                } else if (err?.name === 'NotFoundError' || err?.name === 'DevicesNotFoundError') {
+                    errorMessage = 'No se encontró ninguna cámara en el dispositivo.';
+                } else if (err?.name === 'NotReadableError' || err?.name === 'TrackStartError') {
+                    errorMessage = 'La cámara está en uso por otra aplicación o no es accesible.';
+                } else if (err?.name === 'OverconstrainedError') {
+                    errorMessage = 'Las restricciones de cámara no son compatibles (cámara trasera no encontrada).';
+                } else if (err?.message) {
+                    errorMessage = `Error: ${err.message}`;
+                }
+
+                setCameraError(errorMessage);
             }
         };
 

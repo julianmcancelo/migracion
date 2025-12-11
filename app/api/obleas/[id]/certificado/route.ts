@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+import QRCode from 'qrcode'
 
 export const dynamic = 'force-dynamic'
 
@@ -132,6 +133,20 @@ export async function GET(
       vigenciaDesde = new Date(habilitacion.vigencia_inicio).toLocaleDateString('es-AR')
     }
 
+    // Generar QR
+    const qrData = JSON.stringify({
+      t: 'o', // oblea
+      id: oblea?.id || 0
+    })
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'
+    const qrUrl = `${baseUrl}/inspector-movil/qr?data=${encodeURIComponent(qrData)}`
+
+    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 150
+    })
+
     // Generar HTML del certificado
     const html = `
 <!DOCTYPE html>
@@ -174,6 +189,11 @@ export async function GET(
                 <div class="text-center my-8">
                     <h1 class="text-3xl font-bold text-blue-900 tracking-wider">CERTIFICADO DE ENTREGA DE OBLEA</h1>
                     <p class="text-xl font-medium text-gray-600 mt-2">Transporte ${habilitacion.tipo_transporte || 'N/A'}</p>
+                    
+                    <!-- QR Code Absolute Position -->
+                    <div class="absolute top-24 right-12">
+                        <img src="${qrCodeDataUrl}" alt="QR Code" class="w-24 h-24 border-2 border-blue-200 rounded-lg">
+                    </div>
                 </div>
 
                 <main class="flex-grow space-y-6">
