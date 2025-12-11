@@ -191,7 +191,7 @@ export async function GET(
                     <p class="text-xl font-medium text-gray-600 mt-2">Transporte ${habilitacion.tipo_transporte || 'N/A'}</p>
                     
                     <!-- QR Code Absolute Position -->
-                    <div class="absolute top-24 right-12">
+                    <div class="absolute top-10 left-10">
                         <img src="${qrCodeDataUrl}" alt="QR Code" class="w-24 h-24 border-2 border-blue-200 rounded-lg">
                     </div>
                 </div>
