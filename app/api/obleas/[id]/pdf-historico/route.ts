@@ -57,6 +57,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     // Preparar datos para el generador mejorado
     const datosOblea = {
       habilitacion: {
+        id: habilitacion.id,
         nro_licencia: oblea.nro_licencia || '',
         tipo_transporte: String(habilitacion.tipo_transporte || 'N/A'),
         expte: habilitacion.expte || undefined,
@@ -84,14 +85,14 @@ export async function GET(request: Request, { params }: { params: { id: string }
       },
       inspector: oblea.path_firma_inspector
         ? {
-            nombre: 'Inspector Municipal',
-            firma: oblea.path_firma_inspector,
-          }
+          nombre: 'Inspector Municipal',
+          firma: oblea.path_firma_inspector,
+        }
         : undefined,
       contribuyente: oblea.path_firma_receptor
         ? {
-            firma: oblea.path_firma_receptor,
-          }
+          firma: oblea.path_firma_receptor,
+        }
         : undefined,
     }
 
