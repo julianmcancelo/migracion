@@ -1,5 +1,8 @@
+```typescript
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/inspecciones - Listar inspecciones
@@ -26,17 +29,17 @@ export async function GET(request: Request) {
 
     // SQL optimizado - Solo seleccionar datos de inspección, los datos relacionados se obtienen después
     const sql = `
-      SELECT 
-        i.id,
-        i.habilitacion_id,
-        i.nro_licencia,
-        i.fecha_inspeccion,
-        i.resultado,
-        i.nombre_inspector,
-        i.tipo_transporte,
-        i.email_contribuyente
+SELECT
+i.id,
+  i.habilitacion_id,
+  i.nro_licencia,
+  i.fecha_inspeccion,
+  i.resultado,
+  i.nombre_inspector,
+  i.tipo_transporte,
+  i.email_contribuyente
       FROM inspecciones AS i
-      ${whereClause}
+      ${ whereClause }
       ORDER BY i.fecha_inspeccion DESC
       LIMIT 100
     `
@@ -96,7 +99,7 @@ export async function GET(request: Request) {
             dominio,
           }
         } catch (error) {
-          console.error(`Error al enriquecer inspección ${inspeccion.id}:`, error)
+          console.error(`Error al enriquecer inspección ${ inspeccion.id }: `, error)
           return {
             ...inspeccion,
             titular: null,
@@ -207,7 +210,7 @@ export async function POST(request: Request) {
         habilitacion_id: Number(habilitacion_id),
         nro_licencia,
         nombre_inspector,
-        firma_digital: `${latitud || 0},${longitud || 0}`, // GPS en formato texto
+        firma_digital: `${ latitud || 0 },${ longitud || 0 } `, // GPS en formato texto
         firma_inspector,
         firma_contribuyente: firma_contribuyente || null,
         email_contribuyente: email_contribuyente || null,
@@ -266,7 +269,7 @@ export async function POST(request: Request) {
           items: items?.length || 0,
           fotos: fotos_vehiculo?.length || 0,
         },
-        message: `Inspección ${resultado.toLowerCase()} creada exitosamente`,
+        message: `Inspección ${ resultado.toLowerCase() } creada exitosamente`,
       },
       { status: 201 }
     )

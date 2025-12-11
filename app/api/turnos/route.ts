@@ -1,5 +1,8 @@
+```typescript
 import { NextResponse } from 'next/server'
 import { prisma } from '@/lib/db'
+
+export const dynamic = 'force-dynamic';
 
 /**
  * GET /api/turnos - Listar turnos con filtros
@@ -43,31 +46,31 @@ export async function GET(request: Request) {
 
     // SQL optimizado con LEFT JOINs (como en inspecciones)
     const sql = `
-      SELECT 
-        t.id,
-        t.habilitacion_id,
-        t.fecha,
-        t.hora,
-        t.estado,
-        t.observaciones,
-        t.recordatorio_enviado,
-        t.creado_en,
-        hg.nro_licencia,
-        hg.tipo_transporte,
-        p.nombre as titular_nombre,
-        p.dni as titular_dni,
-        p.email as titular_email,
-        p.telefono as titular_telefono,
-        v.dominio as vehiculo_patente,
-        v.marca as vehiculo_marca,
-        v.modelo as vehiculo_modelo
+SELECT
+t.id,
+  t.habilitacion_id,
+  t.fecha,
+  t.hora,
+  t.estado,
+  t.observaciones,
+  t.recordatorio_enviado,
+  t.creado_en,
+  hg.nro_licencia,
+  hg.tipo_transporte,
+  p.nombre as titular_nombre,
+  p.dni as titular_dni,
+  p.email as titular_email,
+  p.telefono as titular_telefono,
+  v.dominio as vehiculo_patente,
+  v.marca as vehiculo_marca,
+  v.modelo as vehiculo_modelo
       FROM turnos AS t
       LEFT JOIN habilitaciones_generales AS hg ON t.habilitacion_id = hg.id
       LEFT JOIN habilitaciones_personas AS hp ON hg.id = hp.habilitacion_id AND hp.rol = 'TITULAR'
       LEFT JOIN personas AS p ON hp.persona_id = p.id
       LEFT JOIN habilitaciones_vehiculos AS hv ON hg.id = hv.habilitacion_id AND hv.activo = 1
       LEFT JOIN vehiculos AS v ON hv.vehiculo_id = v.id
-      ${whereClause}
+      ${ whereClause }
       GROUP BY t.id
       ORDER BY t.fecha ASC, t.hora ASC
       LIMIT 100
@@ -157,7 +160,7 @@ export async function POST(request: Request) {
       data: {
         habilitacion_id: Number(habilitacion_id),
         fecha: fechaDate,
-        hora: new Date(`1970-01-01T${hora}:00`),
+        hora: new Date(`1970-01-01T${ hora }:00`),
         fecha_hora: fechaHora,
         observaciones: observaciones || null,
         estado: 'PENDIENTE',
@@ -189,7 +192,7 @@ export async function POST(request: Request) {
         })
 
         await fetch(
-          `${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/turnos/enviar-email`,
+          `${ process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000' } /api/turnos / enviar - email`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

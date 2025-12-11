@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/db';
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/obleas/pendientes
  * Obtiene las habilitaciones relevantes para el inspector móvil
@@ -73,35 +75,35 @@ export async function GET(request: NextRequest) {
           oblea_colocada: habilitacion.oblea_colocada,
           titular: habPersona?.persona
             ? {
-                nombre: habPersona.persona.nombre,
-                dni: habPersona.persona.dni,
-                telefono: habPersona.persona.telefono,
-                email: habPersona.persona.email,
-              }
+              nombre: habPersona.persona.nombre,
+              dni: habPersona.persona.dni,
+              telefono: habPersona.persona.telefono,
+              email: habPersona.persona.email,
+            }
             : {
-                nombre: 'Sin titular',
-                dni: 'N/A',
-                telefono: null,
-                email: null,
-              },
+              nombre: 'Sin titular',
+              dni: 'N/A',
+              telefono: null,
+              email: null,
+            },
           vehiculo: habVehiculo?.vehiculo
             ? {
-                dominio: habVehiculo.vehiculo.dominio,
-                marca: habVehiculo.vehiculo.marca,
-                modelo: habVehiculo.vehiculo.modelo,
-                anio: habVehiculo.vehiculo.ano,
-              }
+              dominio: habVehiculo.vehiculo.dominio,
+              marca: habVehiculo.vehiculo.marca,
+              modelo: habVehiculo.vehiculo.modelo,
+              anio: habVehiculo.vehiculo.ano,
+            }
             : {
-                dominio: 'N/A',
-                marca: 'Sin vehículo',
-                modelo: '',
-                anio: null,
-              },
+              dominio: 'N/A',
+              marca: 'Sin vehículo',
+              modelo: '',
+              anio: null,
+            },
           turno: turno
             ? {
-                fecha: turno.fecha,
-                hora: turno.hora,
-              }
+              fecha: turno.fecha,
+              hora: turno.hora,
+            }
             : null,
         };
       })

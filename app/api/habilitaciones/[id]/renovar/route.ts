@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
+
+export const dynamic = 'force-dynamic'
 import { notificarAdmins } from '@/lib/notificaciones'
 
 /**
@@ -25,9 +27,9 @@ export async function POST(
 
     const habilitacionId = parseInt(params.id)
     const body = await request.json()
-    const { 
-      nuevoExpediente, 
-      copiarTitular = true, 
+    const {
+      nuevoExpediente,
+      copiarTitular = true,
       copiarVehiculo = true,
       nuevoTitular,
       nuevoVehiculo

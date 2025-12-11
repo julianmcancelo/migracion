@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getSession } from '@/lib/auth'
 import { prisma } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 /**
  * GET - Obtener notificaciones del usuario actual
  * Query params:
@@ -32,14 +34,14 @@ export async function GET(request: NextRequest) {
     }
 
     // Obtener notificaciones
-    const notificaciones = limit > 0 
+    const notificaciones = limit > 0
       ? await prisma.notificaciones.findMany({
-          where,
-          orderBy: {
-            fecha_creacion: 'desc',
-          },
-          take: limit,
-        })
+        where,
+        orderBy: {
+          fecha_creacion: 'desc',
+        },
+        take: limit,
+      })
       : []
 
     // Contar no leídas
