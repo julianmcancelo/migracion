@@ -3,6 +3,7 @@ import QRCode from 'qrcode'
 
 interface DatosOblea {
   habilitacion: {
+    id: number
     nro_licencia: string
     tipo_transporte: string
     expte?: string
@@ -52,7 +53,8 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     // Generar QR
     const qrData = JSON.stringify({
       t: 'o', // oblea
-      id: datos.oblea.id
+      id: datos.oblea.id,
+      h: datos.habilitacion.id
     })
     // URL base para redirección (ajustar según entorno si es necesario)
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'

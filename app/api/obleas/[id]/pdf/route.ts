@@ -154,6 +154,7 @@ export async function GET(request: Request, { params }: { params: { id: string }
     // Preparar datos para el PDF
     const datosOblea = {
       habilitacion: {
+        id: habilitacion.id,
         nro_licencia: habilitacion.nro_licencia || 'N/A',
         tipo_transporte: habilitacion.tipo_transporte || 'N/A',
         expte: habilitacion.expte || undefined,
@@ -193,11 +194,11 @@ export async function GET(request: Request, { params }: { params: { id: string }
         resultado: 'OBLEA COLOCADA',
         fotos: fotoObleaBase64
           ? [
-              {
-                tipo: 'Oblea Colocada',
-                path: fotoObleaBase64,
-              },
-            ]
+            {
+              tipo: 'Oblea Colocada',
+              path: fotoObleaBase64,
+            },
+          ]
           : [],
       },
     }

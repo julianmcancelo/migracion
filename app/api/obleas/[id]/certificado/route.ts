@@ -136,7 +136,8 @@ export async function GET(
     // Generar QR
     const qrData = JSON.stringify({
       t: 'o', // oblea
-      id: oblea?.id || 0
+      id: oblea?.id || 0,
+      h: habilitacionId
     })
     const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'
     const qrUrl = `${baseUrl}/inspector-movil/qr?data=${encodeURIComponent(qrData)}`
