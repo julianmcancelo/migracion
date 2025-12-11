@@ -112,7 +112,7 @@ export default function QRScanner({
                                 <li>Toca el ícono 🔒 o ⚙️ en la barra de URL.</li>
                                 <li>Ve a <strong>Permisos</strong> o <strong>Configuración del sitio</strong>.</li>
                                 <li>Busca <strong>Cámara</strong> y selecciona <strong>Permitir</strong>.</li>
-                                <li>Toca el botón "Reintentar" abajo.</li>
+                                <li>Toca el botón &quot;Reintentar&quot; abajo.</li>
                             </ol>
                         </div>
 
