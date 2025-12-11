@@ -1,5 +1,6 @@
 import jsPDF from 'jspdf'
 import autoTable from 'jspdf-autotable'
+import QRCode from 'qrcode'
 
 interface DatosInspeccion {
   inspeccion: {
@@ -59,6 +60,21 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       })
     )
 
+    // Generar QR
+    const qrData = JSON.stringify({
+      t: 'i', // inspeccion
+      id: datos.inspeccion.id
+    })
+    // URL base para redirección
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'
+    const qrUrl = `${baseUrl}/inspector-movil/qr?data=${encodeURIComponent(qrData)}`
+
+    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 100
+    })
+
     const doc = new jsPDF('p', 'mm', 'a4')
 
     // Colores del diseño - Estilo certificado oficial
@@ -117,6 +133,13 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         19,
         { align: 'right' }
       )
+
+      // QR Code
+      try {
+        doc.addImage(qrCodeDataUrl, 'PNG', 175, 22, 20, 20)
+      } catch (e) {
+        console.error('Error agregando QR:', e)
+      }
 
       yPos = 30
     }
@@ -358,7 +381,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         if (datos.inspeccion.firma_inspector.startsWith('data:image')) {
           const sizeInKB = (datos.inspeccion.firma_inspector.length * 0.75) / 1024
           console.log(`📝 Firma inspector: ${sizeInKB.toFixed(0)}KB`)
-          
+
           // Límite: 500KB para firmas
           if (sizeInKB < 500) {
             doc.addImage(datos.inspeccion.firma_inspector, 'JPEG', 32, yPos + 6, 50, 13)
@@ -403,7 +426,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
         if (datos.inspeccion.firma_contribuyente.startsWith('data:image')) {
           const sizeInKB = (datos.inspeccion.firma_contribuyente.length * 0.75) / 1024
           console.log(`📝 Firma contribuyente: ${sizeInKB.toFixed(0)}KB`)
-          
+
           if (sizeInKB < 500) {
             doc.addImage(datos.inspeccion.firma_contribuyente, 'JPEG', 127, yPos + 6, 50, 13)
             console.log('✅ Firma del contribuyente agregada')
@@ -453,7 +476,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
     })
 
     console.log(`📸 Total de fotos a procesar: ${todasLasFotos.length}`)
-    
+
     // Filtrar solo fotos válidas (límite generoso de 1MB)
     const fotosValidas = todasLasFotos.filter(foto => {
       if (!foto.path || !foto.path.startsWith('data:image')) {
@@ -468,9 +491,9 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
       }
       return true
     })
-    
+
     console.log(`✅ ${fotosValidas.length} fotos válidas para incluir en PDF`)
-    
+
     if (fotosValidas.length > 0) {
       doc.addPage()
       agregarHeader()
@@ -494,7 +517,7 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
 
       fotosValidas.forEach((foto, index) => {
         console.log(`📷 Procesando foto ${index + 1}/${fotosValidas.length}: ${foto.tipo}`)
-        
+
         // Verificar si necesita nueva página
         if (yPos + imgHeight + 15 > 265) {
           doc.addPage()
@@ -548,15 +571,15 @@ export async function generarPDFInspeccion(datos: DatosInspeccion): Promise<Buff
                 const base64Length = foto.path.length
                 const sizeInKB = (base64Length * 0.75) / 1024
                 const sizeInMB = sizeInKB / 1024
-                
+
                 console.log(`📊 Procesando imagen ${foto.tipo}: ${sizeInKB.toFixed(0)}KB`)
-                
+
                 // Límite más estricto: 500KB por imagen
                 if (sizeInKB > 500) {
                   console.warn(`⚠️ Imagen demasiado grande (${sizeInKB.toFixed(0)}KB), omitiendo...`)
                   throw new Error('Imagen demasiado grande')
                 }
-                
+
                 // Intentar agregar la imagen
                 doc.addImage(foto.path, formato, xPos, yPos, imgWidth, imgHeight)
                 imagenAgregada = true

@@ -9,7 +9,13 @@ import {
   Sun,
   ChevronRight,
   Shield,
+  QrCode,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
+
+const QRScanner = dynamic(() => import('@/components/inspector/QRScanner'), {
+  ssr: false,
+});
 
 interface Inspector {
   id: number;
@@ -23,6 +29,7 @@ export default function InspectorMenuPage() {
   const router = useRouter();
   const [inspector, setInspector] = useState<Inspector | null>(null);
   const [currentTime, setCurrentTime] = useState(new Date());
+  const [showScanner, setShowScanner] = useState(false);
 
   useEffect(() => {
     // Verificar si hay sesión activa
@@ -75,9 +82,40 @@ export default function InspectorMenuPage() {
       'Noviembre',
       'Diciembre',
     ];
-    return `${days[date.getDay()]}, ${date.getDate()} de ${
-      months[date.getMonth()]
-    }`;
+    return `${days[date.getDay()]}, ${date.getDate()} de ${months[date.getMonth()]
+      }`;
+  };
+
+  const handleScanSuccess = (decodedText: string) => {
+    setShowScanner(false);
+    try {
+      // Intentar parsear como URL primero
+      let data: any;
+      try {
+        const url = new URL(decodedText);
+        const dataParam = url.searchParams.get('data');
+        if (dataParam) {
+          data = JSON.parse(decodeURIComponent(dataParam));
+        } else {
+          // Si no tiene param data, quizás es la URL directa de resolución que implementaremos
+          // Por ahora asumimos formato JSON en param data
+          throw new Error('Formato URL no reconocido');
+        }
+      } catch (e) {
+        // Si falla URL, intentar JSON directo
+        data = JSON.parse(decodedText);
+      }
+
+      if (data) {
+        // Redirigir a la página de resolución de QR
+        // Pasamos los datos codificados
+        const dataStr = encodeURIComponent(JSON.stringify(data));
+        router.push(`/inspector-movil/qr?data=${dataStr}`);
+      }
+    } catch (e) {
+      console.error('Error procesando QR:', e);
+      alert('Código QR no válido o formato desconocido');
+    }
   };
 
   if (!inspector) {
@@ -146,6 +184,23 @@ export default function InspectorMenuPage() {
 
         {/* Cards de acciones */}
         <div className="space-y-4">
+          {/* Escanear QR */}
+          <button
+            onClick={() => setShowScanner(true)}
+            className="w-full bg-gradient-to-r from-indigo-600 to-indigo-500 rounded-2xl shadow-md border border-transparent p-5 hover:shadow-lg transition-all active:scale-[0.98] flex items-center gap-4 text-white"
+          >
+            <div className="bg-white/20 p-3 rounded-xl">
+              <QrCode className="w-7 h-7 text-white" />
+            </div>
+            <div className="flex-1 text-left">
+              <h3 className="text-lg font-bold">
+                Escanear QR
+              </h3>
+              <p className="text-sm text-indigo-100">Leer Oblea o Inspección</p>
+            </div>
+            <ChevronRight className="w-5 h-5 text-indigo-200" />
+          </button>
+
           {/* Nueva Inspección */}
           <button
             onClick={() => router.push('/inspector-movil/tramites')}
@@ -225,6 +280,14 @@ export default function InspectorMenuPage() {
         <p>Sistema de Inspecciones Vehiculares</p>
         <p className="text-xs mt-1">Versión 2.0 - {new Date().getFullYear()}</p>
       </div>
+
+      {/* Scanner Modal */}
+      {showScanner && (
+        <QRScanner
+          onScanSuccess={handleScanSuccess}
+          onClose={() => setShowScanner(false)}
+        />
+      )}
     </div>
   );
 }

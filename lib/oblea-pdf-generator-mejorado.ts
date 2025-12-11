@@ -1,4 +1,5 @@
 import jsPDF from 'jspdf'
+import QRCode from 'qrcode'
 
 interface DatosOblea {
   habilitacion: {
@@ -48,6 +49,21 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
   try {
     console.log('🎨 Generando PDF con diseño mejorado...')
 
+    // Generar QR
+    const qrData = JSON.stringify({
+      t: 'o', // oblea
+      id: datos.oblea.id
+    })
+    // URL base para redirección (ajustar según entorno si es necesario)
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://credenciales.transportelanus.com.ar'
+    const qrUrl = `${baseUrl}/inspector-movil/qr?data=${encodeURIComponent(qrData)}`
+
+    const qrCodeDataUrl = await QRCode.toDataURL(qrUrl, {
+      errorCorrectionLevel: 'M',
+      margin: 1,
+      width: 100
+    })
+
     const doc = new jsPDF('p', 'mm', 'a4')
     const pageWidth = 210
     const pageHeight = 297
@@ -81,10 +97,10 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     // ==================== FUNCIÓN: CARD MODERNA ====================
     const crearCard = (x: number, y: number, w: number, h: number, conSombra = true) => {
       if (conSombra) agregarSombra(x, y, w, h, 3)
-      
+
       doc.setFillColor(colores.fondoCard[0], colores.fondoCard[1], colores.fondoCard[2])
       doc.roundedRect(x, y, w, h, 3, 3, 'F')
-      
+
       doc.setDrawColor(colores.borde[0], colores.borde[1], colores.borde[2])
       doc.setLineWidth(0.2)
       doc.roundedRect(x, y, w, h, 3, 3, 'S')
@@ -106,12 +122,12 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       // Logo moderno con círculo
       doc.setFillColor(255, 255, 255)
       doc.circle(25, 20, 12, 'F')
-      
+
       // Borde del logo
       doc.setDrawColor(255, 255, 255)
       doc.setLineWidth(2)
       doc.circle(25, 20, 12, 'S')
-      
+
       // Texto en logo
       doc.setTextColor(colores.primario[0], colores.primario[1], colores.primario[2])
       doc.setFontSize(10)
@@ -128,7 +144,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       doc.setFontSize(9)
       doc.setFont('helvetica', 'normal')
       doc.text('Subsecretaría de Ordenamiento Urbano', 105, 22, { align: 'center' })
-      
+
       doc.setFontSize(8)
       doc.text('Dirección General de Movilidad y Transporte', 105, 27, { align: 'center' })
 
@@ -141,7 +157,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       const fechaEmision = new Date(datos.oblea.fecha_solicitud)
       doc.setFillColor(230, 245, 255)
       doc.roundedRect(160, 12, 40, 10, 2, 2, 'F')
-      
+
       doc.setFontSize(7)
       doc.setTextColor(255, 255, 255)
       doc.setFont('helvetica', 'normal')
@@ -149,6 +165,13 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       doc.setFont('helvetica', 'bold')
       doc.setFontSize(8)
       doc.text(fechaEmision.toLocaleDateString('es-AR'), 180, 20.5, { align: 'center' })
+
+      // QR Code
+      try {
+        doc.addImage(qrCodeDataUrl, 'PNG', 165, 25, 25, 25)
+      } catch (e) {
+        console.error('Error agregando QR:', e)
+      }
 
       yPos = 45
     }
@@ -175,10 +198,10 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
 
     // ==================== DATOS DEL TITULAR (CARD) ====================
     crearCard(15, yPos, 85, 32)
-    
+
     doc.setFillColor(colores.primario[0], colores.primario[1], colores.primario[2])
     doc.rect(15, yPos, 85, 8, 'F')
-    
+
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
@@ -210,10 +233,10 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     // ==================== DATOS DEL VEHÍCULO (CARD) ====================
     const vehiculoY = 67
     crearCard(110, vehiculoY, 85, 32)
-    
+
     doc.setFillColor(colores.secundario[0], colores.secundario[1], colores.secundario[2])
     doc.rect(110, vehiculoY, 85, 8, 'F')
-    
+
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(9)
     doc.setFont('helvetica', 'bold')
@@ -245,11 +268,11 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
 
     // ==================== LICENCIA (DESTACADO) ====================
     agregarSombra(15, yPos, 180, 40, 5)
-    
+
     // Fondo con gradiente
     doc.setFillColor(colores.primario[0], colores.primario[1], colores.primario[2])
     doc.roundedRect(15, yPos, 180, 40, 5, 5, 'F')
-    
+
     // Borde brillante
     doc.setDrawColor(colores.secundario[0], colores.secundario[1], colores.secundario[2])
     doc.setLineWidth(1.5)
@@ -271,7 +294,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
       const vigenciaFin = new Date(datos.habilitacion.vigencia_fin)
       doc.setFillColor(230, 240, 255)
       doc.roundedRect(65, yPos + 30, 80, 7, 3, 3, 'F')
-      
+
       doc.setFontSize(9)
       doc.setFont('helvetica', 'normal')
       doc.text(`⏰ Vigencia hasta ${vigenciaFin.toLocaleDateString('es-AR')}`, 105, yPos + 35, {
@@ -311,10 +334,10 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
 
     // FIRMA INSPECTOR
     crearCard(25, yPos, 70, 45)
-    
+
     doc.setFillColor(colores.fondoClaro[0], colores.fondoClaro[1], colores.fondoClaro[2])
     doc.roundedRect(25, yPos, 70, 10, 2, 2, 'FD')
-    
+
     doc.setTextColor(colores.primario[0], colores.primario[1], colores.primario[2])
     doc.setFontSize(8)
     doc.setFont('helvetica', 'bold')
@@ -334,7 +357,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     doc.setDrawColor(colores.borde[0], colores.borde[1], colores.borde[2])
     doc.setLineWidth(0.5)
     doc.line(30, yPos + 35, 90, yPos + 35)
-    
+
     doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(colores.texto[0], colores.texto[1], colores.texto[2])
@@ -344,10 +367,10 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
 
     // FIRMA CONTRIBUYENTE
     crearCard(115, yPos, 70, 45)
-    
+
     doc.setFillColor(colores.fondoClaro[0], colores.fondoClaro[1], colores.fondoClaro[2])
     doc.roundedRect(115, yPos, 70, 10, 2, 2, 'FD')
-    
+
     doc.setTextColor(colores.secundario[0], colores.secundario[1], colores.secundario[2])
     doc.setFontSize(8)
     doc.setFont('helvetica', 'bold')
@@ -367,7 +390,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
     doc.setDrawColor(colores.borde[0], colores.borde[1], colores.borde[2])
     doc.setLineWidth(0.5)
     doc.line(120, yPos + 35, 180, yPos + 35)
-    
+
     doc.setFontSize(7)
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(colores.texto[0], colores.texto[1], colores.texto[2])
@@ -428,7 +451,7 @@ export async function generarPDFOblea(datos: DatosOblea): Promise<Buffer> {
         // Badge de título
         doc.setFillColor(colores.secundario[0], colores.secundario[1], colores.secundario[2])
         doc.roundedRect(xPos, yPos + imgHeight, imgWidth, 12, 0, 0, 'F')
-        
+
         doc.setFontSize(8)
         doc.setFont('helvetica', 'bold')
         doc.setTextColor(255, 255, 255)
